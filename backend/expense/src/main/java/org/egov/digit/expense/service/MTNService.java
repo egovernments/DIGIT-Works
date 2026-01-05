@@ -318,6 +318,30 @@ public class MTNService {
 
     }
 
+    public MtnBalanceResponse getMtnBalanceResponse(MtnBalanceRequest mtnBalanceRequest) {
+        try {
+            MtnBalance mtnBalance = mtnUtil.getTotalAmountBalance();
+            ResponseInfo responseInfo = responseInfoFactory.
+                    createResponseInfoFromRequestInfo(mtnBalanceRequest.getRequestInfo(), true);
+
+            return MtnBalanceResponse
+                    .builder()
+                    .responseInfo(responseInfo)
+                    .mtnBalance(mtnBalance)
+                    .build();
+        } catch (CustomException e) {
+            log.error("Error while retrieving balance", e);
+            throw new CustomException(e.getCode(), e.getMessage());
+        } catch (HttpClientErrorException e) {
+            log.error("Error from MTN service", e);
+            throw new CustomException("MTN_SERVICE_" + EXCEPTION, e.getMessage());
+        } catch (Exception e) {
+            log.error("Error while retrieving balance", e);
+            throw new CustomException("MTN_ACCOUNT_BALANCE_" + EXCEPTION, e.getMessage());
+        }
+
+    }
+
     public BillTaskResponse transfer(@Valid BillTaskRequest billTaskRequest) {
         Task task = fetchOrCreateTask(billTaskRequest, Task.Type.Transfer);
 

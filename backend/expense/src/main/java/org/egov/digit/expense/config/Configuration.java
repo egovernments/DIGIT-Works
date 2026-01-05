@@ -224,6 +224,9 @@ public class Configuration {
 	@Value("${mtn.transfer.status.endpoint}")
 	private String transferStatusEndpointMTN;
 
+	@Value("${mtn.amount.balance.endpoint}")
+	private String amountBalanceEndpointMTN;
+
 	@Value("${mtn.payment.currency}")
 	private String paymentCurrency;
 

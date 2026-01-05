@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.digit.expense.config.Configuration;
-import org.egov.digit.expense.config.Constants;
+import org.egov.digit.expense.web.models.MtnBalance;
 import org.egov.digit.expense.web.models.PaymentTransferRequest;
 import org.egov.digit.expense.web.models.PaymentTransferResponse;
 import org.egov.tracer.model.CustomException;
@@ -341,6 +341,46 @@ public class MTNUtil {
         } catch (Exception e) {
             log.error("Error while retrieving transfer status for referenceId {}", referenceId, e);
             throw new CustomException("MTN_TRANSFER_STATUS_" + EXCEPTION, e.getMessage());
+        }
+    }
+
+    public MtnBalance getTotalAmountBalance() {
+
+        String accessToken = getAccessToken();
+        String url = UriComponentsBuilder
+                .fromHttpUrl(config.getBaseUrlMTN() + config.getAmountBalanceEndpointMTN())
+                .toUriString();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(MTN_SUBSCRIPTION_KEY_HEADER_NAME, config.getSubscriptionKeyMTN());
+        headers.set(MTN_TARGET_ENVIRONMENT_HEADER_NAME, config.getTargetEnvironmentMTN());
+        headers.set(MTN_AUTHORIZATION_HEADER_NAME, MTN_ACCESS_TOKEN_TYPE + accessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Void> request = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    request,
+                    String.class
+            );
+
+            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+                log.info("Balance fetched from MTN {}",response);
+                return objectMapper.readValue(response.getBody(), MtnBalance.class); // Or parse specific fields if needed
+            } else {
+                throw new CustomException("MTN_ACCOUNT_BALANCE_" + EXCEPTION,
+                        "Unexpected response status while fetching transfer status: " + response.getStatusCode());
+            }
+
+        } catch (HttpClientErrorException e) {
+            log.error("Error from MTN service", e);
+            throw new CustomException("MTN_SERVICE_" + EXCEPTION, e.getMessage());
+        } catch (Exception e) {
+            log.error("Error while retrieving balance", e);
+            throw new CustomException("MTN_ACCOUNT_BALANCE_" + EXCEPTION, e.getMessage());
         }
     }
 

@@ -43,6 +43,12 @@ public class MTNController {
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 
+	@PostMapping(value= "payment/_balance")
+	public ResponseEntity<MtnBalanceResponse> getAmountBalance(@RequestBody MtnBalanceRequest mtnBalanceRequest ){
+		MtnBalanceResponse response = service.getMtnBalanceResponse(mtnBalanceRequest);
+		return new ResponseEntity<>(response,HttpStatus.OK);
+	}
+
 	@PostMapping(value = "payment/_transfer")
 	public ResponseEntity<BillTaskResponse> transfer(@Valid @RequestBody BillTaskRequest request) {
 		BillTaskResponse response = service.transfer(request);
