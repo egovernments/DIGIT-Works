@@ -48,6 +48,7 @@ public class MusterRollRowMapper implements ResultSetExtractor<List<MusterRoll>>
             String musterRollStatus = rs.getString("musterroll_status");
             BigDecimal startDate = rs.getBigDecimal("start_date");
             BigDecimal endDate = rs.getBigDecimal("end_date");
+            String billingPeriodId = rs.getString("billing_period_id");
             String referenceId = rs.getString("reference_id");
             String serviceCode = rs.getString("service_code");
 
@@ -64,7 +65,7 @@ public class MusterRollRowMapper implements ResultSetExtractor<List<MusterRoll>>
 
             MusterRoll musterRoll = MusterRoll.builder().id(id).tenantId(tenantId).musterRollNumber(musterRollNumber)
                     .registerId(registerId).status(Status.fromValue(status)).musterRollStatus(musterRollStatus).startDate(startDate)
-                    .endDate(endDate).referenceId(referenceId).serviceCode(serviceCode)
+                    .endDate(endDate).billingPeriodId(billingPeriodId).referenceId(referenceId).serviceCode(serviceCode)
                     .additionalDetails(additionalDetails).auditDetails(auditDetails).build();
 
             if (!musterRollMap.containsKey(id)) {

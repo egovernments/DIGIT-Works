@@ -1,0 +1,420 @@
+openapi: 3.0.0
+info:
+  title: Expense Service - Payments V2
+  version: 2.0.0
+  description: |
+    Payments V2 enhancements for the Expense Service. Adds period-aware bill search, register+period uniqueness,
+    and a feature flag (`expense.v2.periodic.billing.enabled`) to control V2 validations.
+
+paths:
+  /expense/bill/v1/_create:
+    post:
+      tags: [Bill]
+      summary: Create bills
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillRequest'
+      responses:
+        '202':
+          description: Create request accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillResponse'
+        '400':
+          description: Invalid input
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /expense/bill/v1/_update:
+    post:
+      tags: [Bill]
+      summary: Update bills
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillRequest'
+      responses:
+        '202':
+          description: Update request accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillResponse'
+        '400':
+          description: Invalid input
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /expense/bill/v1/_search:
+    post:
+      tags: [Bill]
+      summary: Search bills (Payments V2)
+      description: |
+        Supports Payments V2 period-aware filters. When `expense.v2.periodic.billing.enabled=true`, the service enforces one bill per register per billing period.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestInfoWrapper'
+      parameters:
+        - $ref: '#/components/parameters/tenantId'
+        - name: billingPeriodIds
+          in: query
+          description: Filter by billing period ids
+          schema:
+            type: array
+            maxItems: 100
+            items:
+              type: string
+        - name: billingType
+          in: query
+          description: Bill type filter (e.g., PERIODIC, AGGREGATE)
+          schema:
+            type: string
+        - name: reportStatus
+          in: query
+          description: Payments V2 reporting status filter
+          schema:
+            type: string
+        - name: isAggregate
+          in: query
+          description: Filter aggregate bills (true) vs period bills (false)
+          schema:
+            type: boolean
+        - name: registerIds
+          in: query
+          description: Filter by register ids
+          schema:
+            type: array
+            maxItems: 100
+            items:
+              type: string
+        - name: billNumbers
+          in: query
+          description: Filter by bill numbers
+          schema:
+            type: array
+            maxItems: 100
+            items:
+              type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            format: int32
+            default: 0
+      responses:
+        '200':
+          description: Bill search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillResponse'
+        '400':
+          description: Invalid input
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+components:
+  schemas:
+    RequestInfoWrapper:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: '#/components/schemas/RequestInfo'
+
+    BillRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: '#/components/schemas/RequestInfo'
+        Bill:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bill'
+      required: [RequestInfo, Bill]
+
+    BillResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: '#/components/schemas/ResponseInfo'
+        Bill:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bill'
+
+    Bill:
+      type: object
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        billNumber:
+          type: string
+        billDate:
+          type: number
+          format: int64
+        registerId:
+          type: string
+          description: Attendance register id tied to the bill
+        billingPeriodId:
+          type: string
+          description: Payments V2 - billing period identifier (enforces uniqueness with registerId)
+        billingType:
+          type: string
+          description: Bill type (PERIODIC/AGGREGATE)
+        isAggregate:
+          type: boolean
+        status:
+          type: string
+        additionalDetails:
+          type: object
+        billDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/BillDetail'
+
+    BillDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        amount:
+          type: number
+          format: double
+        fromPeriod:
+          type: number
+          format: int64
+        toPeriod:
+          type: number
+          format: int64
+        lineItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItem'
+
+    LineItem:
+      type: object
+      properties:
+        id:
+          type: string
+        headCode:
+          type: string
+        amount:
+          type: number
+          format: double
+        type:
+          type: string
+          enum: [DEBIT, CREDIT]
+        additionalDetails:
+          type: object
+
+    # DIGIT Common Schemas (following eGov standards)
+    RequestInfo:
+      type: object
+      description: RequestInfo should be used to carry meta information about the requests to the server as described in the fields below. All eGov APIs will use requestinfo as a part of the request body to carry this meta information. Some of this information will be returned back from the server as part of the ResponseInfo in the response body to ensure correlation.
+      properties:
+        apiId:
+          type: string
+          description: unique API ID
+          maxLength: 128
+        ver:
+          type: string
+          description: API version - for HTTP based request this will be same as used in path
+          maxLength: 32
+        ts:
+          type: integer
+          format: int64
+          description: time in epoch
+        action:
+          type: string
+          description: API action to be performed like _create, _update, _search (denoting POST, PUT, GET) or _determine to get the action based on the request.
+          maxLength: 32
+        did:
+          type: string
+          description: Device ID from which the API is called
+          maxLength: 1024
+        key:
+          type: string
+          description: API key (API key provided to the caller in case of server to server communication)
+          maxLength: 256
+        msgId:
+          type: string
+          description: Unique request message id from the caller
+          maxLength: 256
+        requesterId:
+          type: string
+          description: UserId of the user calling
+          maxLength: 256
+        authToken:
+          type: string
+          description: Auth token of the authenticated user
+        userInfo:
+          $ref: '#/components/schemas/User'
+        correlationId:
+          type: string
+          readOnly: true
+      required:
+        - apiId
+        - ver
+        - ts
+        - msgId
+        - action
+
+    User:
+      type: object
+      description: This is acting ID token of the authenticated user on the server. Any value provided by the clients will be ignored and actual user based on authtoken will be used on the server.
+      readOnly: true
+      properties:
+        tenantId:
+          type: string
+          description: Unique Identifier of the tenant to which user primarily belongs
+        uuid:
+          type: string
+          description: System Generated User id of the authenticated user.
+        userName:
+          type: string
+          description: Unique user name of the authenticated user
+          maxLength: 64
+        name:
+          type: string
+          description: Name of the user
+          maxLength: 64
+        mobileNumber:
+          type: string
+          description: mobile number of the authenticated user
+          maxLength: 150
+        emailId:
+          type: string
+          description: email address of the authenticated user
+          maxLength: 128
+        type:
+          type: string
+          description: Type of the user
+          maxLength: 64
+        roles:
+          type: array
+          description: List of all the roles for the user
+          items:
+            $ref: '#/components/schemas/Role'
+      required:
+        - tenantId
+        - userName
+        - roles
+
+    Role:
+      type: object
+      description: Minimal representation of the role in the system.
+      properties:
+        tenantId:
+          type: string
+          description: TenantId for which the role is given
+          maxLength: 64
+        id:
+          type: string
+          description: id of the role
+          maxLength: 64
+        name:
+          type: string
+          description: Unique name of the role
+          maxLength: 64
+        description:
+          type: string
+          description: Description of the role
+          maxLength: 256
+
+    ResponseInfo:
+      type: object
+      description: ResponseInfo should be used to carry metadata information about the response from the server. apiId, ver and msgId in ResponseInfo should always correspond to the same values in respective request's RequestInfo.
+      readOnly: true
+      properties:
+        apiId:
+          type: string
+          description: unique API ID
+          maxLength: 128
+        ver:
+          type: string
+          description: API version
+          maxLength: 32
+        ts:
+          type: integer
+          format: int64
+          description: response time in epoch
+        resMsgId:
+          type: string
+          description: unique response message id (UUID) - will usually be the correlation id from the server
+          maxLength: 256
+        msgId:
+          type: string
+          description: message id of the request
+          maxLength: 256
+        status:
+          type: string
+          description: status of request processing - to be enhanced in future to reflect each transactions in workflow
+          enum:
+            - SUCCESSFUL
+            - FAILED
+
+    ErrorRes:
+      type: object
+      description: All APIs will return ErrorRes in case of failure which will carry ResponseInfo as metadata and Error object as actual representation of error.
+      properties:
+        ResponseInfo:
+          $ref: '#/components/schemas/ResponseInfo'
+        Errors:
+          type: array
+          description: Error response array corresponding to Request Object array. In case of single object submission or Software Software related errors where each object in request/response can not be identified then this array will have only single error.
+          items:
+            $ref: '#/components/schemas/Error'
+
+    Error:
+      type: object
+      description: Error object will be returned as a part of reponse body in conjunction with ResponseInfo as part of ErrorResponse whenever the request processing status in the ResponseInfo is FAILED.
+      properties:
+        code:
+          type: string
+          description: Error Code will be module specific error code. All modules should also define standard Error codes.
+        message:
+          type: string
+          description: English locale message of the error
+        description:
+          type: string
+          description: English locale description of the error
+        params:
+          type: array
+          items:
+            type: string
+      required:
+        - code
+        - message
+
+  parameters:
+    tenantId:
+      name: tenantId
+      in: query
+      description: Unique id for a tenant.
+      required: true
+      schema:
+        type: string
+        format: varchar

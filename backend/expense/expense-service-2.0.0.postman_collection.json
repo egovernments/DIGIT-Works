@@ -1,0 +1,56 @@
+{
+  "info": {
+    "_postman_id": "expense-2-0-0",
+    "name": "Expense Service - Payments V2 (2.0.0)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Payments V2 period-aware bill search and V2 uniqueness guard."
+  },
+  "item": [
+    {
+      "name": "Create Bill (V2 - period)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{expense_host}}/expense/bill/v1/_create?tenantId={{tenantId}}",
+          "host": ["{{expense_host}}"],
+          "path": ["expense", "bill", "v1", "_create"],
+          "query": [
+            { "key": "tenantId", "value": "{{tenantId}}" }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"RequestInfo\": { \"apiId\": \"postman\", \"ver\": \"1.0\" },\n  \"Bill\": [\n    {\n      \"tenantId\": \"{{tenantId}}\",\n      \"registerId\": \"{{registerId}}\",\n      \"billingPeriodId\": \"{{billingPeriodId}}\",\n      \"billDate\": {{billDate}},\n      \"billingType\": \"PERIODIC\",\n      \"billDetails\": [\n        { \"amount\": 1000, \"fromPeriod\": {{fromDate}}, \"toPeriod\": {{toDate}}, \"lineItems\": [ { \"headCode\": \"WAGE\", \"amount\": 1000, \"type\": \"DEBIT\" } ] }\n      ]\n    }\n  ]\n}"
+        }
+      }
+    },
+    {
+      "name": "Search Bills (Payments V2 filters)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{expense_host}}/expense/bill/v1/_search?tenantId={{tenantId}}&billingPeriodIds={{billingPeriodId}}&billingType=PERIODIC&reportStatus=APPROVED&isAggregate=false",
+          "host": ["{{expense_host}}"],
+          "path": ["expense", "bill", "v1", "_search"],
+          "query": [
+            { "key": "tenantId", "value": "{{tenantId}}" },
+            { "key": "billingPeriodIds", "value": "{{billingPeriodId}}" },
+            { "key": "billingType", "value": "PERIODIC" },
+            { "key": "reportStatus", "value": "APPROVED" },
+            { "key": "isAggregate", "value": "false" }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"RequestInfo\": { \"apiId\": \"postman\", \"ver\": \"1.0\" }\n}"
+        }
+      }
+    }
+  ]
+}

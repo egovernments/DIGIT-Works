@@ -79,6 +79,43 @@ public class AttendanceRegisterSearchCriteria {
     @JsonProperty("includeTaggedAttendees")
     private Boolean includeTaggedAttendees =  Boolean.FALSE;
 
+    /**
+     * V2 Intermediate Billing - Billing Period Filter
+     * When provided (and reviewStatus is NOT provided), the search will:
+     * 1. Filter registers that overlap with the billing period dates
+     * 2. Enrich each register with registerPeriodStatus (muster roll status for that period)
+     * 3. Map registerPeriodStatus to V1 status format for consistent response
+     *
+     * IMPORTANT: If reviewStatus is provided, V1 logic takes priority and this parameter is ignored.
+     */
+    @JsonProperty("billingPeriodId")
+    private String billingPeriodId;
+
+    /**
+     * V2 Intermediate Billing - Register Period Status Filter
+     * When provided along with billingPeriodId (and reviewStatus is NOT provided), the search will:
+     * 1. Filter registers by their muster roll status for the billing period
+     * 2. Return statusCount with APPROVED and PENDING counts
+     *
+     * Valid Values (only 2 values accepted):
+     * - "APPROVED": Show only registers with approved muster rolls
+     * - "PENDING": Show registers with pending muster rolls
+     *   (includes NOT_CREATED, PENDING, SENT_BACK, REJECTED muster roll statuses)
+     *
+     * Response will always contain statusCount with APPROVED and PENDING (0 if none found).
+     *
+     * Validation Rules:
+     * - Must be either "APPROVED" or "PENDING" (throws error if invalid value)
+     * - Requires billingPeriodId to be provided (throws error if missing)
+     * - Ignored if reviewStatus is provided (V1 logic takes priority)
+     *
+     * Internal Mapping (how muster roll statuses map to this field):
+     * - Muster roll status "APPROVED" → APPROVED
+     * - Muster roll statuses "NOT_CREATED", "PENDING", "SENT_BACK", "REJECTED" → PENDING
+     */
+    @JsonProperty("registerPeriodStatus")
+    private String registerPeriodStatus;
+
     public enum SortOrder {
         ASC,
         DESC

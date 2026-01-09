@@ -90,6 +90,9 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.musterroll.search.endpoint}")
 	private String musterRollEndPoint;
 
+    @Value("${egov.musterroll.search.v1.endpoint}")
+    private String musterRollEndV1Point;
+
 	@Value("${egov.musterroll.search.v2.endpoint}")
 	private String musterRollEndV2Point;
 
@@ -203,6 +206,13 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${expense.billing.search.max.limit}")
 	private Integer maxLimit;
 
+	// Bill search pagination limits
+	@Value("${expense.bill.search.default.limit:100}")
+	private Integer billSearchDefaultLimit;
+
+	@Value("${expense.bill.search.max.limit:1000}")
+	private Integer billSearchMaxLimit;
+
 	@Value("${works.estimate.host}")
 	private String estimateHost;
 
@@ -228,6 +238,8 @@ public class ExpenseCalculatorConfiguration {
 	private String attendanceLogHost;
 	@Value("${works.attendance.register.search.endpoint}")
 	private String attendanceRegisterEndpoint;
+	@Value("${works.attendance.register.update.endpoint}")
+	private String attendanceRegisterUpdateEndpoint;
 	@Value("${works.attendance.register.search.limit}")
 	private String attendanceRegisterSearchLimit;
 
@@ -299,5 +311,27 @@ public class ExpenseCalculatorConfiguration {
 
 	@Value("${report.generation.auto.enabled}")
 	private boolean reportGenerationAuto;
+
+	/**
+	 * V2 Intermediate Billing - Batch Processing Configuration
+	 *
+	 * Controls whether batch processing is enabled for V2 intermediate billing.
+	 * Batch processing automatically bills all unbilled periods when no billingPeriodId is provided.
+	 *
+	 * IMPORTANT: This should be DISABLED (false) in production because:
+	 * 1. Bills can only be created when ALL muster rolls for a period are APPROVED
+	 * 2. Muster roll approval is a manual workflow process
+	 * 3. Automatic batch billing would fail if musters are not approved
+	 * 4. UI-driven period selection (with billingPeriodId) is the primary use case
+	 *
+	 * Enable this only for:
+	 * - Automated scheduled jobs with pre-approved data
+	 * - Testing/development environments
+	 * - Migration scenarios where all data is pre-validated
+	 *
+	 * Default: false (disabled)
+	 */
+	@Value("${billing.v2.batch.processing.enabled:false}")
+	private boolean billingV2BatchProcessingEnabled;
 
 }

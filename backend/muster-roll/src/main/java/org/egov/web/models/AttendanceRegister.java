@@ -65,6 +65,12 @@ public class AttendanceRegister {
     @JsonProperty("reviewStatus")
     private String reviewStatus;
 
+    @JsonProperty("referenceId")
+    private String referenceId;
+
+    @JsonProperty("serviceCode")
+    private String serviceCode;
+
 
     public AttendanceRegister addStaffItem(StaffPermission staffItem) {
         if (this.staff == null) {

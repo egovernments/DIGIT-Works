@@ -1,0 +1,165 @@
+{
+  "info": {
+    "_postman_id": "muster-roll-2-0-0",
+    "name": "Muster Roll Service - Payments V2 (2.0.0)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Period-aware muster roll APIs with billingPeriodId, lock checks, and Kafka status publishing."
+  },
+  "item": [
+    {
+      "name": "Periodic Create Muster Roll",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{muster_host}}/muster-roll/v1/_periodicCreate?tenantId={{tenantId}}",
+          "host": ["{{muster_host}}"],
+          "path": ["muster-roll", "v1", "_periodicCreate"],
+          "query": [
+            { "key": "tenantId", "value": "{{tenantId}}" }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"RequestInfo\": { \"apiId\": \"postman\", \"ver\": \"1.0\" },\n  \"musterRoll\": {\n    \"tenantId\": \"{{tenantId}}\",\n    \"registerId\": \"{{registerId}}\",\n    \"billingPeriodId\": \"{{billingPeriodId}}\",\n    \"startDate\": {{startDate}},\n    \"endDate\": {{endDate}},\n    \"individualEntries\": []\n  }\n}"
+        }
+      },
+      "description": "Creates a muster roll for a specific billing period. Validates:\n- registerId must exist\n- billingPeriodId links to billing configuration\n- startDate < endDate within period bounds\n- No duplicate muster for same register+period\n\nReturns:\n- 201: Created successfully with musterRoll object\n- 400: Validation errors (invalid dates, duplicate period)\n- 500: Internal server error\n\nPublishes status to Kafka topic for attendance service sync."
+    },
+    {
+      "name": "Update Muster Roll (Lock Check)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{muster_host}}/muster-roll/v1/_update?tenantId={{tenantId}}",
+          "host": ["{{muster_host}}"],
+          "path": ["muster-roll", "v1", "_update"],
+          "query": [
+            { "key": "tenantId", "value": "{{tenantId}}" }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"RequestInfo\": { \"apiId\": \"postman\", \"ver\": \"1.0\" },\n  \"musterRoll\": {\n    \"id\": \"{{musterId}}\",\n    \"tenantId\": \"{{tenantId}}\",\n    \"billingPeriodId\": \"{{billingPeriodId}}\",\n    \"status\": \"APPROVED\"\n  }\n}"
+        }
+      },
+      "description": "Updates muster roll with period lock validation. When locking is enabled:\n- Invokes calculator `/v1/_checkBillStatus` to verify no bills exist\n- Blocks update if bills already generated for the period\n\nReturns:\n- 200: Updated successfully\n- 400: Validation errors or period locked\n- 404: Muster roll not found\n- 500: Internal server error\n\nPublishes updated status to Kafka for attendance sync."
+    },
+    {
+      "name": "Search Muster Roll by Period",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{muster_host}}/muster-roll/v1/_search?tenantId={{tenantId}}&billingPeriodId={{billingPeriodId}}",
+          "host": ["{{muster_host}}"],
+          "path": ["muster-roll", "v1", "_search"],
+          "query": [
+            { "key": "tenantId", "value": "{{tenantId}}" },
+            { "key": "billingPeriodId", "value": "{{billingPeriodId}}" }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"RequestInfo\": { \"apiId\": \"postman\", \"ver\": \"1.0\" }\n}"
+        }
+      },
+      "description": "Searches muster rolls filtered by billing period.\n\nQuery Parameters:\n- tenantId (required): Tenant identifier\n- billingPeriodId (optional): Filter by specific period\n- registerId (optional): Filter by attendance register\n- status (optional): Filter by muster status\n\nReturns:\n- 200: List of matching muster rolls\n- 400: Invalid query parameters\n- 500: Internal server error"
+    },
+    {
+      "name": "Error: Create with Invalid Dates",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{muster_host}}/muster-roll/v1/_periodicCreate?tenantId={{tenantId}}",
+          "host": ["{{muster_host}}"],
+          "path": ["muster-roll", "v1", "_periodicCreate"],
+          "query": [
+            { "key": "tenantId", "value": "{{tenantId}}" }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"RequestInfo\": { \"apiId\": \"postman\", \"ver\": \"1.0\" },\n  \"musterRoll\": {\n    \"tenantId\": \"{{tenantId}}\",\n    \"registerId\": \"{{registerId}}\",\n    \"billingPeriodId\": \"{{billingPeriodId}}\",\n    \"startDate\": 1640995200000,\n    \"endDate\": 1609459200000\n  }\n}"
+        }
+      },
+      "description": "Test Case: Validates endDate >= startDate constraint.\n\nExpected Response:\n- 400 Bad Request\n- Error: \"End date must be after start date\""
+    },
+    {
+      "name": "Error: Create Duplicate Period",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{muster_host}}/muster-roll/v1/_periodicCreate?tenantId={{tenantId}}",
+          "host": ["{{muster_host}}"],
+          "path": ["muster-roll", "v1", "_periodicCreate"],
+          "query": [
+            { "key": "tenantId", "value": "{{tenantId}}" }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"RequestInfo\": { \"apiId\": \"postman\", \"ver\": \"1.0\" },\n  \"musterRoll\": {\n    \"tenantId\": \"{{tenantId}}\",\n    \"registerId\": \"{{registerId}}\",\n    \"billingPeriodId\": \"{{billingPeriodId}}\",\n    \"startDate\": {{startDate}},\n    \"endDate\": {{endDate}}\n  }\n}"
+        }
+      },
+      "description": "Test Case: Attempts to create muster for existing register+period combination.\n\nPrerequisite: Run \"Periodic Create Muster Roll\" first.\n\nExpected Response:\n- 400 Bad Request\n- Error: \"Muster roll already exists for this register and billing period\""
+    },
+    {
+      "name": "Error: Create with Missing Required Fields",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{muster_host}}/muster-roll/v1/_periodicCreate?tenantId={{tenantId}}",
+          "host": ["{{muster_host}}"],
+          "path": ["muster-roll", "v1", "_periodicCreate"],
+          "query": [
+            { "key": "tenantId", "value": "{{tenantId}}" }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"RequestInfo\": { \"apiId\": \"postman\", \"ver\": \"1.0\" },\n  \"musterRoll\": {\n    \"tenantId\": \"{{tenantId}}\"\n  }\n}"
+        }
+      },
+      "description": "Test Case: Validates required field constraints.\n\nMissing Fields:\n- registerId (required)\n- billingPeriodId (required)\n- startDate (required)\n- endDate (required)\n\nExpected Response:\n- 400 Bad Request\n- Error: List of missing required fields"
+    },
+    {
+      "name": "Error: Update Locked Period",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{muster_host}}/muster-roll/v1/_update?tenantId={{tenantId}}",
+          "host": ["{{muster_host}}"],
+          "path": ["muster-roll", "v1", "_update"],
+          "query": [
+            { "key": "tenantId", "value": "{{tenantId}}" }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"RequestInfo\": { \"apiId\": \"postman\", \"ver\": \"1.0\" },\n  \"musterRoll\": {\n    \"id\": \"{{musterId}}\",\n    \"tenantId\": \"{{tenantId}}\",\n    \"billingPeriodId\": \"{{billingPeriodId}}\",\n    \"status\": \"APPROVED\"\n  }\n}"
+        }
+      },
+      "description": "Test Case: Attempts to update muster when period is locked (bills already generated).\n\nPrerequisite:\n1. Create muster roll\n2. Generate bills for the period\n3. Attempt this update\n\nExpected Response:\n- 400 Bad Request\n- Error: \"Cannot modify muster roll - bills already generated for this period\""
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "info": {
+    "_postman_id": "attendance-2-0-0",
+    "name": "Attendance Service - Payments V2 (2.0.0)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Payments V2: period-aware register search with persisted periodStatuses and Kafka-synced muster statuses."
+  },
+  "item": [
+    {
+      "name": "Register Search - Payments V2",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{attendance_host}}/attendance/v1/_search?tenantId={{tenantId}}&billingPeriodId={{billingPeriodId}}&registerPeriodStatus=APPROVED",
+          "host": ["{{attendance_host}}"],
+          "path": ["attendance", "v1", "_search"],
+          "query": [
+            { "key": "tenantId", "value": "{{tenantId}}" },
+            { "key": "billingPeriodId", "value": "{{billingPeriodId}}" },
+            { "key": "registerPeriodStatus", "value": "APPROVED" }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"RequestInfo\": {\n    \"apiId\": \"postman\",\n    \"ver\": \"1.0\",\n    \"ts\": 0,\n    \"userInfo\": {\n      \"uuid\": \"{{userUuid}}\"\n    }\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "Fallback Status Repair (Attendance Register Update)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{attendance_host}}/attendance/v1/_update?tenantId={{tenantId}}",
+          "host": ["{{attendance_host}}"],
+          "path": ["attendance", "v1", "_update"],
+          "query": [
+            { "key": "tenantId", "value": "{{tenantId}}" }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"requestInfo\": { \"apiId\": \"postman\", \"ver\": \"1.0\" },\n  \"attendanceRegister\": [\n    {\n      \"id\": \"{{registerId}}\",\n      \"tenantId\": \"{{tenantId}}\",\n      \"periodStatuses\": [\n        { \"billingPeriodId\": \"{{billingPeriodId}}\", \"status\": \"APPROVED\", \"lastSyncedTime\": \"{{timestamp}}\" }\n      ]\n    }\n  ]\n}"
+        }
+      },
+      "description": "Use when Kafka delivery is delayed and health calculator fallback patches the register."
+    }
+  ]
+}

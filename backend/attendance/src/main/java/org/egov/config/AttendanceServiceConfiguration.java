@@ -45,6 +45,9 @@ public class AttendanceServiceConfiguration {
     private String saveAttendanceRegisterTopic;
     @Value("${attendance.register.kafka.update.topic}")
     private String updateAttendanceRegisterTopic;
+    // V2 Intermediate Billing - Consumer topic for muster-roll status updates
+    @Value("${attendance.register.kafka.muster.status.update.topic}")
+    private String musterRollStatusUpdateTopic;
 
     //Topic
     @Value("${attendance.staff.kafka.create.topic}")
@@ -100,6 +103,10 @@ public class AttendanceServiceConfiguration {
 
     @Value("${attendance.register.search.max.limit}")
     private Integer attendanceRegisterMaxLimit;
+
+    // V2 register search - max limit for fetching all registers (for statusCount calculation)
+    @Value("${attendance.register.v2.max.fetch.limit:5000}")
+    private Integer attendanceRegisterV2MaxFetchLimit;
 
     @Value("${attendance.register.open.search.enabled.roles}")
     private String registerOpenSearchEnabledRoles;
@@ -165,6 +172,29 @@ public class AttendanceServiceConfiguration {
 
     @Value("#{${attendance.register.status.map}}")
     private Map<String, String> attendanceRegisterStatusMap;
+
+    // V2 Intermediate Billing - Service Integration Config
+    @Value("${egov.expense.calculator.host}")
+    private String expenseCalculatorHost;
+
+    @Value("${egov.expense.calculator.billing.period.search.endpoint}")
+    private String billingPeriodSearchEndpoint;
+
+    @Value("${egov.muster.roll.host}")
+    private String musterRollHost;
+
+    @Value("${egov.muster.roll.search.endpoint}")
+    private String musterRollV2SearchEndpoint;
+
+    // Workflow Service Config (for fetching muster roll workflow states dynamically)
+    @Value("${egov.workflow.host}")
+    private String workflowHost;
+
+    @Value("${egov.workflow.businessservice.search.path}")
+    private String workflowBusinessServiceSearchPath;
+
+    @Value("${musterroll.workflow.business.service}")
+    private String musterRollWorkflowBusinessService;
 }
 
 

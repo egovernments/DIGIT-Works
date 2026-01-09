@@ -72,6 +72,8 @@ public class BillExcelGenerate {
         BigDecimal totalAmountToProcess = reportBill.getTotalAmount();
         String totalNumberOfWorkers = reportBill.getNumberOfIndividuals().toString();
         String campaignName = reportBill.getCampaignName();
+        String billingPeriodLabel = reportBill.getBillingPeriodLabel() != null ? reportBill.getBillingPeriodLabel() : "";
+        String billingPeriodRange = reportBill.getBillingPeriodDateRange() != null ? reportBill.getBillingPeriodDateRange() : "";
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet(campaignName);
@@ -110,23 +112,29 @@ public class BillExcelGenerate {
         campaignRow1.getCell(4).setCellStyle(otherHeaderNumValueStyle);
 
         Row campaignRow2 = sheet.createRow(rowNum++);
-        campaignRow2.createCell(0).setCellValue("");
-        campaignRow2.getCell(0).setCellStyle(otherHeaderNumValueStyle);
-        campaignRow2.createCell(1).setCellValue("");
-        campaignRow2.getCell(1).setCellStyle(otherHeaderNumValueStyle);
-        campaignRow2.createCell(2).setCellValue("");
-        campaignRow2.getCell(2).setCellStyle(otherHeaderNumValueStyle);
-        campaignRow2.createCell(3).setCellValue(localizationMap.getOrDefault(BILL_EXCEL_TOTAL_NUMBER_OF_WORKERS_LABEL, BILL_EXCEL_TOTAL_NUMBER_OF_WORKERS_LABEL));
-        campaignRow2.getCell(3).setCellStyle(otherHeaderLabelStyle);
-        campaignRow2.createCell(4).setCellValue(totalNumberOfWorkers);
-        campaignRow2.getCell(4).setCellStyle(otherHeaderNumValueStyle);
+        campaignRow2.createCell(0).setCellValue(localizationMap.getOrDefault(BILL_EXCEL_BILLING_PERIOD_LABEL, BILL_EXCEL_BILLING_PERIOD_LABEL));
+        campaignRow2.getCell(0).setCellStyle(otherHeaderLabelStyle);
+        campaignRow2.createCell(1).setCellValue(billingPeriodLabel);
+        campaignRow2.getCell(1).setCellStyle(otherHeaderTxtValueStyle);
+        campaignRow2.createCell(2).setCellValue(localizationMap.getOrDefault(BILL_EXCEL_BILLING_PERIOD_RANGE_LABEL, BILL_EXCEL_BILLING_PERIOD_RANGE_LABEL));
+        campaignRow2.getCell(2).setCellStyle(otherHeaderLabelStyle);
+        campaignRow2.createCell(3).setCellValue(billingPeriodRange);
+        campaignRow2.getCell(3).setCellStyle(otherHeaderTxtValueStyle);
+        campaignRow2.createCell(4).setCellValue(localizationMap.getOrDefault(BILL_EXCEL_TOTAL_NUMBER_OF_WORKERS_LABEL, BILL_EXCEL_TOTAL_NUMBER_OF_WORKERS_LABEL));
+        campaignRow2.getCell(4).setCellStyle(otherHeaderLabelStyle);
+        campaignRow2.createCell(5).setCellValue(totalNumberOfWorkers);
+        campaignRow2.getCell(5).setCellStyle(otherHeaderNumValueStyle);
 
-        // fill empty cells of header
+        // fill empty cells of header with green background (same as other header cells)
+        // campaignRow1 has cells 0-4 created, campaignRow2 has cells 0-5 created
+        // Fill remaining cells (5 onwards for row1, 6 onwards for row2) with green style
         for (int i = 5; i < columns.length; i++) {
             campaignRow1.createCell(i).setCellValue("");
-            campaignRow1.getCell(i).setCellStyle(headerStyle);
+            campaignRow1.getCell(i).setCellStyle(otherHeaderLabelStyle);
+        }
+        for (int i = 6; i < columns.length; i++) {
             campaignRow2.createCell(i).setCellValue("");
-            campaignRow2.getCell(i).setCellStyle(headerStyle);
+            campaignRow2.getCell(i).setCellStyle(otherHeaderLabelStyle);
         }
 
         // Write column headers

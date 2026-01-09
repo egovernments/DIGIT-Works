@@ -49,6 +49,14 @@ public class PDFServiceUtil {
                 .append("?tenantId=" + tenantId)
                 .append("&key=" + pdfKey);
         try {
+            // Log PDF service call with non-sensitive identifiers only
+            log.info("Calling PDF Service - TenantId: {}, PDFKey: {}, URL: {}", tenantId, pdfKey, uri.toString());
+
+            // Full request payload logged at DEBUG level with guard to avoid serialization cost in production
+            if (log.isDebugEnabled()) {
+                log.debug("PDF Service Request Payload: {}", mapper.writeValueAsString(request));
+            }
+
             result = restRepo.fetchResult(uri, request);
             filestoreids = JsonPath.read(result, PDF_RESPONSE_FILESTORE_ID_JSONPATH);
         } catch (Exception e) {

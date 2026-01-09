@@ -1,0 +1,996 @@
+openapi: 3.0.0
+info:
+  version: 2.0.0
+  title: Attendance Service
+  description: 'Payments V2: period-aware attendance register search, persisted periodStatuses, Kafka-driven muster status sync, and backward-compatible reviewStatus.'
+
+paths:
+
+  /attendance/v1/_create:
+    post:
+      tags:
+        - Attendance Register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttendanceRegisterRequest'
+      responses:
+        '202':
+          description: 'Request to create a register has been accepted.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceRegisterResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /attendance/v1/_update:
+    post:
+      tags:
+        - Attendance Register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttendanceRegisterRequest'
+      responses:
+        '202':
+          description: 'Request to update the register has been accepted.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceRegisterResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /attendance/v1/_search:
+    post:
+      tags:
+        - Attendance Register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestInfoWrapper'
+      parameters:
+        - $ref: '#/components/parameters/tenantId'
+        - name: ids
+          description: List of register ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+            maxItems: 100
+        - name: registerNumber
+          description: Custom formatted Register id
+          in: query
+          schema:
+            type: string
+        - name: name
+          description: Name of the register
+          in: query
+          schema:
+            type: string
+        - name: referenceId
+          description: Reference Id
+          in: query
+          schema:
+            type: string
+        - name: serviceCode
+          description: Service Code
+          in: query
+          schema:
+            type: string
+        - name: fromDate
+          description: Return registers with any overlap in the given time period
+          in: query
+          schema:
+            type: number
+        - name: toDate
+          description: Return registers with any overlap in the given time period
+          in: query
+          schema:
+            type: number
+        - name: status
+          description: Status of the register. This can't be the only query param. It should be paired with some other search param.
+          in: query
+          schema:
+            type: string
+        - name: attendeeId
+          description: Get all the registers where the given Individual was registered.
+          in: query
+          schema:
+            type: string
+        - name: staffId
+          description: Get all the registers where the given staff was registered.
+          in: query
+          schema:
+            type: string
+        - name: localityCode
+          description: Get all the registers based on the combination of referenceId and localityCode
+          in: query
+          schema:
+            type: string
+        - name: isChildrenRequired
+          description: Get all the registers including child Project registers
+          in: query
+          schema:
+            type: boolean
+        - name: reviewStatus
+          description: Get all the registers based on the reviewStatus
+          in: query
+          schema:
+            type: string
+        - name: billingPeriodId
+          description: Payments V2 - filter registers overlapping the billing period; use value `AGGREGATE` to map to legacy aggregate billing search.
+          in: query
+          schema:
+            type: string
+        - name: registerPeriodStatus
+          description: Payments V2 - filter by persisted muster-roll status for the billing period (APPROVED/PENDING).
+          in: query
+          schema:
+            type: string
+            enum:
+              - APPROVED
+              - PENDING
+        - name: sortBy
+          in: query
+          description: sort the search results by fields
+          schema:
+            type: string
+            enum:
+              - fromDate
+              - toDate
+              - lastModifiedTime
+        - name: sortOrder
+          in: query
+          description: sorting order of the search resulsts
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+        - name: limit
+          in: query
+          description: limit on the resulsts
+          schema:
+            type: number
+        - name: offset
+          in: query
+          description: offset index of the overall search resulsts
+          schema:
+            type: number
+      responses:
+        '200':
+          description: 'Search results'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceRegisterResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /attendance/staff/v1/_create:
+    post:
+      description: Grant permission to a user to access and modify an attendance register. This user can enroll / denroll individuals. They will add attendance entries for the attendees.
+      tags:
+        - Register Permission
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StaffPermissionRequest'
+      responses:
+        '202':
+          description: 'Grant permission request accepted'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffPermissionResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /attendance/staff/v1/_delete:
+    post:
+      description: Revoke permission to a user to access and modify an attendance register. This user can enroll / denroll individuals. They will add attendance entries for the attendees.
+      tags:
+        - Register Permission
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StaffPermissionRequest'
+      responses:
+        '202':
+          description: 'Revoke permission request accepted'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffPermissionResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /attendance/attendee/v1/_create:
+    post:
+      description: Users with permission to access the register can enroll / denroll attendees.
+      tags:
+        - Individual Enrollment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttendeeCreateRequest'
+      responses:
+        '202':
+          description: 'Attendee Create request accepted'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendeeCreateResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /attendance/attendee/v1/_delete:
+    post:
+      description: Users with permission to access the register can enroll / denroll attendees.
+      tags:
+        - Individual Enrollment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttendeeDeleteRequest'
+      responses:
+        '202':
+          description: 'Attendee Delete request accepted'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendeeDeleteResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /attendance/log/v1/_create:
+    post:
+      tags:
+        - Attendance Log
+      description: It creates a new attendance record.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttendanceLogRequest'
+      responses:
+        '202':
+          description: 'Attendance Records Create Request accepted.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceLogResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /attendance/log/v1/_update:
+    post:
+      tags:
+        - Attendance Log
+      description: It updates an attendance record.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttendanceLogRequest'
+      responses:
+        '202':
+          description: 'Attendance Records Update Request accepted.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceLogResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /attendance/log/v1/_search:
+    post:
+      tags:
+        - Attendance Log
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestInfoWrapper'
+      parameters:
+        - $ref: '#/components/parameters/tenantId'
+        - name: registerId
+          in: query
+          required: true
+          description: Id of the register
+          schema:
+            type: string
+        - name: fromTime
+          in: query
+          description: Starting time from which the attendance needs to be searched
+          schema:
+            type: number
+        - name: toTime
+          in: query
+          description: End time till which the attendance needs to be searched
+          schema:
+            type: number
+        - name: individualIds
+          in: query
+          description: List of individual ids
+          schema:
+            type: array
+            items:
+              type: string
+            maxItems: 100
+        - name: ids
+          in: query
+          description: List of ids
+          schema:
+            type: array
+            items:
+              type: string
+            maxItems: 100
+        - name: status
+          in: query
+          description: The status of the attendance log.
+          schema:
+            type: string
+            enum:
+              - ACTIVE
+              - INACTIVE
+      responses:
+        '200':
+          description: 'Complete table of attendance entries.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceLogResponse'
+
+components:
+  schemas:
+    AttendanceRegister:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 64e33343-7b4c-4353-9abf-4de8f5bcd732
+          description: System generated unique identifier of the register
+          readOnly: true
+        tenantId:
+          type: string
+          example: pb.amritsar
+          description: Tenant Id of the register
+        registerNumber:
+          type: string
+          example: REG/2022-23/001
+          description: System generated id with custom formatting
+          readOnly: true
+        name:
+          type: string
+          example: Class-10-E Physics
+          description: Name of the register
+          maxLength: 140
+        referenceId:
+          type: string
+          example: 64e33343-7b4c-4353-9abf-4de8f5bcd732
+          description: Id of the entity to which register is associated. Example ContractId
+          maxLength: 256
+        serviceCode:
+          type: string
+          example: WORKS-CONTRACT
+          description: Service to which register is associated.
+          maxLength: 64
+        startDate:
+          type: number
+          format: timestamp
+          example: 1665497225000
+          description: Timestamp of the start date in milliseconds
+        endDate:
+          type: number
+          format: timestamp
+          example: 1665497271000
+          description: Timestamp of the end date in milliseconds. After the end date no modifications will be allowed to the register.
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+          description: Stores if the register is active or not. Inactive registers can be archieved later.
+        staff:
+          readOnly: true
+          type: array
+          maxItems: 500
+          items:
+            allOf:
+              - $ref: '#/components/schemas/StaffPermission'
+              - description: 'Entries of the staff members of the register.'
+        attendees:
+          readOnly: true
+          type: array
+          maxItems: 5000
+          items:
+            allOf:
+              - $ref: '#/components/schemas/IndividualEntry'
+              - description: 'Entries of the attendees of the register.'
+        localityCode:
+          type: string
+          example: HIERARCHYTEST_MO_13_02_01_01_23_LIPIRANI
+          description: A reference to the boundary code associated with the attendance register, representing the geographical or administrative area the register is bounded by.
+        reviewStatus:
+          type: string
+          example: PENDINGFORAPPROVAL
+          description: Indicates whether the attendance register has been reviewed or approved
+        billingPeriodId:
+          type: string
+          example: b6d8e9b0-27b4-4c09-9f2f-8d7e6c91a123
+          description: Payments V2 - billing period identifier used for search/enrichment (not persisted on create).
+        registerPeriodStatus:
+          type: string
+          enum:
+            - NOT_CREATED
+            - PENDING
+            - APPROVED
+            - REJECTED
+            - SENT_BACK
+          description: Payments V2 - derived period-level muster-roll status for the billing period.
+        periodStatuses:
+          type: array
+          maxItems: 100
+          description: Payments V2 - persisted per-period statuses received from muster-roll Kafka events.
+          items:
+            type: object
+            properties:
+              periodId:
+                type: string
+                description: Billing period identifier (links to eg_wms_billing_period.id)
+              status:
+                type: string
+                enum:
+                  - NOT_CREATED
+                  - PENDING
+                  - APPROVED
+                  - REJECTED
+                  - SENT_BACK
+                description: Muster roll status for this period
+              musterRollId:
+                type: string
+                description: Muster roll identifier (links to eg_wms_muster_roll.id). Null when status is NOT_CREATED.
+              lastModifiedTime:
+                type: number
+                description: Epoch millis when this status was last updated.
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+        additionalDetails:
+          type: object
+          description: Any additional details of the register
+      required:
+        - tenantId
+        - name
+        - referenceId
+        - serviceCode
+
+    AttendanceRegisterRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: '#/components/schemas/RequestInfo'
+        attendanceRegister:
+          type: array
+          maxItems: 100
+          items:
+            allOf:
+              - $ref: '#/components/schemas/AttendanceRegister'
+              - description: 'Entries of the attendance register to be created.'
+
+    AttendanceRegisterResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: '#/components/schemas/ResponseInfo'
+        attendanceRegister:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/AttendanceRegister'
+
+    IndividualEntry:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 64e33343-7b4c-4353-9abf-4de8f5bcd732
+          description: Primary identifier of the enrollment record
+          readOnly: true
+        registerId:
+          type: string
+          format: uuid
+          example: 32e33343-7b4c-4353-9abf-4de8f5bcd764
+          description: This field will not be shown when this object is part of the register object. It is present so that we can reuse this object for enroll and denroll requests.
+        individualId:
+          type: string
+          format: uuid
+          example: 2bafdd8d-5673-4690-b3d0-e13d7ac0cf24
+          description: Reference from the Individual Registry
+        enrollmentDate:
+          type: number
+          description: The timestamp of the date on which the individual is enrolled onto the register. Defaults to current time.
+        denrollmentDate:
+          type: number
+          description: The timestamp of the date on which the individual is denrolled from the register. Defaults to current time.
+        tenantId:
+          type: string
+          example: pb.amritsar
+          description: Tenant Id
+
+    AttendeeCreateRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: '#/components/schemas/RequestInfo'
+        attendees:
+          type: array
+          maxItems: 500
+          items:
+            allOf:
+              - $ref: '#/components/schemas/IndividualEntry'
+              - required:
+                  - registerId
+                  - individualId
+                  - enrollmentDate
+                  - tenantId
+
+    AttendeeCreateResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: '#/components/schemas/ResponseInfo'
+        attendees:
+          type: array
+          maxItems: 500
+          items:
+            $ref: '#/components/schemas/IndividualEntry'
+
+    AttendeeDeleteRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: '#/components/schemas/RequestInfo'
+        attendees:
+          type: array
+          maxItems: 500
+          items:
+            allOf:
+              - $ref: '#/components/schemas/IndividualEntry'
+              - required:
+                  - registerId
+                  - individualId
+                  - denrollmentDate
+                  - tenantId
+
+    AttendeeDeleteResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: '#/components/schemas/ResponseInfo'
+        attendees:
+          type: array
+          maxItems: 500
+          items:
+            $ref: '#/components/schemas/IndividualEntry'
+
+    StaffPermission:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: System generated unique identifier for the granted permission request
+          readOnly: true
+        registerId:
+          type: string
+          description: Identifier of the register. This field will not be shown when this object is part of the register object. It is present so that we can reuse this object for access permission requests.
+        userId:
+          type: string
+          description: Identifier of the user of the system
+        tenantId:
+          type: string
+          format: string
+          example: pb.amritsar
+          description: Tenant Id to which the staff belongs
+        enrollmentDate:
+          readOnly: true
+          type: number
+          description: The timestamp at which the permission is granted. It is set to the current time when the create api is called.
+        denrollmentDate:
+          readOnly: true
+          type: number
+          description: The timestamp at which the access permission is revoked. It is set to the current time when the delete api is called.
+        staffType:
+          type: string
+          description: Defines the role assigned to a staff member within the attendance register. Roles determine the level of access and responsibilities.
+          enum:
+            - EDITOR
+            - OWNER
+            - APPROVER
+      required:
+        - registerId
+        - userId
+
+    StaffPermissionRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: '#/components/schemas/RequestInfo'
+        staff:
+          type: array
+          maxItems: 100
+          items:
+            allOf:
+              - $ref: '#/components/schemas/StaffPermission'
+              - required:
+                  - registerId
+                  - userId
+                  - tenantId
+
+    StaffPermissionResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: '#/components/schemas/ResponseInfo'
+        staff:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/StaffPermission'
+
+    AttendanceLog:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: System generated unique identifier for the entry
+          readOnly: true
+        registerId:
+          type: string
+          description: Unique identifier of the register
+        individualId:
+          type: string
+          format: uuid
+          description: The individual for which the attendance is being marked
+        tenantId:
+          type: string
+          example: pb.amritsar
+          description: Tenant Id of the register
+        time:
+          type: number
+          format: timestamp
+          description: The timestamp at which the event has been recorded.
+        type:
+          type: string
+          description: Configurable in MDMS. [ENTRY/EXIT/...]
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+          description: The attendance log of the cancelled event can be marked as inactive.
+        documentIds:
+          description: Used to store file store ids. Need to verify validity of them using file store service.
+          type: array
+          maxItems: 20
+          items:
+            $ref: '#/components/schemas/Document'
+        additionalDetails:
+          type: object
+      required:
+        - registerId
+        - individualId
+        - tenantId
+        - time
+        - type
+
+    AttendanceLogRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: '#/components/schemas/RequestInfo'
+        attendance:
+          type: array
+          maxItems: 1000
+          items:
+            $ref: '#/components/schemas/AttendanceLog'
+
+    AttendanceLogResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: '#/components/schemas/ResponseInfo'
+        attendance:
+          type: array
+          maxItems: 1000
+          items:
+            $ref: '#/components/schemas/AttendanceLog'
+
+    RequestInfoWrapper:
+      type: object
+      properties:
+        requestInfo:
+          $ref: '#/components/schemas/RequestInfo'
+
+    # DIGIT Common Schemas (following eGov standards)
+    RequestInfo:
+      type: object
+      description: RequestInfo should be used to carry meta information about the requests to the server as described in the fields below. All eGov APIs will use requestinfo as a part of the request body to carry this meta information. Some of this information will be returned back from the server as part of the ResponseInfo in the response body to ensure correlation.
+      properties:
+        apiId:
+          type: string
+          description: unique API ID
+          maxLength: 128
+        ver:
+          type: string
+          description: API version - for HTTP based request this will be same as used in path
+          maxLength: 32
+        ts:
+          type: integer
+          format: int64
+          description: time in epoch
+        action:
+          type: string
+          description: API action to be performed like _create, _update, _search (denoting POST, PUT, GET) or _determine to get the action based on the request.
+          maxLength: 32
+        did:
+          type: string
+          description: Device ID from which the API is called
+          maxLength: 1024
+        key:
+          type: string
+          description: API key (API key provided to the caller in case of server to server communication)
+          maxLength: 256
+        msgId:
+          type: string
+          description: Unique request message id from the caller
+          maxLength: 256
+        requesterId:
+          type: string
+          description: UserId of the user calling
+          maxLength: 256
+        authToken:
+          type: string
+          description: Auth token of the authenticated user
+        userInfo:
+          $ref: '#/components/schemas/User'
+        correlationId:
+          type: string
+          readOnly: true
+      required:
+        - apiId
+        - ver
+        - ts
+        - msgId
+        - action
+
+    User:
+      type: object
+      description: This is acting ID token of the authenticated user on the server. Any value provided by the clients will be ignored and actual user based on authtoken will be used on the server.
+      readOnly: true
+      properties:
+        tenantId:
+          type: string
+          description: Unique Identifier of the tenant to which user primarily belongs
+        uuid:
+          type: string
+          description: System Generated User id of the authenticated user.
+        userName:
+          type: string
+          description: Unique user name of the authenticated user
+          maxLength: 64
+        name:
+          type: string
+          description: Name of the user
+          maxLength: 64
+        mobileNumber:
+          type: string
+          description: mobile number of the authenticated user
+          maxLength: 150
+        emailId:
+          type: string
+          description: email address of the authenticated user
+          maxLength: 128
+        type:
+          type: string
+          description: Type of the user
+          maxLength: 64
+        roles:
+          type: array
+          description: List of all the roles for the user
+          items:
+            $ref: '#/components/schemas/Role'
+      required:
+        - tenantId
+        - userName
+        - roles
+
+    Role:
+      type: object
+      description: Minimal representation of the role in the system.
+      properties:
+        tenantId:
+          type: string
+          description: TenantId for which the role is given
+          maxLength: 64
+        id:
+          type: string
+          description: id of the role
+          maxLength: 64
+        name:
+          type: string
+          description: Unique name of the role
+          maxLength: 64
+        description:
+          type: string
+          description: Description of the role
+          maxLength: 256
+
+    ResponseInfo:
+      type: object
+      description: ResponseInfo should be used to carry metadata information about the response from the server. apiId, ver and msgId in ResponseInfo should always correspond to the same values in respective request's RequestInfo.
+      readOnly: true
+      properties:
+        apiId:
+          type: string
+          description: unique API ID
+          maxLength: 128
+        ver:
+          type: string
+          description: API version
+          maxLength: 32
+        ts:
+          type: integer
+          format: int64
+          description: response time in epoch
+        resMsgId:
+          type: string
+          description: unique response message id (UUID) - will usually be the correlation id from the server
+          maxLength: 256
+        msgId:
+          type: string
+          description: message id of the request
+          maxLength: 256
+        status:
+          type: string
+          description: status of request processing - to be enhanced in future to reflect each transactions in workflow
+          enum:
+            - SUCCESSFUL
+            - FAILED
+
+    ErrorRes:
+      type: object
+      description: All APIs will return ErrorRes in case of failure which will carry ResponseInfo as metadata and Error object as actual representation of error.
+      properties:
+        ResponseInfo:
+          $ref: '#/components/schemas/ResponseInfo'
+        Errors:
+          type: array
+          description: Error response array corresponding to Request Object array. In case of single object submission or Software Software related errors where each object in request/response can not be identified then this array will have only single error.
+          items:
+            $ref: '#/components/schemas/Error'
+
+    Error:
+      type: object
+      description: Error object will be returned as a part of reponse body in conjunction with ResponseInfo as part of ErrorResponse whenever the request processing status in the ResponseInfo is FAILED.
+      properties:
+        code:
+          type: string
+          description: Error Code will be module specific error code. All modules should also define standard Error codes.
+        message:
+          type: string
+          description: English locale message of the error
+        description:
+          type: string
+          description: English locale description of the error
+        params:
+          type: array
+          items:
+            type: string
+      required:
+        - code
+        - message
+
+    AuditDetails:
+      type: object
+      description: Collection of audit related fields used by most models
+      readOnly: true
+      properties:
+        createdBy:
+          type: string
+          description: username (preferred) or userid of the user that created the object
+        lastModifiedBy:
+          type: string
+          description: username (preferred) or userid of the user that last modified the object
+        createdTime:
+          type: integer
+          format: int64
+          description: epoch of the time object is created
+        lastModifiedTime:
+          type: integer
+          format: int64
+          description: epoch of the time object is last modified
+
+    Document:
+      type: object
+      description: A Object holds the basic data for a document
+      properties:
+        id:
+          type: string
+          description: system id of the Document.
+          maxLength: 64
+        documentType:
+          type: string
+          description: Type of document.
+          maxLength: 64
+        fileStore:
+          type: string
+          description: File store reference key.
+          maxLength: 64
+        documentUid:
+          type: string
+          description: The unique id of the document.
+          maxLength: 64
+        additionalDetails:
+          type: object
+          description: Json object to capture any extra information which is not accommodated by model
+
+  parameters:
+    tenantId:
+      name: tenantId
+      in: query
+      description: Unique id for a tenant.
+      required: true
+      schema:
+        type: string
+        format: varchar

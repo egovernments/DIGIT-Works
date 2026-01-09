@@ -65,6 +65,10 @@ public class MusterRoll {
     @JsonProperty("serviceCode")
     private String serviceCode = null;
 
+    @JsonProperty("billingPeriodId")
+    @Size(max = 64)
+    private String billingPeriodId = null;
+
     @JsonProperty("additionalDetails")
     private Object additionalDetails = null;
 

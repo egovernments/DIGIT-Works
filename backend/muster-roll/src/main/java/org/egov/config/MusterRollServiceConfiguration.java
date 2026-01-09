@@ -62,6 +62,9 @@ public class MusterRollServiceConfiguration {
     private String updateMusterRollTopic;
     @Value("${musterroll.kafka.calculate.topic}")
     private String calculateMusterRollTopic;
+    // V2 Intermediate Billing - Event-driven status updates
+    @Value("${musterroll.kafka.status.update.topic}")
+    private String musterRollStatusUpdateTopic;
 
     //search config
     @Value("${musterroll.default.offset}")
@@ -168,6 +171,15 @@ public class MusterRollServiceConfiguration {
     @Value("${egov.user.context.path}")
     private String userContextPath;
 
+    @Value("${works.expense.calculator.billing.period.search.endpoint}")
+    private String billingPeriodSearchEndpoint;
+
+    @Value("${works.expense.calculator.billing.config.search.endpoint}")
+    private String billingConfigSearchEndpoint;
+
+    @Value("${works.expense.calculator.check.bill.status.endpoint:/health-expense-calculator/v1/_checkBillStatus}")
+    private String checkBillStatusEndpoint;
+
     @Value("${egov.user.create.path}")
     private String userCreateEndpoint;
 
@@ -176,6 +188,10 @@ public class MusterRollServiceConfiguration {
 
     @Value("${egov.user.update.path}")
     private String userUpdateEndpoint;
+
+    // Period Locking Configuration (V2 Data Consistency)
+    @Value("${musterroll.period.locking.enabled:true}")
+    private boolean periodLockingEnabled;
 
     @PostConstruct
     public void initialize() {

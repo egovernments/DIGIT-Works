@@ -105,6 +105,19 @@ public class CalculationService {
         }
         //Fetch Absentees by comparing original enrolment against attendance register - fix for PFM-3184
         List<IndividualEntry> absenteesList = fetchAbsentees(attendeesWithLogs, musterRoll, musterRollRequest.getRequestInfo());
+
+        // V2 FIX: Set fresh IDs for absentees to prevent duplicate ID violations
+        // - For create flow (isCreate=true): Generate permanent IDs that will be persisted
+        // - For estimate flow (isCreate=false): Generate temporary IDs for response consistency
+        if (absenteesList != null && !absenteesList.isEmpty()) {
+            for (IndividualEntry absentee : absenteesList) {
+                absentee.setId(UUID.randomUUID().toString());
+                absentee.setAuditDetails(auditDetails);
+                log.debug("CalculationService::createAttendance::Generated " + (isCreate ? "permanent" : "temporary")
+                    + " ID for absentee: " + absentee.getId() + " individual: " + absentee.getIndividualId());
+            }
+        }
+
         //Add absentees to the response first. These attendees have 0 as attendance
         individualEntries.addAll(absenteesList);
 
@@ -265,11 +278,27 @@ public class CalculationService {
             //Remove all attendees who have marked some sort of attendance. This leaves the once who registered but never marked a day's work
             allAttendees.removeAll(attendeesWithLogs);
             //Add these absentees to a list with zero as attendance days
+            // V2 FIX: Create NEW IndividualEntry objects instead of reusing old ones
+            // This prevents duplicate ID violations when creating muster rolls for different billing periods
             for(String individual: allAttendees) {
                 for(IndividualEntry entry: entries) {
                     if(entry.getIndividualId().equals(individual)) {
-                        entry.setActualTotalAttendance(new BigDecimal(0));
-                        absentees.add(entry);            		}
+                        // Create a new IndividualEntry instead of reusing the old one
+                        // NOTE: ID will be set in createAttendance() after this method returns
+                        IndividualEntry absentee = new IndividualEntry();
+                        absentee.setIndividualId(entry.getIndividualId());
+                        absentee.setActualTotalAttendance(new BigDecimal(0));
+
+                        // Copy additionalDetails if present (contains skill info)
+                        if (entry.getAdditionalDetails() != null) {
+                            absentee.setAdditionalDetails(entry.getAdditionalDetails());
+                        }
+
+                        // Note: ID is intentionally NOT set here to avoid reuse
+                        // It will be generated in createAttendance() for both estimate and create flows
+                        absentees.add(absentee);
+                        break; // Found the matching entry, no need to continue inner loop
+                    }
                 }
             }//End of for
         }
@@ -410,13 +439,47 @@ public class CalculationService {
      */
     private List<AttendanceLog> getAttendanceLogs(MusterRoll musterRoll, RequestInfo requestInfo){
 
-        /* UI sends the startDate and endDate. Set the toTime for attendanceLog search api as endDate+23h0m to
-        * fetch the logs till end of the endDate */
-        BigDecimal fromTime = musterRoll.getStartDate();
-        LocalDate endDate = Instant.ofEpochMilli(musterRoll.getEndDate().longValue()).atZone(ZoneId.of(config.getTimeZone())).toLocalDate();
-        // set the endTime as endDate's date+23h0min
-        LocalDateTime endTime = endDate.atTime(23,0);
-        BigDecimal toTime = new BigDecimal(endTime.atZone(ZoneId.of(config.getTimeZone())).toInstant().toEpochMilli());
+        /*
+         * Determine the exact time window to fetch attendance logs.
+         * - V2: Prefer the billing period window to avoid any bleed across periods.
+         * - V1: Use muster start/end.
+         *
+         * IMPORTANT: Billing periods are stored with:
+         *   - periodStartDate = start of first day (00:00:00.000)
+         *   - periodEndDate = end of last day (23:59:59.999) - already includes time!
+         *
+         * Muster roll dates are stored as:
+         *   - startDate = start of first day (00:00:00.000)
+         *   - endDate = start of last day (00:00:00.000) - need to add 24h for end-of-day
+         *
+         * FIX: Don't add 24h to periodEndDate as it's already end-of-day!
+         */
+        long windowStart;
+        long windowEnd;
+        if (StringUtils.isNotBlank(musterRoll.getBillingPeriodId())) {
+            BillingPeriod period = musterRollServiceUtil.fetchBillingPeriod(
+                musterRoll.getBillingPeriodId(),
+                musterRoll.getTenantId(),
+                requestInfo
+            );
+            windowStart = period.getPeriodStartDate();
+            // FIX: periodEndDate is already stored as end-of-day (23:59:59.999)
+            // DO NOT add 24h - that was causing cross-period bleeding!
+            windowEnd = period.getPeriodEndDate();
+        } else {
+            // V1 muster roll: endDate is stored as start-of-day, so we need to add 24h-1ms
+            windowStart = musterRoll.getStartDate().longValue();
+            windowEnd = musterRoll.getEndDate().longValue() + (24 * 60 * 60 * 1000L) - 1;
+        }
+
+        BigDecimal fromTime = BigDecimal.valueOf(windowStart);
+        BigDecimal toTime = BigDecimal.valueOf(windowEnd);
+
+        log.info("CalculationService::getAttendanceLogs - Fetching attendance logs for register {} from {} to {} (period: {})",
+            musterRoll.getRegisterId(),
+            formatTimestamp(fromTime.longValue()),
+            formatTimestamp(toTime.longValue()),
+            StringUtils.isNotBlank(musterRoll.getBillingPeriodId()) ? musterRoll.getBillingPeriodId() : "V1-full-register");
 
         StringBuilder uri = new StringBuilder();
         uri.append(config.getAttendanceLogHost()).append(config.getAttendanceLogEndpoint());
@@ -444,14 +507,43 @@ public class CalculationService {
             exceptionMessage.append("No attendance log found for the register - ");
             exceptionMessage.append(musterRoll.getRegisterId());
             exceptionMessage.append(" with startDate - ");
-            exceptionMessage.append(musterRoll.getStartDate());
+            exceptionMessage.append(formatTimestamp(musterRoll.getStartDate().longValue()));
             exceptionMessage.append(" and endDate - ");
-            exceptionMessage.append(musterRoll.getEndDate());
+            exceptionMessage.append(formatTimestamp(musterRoll.getEndDate().longValue()));
+            if (StringUtils.isNotBlank(musterRoll.getBillingPeriodId())) {
+                exceptionMessage.append(" for billing period - ").append(musterRoll.getBillingPeriodId());
+            }
             throw new CustomException("ATTENDANCE_LOG_EMPTY",exceptionMessage.toString());
         }
 
-        log.info("CalculationService::getAttendanceLogs::Attendance logs fetched successfully");
-        return attendanceLogResponse.getAttendance();
+        List<AttendanceLog> logs = attendanceLogResponse.getAttendance();
+
+        // Defensive filter: ensure logs fall within the muster start/end window (inclusive) to avoid cross-period bleed.
+        long startMillis = fromTime.longValue();
+        long endMillis = toTime.longValue();
+        List<AttendanceLog> filteredLogs = logs.stream()
+            .filter(log -> log.getTime() != null &&
+                log.getTime().longValue() >= startMillis &&
+                log.getTime().longValue() <= endMillis)
+            .collect(Collectors.toList());
+
+        int dropped = logs.size() - filteredLogs.size();
+        if (dropped > 0) {
+            log.warn("CalculationService::getAttendanceLogs - Dropped {} attendance logs outside window {} to {} (period: {})",
+                dropped, formatTimestamp(startMillis), formatTimestamp(endMillis),
+                StringUtils.isNotBlank(musterRoll.getBillingPeriodId()) ? musterRoll.getBillingPeriodId() : "V1-full-register");
+        } else {
+            log.info("CalculationService::getAttendanceLogs - All logs within window {} to {} (period: {})",
+                formatTimestamp(startMillis), formatTimestamp(endMillis),
+                StringUtils.isNotBlank(musterRoll.getBillingPeriodId()) ? musterRoll.getBillingPeriodId() : "V1-full-register");
+        }
+
+        log.info("CalculationService::getAttendanceLogs - Fetched {} attendance logs after window filter (period: {}, {} unique individuals)",
+            filteredLogs.size(),
+            StringUtils.isNotBlank(musterRoll.getBillingPeriodId()) ? musterRoll.getBillingPeriodId() : "V1-full-register",
+            filteredLogs.stream().map(AttendanceLog::getIndividualId).distinct().count());
+
+        return filteredLogs;
     }
 
     /**
@@ -616,6 +708,16 @@ public class CalculationService {
                                                         && attnLog.getTime().compareTo(time) == 0 && attnLog.getType().equalsIgnoreCase(type))
                                             .findFirst().orElse(null);
          return attendanceLog != null ? attendanceLog.getId() : "";
+    }
+
+    /**
+     * Helper method to format timestamp to readable date string for logging.
+     * @param timestamp Epoch timestamp in milliseconds
+     * @return Formatted date string (yyyy-MM-dd HH:mm:ss)
+     */
+    private String formatTimestamp(long timestamp) {
+        return new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            .format(new java.util.Date(timestamp));
     }
 
 }

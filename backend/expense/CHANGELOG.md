@@ -1,6 +1,13 @@
 
 All notable changes to this module will be documented in this file.
 
+## 2.0.0 - 2025-11-24
+
+- Added Payments V2 period-aware bill search fields (`billingPeriodIds`, `billingType`, `reportStatus`, `isAggregate`) with backward compatibility.
+- Introduced flag `expense.v2.periodic.billing.enabled` to enforce one bill per register per billing period.
+- Updated pagination model to align with Payments V2 usage.
+- Added constraints/migrations for register+period uniqueness (`V20250213120000__expense_bill_update_unique_constraint_for_v2_ddl.sql`, `V20250213150000__fix_billing_period_constraints.sql`).
+
 ## 1.2.0 - 2025-06-20
 
 - Added tenant-based schema resolution using MultiStateInstanceUtil and schema placeholders in queries.

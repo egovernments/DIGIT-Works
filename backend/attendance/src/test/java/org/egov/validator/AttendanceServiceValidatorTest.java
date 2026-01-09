@@ -189,4 +189,148 @@ public class AttendanceServiceValidatorTest {
         CustomException exception = assertThrows(CustomException.class,()->attendanceServiceValidator.validateCreateAttendanceRegister(attendanceRegisterRequest));
         assertTrue(exception.getMessage().contains("INVALID_TENANT"));
     }
+
+    // V2 Tests: registerPeriodStatus validation and V1/V2 priority
+
+    @DisplayName("Method validateSearchRegisterRequest: Should pass with valid billingPeriodId and registerPeriodStatus")
+    @Test
+    public void validateSearchRegisterRequest_withBillingPeriodIdAndRegisterPeriodStatus_shouldPass(){
+        digit.models.coremodels.RequestInfoWrapper requestInfoWrapper =
+            digit.models.coremodels.RequestInfoWrapper.builder()
+                .requestInfo(AttendanceRegisterRequestBuilderTest.builder().withRequestInfo().build().getRequestInfo())
+                .build();
+
+        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder()
+                .tenantId("pg.citya")
+                .billingPeriodId("period-123")
+                .registerPeriodStatus("APPROVED")
+                .build();
+
+        assertDoesNotThrow(() -> attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria));
+    }
+
+    @DisplayName("Method validateSearchRegisterRequest: Should throw error when registerPeriodStatus used without billingPeriodId")
+    @Test
+    public void validateSearchRegisterRequest_withRegisterPeriodStatusButNoBillingPeriodId_shouldThrowError(){
+        digit.models.coremodels.RequestInfoWrapper requestInfoWrapper =
+            digit.models.coremodels.RequestInfoWrapper.builder()
+                .requestInfo(AttendanceRegisterRequestBuilderTest.builder().withRequestInfo().build().getRequestInfo())
+                .build();
+
+        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder()
+                .tenantId("pg.citya")
+                .registerPeriodStatus("APPROVED")  // registerPeriodStatus without billingPeriodId
+                .build();
+
+        CustomException exception = assertThrows(CustomException.class,
+            () -> attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria));
+
+        assertTrue(exception.getMessage().contains("INVALID_PERIOD_STATUS_FILTER") ||
+                   exception.getMessage().contains("registerPeriodStatus"));
+    }
+
+    @DisplayName("Method validateSearchRegisterRequest: Should pass with only billingPeriodId (no registerPeriodStatus)")
+    @Test
+    public void validateSearchRegisterRequest_withOnlyBillingPeriodId_shouldPass(){
+        digit.models.coremodels.RequestInfoWrapper requestInfoWrapper =
+            digit.models.coremodels.RequestInfoWrapper.builder()
+                .requestInfo(AttendanceRegisterRequestBuilderTest.builder().withRequestInfo().build().getRequestInfo())
+                .build();
+
+        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder()
+                .tenantId("pg.citya")
+                .billingPeriodId("period-123")
+                .build();
+
+        assertDoesNotThrow(() -> attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria));
+    }
+
+    @DisplayName("Method validateSearchRegisterRequest: Should pass with V1 search (no billing period params)")
+    @Test
+    public void validateSearchRegisterRequest_v1SearchWithoutBillingParams_shouldPass(){
+        digit.models.coremodels.RequestInfoWrapper requestInfoWrapper =
+            digit.models.coremodels.RequestInfoWrapper.builder()
+                .requestInfo(AttendanceRegisterRequestBuilderTest.builder().withRequestInfo().build().getRequestInfo())
+                .build();
+
+        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder()
+                .tenantId("pg.citya")
+                .reviewStatus("APPROVED")
+                .build();
+
+        assertDoesNotThrow(() -> attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria));
+    }
+
+    @DisplayName("Method validateSearchRegisterRequest: Should pass with reviewStatus taking priority over V2 params (warning logged)")
+    @Test
+    public void validateSearchRegisterRequest_reviewStatusTakesPriorityOverV2_shouldPassWithWarning(){
+        digit.models.coremodels.RequestInfoWrapper requestInfoWrapper =
+            digit.models.coremodels.RequestInfoWrapper.builder()
+                .requestInfo(AttendanceRegisterRequestBuilderTest.builder().withRequestInfo().build().getRequestInfo())
+                .build();
+
+        // Both reviewStatus and V2 parameters provided - reviewStatus should take priority
+        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder()
+                .tenantId("pg.citya")
+                .reviewStatus("APPROVED")
+                .billingPeriodId("period-123")
+                .registerPeriodStatus("PENDING")
+                .build();
+
+        // Should not throw error - just log warning
+        assertDoesNotThrow(() -> attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria));
+    }
+
+    @DisplayName("Method validateSearchRegisterRequest: Should pass with any registerPeriodStatus value (no strict validation)")
+    @Test
+    public void validateSearchRegisterRequest_anyRegisterPeriodStatus_shouldPass(){
+        digit.models.coremodels.RequestInfoWrapper requestInfoWrapper =
+            digit.models.coremodels.RequestInfoWrapper.builder()
+                .requestInfo(AttendanceRegisterRequestBuilderTest.builder().withRequestInfo().build().getRequestInfo())
+                .build();
+
+        // Any registerPeriodStatus value is accepted - service handles unknown values gracefully
+        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder()
+                .tenantId("pg.citya")
+                .billingPeriodId("period-123")
+                .registerPeriodStatus("NOT_CREATED")  // Any value is accepted
+                .build();
+
+        // Should not throw error - validator accepts any value
+        assertDoesNotThrow(() -> attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria));
+    }
+
+    @DisplayName("Method validateSearchRegisterRequest: Should pass with PENDING value in registerPeriodStatus")
+    @Test
+    public void validateSearchRegisterRequest_withPendingStatus_shouldPass(){
+        digit.models.coremodels.RequestInfoWrapper requestInfoWrapper =
+            digit.models.coremodels.RequestInfoWrapper.builder()
+                .requestInfo(AttendanceRegisterRequestBuilderTest.builder().withRequestInfo().build().getRequestInfo())
+                .build();
+
+        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder()
+                .tenantId("pg.citya")
+                .billingPeriodId("period-123")
+                .registerPeriodStatus("PENDING")
+                .build();
+
+        assertDoesNotThrow(() -> attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria));
+    }
+
+    @DisplayName("Method validateSearchRegisterRequest: Should pass with PENDINGFORAPPROVAL value in registerPeriodStatus")
+    @Test
+    public void validateSearchRegisterRequest_withPendingForApprovalStatus_shouldPass(){
+        digit.models.coremodels.RequestInfoWrapper requestInfoWrapper =
+            digit.models.coremodels.RequestInfoWrapper.builder()
+                .requestInfo(AttendanceRegisterRequestBuilderTest.builder().withRequestInfo().build().getRequestInfo())
+                .build();
+
+        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder()
+                .tenantId("pg.citya")
+                .billingPeriodId("period-123")
+                .registerPeriodStatus("PENDINGFORAPPROVAL")
+                .build();
+
+        assertDoesNotThrow(() -> attendanceServiceValidator.validateSearchRegisterRequest(requestInfoWrapper, searchCriteria));
+    }
 }

@@ -1,5 +1,6 @@
 package org.egov.digit.expense.calculator.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.Address;
@@ -8,8 +9,13 @@ import org.egov.common.models.individual.Individual;
 import org.egov.common.models.individual.Skill;
 import org.egov.common.models.project.ProjectResponse;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
+import org.egov.digit.expense.calculator.service.BillingConfigurationService;
 import org.egov.digit.expense.calculator.util.*;
 import org.egov.digit.expense.calculator.web.models.*;
+import org.egov.digit.expense.calculator.web.models.BillingPeriod;
+import org.egov.digit.expense.calculator.web.models.BillingPeriodSearchCriteria;
+import org.egov.digit.expense.calculator.web.models.BillingPeriodSearchRequest;
+import org.egov.digit.expense.calculator.web.models.BillingPeriodSearchResponse;
 import org.egov.digit.expense.calculator.web.models.report.BillReportRequest;
 import org.egov.digit.expense.calculator.web.models.report.ReportBill;
 import org.egov.digit.expense.calculator.web.models.report.ReportBillDetail;
@@ -19,10 +25,14 @@ import org.egov.works.services.common.models.expense.calculator.IndividualEntry;
 import org.egov.works.services.common.models.musterroll.MusterRoll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -44,10 +54,12 @@ public class HealthBillReportGenerator {
     private final PDFServiceUtil pdfServiceUtil;
     private final BillUtils billUtils;
     private final ExpenseCalculatorService expenseCalculatorService;
+    private final ObjectMapper objectMapper;
+    private final BillingConfigurationService billingConfigurationService;
 
 
     @Autowired
-    public HealthBillReportGenerator(IndividualUtil individualUtil, ExpenseCalculatorUtil expenseCalculatorUtil, BillExcelGenerate billExcelGenerate, ExpenseCalculatorConfiguration config, ProjectUtil projectUtil, LocalizationUtil localizationUtil, PDFServiceUtil pdfServiceUtil, BillUtils billUtils, ExpenseCalculatorService expenseCalculatorService) {
+    public HealthBillReportGenerator(IndividualUtil individualUtil, ExpenseCalculatorUtil expenseCalculatorUtil, BillExcelGenerate billExcelGenerate, ExpenseCalculatorConfiguration config, ProjectUtil projectUtil, LocalizationUtil localizationUtil, PDFServiceUtil pdfServiceUtil, BillUtils billUtils, ExpenseCalculatorService expenseCalculatorService, ObjectMapper objectMapper, BillingConfigurationService billingConfigurationService) {
         this.individualUtil = individualUtil;
         this.expenseCalculatorUtil = expenseCalculatorUtil;
         this.billExcelGenerate = billExcelGenerate;
@@ -57,6 +69,8 @@ public class HealthBillReportGenerator {
         this.pdfServiceUtil = pdfServiceUtil;
         this.billUtils = billUtils;
         this.expenseCalculatorService = expenseCalculatorService;
+        this.objectMapper = objectMapper;
+        this.billingConfigurationService = billingConfigurationService;
     }
 
     /**
@@ -128,6 +142,18 @@ public class HealthBillReportGenerator {
             // Enrich the report request
             BillReportRequest billReportRequest = enrichReportRequest(billRequest, reportBillDetail); //enrichReportRequest
 
+            // Validate the report request before sending to PDF service
+            log.info("Validating BillReportRequest before PDF generation:");
+            log.info("  - ReportBill count: {}", billReportRequest.getReportBill().size());
+            if (!billReportRequest.getReportBill().isEmpty()) {
+                ReportBill reportBill = billReportRequest.getReportBill().get(0);
+                log.info("  - Campaign Name: {}", reportBill.getCampaignName());
+                log.info("  - Report Title: {}", reportBill.getReportTitle());
+                log.info("  - Total Amount: {}", reportBill.getTotalAmount());
+                log.info("  - Number of Individuals: {}", reportBill.getNumberOfIndividuals());
+                log.info("  - Bill Details count: {}", reportBill.getReportBillDetails() != null ? reportBill.getReportBillDetails().size() : 0);
+            }
+
             // Generate the excel file
             String excelFileStoreId = billExcelGenerate.generateExcel(billReportRequest.getRequestInfo(), billReportRequest.getReportBill().get(0));
             // Generate the pdf file
@@ -159,6 +185,8 @@ public class HealthBillReportGenerator {
                 ? billRequest.getRequestInfo().getUserInfo().getName()
                 : "";
 
+        BillingPeriodDisplay billingPeriodDisplay = getBillingPeriodDisplay(billRequest);
+
         ReportBill reportBill = ReportBill.builder()
                 .totalAmount(billRequest.getBill().getTotalAmount())
                 .reportTitle(config.getReportHeaderTitle())
@@ -167,6 +195,10 @@ public class HealthBillReportGenerator {
                 .campaignName(null)
                 .numberOfIndividuals(billRequest.getBill().getBillDetails().size())
                 .reportBillDetails(reportBillDetail)
+                .billingPeriodLabel(billingPeriodDisplay.label)
+                .billingPeriodDateRange(billingPeriodDisplay.dateRange)
+                .billingPeriodStartDate(billingPeriodDisplay.startDate)
+                .billingPeriodEndDate(billingPeriodDisplay.endDate)
                 .build();
 
         enrichCampaignName(reportBill, billRequest);
@@ -198,6 +230,223 @@ public class HealthBillReportGenerator {
         return msgId + "|" + config.getReportLocalizationLocaleCode();
     }
 
+    private BillingPeriodDisplay getBillingPeriodDisplay(BillRequest billRequest) {
+        Bill bill = billRequest.getBill();
+
+        // First check if this is an aggregate bill
+        BillingPeriodDisplay aggregateDisplay = getAggregateBillingPeriodDisplay(bill);
+        if (aggregateDisplay != null) {
+            log.info("Bill {} is an aggregate bill, using aggregate period display", bill.getId());
+            return aggregateDisplay;
+        }
+
+        // Regular bill flow - look for billingPeriodId
+        String billingPeriodId = extractBillingPeriodId(bill);
+        if (!StringUtils.hasLength(billingPeriodId)) {
+            log.info("No billingPeriodId found for bill {}, skipping billing period enrichment", bill.getId());
+            return BillingPeriodDisplay.empty();
+        }
+
+        BillingPeriod billingPeriod = billingConfigurationService.getBillingPeriodById(billingPeriodId, bill.getTenantId());
+        if (billingPeriod == null) {
+            log.warn("Billing period {} not found for bill {}, leaving period columns empty", billingPeriodId, bill.getId());
+            return BillingPeriodDisplay.empty();
+        }
+
+        List<BillingPeriod> periodsForConfig = fetchBillingPeriodsForConfig(billingPeriod, billRequest);
+        int displayCycleNumber = computeDisplayCycleNumber(billingPeriod, periodsForConfig);
+        String label = displayCycleNumber > 0 ? "Period " + displayCycleNumber : null;
+        String dateRange = formatPeriodRange(billingPeriod.getPeriodStartDate(), billingPeriod.getPeriodEndDate());
+
+        return new BillingPeriodDisplay(label, dateRange, billingPeriod.getPeriodStartDate(), billingPeriod.getPeriodEndDate());
+    }
+
+    /**
+     * Get billing period display for aggregate bills.
+     * For aggregate bills: Period = "Aggregate", Date Range = first period start to last period end date
+     *
+     * @param bill The bill to check
+     * @return BillingPeriodDisplay for aggregate bills, null if not an aggregate bill
+     */
+    private BillingPeriodDisplay getAggregateBillingPeriodDisplay(Bill bill) {
+        try {
+            if (bill.getAdditionalDetails() == null) {
+                return null;
+            }
+
+            Map<String, Object> additionalDetails = objectMapper.convertValue(
+                    bill.getAdditionalDetails(),
+                    objectMapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class)
+            );
+
+            // Check if this is an aggregate bill
+            Object isAggregateBill = additionalDetails.get("isAggregateBill");
+            if (isAggregateBill == null || !Boolean.TRUE.equals(isAggregateBill)) {
+                return null;
+            }
+
+            log.info("Processing aggregate bill {} for period display", bill.getId());
+
+            // Extract period dates (first period start to last period end)
+            Long periodStartDate = extractLongValue(additionalDetails.get("periodStartDate"));
+            Long periodEndDate = extractLongValue(additionalDetails.get("periodEndDate"));
+
+            // For aggregate bills: Period = "Aggregate", Date Range = full campaign date range
+            String label = "Aggregate";
+            String dateRange = formatPeriodRange(periodStartDate, periodEndDate);
+
+            log.info("Aggregate bill period display - Label: {}, DateRange: {}", label, dateRange);
+
+            return new BillingPeriodDisplay(label, dateRange, periodStartDate, periodEndDate);
+
+        } catch (Exception e) {
+            log.warn("Error extracting aggregate billing period display for bill {}: {}",
+                    bill.getId(), e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Extract Long value from various number types (handles Integer, Long, Double from JSON)
+     */
+    private Long extractLongValue(Object value) {
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof Long) {
+            return (Long) value;
+        }
+        if (value instanceof Number) {
+            return ((Number) value).longValue();
+        }
+        try {
+            return Long.parseLong(value.toString());
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private List<BillingPeriod> fetchBillingPeriodsForConfig(BillingPeriod billingPeriod, BillRequest billRequest) {
+        try {
+            BillingPeriodSearchCriteria criteria = BillingPeriodSearchCriteria.builder()
+                    .tenantId(billRequest.getBill().getTenantId())
+                    .billingConfigId(billingPeriod.getBillingConfigId())
+                    .includeDeprecated(true)
+                    .limit(200)
+                    .offset(0)
+                    .build();
+
+            BillingPeriodSearchRequest searchRequest = BillingPeriodSearchRequest.builder()
+                    .requestInfo(billRequest.getRequestInfo())
+                    .searchCriteria(criteria)
+                    .build();
+
+            BillingPeriodSearchResponse response = billingConfigurationService.searchBillingPeriods(searchRequest);
+            if (response != null && response.getBillingPeriods() != null) {
+                return response.getBillingPeriods();
+            }
+        } catch (Exception e) {
+            log.warn("Failed to fetch billing periods for config {}: {}", billingPeriod.getBillingConfigId(), e.getMessage());
+        }
+        return Collections.emptyList();
+    }
+
+    private int computeDisplayCycleNumber(BillingPeriod billingPeriod, List<BillingPeriod> periodsForConfig) {
+        if (CollectionUtils.isEmpty(periodsForConfig)) {
+            return billingPeriod.getPeriodNumber() != null ? billingPeriod.getPeriodNumber() : 0;
+        }
+
+        List<BillingPeriod> activePeriods = periodsForConfig.stream()
+                .filter(period -> period.getIsDeprecated() == null || !period.getIsDeprecated())
+                .sorted(Comparator.comparing(BillingPeriod::getPeriodStartDate, Comparator.nullsLast(Long::compareTo)))
+                .collect(Collectors.toList());
+
+        int index = findIndex(billingPeriod, activePeriods);
+        if (index >= 0) {
+            return index + 1;
+        }
+
+        List<BillingPeriod> sortedAllPeriods = periodsForConfig.stream()
+                .sorted(Comparator.comparing(BillingPeriod::getPeriodStartDate, Comparator.nullsLast(Long::compareTo)))
+                .collect(Collectors.toList());
+
+        index = findIndex(billingPeriod, sortedAllPeriods);
+        if (index >= 0) {
+            return index + 1;
+        }
+
+        return billingPeriod.getPeriodNumber() != null ? billingPeriod.getPeriodNumber() : 0;
+    }
+
+    private int findIndex(BillingPeriod billingPeriod, List<BillingPeriod> periods) {
+        for (int i = 0; i < periods.size(); i++) {
+            if (billingPeriod.getId() != null && billingPeriod.getId().equals(periods.get(i).getId())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private String formatPeriodRange(Long startDate, Long endDate) {
+        if (startDate == null || endDate == null) {
+            return null;
+        }
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+                    .withZone(ZoneId.of(config.getReportDateTimeZone()));
+            return formatter.format(Instant.ofEpochMilli(startDate)) + " - " + formatter.format(Instant.ofEpochMilli(endDate));
+        } catch (Exception e) {
+            log.warn("Failed to format billing period range: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    private String extractBillingPeriodId(Bill bill) {
+        try {
+            if (bill.getAdditionalDetails() == null) {
+                return null;
+            }
+            Map<String, Object> additionalDetails = objectMapper.convertValue(
+                    bill.getAdditionalDetails(),
+                    objectMapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class)
+            );
+
+            Object directPeriodId = additionalDetails.get("billingPeriodId");
+            if (directPeriodId instanceof String && StringUtils.hasLength((String) directPeriodId)) {
+                return (String) directPeriodId;
+            }
+
+            Object nestedPeriod = additionalDetails.get("billingPeriod");
+            if (nestedPeriod instanceof Map) {
+                Object nestedId = ((Map<?, ?>) nestedPeriod).get("billingPeriodId");
+                if (nestedId instanceof String && StringUtils.hasLength((String) nestedId)) {
+                    return (String) nestedId;
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Unable to extract billingPeriodId from bill {}: {}", bill.getId(), e.getMessage());
+        }
+        return null;
+    }
+
+    private static class BillingPeriodDisplay {
+        private final String label;
+        private final String dateRange;
+        private final Long startDate;
+        private final Long endDate;
+
+        private BillingPeriodDisplay(String label, String dateRange, Long startDate, Long endDate) {
+            this.label = label;
+            this.dateRange = dateRange;
+            this.startDate = startDate;
+            this.endDate = endDate;
+        }
+
+        private static BillingPeriodDisplay empty() {
+            return new BillingPeriodDisplay(null, null, null, null);
+        }
+    }
+
     /**
      * This method takes a bill and its details and generates a list of report bill detail objects.
      * It does this by splitting the bill details into batches and calling the generate report method
@@ -222,7 +471,7 @@ public class HealthBillReportGenerator {
             // Get the current batch
             List<BillDetail> batch = billDetails.subList(i, Math.min(i + pageSize, billDetails.size()));
             // Generate the report bill details for the current batch
-            List<ReportBillDetail> reportBillDetail = generateReport(requestInfo, batch, skillCodeRateMap);
+            List<ReportBillDetail> reportBillDetail = generateReport(requestInfo, batch, skillCodeRateMap, bill.getTenantId());
             // Add the report bill details to the result list
             reportBillDetails.addAll(reportBillDetail);
         }
@@ -272,9 +521,10 @@ public class HealthBillReportGenerator {
      * @param requestInfo            the request info
      * @param billDetails            the list of bill details
      * @param skillCodeRateMap       the map of skill code to the corresponding worker rate
+     * @param tenantId               the tenant id
      * @return a list of report bill details
      */
-    private List<ReportBillDetail> generateReport(RequestInfo requestInfo, List<BillDetail> billDetails, Map<String, WorkerRate> skillCodeRateMap) {
+    private List<ReportBillDetail> generateReport(RequestInfo requestInfo, List<BillDetail> billDetails, Map<String, WorkerRate> skillCodeRateMap, String tenantId) {
         List<String> individualIds = new ArrayList<>();
         List<String> musterRollIds = new ArrayList<>();
         List<ReportBillDetail> reportBillDetails = new ArrayList<>();
@@ -282,7 +532,7 @@ public class HealthBillReportGenerator {
             individualIds.add(billDetail.getPayee().getIdentifier());
             musterRollIds.add(billDetail.getReferenceId());
         }
-        List<Individual> individuals = individualUtil.fetchIndividualDetails(individualIds, requestInfo, billDetails.get(0).getTenantId());
+        List<Individual> individuals = individualUtil.fetchIndividualDetails(individualIds, requestInfo, tenantId);
         Map<String, Map<String, BigDecimal>> individualMusterAttendanceMap = new HashMap<>();
 
         Map<String, Individual> individualMap = new HashMap<>();
@@ -290,8 +540,17 @@ public class HealthBillReportGenerator {
             individualMap.put(individual.getId(), individual);
         }
 
-        List<MusterRoll> musterRolls = expenseCalculatorUtil.fetchMusterRollByRegIdsV2(requestInfo, billDetails.get(0).getTenantId(), musterRollIds);
-        if (musterRolls != null && !musterRolls.isEmpty()) {
+        // BUGFIX: For aggregate bills, the musterRollIds point to a synthetic consolidated muster roll
+        // that doesn't exist in the database. We need to extract originalMusterRollIds from the
+        // consolidated muster roll's additionalDetails and fetch those instead.
+        List<MusterRoll> musterRolls = expenseCalculatorUtil.fetchMusterRollByRegIdsV2(requestInfo, tenantId, musterRollIds);
+
+        // If no muster rolls found, check if this might be an aggregate bill
+        if ((musterRolls == null || musterRolls.isEmpty()) && !musterRollIds.isEmpty()) {
+            log.warn("No muster rolls found for IDs: {}. This might be an aggregate bill with synthetic muster roll IDs.", musterRollIds);
+            log.warn("Attendance data (number of days) will show as 0 in the report.");
+            // Continue with empty attendance map - will result in 0 days
+        } else if (musterRolls != null && !musterRolls.isEmpty()) {
             for (MusterRoll musterRoll : musterRolls) {
                 createMusterRollIndividualWorksMap(musterRoll, individualMusterAttendanceMap);
             }
@@ -360,9 +619,41 @@ public class HealthBillReportGenerator {
             }
         }
         BigDecimal totalNumberOfDays = BigDecimal.ZERO;
-        if (individualMusterAttendanceMap.containsKey(billDetail.getReferenceId()) && individualMusterAttendanceMap.get(billDetail.getReferenceId()).containsKey(individual.getId())) {
+
+        // Try to get attendance from muster roll map first (works for regular bills)
+        if (individualMusterAttendanceMap.containsKey(billDetail.getReferenceId()) &&
+            individualMusterAttendanceMap.get(billDetail.getReferenceId()).containsKey(individual.getId())) {
             totalNumberOfDays = individualMusterAttendanceMap.get(billDetail.getReferenceId()).get(individual.getId());
-            reportBillDetail.setTotalNumberOfDays(individualMusterAttendanceMap.get(billDetail.getReferenceId()).get(individual.getId()).floatValue());
+            reportBillDetail.setTotalNumberOfDays(totalNumberOfDays.floatValue());
+            log.debug("Found attendance {} days for individual {} from muster roll map", totalNumberOfDays, individual.getId());
+        }
+        // BUGFIX: Fallback to bill detail additionalDetails for aggregate bills
+        // For aggregate bills, attendance is stored directly in bill detail since consolidated muster roll isn't persisted
+        else if (billDetail.getAdditionalDetails() != null) {
+            try {
+                Map<String, Object> additionalDetails = objectMapper.convertValue(
+                    billDetail.getAdditionalDetails(), Map.class
+                );
+                Object attendanceObj = additionalDetails.get("attendance");
+                if (attendanceObj != null) {
+                    if (attendanceObj instanceof BigDecimal) {
+                        totalNumberOfDays = (BigDecimal) attendanceObj;
+                    } else if (attendanceObj instanceof Number) {
+                        totalNumberOfDays = BigDecimal.valueOf(((Number) attendanceObj).doubleValue());
+                    }
+                    reportBillDetail.setTotalNumberOfDays(totalNumberOfDays.floatValue());
+                    log.debug("Found attendance {} days for individual {} from bill detail additionalDetails (aggregate bill)",
+                        totalNumberOfDays, individual.getId());
+                } else {
+                    log.warn("No attendance data found for individual {} in bill detail {}. Setting to 0.",
+                        individual.getId(), billDetail.getId());
+                }
+            } catch (Exception e) {
+                log.error("Failed to extract attendance from bill detail additionalDetails: {}", e.getMessage());
+            }
+        } else {
+            log.warn("No attendance data found for individual {} in muster map or bill detail. Setting to 0.",
+                individual.getId());
         }
 
         String role = reportBillDetail.getRole();
@@ -396,8 +687,39 @@ public class HealthBillReportGenerator {
                 individualIdWorkDaysMap.put(individualId, individualEntry.getActualTotalAttendance());
             }
         }
+
+        // Store attendance map keyed by muster roll ID
         individualMusterAttendanceMap.put(musterRoll.getId(), individualIdWorkDaysMap);
 
+        // BUGFIX: For aggregate muster rolls, also store under original muster roll IDs
+        // This allows report generation to lookup attendance for bills referencing aggregate muster rolls
+        if (musterRoll.getAdditionalDetails() != null) {
+            try {
+                Map<String, Object> additionalDetails = objectMapper.convertValue(
+                    musterRoll.getAdditionalDetails(), Map.class
+                );
+                Object originalMusterRollIds = additionalDetails.get("originalMusterRollIds");
+
+                // If this is an aggregate muster roll, store attendance under each original ID too
+                if (originalMusterRollIds instanceof List) {
+                    List<String> originalIds = (List<String>) originalMusterRollIds;
+                    log.info("Detected aggregate muster roll {} with {} original muster rolls",
+                        musterRoll.getId(), originalIds.size());
+
+                    // Store the same attendance data under the aggregate muster roll ID
+                    // so report lookups using bill detail's referenceId (which points to aggregate ID) will work
+                    for (String originalId : originalIds) {
+                        // Don't overwrite if already exists
+                        if (!individualMusterAttendanceMap.containsKey(originalId)) {
+                            individualMusterAttendanceMap.put(originalId, individualIdWorkDaysMap);
+                        }
+                    }
+                    log.info("Stored aggregate attendance data for {} original muster roll IDs", originalIds.size());
+                }
+            } catch (Exception e) {
+                log.warn("Failed to process originalMusterRollIds from additionalDetails: {}", e.getMessage());
+            }
+        }
     }
 
     /**
@@ -439,6 +761,8 @@ public class HealthBillReportGenerator {
     
     /**
      * Updates the report status of the given bill request.
+     * IMPORTANT: This method preserves existing V2 metadata (billingPeriodId, periodNumber, etc.)
+     * while adding/updating reportDetails.
      *
      * @param billRequest    the bill request containing the bill to be updated
      * @param status         the status of the report
@@ -447,26 +771,56 @@ public class HealthBillReportGenerator {
      * @param errorMessage   the error message if the report generation failed
      */
     private void updateReportStatus(BillRequest billRequest, String status, String excelReportId, String pdfReportId, String errorMessage) {
-        // Ensure additionalDetails is initialized
-        Object additionalDetails = billRequest.getBill().getAdditionalDetails();
-        if (additionalDetails == null) {
-            additionalDetails = new HashMap<String, Object>();
+        Bill bill = billRequest.getBill();
+
+        // Safely convert additionalDetails to Map (handles both Map and JsonNode types)
+        Map<String, Object> additionalDetailsMap;
+        try {
+            if (bill.getAdditionalDetails() == null) {
+                additionalDetailsMap = new HashMap<>();
+                log.info("Bill {} has null additionalDetails, creating new map", bill.getId());
+            } else {
+                // Use ObjectMapper to safely convert (handles Map, LinkedHashMap, JsonNode, etc.)
+                additionalDetailsMap = objectMapper.convertValue(
+                    bill.getAdditionalDetails(),
+                    objectMapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class)
+                );
+
+                // Log V2 metadata if present (for debugging)
+                if (additionalDetailsMap.containsKey("billingPeriodId")) {
+                    log.info("Bill {} is V2 bill with billingPeriodId: {}, periodNumber: {}, preserving V2 metadata",
+                        bill.getId(),
+                        additionalDetailsMap.get("billingPeriodId"),
+                        additionalDetailsMap.get("periodNumber"));
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error converting additionalDetails for bill {}, creating new map. Error: {}",
+                bill.getId(), e.getMessage());
+            additionalDetailsMap = new HashMap<>();
         }
-        // Cast additionalDetails to Map
-        Map<String, Object> additionalDetailsMap = (Map<String, Object>) additionalDetails;
-        // Add reportDetails key with nested values
+
+        // Create reportDetails object
         Map<String, Object> reportDetails = new HashMap<>();
         reportDetails.put(REPORT_STATUS_KEY, status);
         reportDetails.put(PDF_REPORT_ID_KEY, pdfReportId);
         reportDetails.put(EXCEL_REPORT_ID_KEY, excelReportId);
         reportDetails.put(ERROR_ERROR_MESSAGE_KEY, errorMessage);
 
-        // Add or overwrite reportDetails key
+        // Add or update reportDetails while preserving all other keys (V2 metadata, etc.)
         additionalDetailsMap.put(REPORT_KEY, reportDetails);
-        billRequest.getBill().setAdditionalDetails(additionalDetailsMap);
+
+        // Log final state for verification
+        log.info("Updating bill {} with report status: {}. Final additionalDetails keys: {}",
+            bill.getId(), status, additionalDetailsMap.keySet());
+
+        bill.setAdditionalDetails(additionalDetailsMap);
+
         Workflow workflow = Workflow.builder()
                 .action(WF_SUBMIT_ACTION_CONSTANT)
                 .build();
-        billUtils.postUpdateBill(billRequest.getRequestInfo(), billRequest.getBill(), workflow);
+        billUtils.postUpdateBill(billRequest.getRequestInfo(), bill, workflow);
+
+        log.info("Successfully updated bill {} with report details", bill.getId());
     }
 }

@@ -1,6 +1,28 @@
 
 All notable changes to this module will be documented in this file.
 
+## 2.0.0 - 2025-11-24
+
+### Changes
+
+- Added Payments V2 billing period support on muster rolls (create/update/search with `billingPeriodId`).
+- Enforced period-aware date intersection with attendance register and duplicate prevention per register+period.
+- Added Kafka status publisher for V2 musters to keep attendance register periodStatuses in sync.
+- Introduced billing lock check via calculator `/v1/_checkBillStatus` to block updates once billed.
+- Skipped V1 reviewStatus updates for V2 musters to preserve multi-period registers.
+
+### Migrations / Constraints
+
+- Added billing period columns and indexes to muster and attendance tables (`V20250201120000__add_billing_period_to_muster_roll.sql`, `V20250201123000__add_billing_period_to_attendance_tables.sql`).
+- Added unique constraint for registerId + billingPeriodId (`V20250201122000__add_v2_register_period_unique_constraint.sql`).
+
+### Configuration
+
+- New properties:
+  - `musterroll.kafka.status.update.topic`
+  - `works.expense.calculator.billing.period.search.endpoint`, `works.expense.calculator.billing.config.search.endpoint`
+  - `musterroll.period.locking.enabled`
+
 ## 1.2.0 - 2025-06-20
 
 ### Changes

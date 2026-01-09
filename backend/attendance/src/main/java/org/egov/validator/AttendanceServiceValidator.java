@@ -301,6 +301,31 @@ public class AttendanceServiceValidator {
             throw new CustomException("TENANT_ID", "Tenant is mandatory");
         }
 
+        // V2 Validation: registerPeriodStatus can only be used with billingPeriodId
+        if (StringUtils.isNotBlank(searchCriteria.getRegisterPeriodStatus()) &&
+            StringUtils.isBlank(searchCriteria.getBillingPeriodId())) {
+            log.error("registerPeriodStatus filter requires billingPeriodId to be provided");
+            errorMap.put("INVALID_PERIOD_STATUS_FILTER",
+                "registerPeriodStatus can only be used when billingPeriodId is provided");
+        }
+
+        // V2 Validation: registerPeriodStatus - any value is accepted
+        // APPROVED → filters for approved muster rolls (billing-ready)
+        // Any other value → filters for non-approved (all workflow states except APPROVED)
+        // No strict validation needed as the service handles unknown values gracefully
+        if (StringUtils.isNotBlank(searchCriteria.getRegisterPeriodStatus())) {
+            log.debug("registerPeriodStatus filter provided: {}", searchCriteria.getRegisterPeriodStatus());
+        }
+
+        // V1/V2 Priority: Warn if both reviewStatus and V2 parameters are provided
+        // reviewStatus takes priority and V2 parameters will be ignored
+        if (StringUtils.isNotBlank(searchCriteria.getReviewStatus()) &&
+            (StringUtils.isNotBlank(searchCriteria.getBillingPeriodId()) ||
+             StringUtils.isNotBlank(searchCriteria.getRegisterPeriodStatus()))) {
+            log.warn("reviewStatus takes priority - billingPeriodId and registerPeriodStatus will be ignored");
+            // Note: This is just a warning, not an error - the request will proceed with V1 logic
+        }
+
         // Throw exception if required parameters are missing
         if (!errorMap.isEmpty())
             throw new CustomException(errorMap);

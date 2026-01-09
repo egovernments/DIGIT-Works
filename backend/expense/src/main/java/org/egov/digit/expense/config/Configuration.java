@@ -178,6 +178,9 @@ public class Configuration {
 	@Value("${is.health.context.enabled}")
 	private boolean isHealthContextEnabled;
 
+	@Value("${expense.v2.periodic.billing.enabled:true}")
+	private boolean isV2PeriodicBillingEnabled;
+
 	@Value("${bill.persistence.breakdown.enabled:true}")
 	private boolean isBillBreakdownEnabled;
 

@@ -68,6 +68,49 @@ public class AttendanceRegister {
     @JsonProperty("reviewStatus")
     private String reviewStatus = null;
 
+    /**
+     * V2 Intermediate Billing - Register Period Status
+     *
+     * Indicates the muster roll status for this register within a specific billing period.
+     * Only populated when billingPeriodId is provided in search criteria.
+     *
+     * Possible values:
+     * - "NOT_CREATED": No muster roll exists for this register+period combination
+     * - "PENDING": Muster roll created but awaiting approval
+     * - "APPROVED": Muster roll approved, ready for billing
+     * - "REJECTED": Muster roll rejected
+     * - "SENT_BACK": Muster roll sent back for corrections
+     *
+     * This field helps UI determine which registers are ready for bill generation.
+     */
+    @JsonProperty("registerPeriodStatus")
+    private String registerPeriodStatus = null;
+
+    /**
+     * V2 Intermediate Billing - Period Statuses (Event-Driven Storage)
+     *
+     * Stores muster roll statuses for all billing periods associated with this register.
+     * Stored as JSONB array in database: eg_wms_attendance_register.period_statuses
+     *
+     * Updated asynchronously via Kafka events when muster-roll service changes status.
+     * This eliminates synchronous API calls during search, improving scalability.
+     *
+     * Structure: List of RegisterPeriodStatus objects
+     * Example: [
+     *   {"periodId": "uuid-1", "status": "APPROVED", "musterRollId": "muster-1", "lastModifiedTime": 1709884800000},
+     *   {"periodId": "uuid-2", "status": "PENDING", "musterRollId": "muster-2", "lastModifiedTime": 1709971200000}
+     * ]
+     *
+     * This field is:
+     * - Persisted to database as JSONB
+     * - Indexed for fast queries (GIN index)
+     * - Updated by MusterRollStatusUpdateConsumer
+     * - Read during V2 search operations
+     */
+    @JsonProperty("periodStatuses")
+    @Valid
+    private List<RegisterPeriodStatus> periodStatuses = null;
+
     public AttendanceRegister addStaffItem(StaffPermission staffItem) {
         if (this.staff == null) {
             this.staff = new ArrayList<>();

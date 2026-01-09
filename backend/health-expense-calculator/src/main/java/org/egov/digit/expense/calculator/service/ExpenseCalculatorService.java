@@ -63,8 +63,16 @@ public class ExpenseCalculatorService {
     private final BoundaryUtil boundaryUtil;
     private final ResponseInfoFactory responseInfoFactory;
 
+    // V2 Intermediate Billing Services
+    private final IntermediateBillingService intermediateBillingService;
+    private final BillingConfigurationService billingConfigurationService;
+    private final BillingVersionHelper billingVersionHelper;
+
+    // Permission Validation
+    private final RegisterPermissionValidator registerPermissionValidator;
+
     @Autowired
-    public ExpenseCalculatorService(ExpenseCalculatorProducer expenseCalculatorProducer, ExpenseCalculatorServiceValidator expenseCalculatorServiceValidator, WageSeekerBillGeneratorService wageSeekerBillGeneratorService, SupervisionBillGeneratorService supervisionBillGeneratorService, BillToMetaMapper billToMetaMapper, ObjectMapper objectMapper, ExpenseCalculatorConfiguration config, PurchaseBillGeneratorService purchaseBillGeneratorService, MdmsUtils mdmsUtils, BillUtils billUtils, ProjectUtil projectUtils, ExpenseCalculatorUtil expenseCalculatorUtil, ExpenseCalculatorRepository expenseCalculatorRepository, ObjectMapper mapper, CommonUtil commonUtil, ContractUtils contractUtils, EstimateServiceUtil estimateServiceUtil, ProjectUtil projectUtil, AttendanceUtil attendanceUtil, BoundaryUtil boundaryUtil, ResponseInfoFactory responseInfoFactory) {
+    public ExpenseCalculatorService(ExpenseCalculatorProducer expenseCalculatorProducer, ExpenseCalculatorServiceValidator expenseCalculatorServiceValidator, WageSeekerBillGeneratorService wageSeekerBillGeneratorService, SupervisionBillGeneratorService supervisionBillGeneratorService, BillToMetaMapper billToMetaMapper, ObjectMapper objectMapper, ExpenseCalculatorConfiguration config, PurchaseBillGeneratorService purchaseBillGeneratorService, MdmsUtils mdmsUtils, BillUtils billUtils, ProjectUtil projectUtils, ExpenseCalculatorUtil expenseCalculatorUtil, ExpenseCalculatorRepository expenseCalculatorRepository, ObjectMapper mapper, CommonUtil commonUtil, ContractUtils contractUtils, EstimateServiceUtil estimateServiceUtil, ProjectUtil projectUtil, AttendanceUtil attendanceUtil, BoundaryUtil boundaryUtil, ResponseInfoFactory responseInfoFactory, IntermediateBillingService intermediateBillingService, BillingConfigurationService billingConfigurationService, BillingVersionHelper billingVersionHelper, RegisterPermissionValidator registerPermissionValidator) {
         this.expenseCalculatorProducer = expenseCalculatorProducer;
         this.expenseCalculatorServiceValidator = expenseCalculatorServiceValidator;
         this.wageSeekerBillGeneratorService = wageSeekerBillGeneratorService;
@@ -86,6 +94,10 @@ public class ExpenseCalculatorService {
         this.attendanceUtil = attendanceUtil;
         this.boundaryUtil = boundaryUtil;
         this.responseInfoFactory = responseInfoFactory;
+        this.intermediateBillingService = intermediateBillingService;
+        this.billingConfigurationService = billingConfigurationService;
+        this.billingVersionHelper = billingVersionHelper;
+        this.registerPermissionValidator = registerPermissionValidator;
     }
 
     public Calculation calculateEstimates(CalculationRequest calculationRequest) {
@@ -96,13 +108,185 @@ public class ExpenseCalculatorService {
         if (criteria.getMusterRollId() != null && !criteria.getMusterRollId().isEmpty()) {
             // Fetch all the approved muster rolls for provided muster Ids
             List<MusterRoll> musterRolls = fetchApprovedMusterRolls(requestInfo, criteria, false);
+
+            // V2: Validate and enrich with period context
+            validateAndEnrichEstimateWithPeriodContext(musterRolls, criteria);
+
             // Fetch wage seeker skills from MDMS
             List<SorDetail> sorDetails = fetchMDMSDataForLabourCharges(requestInfo, criteria.getTenantId(), musterRolls);
-            return wageSeekerBillGeneratorService.calculateEstimates(requestInfo, criteria.getTenantId(), musterRolls, sorDetails);
+
+            // Calculate estimates
+            Calculation calculation = wageSeekerBillGeneratorService.calculateEstimates(
+                requestInfo, criteria.getTenantId(), musterRolls, sorDetails
+            );
+
+            // V2: Enrich response with period metadata
+            enrichCalculationWithPeriodMetadata(calculation, musterRolls);
+
+            return calculation;
         } else {
             List<Bill> bills = fetchBills(requestInfo, criteria.getTenantId(), criteria.getReferenceId());
             //TODO: Add check for empty bill list here and send back a response
             return supervisionBillGeneratorService.estimateBill(requestInfo, criteria, bills);
+        }
+    }
+
+    /**
+     * Validate and enrich estimate request with V2 period context
+     * Ensures all muster rolls belong to the same billing period
+     *
+     * @param musterRolls List of muster rolls
+     * @param criteria Request criteria
+     */
+    private void validateAndEnrichEstimateWithPeriodContext(List<MusterRoll> musterRolls, Criteria criteria) {
+        if (musterRolls == null || musterRolls.isEmpty()) {
+            return;
+        }
+
+        // Check if any muster roll has billingPeriodId (V2 indicator)
+        String firstPeriodId = null;
+        boolean isV2 = false;
+
+        for (MusterRoll musterRoll : musterRolls) {
+            String periodId = extractBillingPeriodId(musterRoll);
+            if (periodId != null && !periodId.isEmpty()) {
+                isV2 = true;
+                if (firstPeriodId == null) {
+                    firstPeriodId = periodId;
+                }
+                break;
+            }
+        }
+
+        if (!isV2) {
+            log.info("V1 mode detected - muster rolls without billingPeriodId");
+            return; // V1 mode - no validation needed
+        }
+
+        log.info("V2 mode detected - validating period consistency for estimate");
+
+        // V2 validation: All muster rolls must belong to the same period
+        for (MusterRoll musterRoll : musterRolls) {
+            String periodId = extractBillingPeriodId(musterRoll);
+
+            if (periodId == null || periodId.isEmpty()) {
+                throw new CustomException("MIXED_V1_V2_MUSTERS",
+                    String.format("Cannot estimate with mixed V1/V2 muster rolls. " +
+                        "Muster roll %s does not have billingPeriodId while others do. " +
+                        "All muster rolls must belong to the same billing period.",
+                        musterRoll.getId()));
+            }
+
+            if (!periodId.equals(firstPeriodId)) {
+                throw new CustomException("MULTIPLE_PERIODS_IN_ESTIMATE",
+                    String.format("Cannot estimate across multiple billing periods. " +
+                        "Muster roll %s belongs to period %s but previous musters belong to period %s. " +
+                        "All muster rolls must belong to the same billing period.",
+                        musterRoll.getId(), periodId, firstPeriodId));
+            }
+        }
+
+        log.info("V2 validation passed - all {} muster rolls belong to period {}",
+            musterRolls.size(), firstPeriodId);
+    }
+
+    /**
+     * Extract billingPeriodId from MusterRoll
+     * Checks additionalDetails for the billingPeriodId
+     *
+     * @param musterRoll Muster roll object
+     * @return billingPeriodId if found, null otherwise
+     */
+    private String extractBillingPeriodId(MusterRoll musterRoll) {
+        try {
+            if (musterRoll.getAdditionalDetails() == null) {
+                return null;
+            }
+
+            Map<String, Object> additionalDetails = mapper.convertValue(
+                musterRoll.getAdditionalDetails(), Map.class
+            );
+
+            // Check for billingPeriodId in additionalDetails
+            if (additionalDetails.containsKey("billingPeriodId")) {
+                Object periodId = additionalDetails.get("billingPeriodId");
+                return periodId != null ? periodId.toString() : null;
+            }
+
+            // Check for nested billingPeriod object
+            if (additionalDetails.containsKey("billingPeriod")) {
+                Object billingPeriod = additionalDetails.get("billingPeriod");
+                if (billingPeriod instanceof Map) {
+                    Map<String, Object> periodMap = (Map<String, Object>) billingPeriod;
+                    if (periodMap.containsKey("billingPeriodId")) {
+                        Object periodId = periodMap.get("billingPeriodId");
+                        return periodId != null ? periodId.toString() : null;
+                    }
+                }
+            }
+
+            return null;
+        } catch (Exception e) {
+            log.warn("Failed to extract billingPeriodId from muster roll {}: {}",
+                musterRoll.getId(), e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Enrich calculation response with V2 period metadata
+     * Adds period information to additionalDetails for UI consumption
+     *
+     * @param calculation Calculation response
+     * @param musterRolls Muster rolls used in calculation
+     */
+    private void enrichCalculationWithPeriodMetadata(Calculation calculation, List<MusterRoll> musterRolls) {
+        if (musterRolls == null || musterRolls.isEmpty()) {
+            return;
+        }
+
+        // Check if V2 mode (has billingPeriodId)
+        MusterRoll firstMuster = musterRolls.get(0);
+        String periodId = extractBillingPeriodId(firstMuster);
+
+        if (periodId == null || periodId.isEmpty()) {
+            return; // V1 mode - no enrichment needed
+        }
+
+        try {
+            // Extract period information from first muster roll
+            Map<String, Object> periodMetadata = new HashMap<>();
+            periodMetadata.put("isV2Mode", true);
+            periodMetadata.put("billingPeriodId", periodId);
+            periodMetadata.put("musterRollCount", musterRolls.size());
+
+            // Add period dates if available from muster roll
+            if (firstMuster.getStartDate() != null) {
+                periodMetadata.put("periodStartDate", firstMuster.getStartDate().longValue());
+            }
+            if (firstMuster.getEndDate() != null) {
+                periodMetadata.put("periodEndDate", firstMuster.getEndDate().longValue());
+            }
+
+            // Merge with existing additionalDetails or create new
+            Object existingDetails = calculation.getAdditionalDetails();
+            Map<String, Object> additionalDetails;
+
+            if (existingDetails != null) {
+                additionalDetails = mapper.convertValue(existingDetails, Map.class);
+            } else {
+                additionalDetails = new HashMap<>();
+            }
+
+            additionalDetails.put("billingPeriod", periodMetadata);
+            calculation.setAdditionalDetails(additionalDetails);
+
+            log.info("Enriched estimate calculation with V2 period metadata - period: {}", periodId);
+
+        } catch (Exception e) {
+            // Graceful degradation - don't fail the estimate if enrichment fails
+            log.error("Failed to enrich calculation with period metadata: {}", e.getMessage(), e);
+            log.warn("Continuing without period metadata enrichment");
         }
     }
 
@@ -271,12 +455,49 @@ public class ExpenseCalculatorService {
                 referenceId = projectResponse.getProject().get(0).getProjectHierarchy();
             }
 
-            // Fetch Bill Status from DB
-            List<BillStatus> billStatuses = expenseCalculatorRepository.getBillStatusByReferenceId(referenceId);
+            // V2: Check if billingPeriodId is present (multi-period billing)
+            String billingPeriodId = calculationRequest.getCriteria().getBillingPeriodId();
+            boolean isV2Request = billingPeriodId != null && !billingPeriodId.isEmpty();
+
+            // V2 PRE-VALIDATION: Run all validations BEFORE async push so UI gets immediate feedback
+            if (isV2Request) {
+                log.info("V2 Request - Running pre-validations before async push");
+                try {
+                    intermediateBillingService.validateV2BillingPrerequisites(calculationRequest);
+                    log.info("V2 pre-validation passed - proceeding with async bill generation");
+                } catch (CustomException e) {
+                    log.error("V2 pre-validation failed: {} - {}", e.getCode(), e.getMessage());
+                    // Return error immediately to UI
+                    throw e;
+                } catch (Exception e) {
+                    log.error("Unexpected error during V2 pre-validation: {}", e.getMessage(), e);
+                    throw new CustomException("VALIDATION_ERROR",
+                        "Bill generation validation failed: " + e.getMessage());
+                }
+            }
+
+            // Fetch Bill Status from DB (V2: use project+period, V1: use project only)
+            List<BillStatus> billStatuses;
+            if (isV2Request) {
+                // V2: Check status for specific project+period combination
+                log.info("V2 Request detected - checking bill status for project {} and period {}",
+                    referenceId, billingPeriodId);
+                BillStatus periodBillStatus = expenseCalculatorRepository.getBillStatusByProjectAndPeriod(
+                    referenceId, billingPeriodId);
+                billStatuses = periodBillStatus != null ? Arrays.asList(periodBillStatus) : new ArrayList<>();
+            } else {
+                // V1: Check status for project only (backward compatibility)
+                log.info("V1 Request detected - checking bill status for project {}", referenceId);
+                billStatuses = expenseCalculatorRepository.getBillStatusByReferenceId(referenceId);
+            }
 
             if (!billStatuses.isEmpty()) {
                 if (billStatuses.stream().map(BillStatus::getStatus).collect(Collectors.toList()).contains(SUCCESSFUL_STATUS)) {
                     // If already successful return success response
+                    log.info("{} - Bill already generated successfully for project {} {}",
+                        isV2Request ? "V2" : "V1",
+                        referenceId,
+                        isV2Request ? "and period " + billingPeriodId : "");
                     return BillResponse.builder().responseInfo(responseInfo).statusCode(SUCCESSFUL_STATUS).build();
                 } else if (billStatuses.stream().map(BillStatus::getStatus).collect(Collectors.toList()).contains(INITIATED_STATUS)) {
                     BillResponse billResponse = billUtils.searchBills(calculationRequest, referenceId);
@@ -291,7 +512,14 @@ public class ExpenseCalculatorService {
                     } else {
                         //If found in expense db return success status
                         BillStatus billStatus = billStatuses.stream().filter(billStatus1 -> billStatus1.getStatus().equals(INITIATED_STATUS)).findFirst().get();
-                        expenseCalculatorRepository.updateBillStatus(billStatus.getId(), SUCCESSFUL_STATUS, null);
+                        if (isV2Request) {
+                            // V2: Update with period tracking
+                            expenseCalculatorRepository.updateBillStatusV2(billStatus.getId(), SUCCESSFUL_STATUS,
+                                null, System.currentTimeMillis());
+                        } else {
+                            // V1: Update without period tracking
+                            expenseCalculatorRepository.updateBillStatus(billStatus.getId(), SUCCESSFUL_STATUS, null);
+                        }
                         billResponse1.setStatusCode(SUCCESSFUL_STATUS);
                         return billResponse1;
                         }
@@ -299,9 +527,20 @@ public class ExpenseCalculatorService {
             }
 
             // Create entry for bill status
-            expenseCalculatorRepository.createBillStatus(UUID.randomUUID().toString(),
-                    calculationRequest.getCriteria().getTenantId(), referenceId,
-                    INITIATED_STATUS, null);
+            // V2: IntermediateBillingService will create detailed status entry during processing
+            // V1: Create status here for backward compatibility
+            if (!isV2Request) {
+                // V1: Create status without period tracking (backward compatibility)
+                log.info("V1 - Creating bill status for project {}", referenceId);
+                expenseCalculatorRepository.createBillStatus(UUID.randomUUID().toString(),
+                        calculationRequest.getCriteria().getTenantId(), referenceId,
+                        INITIATED_STATUS, null);
+            } else {
+                // V2: Skip status creation here - IntermediateBillingService creates detailed status
+                log.info("V2 - Skipping API-level status creation for project {} and period {}. " +
+                        "IntermediateBillingService will create detailed status entry during processing.",
+                        referenceId, billingPeriodId);
+            }
 
             // Push to async topic for bill generation
             expenseCalculatorProducer.push(config.getBillGenerationAsyncTopic(), calculationRequest);
@@ -332,9 +571,10 @@ public class ExpenseCalculatorService {
 
         try {
             // Fetch all boundaries for that particular locality and projectId with children
+            // Pass hierarchyType from criteria for fallback if the primary search returns empty
             List<TenantBoundary> boundaries = boundaryUtil.fetchBoundary(RequestInfoWrapper.builder()
                             .requestInfo(calculationRequest.getRequestInfo()).build(), calculationRequest.getCriteria().getLocalityCode(),
-                    calculationRequest.getCriteria().getTenantId(), false);
+                    calculationRequest.getCriteria().getTenantId(), false, calculationRequest.getCriteria().getHierarchyType());
 
             if (boundaries.isEmpty()) {
                 log.error("Boundary not found");
@@ -356,6 +596,30 @@ public class ExpenseCalculatorService {
                 bills = createSupervisionBill(requestInfo, criteria, metaInfo);
             }
 
+            // V2: Check if these are V2 bills (already submitted by IntermediateBillingService)
+            boolean areV2Bills = false;
+            if (!bills.isEmpty() && bills.get(0).getAdditionalDetails() != null) {
+                try {
+                    Map<String, Object> additionalDetails = objectMapper.convertValue(
+                        bills.get(0).getAdditionalDetails(),
+                        objectMapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class)
+                    );
+                    areV2Bills = additionalDetails.containsKey("billingPeriodId");
+                } catch (Exception e) {
+                    log.warn("Could not parse additionalDetails, treating as V1 bill");
+                }
+            }
+
+            if (areV2Bills) {
+                // V2 bills are already submitted by IntermediateBillingService
+                // Report generation trigger also already pushed by IntermediateBillingService
+                log.info("V2 bills detected - already submitted by IntermediateBillingService. Skipping duplicate submission.");
+                log.info("Processing bill completed; time taken :: " + (System.currentTimeMillis() - startTime)/1000 + " seconds");
+                return bills;  // Return the bills as-is (already submitted)
+            }
+
+            // V1 flow: Bills need to be submitted to expense service
+            log.info("V1 bills detected - submitting to expense service");
             BillResponse billResponse = null;
             List<Bill> submittedBills = new ArrayList<>();
             Workflow workflow = Workflow.builder()
@@ -395,21 +659,74 @@ public class ExpenseCalculatorService {
             } else {
                 referenceId = projectResponse.getProject().get(0).getProjectHierarchy();
             }
-            List<BillStatus> billStatuses = expenseCalculatorRepository.getBillStatusByReferenceId(referenceId);
+
+            // V2: Check if billingPeriodId is present
+            String billingPeriodId = calculationRequest.getCriteria().getBillingPeriodId();
+            boolean isV2Request = billingPeriodId != null && !billingPeriodId.isEmpty();
+
+            // Fetch and update bill status (V2: project+period, V1: project only)
+            List<BillStatus> billStatuses;
+            if (isV2Request) {
+                // V2: Get status for specific project+period
+                BillStatus periodBillStatus = expenseCalculatorRepository.getBillStatusByProjectAndPeriod(
+                    referenceId, billingPeriodId);
+                billStatuses = periodBillStatus != null ? Arrays.asList(periodBillStatus) : new ArrayList<>();
+            } else {
+                // V1: Get status for project only
+                billStatuses = expenseCalculatorRepository.getBillStatusByReferenceId(referenceId);
+            }
+
             if (!billStatuses.isEmpty()) {
-                BillStatus billStatus = billStatuses.stream().filter(billStatus1 -> billStatus1.getStatus().equals(INITIATED_STATUS)).findFirst().get();
-                if (billStatus != null)
-                    expenseCalculatorRepository.updateBillStatus(billStatus.getId(), FAILED_STATUS, customException.getCode() + " " + customException.getMessage());
+                BillStatus billStatus = billStatuses.stream().filter(billStatus1 -> billStatus1.getStatus().equals(INITIATED_STATUS)).findFirst().orElse(null);
+                if (billStatus != null) {
+                    String errorMsg = customException.getCode() + " " + customException.getMessage();
+                    if (isV2Request) {
+                        // V2: Update with period tracking
+                        expenseCalculatorRepository.updateBillStatusV2(billStatus.getId(), FAILED_STATUS,
+                            errorMsg, System.currentTimeMillis());
+                    } else {
+                        // V1: Update without period tracking
+                        expenseCalculatorRepository.updateBillStatus(billStatus.getId(), FAILED_STATUS, errorMsg);
+                    }
+                }
             }
             throw customException;
 
         } catch (Exception e) {
+            // Fix: Add null check for projectHierarchy (fallback to project ID)
             String referenceId = projectResponse.getProject().get(0).getProjectHierarchy();
-            List<BillStatus> billStatuses = expenseCalculatorRepository.getBillStatusByReferenceId(referenceId);
+            if (referenceId == null) {
+                referenceId = projectResponse.getProject().get(0).getId();
+            }
+
+            // V2: Check if billingPeriodId is present
+            String billingPeriodId = calculationRequest.getCriteria().getBillingPeriodId();
+            boolean isV2Request = billingPeriodId != null && !billingPeriodId.isEmpty();
+
+            // Fetch and update bill status (V2: project+period, V1: project only)
+            List<BillStatus> billStatuses;
+            if (isV2Request) {
+                // V2: Get status for specific project+period
+                BillStatus periodBillStatus = expenseCalculatorRepository.getBillStatusByProjectAndPeriod(
+                    referenceId, billingPeriodId);
+                billStatuses = periodBillStatus != null ? Arrays.asList(periodBillStatus) : new ArrayList<>();
+            } else {
+                // V1: Get status for project only
+                billStatuses = expenseCalculatorRepository.getBillStatusByReferenceId(referenceId);
+            }
+
             if (!billStatuses.isEmpty()) {
-                BillStatus billStatus = billStatuses.stream().filter(billStatus1 -> billStatus1.getStatus().equals(INITIATED_STATUS)).findFirst().get();
-                if (billStatus != null)
-                    expenseCalculatorRepository.updateBillStatus(billStatus.getId(), FAILED_STATUS,  e.getMessage());
+                BillStatus billStatus = billStatuses.stream().filter(billStatus1 -> billStatus1.getStatus().equals(INITIATED_STATUS)).findFirst().orElse(null);
+                if (billStatus != null) {
+                    if (isV2Request) {
+                        // V2: Update with period tracking
+                        expenseCalculatorRepository.updateBillStatusV2(billStatus.getId(), FAILED_STATUS,
+                            e.getMessage(), System.currentTimeMillis());
+                    } else {
+                        // V1: Update without period tracking
+                        expenseCalculatorRepository.updateBillStatus(billStatus.getId(), FAILED_STATUS, e.getMessage());
+                    }
+                }
             }
             throw new CustomException("EXCEPTION", e.getMessage());
         }
@@ -417,7 +734,88 @@ public class ExpenseCalculatorService {
 
     private List<Bill> createWageBill(RequestInfo requestInfo, Criteria criteria, Map<String, String> metaInfo,
                                       Project project, boolean isDistrictLevel) {
-        log.info("Create wage bill for musterRollIds :"+criteria.getMusterRollId());
+        log.info("ExpenseCalculatorService::createWageBill - Starting bill generation for project: {}", project.getId());
+
+        // NEW V2: Extract campaign number from project.referenceID and check for billing configuration
+        String campaignNumber = extractCampaignNumberFromProject(project);
+        BillingConfig billingConfig = null;
+
+        if (campaignNumber != null) {
+            try {
+                billingConfig = billingConfigurationService.getBillingConfigByCampaignNumber(campaignNumber, criteria.getTenantId());
+                log.info("ExpenseCalculatorService::createWageBill - Found billing config for campaign: {}", campaignNumber);
+            } catch (Exception e) {
+                log.warn("ExpenseCalculatorService::createWageBill - Error fetching billing config for campaign {}: {}. " +
+                        "Falling back to V1 mode.", campaignNumber, e.getMessage());
+            }
+        } else {
+            log.info("ExpenseCalculatorService::createWageBill - No campaign number found in project. Using V1 mode.");
+        }
+
+        // Detect billing mode and log
+        billingVersionHelper.logBillingMode(campaignNumber != null ? campaignNumber : project.getId(), billingConfig, "createWageBill");
+
+        if (billingVersionHelper.isV2Mode(billingConfig)) {
+            // V2 Mode: Process intermediate billing with periods
+            log.info("ExpenseCalculatorService::createWageBill - V2 Mode: Billing configuration found for campaign {}", campaignNumber);
+            return intermediateBillingService.processIntermediateBilling(
+                    requestInfo, criteria, project, isDistrictLevel, billingConfig
+            );
+        } else {
+            // V1 Mode: Regular billing (existing logic - NO CHANGES)
+            log.info("ExpenseCalculatorService::createWageBill - V1 Mode: No active billing configuration, using regular billing");
+            return processRegularBillingV1(requestInfo, criteria, project, isDistrictLevel);
+        }
+    }
+
+    /**
+     * Extract campaign number from project's referenceID field.
+     *
+     * The project.referenceID contains the campaign number (e.g., "CMP-2025-10-14-007097").
+     * This campaign number is used to fetch billing configuration at campaign level.
+     *
+     * @param project Project object
+     * @return Campaign number from referenceID, or null if not found
+     */
+    private String extractCampaignNumberFromProject(Project project) {
+        if (project == null) {
+            return null;
+        }
+
+        // Campaign number is stored in project.referenceID field
+        String referenceId = project.getReferenceID();
+
+        if (referenceId != null && !referenceId.trim().isEmpty()) {
+            log.debug("ExpenseCalculatorService::extractCampaignNumberFromProject - Extracted campaign number: {} from project: {}",
+                    referenceId, project.getId());
+            return referenceId.trim();
+        }
+
+        log.debug("ExpenseCalculatorService::extractCampaignNumberFromProject - No campaign number found for project: {}",
+                project.getId());
+        return null;
+    }
+
+    /**
+     * V1 Legacy Billing Flow - PRESERVED UNCHANGED
+     *
+     * This method contains the original V1 bill generation logic.
+     * It processes bills for the entire project duration in a single bill.
+     *
+     * Used when:
+     * - No billing configuration exists for the project
+     * - Billing configuration exists but is not ACTIVE
+     *
+     * @param requestInfo Request info
+     * @param criteria Billing criteria
+     * @param project Project details
+     * @param isDistrictLevel Whether project is district level
+     * @return Single bill for entire project duration
+     */
+    private List<Bill> processRegularBillingV1(RequestInfo requestInfo, Criteria criteria,
+                                                Project project, boolean isDistrictLevel) {
+        log.info("ExpenseCalculatorService::processRegularBillingV1 - Create wage bill for musterRollIds: {}", criteria.getMusterRollId());
+
         Bill bill = Bill.builder().totalAmount(BigDecimal.ZERO).billDetails(new ArrayList<>()).build();
         String parentProjectId = project.getProjectHierarchy();
         if (project.getProjectHierarchy() == null) {
@@ -784,5 +1182,158 @@ public class ExpenseCalculatorService {
         additionalDetails.put(NO_OF_REGISTERS, distinctRegisters.size());
         additionalDetails.put(NO_OF_BILL_DETAILS, bill.getBillDetails().size());
         bill.setAdditionalDetails(additionalDetails);
+    }
+
+    /**
+     * Check bill status and build response for the API endpoint.
+     * Handles request parsing and response building.
+     * Follows existing coding standards by keeping logic in service layer.
+     *
+     * @param request Request map with tenantId, projectId, billingPeriodId/registerId
+     * @return Response map with isBilled status and metadata
+     */
+    public HashMap<String, Object> checkBillStatusAndBuildResponse(HashMap<String, Object> request) {
+        // Extract and validate parameters from request
+        Object requestInfoObj = request.get("requestInfo");
+
+        // Safe extraction with type validation
+        String tenantId = extractStringParam(request, "tenantId");
+        String projectId = extractStringParam(request, "projectId");
+        String billingPeriodId = extractStringParam(request, "billingPeriodId");
+        String registerId = extractStringParam(request, "registerId");
+
+        // Validate required parameters
+        if (tenantId == null || tenantId.isEmpty()) {
+            throw new CustomException("INVALID_REQUEST", "tenantId is required");
+        }
+        if (projectId == null || projectId.isEmpty()) {
+            throw new CustomException("INVALID_REQUEST", "projectId is required");
+        }
+
+        log.info("checkBillStatusAndBuildResponse::Processing request - tenantId: {}, projectId: {}, periodId: {}, registerId: {}",
+            tenantId, projectId, billingPeriodId, registerId);
+
+        // Parse RequestInfo if available
+        RequestInfo requestInfo = null;
+        if (requestInfoObj != null) {
+            requestInfo = mapper.convertValue(requestInfoObj, RequestInfo.class);
+        }
+
+        // Check if bill exists (comprehensive check)
+        boolean isBilled = checkIfBillExists(requestInfo, tenantId, projectId, billingPeriodId, registerId);
+
+        // Build response
+        HashMap<String, Object> response = new HashMap<>();
+        response.put("isBilled", isBilled);
+        response.put("tenantId", tenantId);
+        response.put("projectId", projectId);
+
+        if (billingPeriodId != null && !billingPeriodId.isEmpty()) {
+            response.put("billingPeriodId", billingPeriodId);
+            response.put("flowType", "V2");
+            response.put("checkPerformed", "COMPREHENSIVE (status + bill + report)");
+        } else if (registerId != null && !registerId.isEmpty()) {
+            response.put("registerId", registerId);
+            response.put("flowType", "V1");
+            response.put("checkPerformed", "NOT_IMPLEMENTED");
+        }
+
+        log.info("checkBillStatusAndBuildResponse::Response - isBilled: {}, flowType: {}",
+            isBilled, response.get("flowType"));
+
+        return response;
+    }
+
+    /**
+     * Check if a bill is fully generated and completed for a given period/register.
+     * Used by muster-roll service to lock periods/registers after billing.
+     *
+     * Uses microservices architecture principles:
+     * - Checks local status table first (fast check)
+     * - Then calls Expense service API to verify actual bill and report completion
+     *
+     * A bill is considered fully generated when:
+     * 1. Entry exists in eg_expense_bill_gen_status with status = 'SUCCESSFUL'
+     * 2. Bill exists in expense service with status = 'ACTIVE' (verified via API)
+     * 3. Bill's additionalDetails.reportDetails.status = 'COMPLETED' (verified via API)
+     *
+     * V2 Flow: Checks by billingPeriodId if provided
+     * V1 Flow: Checks by registerId if billingPeriodId is null (not yet implemented)
+     *
+     * @param requestInfo Request info for API calls
+     * @param tenantId Tenant ID
+     * @param projectId Project ID (campaign number)
+     * @param billingPeriodId Billing period ID (V2 - null for V1)
+     * @param registerId Register ID (V1 - null for V2)
+     * @return true if bill is fully generated and completed, false otherwise
+     */
+    public boolean checkIfBillExists(RequestInfo requestInfo, String tenantId, String projectId,
+                                     String billingPeriodId, String registerId) {
+        log.info("checkIfBillExists::Comprehensive check - tenantId: {}, projectId: {}, periodId: {}, registerId: {}",
+            tenantId, projectId, billingPeriodId, registerId);
+
+        try {
+            if (billingPeriodId != null && !billingPeriodId.isEmpty()) {
+                // V2 Flow: Comprehensive check for completed bill
+                log.debug("checkIfBillExists::V2 mode - using BillUtils API-based check");
+
+                if (requestInfo == null) {
+                    log.warn("checkIfBillExists::No requestInfo provided, falling back to status table check only");
+                    // Fallback: Check status table only (partial check)
+                    boolean exists = expenseCalculatorRepository.isCompletedBillGeneratedForPeriod(
+                        projectId, billingPeriodId, tenantId);
+                    return exists;
+                }
+
+                // Use comprehensive check via BillUtils: status table + expense service API
+                boolean exists = billUtils.isCompletedBillGeneratedForPeriod(
+                    requestInfo, projectId, billingPeriodId, tenantId);
+
+                if (exists) {
+                    log.info("checkIfBillExists::V2 result - BILL FULLY COMPLETED (status + bill + report verified via API)");
+                } else {
+                    log.info("checkIfBillExists::V2 result - Bill NOT fully completed");
+                }
+
+                return exists;
+            } else if (registerId != null && !registerId.isEmpty()) {
+                // V1 Flow: Check by registerId
+                // For V1, we need to check if ANY bill exists for this register
+                log.debug("checkIfBillExists::V1 mode - checking by registerId");
+
+                // Query the bill status table for this register
+                // In V1 mode, period_id would be NULL and we'd use the register as key
+                // For now, return false (fail-open) for V1 until we implement V1 locking
+                log.warn("checkIfBillExists::V1 locking not yet implemented, returning false");
+                return false;
+            } else {
+                log.warn("checkIfBillExists::Neither periodId nor registerId provided, returning false");
+                return false;
+            }
+        } catch (Exception e) {
+            log.error("checkIfBillExists::Error checking bill status: {}", e.getMessage(), e);
+            // Fail-open: if we can't check, allow the update
+            return false;
+        }
+    }
+
+    /**
+     * Helper method to safely extract String parameter from request map
+     * Validates type and returns null if not found or not a String
+     *
+     * @param request Request map
+     * @param key Parameter key
+     * @return String value or null
+     */
+    private String extractStringParam(HashMap<String, Object> request, String key) {
+        Object value = request.get(key);
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof String) {
+            return (String) value;
+        }
+        throw new CustomException("INVALID_PARAMETER_TYPE",
+                "Parameter '" + key + "' must be a String, but got: " + value.getClass().getSimpleName());
     }
 }

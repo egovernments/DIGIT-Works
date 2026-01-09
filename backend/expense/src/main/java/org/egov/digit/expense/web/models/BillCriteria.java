@@ -1,6 +1,8 @@
 package org.egov.digit.expense.web.models;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import jakarta.validation.constraints.NotNull;
@@ -62,6 +64,20 @@ public class BillCriteria {
 	@JsonProperty("toDate")
 	private Long toDate;
 
+	// V2 Payments - Period-based billing search fields
+
+	@JsonProperty("billingPeriodIds")
+	private List<String> billingPeriodIds;
+
+	@JsonProperty("isAggregate")
+	private Boolean isAggregate;
+
+	@JsonProperty("billingType")
+	private String billingType;
+
+	@JsonProperty("reportStatus")
+	private String reportStatus;
+
 	public BillCriteria addIdsItem(String idsItem) {
 		if (this.ids == null) {
 			this.ids = new HashSet<>();
@@ -75,6 +91,14 @@ public class BillCriteria {
 			this.referenceIds = new HashSet<>();
 		}
 		this.referenceIds.add(referenceIdItem);
+		return this;
+	}
+
+	public BillCriteria addBillingPeriodIdItem(String billingPeriodIdItem) {
+		if (this.billingPeriodIds == null) {
+			this.billingPeriodIds = new ArrayList<>();
+		}
+		this.billingPeriodIds.add(billingPeriodIdItem);
 		return this;
 	}
 

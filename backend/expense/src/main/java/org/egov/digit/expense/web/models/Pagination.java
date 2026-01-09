@@ -6,6 +6,7 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -32,6 +33,7 @@ public class Pagination {
     private Integer limit;
 
     @JsonProperty("offSet")
+    @JsonAlias("offset") // accept both offset and offSet for backward compatibility
     @Valid
     private Integer offSet;
 

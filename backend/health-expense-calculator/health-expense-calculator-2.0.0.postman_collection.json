@@ -1,0 +1,96 @@
+{
+  "info": {
+    "_postman_id": "health-expense-calculator-2-0-0",
+    "name": "Health Expense Calculator - Payments V2 (2.0.0)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Billing config lifecycle, period search, intermediate billing trigger, bill status check, and period-aware reports."
+  },
+  "item": [
+    {
+      "name": "Create Billing Config (with period generation)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{calculator_host}}/health-expense-calculator/billing-config/v1/_create?tenantId={{tenantId}}",
+          "host": ["{{calculator_host}}"],
+          "path": ["health-expense-calculator", "billing-config", "v1", "_create"],
+          "query": [
+            { "key": "tenantId", "value": "{{tenantId}}" }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"RequestInfo\": { \"apiId\": \"postman\", \"ver\": \"1.0\" },\n  \"billingConfig\": {\n    \"tenantId\": \"{{tenantId}}\",\n    \"projectId\": \"{{projectId}}\",\n    \"frequency\": \"MONTHLY\",\n    \"startDate\": {{startDate}},\n    \"endDate\": {{endDate}}\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "Search Billing Periods",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{calculator_host}}/health-expense-calculator/billing-config/v1/periods/_search?tenantId={{tenantId}}&billingPeriodId={{billingPeriodId}}",
+          "host": ["{{calculator_host}}"],
+          "path": ["health-expense-calculator", "billing-config", "v1", "periods", "_search"],
+          "query": [
+            { "key": "tenantId", "value": "{{tenantId}}" },
+            { "key": "billingPeriodId", "value": "{{billingPeriodId}}" }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"RequestInfo\": { \"apiId\": \"postman\", \"ver\": \"1.0\" },\n  \"searchCriteria\": { \"projectId\": \"{{projectId}}\" }\n}"
+        }
+      }
+    },
+    {
+      "name": "Trigger Intermediate Billing (period-aware)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{calculator_host}}/health-expense-calculator/v1/_generateBill?tenantId={{tenantId}}",
+          "host": ["{{calculator_host}}"],
+          "path": ["health-expense-calculator", "v1", "_generateBill"],
+          "query": [
+            { "key": "tenantId", "value": "{{tenantId}}" }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"RequestInfo\": { \"apiId\": \"postman\", \"ver\": \"1.0\" },\n  \"projectId\": \"{{projectId}}\",\n  \"billingPeriodId\": \"{{billingPeriodId}}\"\n}"
+        }
+      },
+      "description": "Validates muster statuses (periodStatuses / fallback) and generates bills for the period."
+    },
+    {
+      "name": "Check Bill Status (lock check)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{calculator_host}}/health-expense-calculator/v1/_checkBillStatus?tenantId={{tenantId}}",
+          "host": ["{{calculator_host}}"],
+          "path": ["health-expense-calculator", "v1", "_checkBillStatus"],
+          "query": [
+            { "key": "tenantId", "value": "{{tenantId}}" }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"RequestInfo\": { \"apiId\": \"postman\", \"ver\": \"1.0\" },\n  \"registerId\": \"{{registerId}}\",\n  \"billingPeriodId\": \"{{billingPeriodId}}\"\n}"
+        }
+      }
+    }
+  ]
+}
