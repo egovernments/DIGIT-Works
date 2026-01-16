@@ -1,5 +1,7 @@
 package org.egov.validator;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import org.egov.common.contract.models.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -137,7 +139,7 @@ public class MusterRollValidator {
         if(serviceConfiguration.isMusterRollWorkflowEnabled()) {
             validateWorkFlow(workflow, errorMap);
         }
-        validateUpdateMusterRollRequest(musterRoll);
+        validateUpdateMusterRollRequest(musterRollRequest);
 
         //split the tenantId and validate tenantId
         String tenantId = musterRoll.getTenantId();
@@ -212,7 +214,8 @@ public class MusterRollValidator {
         }
     }
 
-    private void validateUpdateMusterRollRequest(MusterRoll musterRoll) {
+    private void validateUpdateMusterRollRequest(MusterRollRequest musterRollRequest) {
+        MusterRoll musterRoll = musterRollRequest.getMusterRoll();
         if (musterRoll == null) {
             throw new CustomException(MUSTER_ROLL,MUSTER_ROLL_IS_MANADATORY);
         }
@@ -221,6 +224,25 @@ public class MusterRollValidator {
         }
         if (musterRoll.getId() == null) {
             throw new CustomException("MUSTER_ROLL_ID","MusterRollId is mandatory");
+        }
+        if(musterRollRequest.getWorkflow().getAction().equals("APPROVE")) {
+            Object additionalDetailsObj = musterRoll.getAdditionalDetails();
+
+            if (additionalDetailsObj == null) {
+                throw new CustomException("ADDITIONAL_DETAILS_MISSING", "additionalDetails is missing");
+            }
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode node = mapper.valueToTree(additionalDetailsObj);
+
+            if (!node.has("attendanceApprovalDocuments")
+                    || !node.get("attendanceApprovalDocuments").isArray()
+                    || node.get("attendanceApprovalDocuments").isEmpty()) {
+
+                throw new CustomException(
+                        "attendanceApprovalDocuments", "attendanceApprovalDocuments is missing or empty"
+                );
+            }
         }
 
     }
