@@ -229,7 +229,7 @@ public class MusterRollValidator {
             Object additionalDetailsObj = musterRoll.getAdditionalDetails();
 
             if (additionalDetailsObj == null) {
-                throw new CustomException("ADDITIONAL_DETAILS_MISSING", "additionalDetails is missing");
+                throw new CustomException("ATTENDANCE_APPROVAL_DOCS_MISSING", "additionalDetails is missing");
             }
 
             ObjectMapper mapper = new ObjectMapper();
@@ -240,7 +240,7 @@ public class MusterRollValidator {
                     || node.get("attendanceApprovalDocuments").isEmpty()) {
 
                 throw new CustomException(
-                        "attendanceApprovalDocuments", "attendanceApprovalDocuments is missing or empty"
+                        "ATTENDANCE_APPROVAL_DOCS_MISSING", "attendanceApprovalDocuments is missing or empty"
                 );
             }
         }
