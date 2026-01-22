@@ -261,17 +261,17 @@ public class Configuration {
 	@Value("${egov.filestore.host}")
 	private String fileStoreHost;
 
-	@Value("${egov.filestore.path}")
+	@Value("${egov.filestore.path:/filestore/v1/files}")
 	private String fileStoreEndpoint;
 
 	//PDF service
 	@Value("${egov.pdf.service.host}")
 	private String pdfServiceHost;
 
-	@Value("${egov.pdf.service.create.endpoint}")
+	@Value("${egov.pdf.service.create.endpoint:/pdf-service/v1/_create}")
 	private String pdfServiceCreateEndpoint;
 
-	@Value("${payment.pdf.key}")
+	@Value("${payment.pdf.key:health-bill-payment}")
 	private String paymentPdfKey;
 
 	@Value("${expense.payment.additional.percent}")
