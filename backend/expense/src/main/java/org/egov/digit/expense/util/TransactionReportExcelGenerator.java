@@ -6,6 +6,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.egov.digit.expense.web.models.TransactionReportRow;
 import org.egov.tracer.model.CustomException;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+@Component
 @Slf4j
 public class TransactionReportExcelGenerator {
 
