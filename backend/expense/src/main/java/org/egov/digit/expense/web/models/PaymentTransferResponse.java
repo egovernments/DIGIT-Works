@@ -15,6 +15,7 @@ public class PaymentTransferResponse {
     private String amount;
     private String currency;
     private String externalId;
+    private String financialTransactionId;
     private Payee payee;
     private String payerMessage;
     private String payeeNote;

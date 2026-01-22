@@ -6,6 +6,7 @@ import org.egov.digit.expense.web.models.TaskDetailsRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.egov.digit.expense.config.Constants.*;
 
@@ -77,4 +78,29 @@ public class TaskQueryBuilder {
 
         return query.toString();
     }
+
+    public String getTaskDetailsByBillDetailIdsQuery(
+            String tenantId,
+            List<String> billDetailIds,
+            List<Object> preparedStmtList
+    ) {
+
+        StringBuilder query = new StringBuilder(TASK_DETAILS_SEARCH_QUERY);
+
+        // WHERE bill_details_id IN (?,?,?)
+        builderUtils.addClauseIfRequired(preparedStmtList, query);
+        query.append(" bill_details_id IN (")
+                .append(builderUtils.createQuery(Set.copyOf(billDetailIds)))
+                .append(")");
+
+        builderUtils.addToPreparedStatement(preparedStmtList, Set.copyOf(billDetailIds));
+
+        // AND tenantid = ?
+        builderUtils.addClauseIfRequired(preparedStmtList, query);
+        query.append(" tenantid = ?");
+        preparedStmtList.add(tenantId);
+
+        return query.toString();
+    }
+
 }

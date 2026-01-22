@@ -56,4 +56,29 @@ public class TaskRepository {
         String query = taskQueryBuilder.getTasksInProgressQuery(seconds, type, preparedStatementValues);
         return jdbcTemplate.query(query, preparedStatementValues.toArray(), taskRowMapper);
     }
+
+    public List<TaskDetails> searchByBillDetailIds(
+            String tenantId,
+            List<String> billDetailIds
+    ) {
+
+        if (billDetailIds == null || billDetailIds.isEmpty()) {
+            return List.of();
+        }
+
+        List<Object> preparedStatementValues = new ArrayList<>();
+
+        String query = taskQueryBuilder.getTaskDetailsByBillDetailIdsQuery(
+                tenantId,
+                billDetailIds,
+                preparedStatementValues
+        );
+
+        return jdbcTemplate.query(
+                query,
+                preparedStatementValues.toArray(),
+                taskDetailsRowMapper
+        );
+    }
+
 }

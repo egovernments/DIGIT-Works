@@ -257,6 +257,23 @@ public class Configuration {
 	@Value("${expense.calculator.calculate.endpoint}")
 	private String calculatePath;
 
+	// File store service
+	@Value("${egov.filestore.host}")
+	private String fileStoreHost;
+
+	@Value("${egov.filestore.path}")
+	private String fileStoreEndpoint;
+
+	//PDF service
+	@Value("${egov.pdf.service.host}")
+	private String pdfServiceHost;
+
+	@Value("${egov.pdf.service.create.endpoint}")
+	private String pdfServiceCreateEndpoint;
+
+	@Value("${payment.pdf.key}")
+	private String paymentPdfKey;
+
 	@Value("${expense.payment.additional.percent}")
 	private BigDecimal additionalAmountPercent;
 
