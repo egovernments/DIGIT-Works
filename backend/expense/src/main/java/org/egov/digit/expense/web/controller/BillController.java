@@ -40,10 +40,10 @@ public class BillController {
 	@PostMapping(value = "_search")
 	public ResponseEntity<BillResponse> search(@Valid @RequestBody BillSearchRequest billSearchRequest) throws Exception {
 		BillResponse billResponse = service.search(billSearchRequest, true);
-		transactionReportGenerationService.createReportAndUploadToFileStore(billSearchRequest.getRequestInfo(),
-				"cg",
-				Set.of("fb556d64-9b7c-46a6-ad7b-3b8d3f883529")
-		);
+//		transactionReportGenerationService.createReportAndUploadToFileStore(billSearchRequest.getRequestInfo(),
+//				"cg",
+//				Set.of("fb556d64-9b7c-46a6-ad7b-3b8d3f883529")
+//		);
 		return new ResponseEntity<>(billResponse, HttpStatus.ACCEPTED);
 	}
 

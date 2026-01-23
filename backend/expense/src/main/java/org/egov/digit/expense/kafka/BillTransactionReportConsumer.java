@@ -3,6 +3,7 @@ package org.egov.digit.expense.kafka;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.digit.expense.config.Configuration;
+import org.egov.digit.expense.service.TransactionReportGenerationService;
 import org.egov.digit.expense.web.models.BillTransactionReport;
 import org.egov.digit.expense.web.models.BillTransactionReportRequest;
 import org.egov.digit.expense.web.models.enums.ReportStatus;
@@ -11,6 +12,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @Component
@@ -19,14 +21,16 @@ public class BillTransactionReportConsumer {
     private final ObjectMapper objectMapper;
     private final ExpenseProducer producer;
     private final Configuration config;
+    private final TransactionReportGenerationService transactionReportGenerationService;
 
     @Autowired
     public BillTransactionReportConsumer(ObjectMapper objectMapper,
                                          ExpenseProducer producer,
-                                         Configuration config) {
+                                         Configuration config, TransactionReportGenerationService transactionReportGenerationService) {
         this.objectMapper = objectMapper;
         this.producer = producer;
         this.config = config;
+        this.transactionReportGenerationService = transactionReportGenerationService;
     }
 
     @KafkaListener(topics = {"${expense.bill.transaction.report.save}"})
@@ -50,8 +54,7 @@ public class BillTransactionReportConsumer {
             // 2. Generate report based on type (EXCEL/PDF)
             // 3. Upload to filestore
             // 4. Get fileStoreId
-
-            String fileStoreId = generateReport(request);
+            String fileStoreId = transactionReportGenerationService.createReportAndUploadToFileStore(request);
 
             // Update report with success status
             report.setStatus(ReportStatus.GENERATED);

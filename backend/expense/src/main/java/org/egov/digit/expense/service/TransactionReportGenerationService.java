@@ -10,21 +10,19 @@ import org.egov.digit.expense.util.PDFServiceUtil;
 import org.egov.digit.expense.util.TransactionReportExcelGenerator;
 import org.egov.digit.expense.util.TransactionReportPdfUtil;
 import org.egov.digit.expense.web.models.*;
+import org.egov.digit.expense.web.models.enums.ReportType;
 import org.egov.digit.expense.web.models.enums.ResponseStatus;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class TransactionReportGenerationService {
+    private static final ObjectMapper mapper = new ObjectMapper();
     private final BillService billService;
     private final TransactionReportExcelGenerator transactionReportExcelGenerator;
     private final TransactionReportPdfUtil transactionReportPdfUtil;
@@ -32,7 +30,6 @@ public class TransactionReportGenerationService {
     private final PDFServiceUtil pdfServiceUtil;
     private final Configuration config;
     private final TaskRepository taskRepository;
-    private static final ObjectMapper mapper = new ObjectMapper();
 
     public TransactionReportGenerationService(BillService billService, TransactionReportExcelGenerator transactionReportExcelGenerator, TransactionReportPdfUtil transactionReportPdfUtil, FileStoreUtil fileStoreUtil, PDFServiceUtil pdfServiceUtil, Configuration config, TaskRepository taskRepository) {
         this.billService = billService;
@@ -44,13 +41,14 @@ public class TransactionReportGenerationService {
         this.taskRepository = taskRepository;
     }
 
-    public void createReportAndUploadToFileStore(
-            RequestInfo requestInfo,
-            String tenantId,
-            Set<String> billIds
-    ) throws Exception {
+    public String createReportAndUploadToFileStore(BillTransactionReportRequest request)
+            throws Exception {
+        String tenantId = request.getBillTransactionReport().getTenantId();
+        BillTransactionReport billTransactionReport = request.getBillTransactionReport();
         List<TransactionReportRow> rows =
-                buildTransactionRows(requestInfo, tenantId, billIds);
+                buildTransactionRows(request.getRequestInfo(),
+                        tenantId,
+                        Collections.singleton(billTransactionReport.getBillId()));
 //        List<TransactionReportRow> rows = List.of(
 //                TransactionReportRow.builder()
 //                        .date(System.currentTimeMillis())
@@ -79,17 +77,14 @@ public class TransactionReportGenerationService {
 //        for (int i = 0; i < rows.size(); i++) {
 //            log.info("Row {} => {}", i + 1, rows.get(i));
 //        }
-        ByteArrayResource excel =
-                transactionReportExcelGenerator.generateExcel(rows);
 
-        String excelFileStoreId =
-                fileStoreUtil.uploadFileAndGetFileStoreId(tenantId, excel);
-        log.info("excellll123", excelFileStoreId);
-
-//        TransactionReportPdfRequest pdfRequest = transactionReportPdfUtil.buildPdfRequest(requestInfo, tenantId, rows);
-//
-//        String pdfFileStoreId = pdfServiceUtil.createPDF(pdfRequest, tenantId, config.getPaymentPdfKey());
-
+        if (billTransactionReport.getType().equals(ReportType.PDF)) {
+            TransactionReportPdfRequest pdfRequest = transactionReportPdfUtil.buildPdfRequest(request.getRequestInfo(), tenantId, rows);
+            return pdfServiceUtil.createPDF(pdfRequest, tenantId, config.getPaymentPdfKey());
+        } else {
+            ByteArrayResource excel = transactionReportExcelGenerator.generateExcel(rows);
+            return fileStoreUtil.uploadFileAndGetFileStoreId(tenantId, excel);
+        }
     }
 
     public List<TransactionReportRow> buildTransactionRows(
@@ -205,12 +200,12 @@ public class TransactionReportGenerationService {
         return rows;
     }
 
-    public static Map<String, Object> toMap(Object additionalDetails) {
-        if (additionalDetails == null) {
-            return Map.of();
-        }
-        return mapper.convertValue(additionalDetails, Map.class);
-    }
+//    public static Map<String, Object> toMap(Object additionalDetails) {
+//        if (additionalDetails == null) {
+//            return Map.of();
+//        }
+//        return mapper.convertValue(additionalDetails, Map.class);
+//    }
 
     private PaymentTransferResponse getPaymentTransferResponse(TaskDetails taskDetails) {
         if (taskDetails.getAdditionalDetails() == null) {

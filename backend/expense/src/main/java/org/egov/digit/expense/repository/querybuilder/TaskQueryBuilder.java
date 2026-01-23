@@ -95,10 +95,10 @@ public class TaskQueryBuilder {
 
         builderUtils.addToPreparedStatement(preparedStmtList, Set.copyOf(billDetailIds));
 
-        // AND tenantid = ?
-        builderUtils.addClauseIfRequired(preparedStmtList, query);
-        query.append(" tenantid = ?");
-        preparedStmtList.add(tenantId);
+//        // AND tenantid = ?
+//        builderUtils.addClauseIfRequired(preparedStmtList, query);
+//        query.append(" tenantid = ?");
+//        preparedStmtList.add(tenantId);
 
         return query.toString();
     }

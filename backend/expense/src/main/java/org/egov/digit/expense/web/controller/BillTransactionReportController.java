@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/expense/v1/transactions/report")
+@RequestMapping("/v1/transactions/report")
 @Slf4j
 public class BillTransactionReportController {
 

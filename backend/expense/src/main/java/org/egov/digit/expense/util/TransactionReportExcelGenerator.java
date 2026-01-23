@@ -45,7 +45,7 @@ public class TransactionReportExcelGenerator {
                 "Bill Number",
                 "MTN Transaction ID",
                 "Description",
-                "Debit Amount"
+                "Debit Amount (XAF)"
         }; // todo add localizations for headers
 
         for (int i = 0; i < headers.length; i++) {
