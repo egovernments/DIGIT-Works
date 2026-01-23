@@ -260,5 +260,11 @@ public class Configuration {
 	@Value("${expense.payment.additional.percent}")
 	private BigDecimal additionalAmountPercent;
 
+	// Bill Transaction Report Topics
+	@Value("${expense.bill.transaction.report.save}")
+	private String billTransactionReportSaveTopic;
+
+	@Value("${expense.bill.transaction.report.update}")
+	private String billTransactionReportUpdateTopic;
 
 }
