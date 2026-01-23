@@ -1,0 +1,93 @@
+{
+  "key": "transaction-report",
+  "DataConfigs": {
+    "serviceName": "hcm-payments",
+    "version": "1.0.0",
+    "baseKeyPath": "$.report",
+    "mappings": [
+      {
+        "topic": "common-pdf-generation-3",
+        "mappings": [
+          {
+            "direct": [
+
+
+              {
+                "variable": "reportTitle",
+                "value": {
+                  "path": "PDF_LABEL_TXN_REP_TRANSACTION_REPORT_TITLE"
+                },
+                "type": "label",
+                "localisation": {
+                  "required": true,
+                  "module": "hcm-payments"
+                }
+              },
+
+
+              {
+                "variable": "label_serial_no",
+                "value": { "path": "PDF_LABEL_TXN_REP_SERIAL_NO" },
+                "type": "label",
+                "localisation": { "required": true, "module": "hcm-payments" }
+              },
+              {
+                "variable": "label_date",
+                "value": { "path": "PDF_LABEL_TXN_REP_DATE" },
+                "type": "label",
+                "localisation": { "required": true, "module": "hcm-payments" }
+              },
+              {
+                "variable": "label_bill_number",
+                "value": { "path": "PDF_LABEL_TXN_REP_BILL_NUMBER" },
+                "type": "label",
+                "localisation": { "required": true, "module": "hcm-payments" }
+              },
+              {
+                "variable": "label_mtn_transaction_id",
+                "value": { "path": "PDF_LABEL_TXN_REP_MTN_TRANSACTION_ID" },
+                "type": "label",
+                "localisation": { "required": true, "module": "hcm-payments" }
+              },
+              {
+                "variable": "label_description",
+                "value": { "path": "PDF_LABEL_TXN_REP_DESCRIPTION" },
+                "type": "label",
+                "localisation": { "required": true, "module": "hcm-payments" }
+              },
+              {
+                "variable": "label_debit_amount",
+                "value": { "path": "PDF_LABEL_TXN_REP_DEBIT_AMOUNT" },
+                "type": "label",
+                "localisation": { "required": true, "module": "hcm-payments" }
+              },
+
+
+              {
+                "variable": "label_generated_time",
+                "value": { "path": "PDF_LABEL_TXN_REP_GENERATED_TIME" },
+                "type": "label",
+                "localisation": { "required": true, "module": "hcm-payments" }
+              },
+
+
+              {
+                "variable": "generatedTime",
+                "value": { "path": "$.generatedTime" },
+                "type": "date",
+                "format": "DD/MM/YYYY HH:mm:ss z"
+              },
+
+
+              {
+                "variable": "rows",
+                "value": { "path": "$.rows" }
+              }
+
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
