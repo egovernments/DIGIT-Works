@@ -49,36 +49,36 @@ public class TransactionReportGenerationService {
             String tenantId,
             Set<String> billIds
     ) throws Exception {
-//        List<TransactionReportRow> rows =
-//                buildTransactionRows(requestInfo, tenantId, billIds);
-        List<TransactionReportRow> rows = List.of(
-                TransactionReportRow.builder()
-                        .date(System.currentTimeMillis())
-                        .billNumber("BILL-001")
-                        .mtnTransactionId("MTN-TXN-123456")
-                        .description("Wage payment for worker A")
-                        .debitAmount(new BigDecimal("1500.00"))
-                        .build(),
-
-                TransactionReportRow.builder()
-                        .date(System.currentTimeMillis() - 86400000L) // yesterday
-                        .billNumber("BILL-002")
-                        .mtnTransactionId("MTN-TXN-789012")
-                        .description("Wage payment for worker B")
-                        .debitAmount(new BigDecimal("1800.50"))
-                        .build(),
-
-                TransactionReportRow.builder()
-                        .date(System.currentTimeMillis() - 2 * 86400000L)
-                        .billNumber("BILL-003")
-                        .mtnTransactionId("MTN-TXN-345678")
-                        .description("Transport allowance")
-                        .debitAmount(new BigDecimal("500.00"))
-                        .build()
-        );
-        for (int i = 0; i < rows.size(); i++) {
-            log.info("Row {} => {}", i + 1, rows.get(i));
-        }
+        List<TransactionReportRow> rows =
+                buildTransactionRows(requestInfo, tenantId, billIds);
+//        List<TransactionReportRow> rows = List.of(
+//                TransactionReportRow.builder()
+//                        .date(System.currentTimeMillis())
+//                        .billNumber("BILL-001")
+//                        .mtnTransactionId("MTN-TXN-123456")
+//                        .description("Wage payment for worker A")
+//                        .debitAmount(new BigDecimal("1500.00"))
+//                        .build(),
+//
+//                TransactionReportRow.builder()
+//                        .date(System.currentTimeMillis() - 86400000L) // yesterday
+//                        .billNumber("BILL-002")
+//                        .mtnTransactionId("MTN-TXN-789012")
+//                        .description("Wage payment for worker B")
+//                        .debitAmount(new BigDecimal("1800.50"))
+//                        .build(),
+//
+//                TransactionReportRow.builder()
+//                        .date(System.currentTimeMillis() - 2 * 86400000L)
+//                        .billNumber("BILL-003")
+//                        .mtnTransactionId("MTN-TXN-345678")
+//                        .description("Transport allowance")
+//                        .debitAmount(new BigDecimal("500.00"))
+//                        .build()
+//        );
+//        for (int i = 0; i < rows.size(); i++) {
+//            log.info("Row {} => {}", i + 1, rows.get(i));
+//        }
         ByteArrayResource excel =
                 transactionReportExcelGenerator.generateExcel(rows);
 
@@ -195,7 +195,7 @@ public class TransactionReportGenerationService {
                                 .billNumber(bill.getBillNumber()) // HCM Identifier
                                 .mtnTransactionId(paymentResponse.getExternalId())
                                 .description(paymentResponse.getPayerMessage())
-                                .debitAmount(billDetail.getTotalPaidAmount())
+                                .debitAmount(paymentResponse.getAmount())
                                 .build()
                 );
             }

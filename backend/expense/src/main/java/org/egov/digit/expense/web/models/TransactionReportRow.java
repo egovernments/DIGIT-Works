@@ -16,5 +16,5 @@ public class TransactionReportRow {
     private String billNumber;        // Bill.billNumber (HCM Identifier)
     private String mtnTransactionId;   // From TaskDetails.additionalDetails
     private String description;        // From BillDetail / LineItem
-    private BigDecimal debitAmount;
+    private String debitAmount;
 }

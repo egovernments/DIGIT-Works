@@ -18,10 +18,10 @@ public class TransactionReportPdfUtil {
             List<TransactionReportRow> rows
     ) {
 
-        BigDecimal totalAmount =
-                rows.stream()
-                        .map(TransactionReportRow::getDebitAmount)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+//        BigDecimal totalAmount =
+//                rows.stream()
+//                        .map(TransactionReportRow::getDebitAmount)
+//                        .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         TransactionReportPdf report =
                 TransactionReportPdf.builder()
@@ -29,7 +29,7 @@ public class TransactionReportPdfUtil {
                         .tenantId(tenantId)
                         .generatedTime(System.currentTimeMillis())
                         .totalTransactions(rows.size())
-                        .totalAmount(totalAmount)
+//                        .totalAmount(totalAmount)
                         .transactions(rows)
                         .build();
 

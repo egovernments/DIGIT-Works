@@ -72,7 +72,7 @@ public class TransactionReportExcelGenerator {
             excelRow.createCell(1).setCellValue(r.getBillNumber());
             excelRow.createCell(2).setCellValue(r.getMtnTransactionId());
             excelRow.createCell(3).setCellValue(r.getDescription());
-            excelRow.createCell(4).setCellValue(r.getDebitAmount().doubleValue());
+            excelRow.createCell(4).setCellValue(r.getDebitAmount());
         }
 
         byte[] bytes;
