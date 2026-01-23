@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransactionReportPdf {
+public class TransactionReport {
 
     private String reportTitle;
     private String tenantId;

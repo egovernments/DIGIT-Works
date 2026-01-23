@@ -49,11 +49,6 @@ public class BillTransactionReportConsumer {
         BillTransactionReport report = request.getBillTransactionReport();
 
         try {
-            // TODO: Implement report generation logic
-            // 1. Fetch bill transaction data
-            // 2. Generate report based on type (EXCEL/PDF)
-            // 3. Upload to filestore
-            // 4. Get fileStoreId
             String fileStoreId = transactionReportGenerationService.createReportAndUploadToFileStore(request);
 
             // Update report with success status
@@ -76,28 +71,6 @@ public class BillTransactionReportConsumer {
             // Push to update topic
             producer.push(config.getBillTransactionReportUpdateTopic(), request);
         }
-    }
-
-    /**
-     * TODO: Implement report generation logic
-     * This method should:
-     * 1. Fetch bill transaction data from database
-     * 2. Generate report based on type (EXCEL/PDF)
-     * 3. Upload to filestore service
-     * 4. Return fileStoreId
-     */
-    private String generateReport(BillTransactionReportRequest request) {
-        // TODO: Implement actual report generation
-        // BillTransactionReport report = request.getBillTransactionReport();
-        // ReportType type = report.getType();
-        //
-        // if (ReportType.EXCEL.equals(type)) {
-        //     return generateExcelReport(request);
-        // } else if (ReportType.PDF.equals(type)) {
-        //     return generatePdfReport(request);
-        // }
-
-        throw new UnsupportedOperationException("Report generation not yet implemented");
     }
 
     private void updateAuditDetails(BillTransactionReport report, BillTransactionReportRequest request) {

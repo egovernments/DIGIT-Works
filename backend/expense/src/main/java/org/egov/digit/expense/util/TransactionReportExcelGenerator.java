@@ -3,6 +3,7 @@ package org.egov.digit.expense.util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.egov.digit.expense.web.models.TransactionReport;
 import org.egov.digit.expense.web.models.TransactionReportRow;
 import org.egov.tracer.model.CustomException;
 import org.springframework.core.io.ByteArrayResource;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -23,10 +23,10 @@ public class TransactionReportExcelGenerator {
     private static final DateTimeFormatter DATE_FORMATTER =
             DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-    public ByteArrayResource generateExcel(List<TransactionReportRow> rows) throws Exception {
-        log.info("inside gennn");
+    public ByteArrayResource generateExcel(TransactionReport reportData) throws Exception {
+        List<TransactionReportRow> rows = reportData.getTransactions();
         Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Congo B Transactions List"); //todo title and localisations
+        Sheet sheet = workbook.createSheet("Transactions List - " + reportData.getBillIds().get(0)); //todo title and localisations
 
         /* ----------------------------
          * Styles

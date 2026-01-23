@@ -45,10 +45,30 @@ public class TransactionReportGenerationService {
             throws Exception {
         String tenantId = request.getBillTransactionReport().getTenantId();
         BillTransactionReport billTransactionReport = request.getBillTransactionReport();
+
+        BillSearchRequest billSearchRequest = BillSearchRequest.builder()
+                .requestInfo(request.getRequestInfo())
+                .billCriteria(
+                        BillCriteria.builder()
+                                .tenantId(tenantId)
+                                .ids(Collections.singleton(billTransactionReport.getBillId()))
+                                .build()
+                )
+                .pagination(new Pagination())
+                .build();
+
+        BillResponse billResponse =
+                billService.search(billSearchRequest, false);
+
+        List<Bill> bills = billResponse.getBills();
+
+        if (bills == null || bills.isEmpty()) {
+            return null;
+        }
         List<TransactionReportRow> rows =
                 buildTransactionRows(request.getRequestInfo(),
                         tenantId,
-                        Collections.singleton(billTransactionReport.getBillId()));
+                        bills);
 //        List<TransactionReportRow> rows = List.of(
 //                TransactionReportRow.builder()
 //                        .date(System.currentTimeMillis())
@@ -78,11 +98,15 @@ public class TransactionReportGenerationService {
 //            log.info("Row {} => {}", i + 1, rows.get(i));
 //        }
 
+        TransactionReportRequest transactionReportRequest = transactionReportPdfUtil.buildReportRequest(request.getRequestInfo(), tenantId, bills.get(0), rows);
+
+        transactionReportRequest.getReport().setGeneratedTime(request.getBillTransactionReport().getAuditDetails().getCreatedTime());
+        transactionReportRequest.getReport().setGeneratedBy(request.getBillTransactionReport().getAuditDetails().getCreatedBy());
+
         if (billTransactionReport.getType().equals(ReportType.PDF)) {
-            TransactionReportPdfRequest pdfRequest = transactionReportPdfUtil.buildPdfRequest(request.getRequestInfo(), tenantId, rows);
-            return pdfServiceUtil.createPDF(pdfRequest, tenantId, config.getPaymentPdfKey());
+            return pdfServiceUtil.createPDF(transactionReportRequest, tenantId, config.getPaymentPdfKey());
         } else {
-            ByteArrayResource excel = transactionReportExcelGenerator.generateExcel(rows);
+            ByteArrayResource excel = transactionReportExcelGenerator.generateExcel(transactionReportRequest.getReport());
             return fileStoreUtil.uploadFileAndGetFileStoreId(tenantId, excel);
         }
     }
@@ -90,34 +114,11 @@ public class TransactionReportGenerationService {
     public List<TransactionReportRow> buildTransactionRows(
             RequestInfo requestInfo,
             String tenantId,
-            Set<String> billIds
+            List<Bill> bills
     ) {
 
         /* ----------------------------------
-         * 1. Fetch Bills using existing search
-         * ---------------------------------- */
-        BillSearchRequest billSearchRequest = BillSearchRequest.builder()
-                .requestInfo(requestInfo)
-                .billCriteria(
-                        BillCriteria.builder()
-                                .tenantId(tenantId)
-                                .ids(billIds)
-                                .build()
-                )
-                .pagination(new Pagination())
-                .build();
-
-        BillResponse billResponse =
-                billService.search(billSearchRequest, false);
-
-        List<Bill> bills = billResponse.getBills();
-
-        if (bills == null || bills.isEmpty()) {
-            return List.of();
-        }
-
-        /* ----------------------------------
-         * 2. Extract PAID BillDetails
+         * Extract PAID BillDetails
          * ---------------------------------- */
         List<BillDetail> paidBillDetails =
                 bills.stream()
@@ -135,7 +136,7 @@ public class TransactionReportGenerationService {
                         .toList();
 
         /* ----------------------------------
-         * 3. Fetch TaskDetails for BillDetails
+         * Fetch TaskDetails for BillDetails
          * ---------------------------------- */
         List<TaskDetails> taskDetailsList =
                 taskRepository.searchByBillDetailIds(
@@ -147,14 +148,14 @@ public class TransactionReportGenerationService {
         }
 
         /* ----------------------------------
-         * 4. Index TaskDetails by BillDetailId
+         * Index TaskDetails by BillDetailId
          * ---------------------------------- */
         Map<String, List<TaskDetails>> taskDetailsByBillDetailId =
                 taskDetailsList.stream()
                         .collect(Collectors.groupingBy(TaskDetails::getBillDetailsId));
 
         /* ----------------------------------
-         * 5. Build report Rows
+         * Build report Rows
          * ---------------------------------- */
         List<TransactionReportRow> rows = new ArrayList<>();
 
@@ -189,7 +190,7 @@ public class TransactionReportGenerationService {
                                 .date(paymentTaskDetails.getAuditDetails().getCreatedTime())
                                 .billNumber(bill.getBillNumber()) // HCM Identifier
                                 .mtnTransactionId(paymentResponse.getExternalId())
-                                .description(paymentResponse.getPayerMessage())
+                                .description(paymentResponse.getPayerMessage()) //todo
                                 .debitAmount(paymentResponse.getAmount())
                                 .build()
                 );
@@ -199,13 +200,6 @@ public class TransactionReportGenerationService {
 
         return rows;
     }
-
-//    public static Map<String, Object> toMap(Object additionalDetails) {
-//        if (additionalDetails == null) {
-//            return Map.of();
-//        }
-//        return mapper.convertValue(additionalDetails, Map.class);
-//    }
 
     private PaymentTransferResponse getPaymentTransferResponse(TaskDetails taskDetails) {
         if (taskDetails.getAdditionalDetails() == null) {
@@ -239,12 +233,7 @@ public class TransactionReportGenerationService {
                     .equalsIgnoreCase(response.getStatus())) {
                 return taskDetails;
             }
-//
-//            if (ResponseStatus.FAILED
-//                    .toString()
-//                    .equalsIgnoreCase(response.getStatus())) {
-//                failedTask = taskDetails;
-//            }
+
         }
 
         return null;

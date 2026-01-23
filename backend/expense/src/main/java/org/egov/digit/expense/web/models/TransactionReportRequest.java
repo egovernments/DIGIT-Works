@@ -9,11 +9,11 @@ import org.egov.common.contract.request.RequestInfo;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransactionReportPdfRequest {
+public class TransactionReportRequest {
 
     @JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
 
     @JsonProperty("report")
-    private TransactionReportPdf report;
+    private TransactionReport report;
 }

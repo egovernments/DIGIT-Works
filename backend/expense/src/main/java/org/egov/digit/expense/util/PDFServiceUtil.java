@@ -3,10 +3,9 @@ package org.egov.digit.expense.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.repository.ServiceRequestRepository;
-import org.egov.digit.expense.web.models.TransactionReportPdfRequest;
+import org.egov.digit.expense.web.models.TransactionReportRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -40,7 +39,7 @@ public class PDFServiceUtil {
      * @param pdfKey     the key to identify the pdf template
      * @return the file store id of the generated pdf file
      */
-    public String createPDF(TransactionReportPdfRequest request, String tenantId, String pdfKey) {
+    public String createPDF(TransactionReportRequest request, String tenantId, String pdfKey) {
         Object result = null;
         StringBuilder uri = new StringBuilder();
         String filestoreId = null;
