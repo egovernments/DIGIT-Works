@@ -8,6 +8,7 @@ import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.repository.ServiceRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -64,6 +65,19 @@ public class LocalizationUtil {
         }
 
         return localizedMessageMap;
+    }
+
+    // Get local code from request info, if it's not there then return from config
+    public String getLocaleCode(RequestInfo requestInfo) {
+        String msgId = requestInfo.getMsgId();
+        if (StringUtils.hasLength(msgId) && msgId.contains("|")) {
+            // Split the string by the pipe symbol
+            String[] parts = msgId.split("\\|", 2); // Limit to 2 parts
+            if (parts.length > 1 && StringUtils.hasLength(parts[1])) {
+                return parts[1];
+            }
+        }
+        return config.getTxnReportLocalisationCode();
     }
 
 }

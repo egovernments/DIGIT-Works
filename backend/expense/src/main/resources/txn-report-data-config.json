@@ -1,5 +1,5 @@
 {
-  "key": "transaction-report",
+  "key": "health-bill-transaction-report",
   "DataConfigs": {
     "serviceName": "hcm-payments",
     "version": "1.0.0",

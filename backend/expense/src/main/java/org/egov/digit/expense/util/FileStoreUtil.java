@@ -15,6 +15,8 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.Map;
 
+import static org.egov.digit.expense.config.Constants.*;
+
 @Slf4j
 @Component
 public class FileStoreUtil {
@@ -31,16 +33,15 @@ public class FileStoreUtil {
     }
 
     public String uploadFileAndGetFileStoreId(String tenantId, Resource resource){
-        log.info("inside fs util");
         HttpHeaders headers = new HttpHeaders();
         Object response = null;
         StringBuilder uri = new StringBuilder();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         uri.append(config.getFileStoreHost()).append(config.getFileStoreEndpoint());
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("tenantId", tenantId);
-        body.add("file", resource);
-        body.add("module", "BILL_TRANSACTION_REPORT");
+        body.add(TENANT_ID, tenantId);
+        body.add(FILE, resource);
+        body.add(MODULE, BILL_TRANSACTION_REPORT_MODULE);
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 

@@ -79,7 +79,7 @@ public class TaskQueryBuilder {
         return query.toString();
     }
 
-    public String getTaskDetailsByBillDetailIdsQuery(
+    public String getCompletedTaskDetailsByBillDetailIdsQuery(
             String tenantId,
             List<String> billDetailIds,
             List<Object> preparedStmtList
@@ -95,10 +95,10 @@ public class TaskQueryBuilder {
 
         builderUtils.addToPreparedStatement(preparedStmtList, Set.copyOf(billDetailIds));
 
-//        // AND tenantid = ?
-//        builderUtils.addClauseIfRequired(preparedStmtList, query);
-//        query.append(" tenantid = ?");
-//        preparedStmtList.add(tenantId);
+       // AND status = ?
+        builderUtils.addClauseIfRequired(preparedStmtList, query);
+        query.append(" status = ?");
+        preparedStmtList.add("DONE");
 
         return query.toString();
     }

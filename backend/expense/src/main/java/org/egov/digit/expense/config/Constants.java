@@ -10,6 +10,9 @@ import java.util.stream.Stream;
 public class Constants {
 	public static final String REQUEST_INFO = "RequestInfo";
 	public static final String TENANT_ID = "tenantId";
+	public static final String FILE = "file";
+	public static final String MODULE = "module";
+	public static final String BILL_TRANSACTION_REPORT_MODULE = "BILL_TRANSACTION_REPORT";
 	public static final String CONTRACT_NUMBER = "contractNumber";
 	public static final String ORG_ID_PATH = "$.contracts.*.orgId";
 	public static final String ID = "id";

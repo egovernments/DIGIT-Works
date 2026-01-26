@@ -57,7 +57,7 @@ public class TaskRepository {
         return jdbcTemplate.query(query, preparedStatementValues.toArray(), taskRowMapper);
     }
 
-    public List<TaskDetails> searchByBillDetailIds(
+    public List<TaskDetails> searchByBillDetailIds(//return only "DONE" taskDetails
             String tenantId,
             List<String> billDetailIds
     ) {
@@ -68,7 +68,7 @@ public class TaskRepository {
 
         List<Object> preparedStatementValues = new ArrayList<>();
 
-        String query = taskQueryBuilder.getTaskDetailsByBillDetailIdsQuery(
+        String query = taskQueryBuilder.getCompletedTaskDetailsByBillDetailIdsQuery(
                 tenantId,
                 billDetailIds,
                 preparedStatementValues

@@ -2,10 +2,17 @@ package org.egov.digit.expense.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.web.models.TransactionReport;
+import org.egov.digit.expense.web.models.TransactionReportRequest;
 import org.egov.digit.expense.web.models.TransactionReportRow;
 import org.egov.tracer.model.CustomException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Component;
 
@@ -15,108 +22,206 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @Slf4j
 public class TransactionReportExcelGenerator {
+    private final LocalizationUtil localizationUtil;
+    private final Configuration config;
+
 
     private static final DateTimeFormatter DATE_FORMATTER =
-            DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm z");
 
-    public ByteArrayResource generateExcel(TransactionReport reportData) throws Exception {
-        List<TransactionReportRow> rows = reportData.getTransactions();
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Transactions List - " + reportData.getBillIds().get(0)); //todo title and localisations
+    @Autowired
+    public TransactionReportExcelGenerator(LocalizationUtil localizationUtil, Configuration config) {
+        this.localizationUtil = localizationUtil;
+        this.config = config;
+    }
 
-        /* ----------------------------
-         * Styles
-         * ---------------------------- */
-        CellStyle headerStyle = createHeaderStyle(workbook);
-        CellStyle dateStyle = createDateStyle(workbook);
-        CellStyle amountStyle = createAmountStyle(workbook);
+    public ByteArrayResource generateExcel(TransactionReportRequest reportRequest) throws Exception {
 
-        /* ----------------------------
-         * Header Row
-         * ---------------------------- */
-        Row headerRow = sheet.createRow(0);
+        try {
+            TransactionReport reportData = reportRequest.getReport();
+            RequestInfo requestInfo = reportRequest.getRequestInfo();
+            String tenantId = reportData.getTenantId();
 
-        String[] headers = {
-                "Date",
-                "Bill Number",
-                "MTN Transaction ID",
-                "Description",
-                "Debit Amount (XAF)"
-        }; // todo add localizations for headers
+            String locale = localizationUtil.getLocaleCode(requestInfo);
+            Map<String, String> localizationMap =
+                    localizationUtil.getLocalisedMessages(
+                            requestInfo,
+                            tenantId,
+                            locale,
+                            config.getTxnReportLocalisationModule()
+                    ).get(locale + "|" + tenantId);
 
-        for (int i = 0; i < headers.length; i++) {
-            Cell cell = headerRow.createCell(i);
-            cell.setCellValue(headers[i]);
-            cell.setCellStyle(headerStyle);
-        }
+            List<TransactionReportRow> rows = reportData.getTransactions();
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet(reportData.getReportTitle()); //todo title and localisations
 
-        /* ----------------------------
-         * Data Rows
-         * ---------------------------- */
-        int rowIndex = 1;
+            /* ----------------------------
+             * Styles
+             * ---------------------------- */
+            XSSFCellStyle headerStyle = createHeaderStyle(workbook);
+            XSSFCellStyle SlNoCellStyle = createSlNoCellStyle(workbook);
+            XSSFCellStyle amountStyle = createAmountStyle(workbook);
+            XSSFCellStyle textStyle = createTextStyle(workbook);
 
-        for (TransactionReportRow r : rows) {
+            /* ----------------------------
+             * Header Row
+             * ---------------------------- */
+            Row headerRow = sheet.createRow(0);
 
-            Row excelRow = sheet.createRow(rowIndex++);
+            String[] headerKeys = {
+                    "EXPENSE_TXN_SERIAL_NO",
+                    "EXPENSE_TXN_DATE",
+                    "EXPENSE_TXN_BILL_NO",
+                    "EXPENSE_TXN_MTN_ID",
+                    "EXPENSE_TXN_DESC",
+                    "EXPENSE_TXN_DEBIT_AMT"
+            }; // todo add localizations for headers
 
-            excelRow.createCell(0).setCellValue(
-                    Instant.ofEpochMilli(r.getDate())
-                            .atZone(ZoneId.systemDefault())
-                            .toLocalDate()
-                            .toString()
-            );
-            excelRow.createCell(1).setCellValue(r.getBillNumber());
-            excelRow.createCell(2).setCellValue(r.getMtnTransactionId());
-            excelRow.createCell(3).setCellValue(r.getDescription());
-            excelRow.createCell(4).setCellValue(r.getDebitAmount());
-        }
-
-        byte[] bytes;
-
-        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-            workbook.write(bos);
-            workbook.close();
-            bytes = bos.toByteArray();
-        } catch (IOException e) {
-            throw new CustomException("EXCEL_GENERATION_FAILED", e.getMessage());
-        }
-
-        return new ByteArrayResource(bytes) {
-            @Override
-            public String getFilename() {
-                return "CongoB_Transaction_Report.xlsx";
+            for (int i = 0; i < headerKeys.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(localizationMap.getOrDefault(headerKeys[i], headerKeys[i]));
+                cell.setCellStyle(headerStyle);
             }
-        };
+
+            /* ----------------------------
+             * Data Rows
+             * ---------------------------- */
+            int rowIndex = 1;
+
+            for (TransactionReportRow r : rows) {
+                Row excelRow = sheet.createRow(rowIndex++);
+
+                excelRow.createCell(0).setCellValue(r.getSlNo());
+                excelRow.getCell(0).setCellStyle(SlNoCellStyle);
+
+                excelRow.createCell(1).setCellValue(getFormattedTime(r.getDate()));
+                excelRow.getCell(1).setCellStyle(textStyle);
+
+                excelRow.createCell(2).setCellValue(r.getBillNumber());
+                excelRow.getCell(2).setCellStyle(textStyle);
+
+                excelRow.createCell(3).setCellValue(r.getMtnTransactionId());
+                excelRow.getCell(3).setCellStyle(textStyle);
+
+                excelRow.createCell(4).setCellValue(r.getDescription());
+                excelRow.getCell(4).setCellStyle(textStyle);
+
+                excelRow.createCell(5).setCellValue(r.getDebitAmount());
+                excelRow.getCell(5).setCellStyle(amountStyle);
+            }
+
+            /* ----------------------------
+             * Footer Row (Generated Time)
+             * ---------------------------- */
+            Row footerRowGeneratedTime = sheet.createRow(rowIndex + 2);
+            Cell keyCellGeneratedTime = footerRowGeneratedTime.createCell(1);
+            Cell valueCellGeneratedTime = footerRowGeneratedTime.createCell(2);
+            keyCellGeneratedTime.setCellValue(localizationMap.getOrDefault(
+                    "EXPENSE_TXN_GENERATED_TIME",
+                    "Generated Time"));
+            valueCellGeneratedTime.setCellValue(getFormattedTime(reportData.getGeneratedTime()));
+            keyCellGeneratedTime.setCellStyle(textStyle);
+            valueCellGeneratedTime.setCellStyle(textStyle);
+
+            sheet.setColumnWidth(0, 8 * 256);   // Sl No
+            sheet.setColumnWidth(1, 15 * 256);  // Date
+            sheet.setColumnWidth(2, 20 * 256);  // Bill No
+            sheet.setColumnWidth(3, 25 * 256);  // MTN ID
+            sheet.setColumnWidth(4, 35 * 256);  // Description
+            sheet.setColumnWidth(5, 18 * 256);  // Amount
+
+            sheet.createFreezePane(0, 1);
+
+            byte[] bytes;
+
+            try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+                workbook.write(bos);
+                workbook.close();
+                bytes = bos.toByteArray();
+
+                return new ByteArrayResource(bytes) {
+                    @Override
+                    public String getFilename() {
+                        return reportData.getReportTitle() + ".xlsx";
+                    }
+                };
+
+            } catch (IOException e) {
+                throw new CustomException("EXCEL_GENERATION_FAILED", e.getMessage());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getFormattedTime(Long t) {
+       return Instant.ofEpochMilli(t)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+                .format(DATE_FORMATTER);
     }
 
     /* ----------------------------
      * Styles
      * ---------------------------- */
 
-    private CellStyle createHeaderStyle(Workbook workbook) {
-        CellStyle style = workbook.createCellStyle();
-        Font font = workbook.createFont();
+    private XSSFCellStyle createHeaderStyle(XSSFWorkbook workbook) {
+        XSSFCellStyle style = workbook.createCellStyle();
+        XSSFFont font = workbook.createFont();
         font.setBold(true);
+        font.setFontHeight(10);
         style.setFont(font);
         style.setAlignment(HorizontalAlignment.CENTER);
+        style.setWrapText(true);
+
+        XSSFColor customColor = new XSSFColor(new java.awt.Color(201, 218, 248), null);
+        style.setFillForegroundColor(customColor);
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+
         return style;
     }
 
-    private CellStyle createDateStyle(Workbook workbook) {
-        CellStyle style = workbook.createCellStyle();
+    private XSSFCellStyle createSlNoCellStyle(XSSFWorkbook workbook) {
+        XSSFCellStyle style = workbook.createCellStyle();
+        XSSFColor customColor = new XSSFColor(new java.awt.Color(212, 212, 212), null);
+        style.setFillForegroundColor(customColor);
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        XSSFFont font = workbook.createFont();
+        font.setFontHeight(8);
+        style.setFont(font);
+
         style.setAlignment(HorizontalAlignment.LEFT);
+        style.setVerticalAlignment(VerticalAlignment.TOP);
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
         return style;
     }
 
-    private CellStyle createAmountStyle(Workbook workbook) {
-        CellStyle style = workbook.createCellStyle();
+    private XSSFCellStyle createTextStyle(XSSFWorkbook workbook) {
+        XSSFCellStyle style = workbook.createCellStyle();
+        style.setAlignment(HorizontalAlignment.LEFT);
+        style.setVerticalAlignment(VerticalAlignment.TOP);
+        style.setWrapText(true);
+        return style;
+    }
+
+    private XSSFCellStyle createAmountStyle(XSSFWorkbook workbook) {
+        XSSFCellStyle style = workbook.createCellStyle();
         style.setAlignment(HorizontalAlignment.RIGHT);
-        DataFormat format = workbook.createDataFormat();
-        style.setDataFormat(format.getFormat("#,##0.00"));
+        style.setVerticalAlignment(VerticalAlignment.TOP);
         return style;
     }
 }

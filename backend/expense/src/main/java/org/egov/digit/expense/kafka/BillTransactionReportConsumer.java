@@ -52,9 +52,9 @@ public class BillTransactionReportConsumer {
             String fileStoreId = transactionReportGenerationService.createReportAndUploadToFileStore(request);
 
             // Update report with success status
-            report.setStatus(ReportStatus.GENERATED);
             report.setFileStoreId(fileStoreId);
             updateAuditDetails(report, request);
+            report.setStatus(ReportStatus.GENERATED);
 
             // Push to update topic
             producer.push(config.getBillTransactionReportUpdateTopic(), request);

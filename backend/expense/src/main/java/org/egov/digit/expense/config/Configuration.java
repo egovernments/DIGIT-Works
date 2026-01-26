@@ -261,18 +261,18 @@ public class Configuration {
 	@Value("${egov.filestore.host}")
 	private String fileStoreHost;
 
-	@Value("${egov.filestore.path:/filestore/v1/files}")
+	@Value("${egov.filestore.path}")
 	private String fileStoreEndpoint;
 
 	//PDF service
 	@Value("${egov.pdf.service.host}")
 	private String pdfServiceHost;
 
-	@Value("${egov.pdf.service.create.endpoint:/pdf-service/v1/_create}")
+	@Value("${egov.pdf.service.create.endpoint}")
 	private String pdfServiceCreateEndpoint;
 
-	@Value("${payment.pdf.key:health-bill-payment}")
-	private String paymentPdfKey;
+	@Value("${transaction.report.pdf.key}")
+	private String txnReportPdfKey;
 
 	@Value("${expense.payment.additional.percent}")
 	private BigDecimal additionalAmountPercent;
@@ -283,5 +283,12 @@ public class Configuration {
 
 	@Value("${expense.bill.transaction.report.update}")
 	private String billTransactionReportUpdateTopic;
+
+	// Bill Transaction Report Localisation Configs
+	@Value("${expense.bill.transaction.report.localisation.code}")
+	private String txnReportLocalisationCode;
+
+	@Value("${expense.bill.transaction.report.localisation.module}")
+	private String txnReportLocalisationModule;
 
 }
