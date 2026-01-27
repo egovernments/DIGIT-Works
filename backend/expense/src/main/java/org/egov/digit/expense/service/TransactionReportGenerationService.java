@@ -193,10 +193,14 @@ public class TransactionReportGenerationService {
                     rows.add(
                             TransactionReportRow.builder()
                                     .slNo(serialNumber++)
-                                    .date(paymentTaskDetails.getAuditDetails().getCreatedTime())
-                                    .billNumber(bill.getBillNumber()) // HCM Identifier
-                                    .mtnTransactionId(paymentResponse.getExternalId())
-                                    .description(paymentResponse.getPayerMessage()) //todo
+                                    .date(
+                                            paymentTaskDetails.getAuditDetails() != null
+                                                    ? paymentTaskDetails.getAuditDetails().getCreatedTime()
+                                                    : null
+                                    )
+                                    .billNumber(bill.getBillNumber())
+                                    .mtnTransactionId(paymentResponse.getFinancialTransactionId())
+                                    .description(paymentResponse.getPayerMessage())
                                     .debitAmount(paymentResponse.getAmount())
                                     .build()
                     );
@@ -206,7 +210,8 @@ public class TransactionReportGenerationService {
 
             return rows;
         } catch (Exception e) {
-            throw new CustomException("BILL_TRANSACTION_REPORT_EXCEPTION", "Exception while building rows for transaction report.");
+            log.error("BILL_TRANSACTION_REPORT_EXCEPTION", e);
+            throw new CustomException("BILL_TRANSACTION_REPORT_EXCEPTION", "Exception while building rows for transaction report: " + e.getMessage());
         }
     }
 

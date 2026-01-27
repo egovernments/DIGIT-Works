@@ -35,7 +35,7 @@ public class TaskDetailsRowMapper implements RowMapper<TaskDetails> {
         }
 
         // Handle AuditDetails if present in result set
-        if (columnExists(rs, "createdby")) {
+        if (columnExists(rs, "created_by")) {
             AuditDetails auditDetails = AuditDetails.builder()
                     .createdBy(rs.getString("created_by"))
                     .createdTime(rs.getLong("created_time"))
