@@ -7,6 +7,7 @@ import org.egov.digit.expense.service.TransactionReportGenerationService;
 import org.egov.digit.expense.web.models.BillTransactionReport;
 import org.egov.digit.expense.web.models.BillTransactionReportRequest;
 import org.egov.digit.expense.web.models.enums.ReportStatus;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -50,6 +51,13 @@ public class BillTransactionReportConsumer {
 
         try {
             String fileStoreId = transactionReportGenerationService.createReportAndUploadToFileStore(request);
+
+            if (fileStoreId == null || fileStoreId.isBlank()) {
+                throw new CustomException(
+                        "FILESTORE_ID_NULL",
+                        "fileStoreId is null or empty"
+                );
+            }
 
             // Update report with success status
             report.setFileStoreId(fileStoreId);

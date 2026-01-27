@@ -216,12 +216,18 @@ public class TransactionReportGenerationService {
         }
 
         try {
+            if (taskDetails.getAdditionalDetails() instanceof String json) {
+                // JSON string → deserialize
+                return mapper.readValue(json, PaymentTransferResponse.class);
+            }
+
             return mapper.convertValue(
                     taskDetails.getAdditionalDetails(),
                     PaymentTransferResponse.class
             );
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             // additionalDetails is NOT a payment response
+            log.warn("Failed to parse PaymentTransferResponse from additionalDetails", e);
             return null;
         }
     }
