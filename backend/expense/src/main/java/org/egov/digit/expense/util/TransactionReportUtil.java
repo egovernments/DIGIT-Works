@@ -27,7 +27,7 @@ public class TransactionReportUtil {
                     .map(BigDecimal::new)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            String title = "Transactions Report - " + bill.getBillNumber(); //todo constant or localised
+            String title = "Report- " + bill.getBillNumber(); //todo constant or localised
             TransactionReport report =
                     TransactionReport.builder()
                             .reportTitle(title)

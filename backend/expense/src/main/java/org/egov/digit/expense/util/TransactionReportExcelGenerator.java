@@ -160,10 +160,9 @@ public class TransactionReportExcelGenerator {
     }
 
     private String getFormattedTime(Long t) {
-       return Instant.ofEpochMilli(t)
+        return Instant.ofEpochMilli(t)
                 .atZone(ZoneId.systemDefault())
-                .toLocalDate()
-                .format(DATE_FORMATTER);
+                .format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm z"));
     }
 
     /* ----------------------------
