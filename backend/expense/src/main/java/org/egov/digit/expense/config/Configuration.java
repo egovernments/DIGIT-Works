@@ -291,4 +291,11 @@ public class Configuration {
 	@Value("${expense.bill.transaction.report.localisation.module}")
 	private String txnReportLocalisationModule;
 
+	// Bill Transaction Report Date Format Configs
+	@Value("${expense.bill.transaction.report.date.format:dd/MM/yyyy HH:mm:ss}")
+	private String txnReportDateFormat;
+
+	@Value("${expense.bill.transaction.report.timezone:UTC}")
+	private String txnReportTimezone;
+
 }

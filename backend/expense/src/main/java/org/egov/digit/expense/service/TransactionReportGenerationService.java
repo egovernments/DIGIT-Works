@@ -16,6 +16,9 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -190,14 +193,14 @@ public class TransactionReportGenerationService {
                         continue;
                     }
 
+                    Long timestamp = paymentTaskDetails.getAuditDetails() != null
+                            ? paymentTaskDetails.getAuditDetails().getCreatedTime()
+                            : null;
+
                     rows.add(
                             TransactionReportRow.builder()
                                     .slNo(serialNumber++)
-                                    .date(
-                                            paymentTaskDetails.getAuditDetails() != null
-                                                    ? paymentTaskDetails.getAuditDetails().getCreatedTime()
-                                                    : null
-                                    )
+                                    .date(formatDate(timestamp))
                                     .billNumber(bill.getBillNumber())
                                     .mtnTransactionId(paymentResponse.getFinancialTransactionId())
                                     .description(paymentResponse.getPayerMessage())
@@ -257,6 +260,21 @@ public class TransactionReportGenerationService {
         }
 
         return null;
+    }
+
+    private String formatDate(Long timestamp) {
+        if (timestamp == null) {
+            return null;
+        }
+        try {
+            ZoneId zoneId = ZoneId.of(config.getTxnReportTimezone());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(config.getTxnReportDateFormat())
+                    .withZone(zoneId);
+            return formatter.format(Instant.ofEpochMilli(timestamp));
+        } catch (Exception e) {
+            log.warn("Failed to format date with timestamp: {}, using default format", timestamp, e);
+            return String.valueOf(timestamp);
+        }
     }
 
 }

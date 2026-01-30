@@ -10,7 +10,7 @@ public class TransactionReportRow {
 
     @Schema(description = "slNo")
     private Integer slNo;
-    private Long date;
+    private String date;              // Formatted date string (from config timezone & format)
     private String billNumber;        // Bill.billNumber (HCM Identifier)
     private String mtnTransactionId;   // From TaskDetails.additionalDetails
     private String description;        // From BillDetail / LineItem

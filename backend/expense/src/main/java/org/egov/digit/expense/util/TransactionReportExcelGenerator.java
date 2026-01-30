@@ -30,10 +30,6 @@ public class TransactionReportExcelGenerator {
     private final LocalizationUtil localizationUtil;
     private final Configuration config;
 
-
-    private static final DateTimeFormatter DATE_FORMATTER =
-            DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm z");
-
     @Autowired
     public TransactionReportExcelGenerator(LocalizationUtil localizationUtil, Configuration config) {
         this.localizationUtil = localizationUtil;
@@ -99,7 +95,7 @@ public class TransactionReportExcelGenerator {
                 excelRow.createCell(0).setCellValue(r.getSlNo());
                 excelRow.getCell(0).setCellStyle(SlNoCellStyle);
 
-                excelRow.createCell(1).setCellValue(getFormattedTime(r.getDate()));
+                excelRow.createCell(1).setCellValue(r.getDate() != null ? r.getDate() : "");
                 excelRow.getCell(1).setCellStyle(textStyle);
 
                 excelRow.createCell(2).setCellValue(r.getBillNumber());
@@ -160,9 +156,13 @@ public class TransactionReportExcelGenerator {
     }
 
     private String getFormattedTime(Long t) {
-        return Instant.ofEpochMilli(t)
-                .atZone(ZoneId.systemDefault())
-                .format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm z"));
+        if (t == null) {
+            return "";
+        }
+        ZoneId zoneId = ZoneId.of(config.getTxnReportTimezone());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(config.getTxnReportDateFormat())
+                .withZone(zoneId);
+        return formatter.format(Instant.ofEpochMilli(t));
     }
 
     /* ----------------------------
