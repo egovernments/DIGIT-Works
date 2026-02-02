@@ -344,7 +344,9 @@ public class HealthBillReportGenerator {
                     if (skill != null && skill.getIsDeleted() != null && !skill.getIsDeleted()) {
                         // Found the first non-deleted skill
                         reportBillDetail.setRole(skill.getType()); // Set the role based on the skill level
-                        break; // Exit the loop once the first non-deleted skill is found
+                        if (skillCodeRateMap != null && skillCodeRateMap.containsKey(skill.getType())) {
+                            break; // Exit the loop once the first non-deleted skill having a rate configured is found
+                        }
                     }
                 }
             }
