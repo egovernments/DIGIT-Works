@@ -604,16 +604,8 @@ public class AttendeeServiceValidator {
                 }
                 validIndividualEntries.add(entry);
             }
-            catch (CustomException e) {
-                // Re-throw CustomException as-is to preserve the original error code and message
-                log.error("Validation failed for attendee {}: {} - {}", entry.getIndividualId(), e.getCode(), e.getMessage());
-                throw e;
-            }
             catch (Exception e) {
-                // Wrap unexpected exceptions
-                log.error("Unexpected error while validating attendee {}: {}", entry.getIndividualId(), e.toString(), e);
-                throw new CustomException("ATTENDEE_VALIDATION_FAILED",
-                        "Failed to validate attendee with individual ID - " + entry.getIndividualId() + ": " + e.getMessage());
+                log.error(e.toString());
             }
         }
         attendeeCreateRequest.setAttendees(validIndividualEntries);
