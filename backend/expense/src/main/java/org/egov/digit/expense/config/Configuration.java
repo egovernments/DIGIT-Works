@@ -1,5 +1,6 @@
 package org.egov.digit.expense.config;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 import org.egov.tracer.config.TracerConfiguration;
@@ -186,5 +187,87 @@ public class Configuration {
 
 	@Value("${bill.persistence.breakdown.size:200}")
 	private Integer billBreakdownSize;
+
+	@Value("${mtn.base.url}")
+	private String baseUrlMTN;
+
+	@Value("${mtn.token.endpoint}")
+	private String tokenEndpointMTN;
+
+	@Value("${mtn.subscription.key}")
+	private String subscriptionKeyMTN;
+
+	@Value("${mtn.basic.authorization}")
+	private String authorizationMTN;
+
+	@Value("${mtn.target.environment}")
+	private String targetEnvironmentMTN;
+
+	@Value("${mtn.account.active.endpoint}")
+	private String accountEndpointMTN;
+
+	@Value("${mtn.user.info.endpoint}")
+	private String basicUserInfoEndpointMTN;
+
+	@Value("${expense.bill.task}")
+	private String billTaskTopic;
+
+	@Value("${expense.bill.task.details}")
+	private String billTaskDetailsTopic;
+
+	@Value("${expense.task.status.update}")
+	private String taskUpdateTopic;
+
+	@Value("${expense.task.details.update}")
+	private String taskDetailsUpdateTopic;
+
+	@Value("${mtn.transfer.endpoint}")
+	private String transferEndpointMTN;
+
+	@Value("${mtn.transfer.status.endpoint}")
+	private String transferStatusEndpointMTN;
+
+	@Value("${mtn.amount.balance.endpoint}")
+	private String amountBalanceEndpointMTN;
+
+	@Value("${mtn.payment.currency}")
+	private String paymentCurrency;
+
+	@Value("${mtn.payment.partyIdType}")
+	private String partyIdType;
+
+	@Value("${mtn.payment.token.expiry.interval.millisec}")
+	private String tokenExpiryInterval;
+
+	@Value("${mtn.payment.phone.code.prefix}")
+	private String phoneCodePrefix;
+
+	@Value("${bill.business.service}")
+	private String billBusinessService;
+
+	@Value("${bill.detail.business.service}")
+	private String billDetailBusinessService;
+
+	@Value("${bill.scheduled.task.delay.sec}")
+	private String scheduledTaskDelay;
+
+	@Value("${bill.scheduled.task.fixed.rate.millisec}")
+	private String scheduledTaskFixedRate;
+
+	@Value("${expense.calculator.host}")
+	private String calculatorHost;
+
+	@Value("${expense.calculator.calculate.endpoint}")
+	private String calculatePath;
+
+	@Value("${expense.payment.additional.percent}")
+	private BigDecimal additionalAmountPercent;
+
+	// Bill Transaction Report Topics
+	@Value("${expense.bill.transaction.report.save}")
+	private String billTransactionReportSaveTopic;
+
+	@Value("${expense.bill.transaction.report.update}")
+	private String billTransactionReportUpdateTopic;
 
 }

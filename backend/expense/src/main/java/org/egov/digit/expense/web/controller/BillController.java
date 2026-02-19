@@ -3,9 +3,7 @@ package org.egov.digit.expense.web.controller;
 import jakarta.validation.Valid;
 
 import org.egov.digit.expense.service.BillService;
-import org.egov.digit.expense.web.models.BillRequest;
-import org.egov.digit.expense.web.models.BillResponse;
-import org.egov.digit.expense.web.models.BillSearchRequest;
+import org.egov.digit.expense.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,4 +44,9 @@ public class BillController {
 		return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 	}
 
+	@PostMapping(value = "search/_calculated")
+	public ResponseEntity<BillResponse> searchCalculatedBills(@Valid @RequestBody BillSearchRequest billSearchRequest) {
+		BillResponse billResponse = service.searchCalculatedBills(billSearchRequest, true);
+		return new ResponseEntity<>(billResponse, HttpStatus.ACCEPTED);
+	}
 }

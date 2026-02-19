@@ -1,0 +1,74 @@
+serviceMaps:
+  serviceName: expense Service
+  mappings:
+    - version: 1.0
+      name: bill verification task create
+      description: create bill verification task in eg_expense_task
+      fromTopic: expense-bill-task
+      queryMaps:
+        - query: INSERT INTO eg_expense_task (id, status, type, created_by, created_time, last_modified_by, last_modified_time, additional_details) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          basePath: $.task
+          jsonMaps:
+            - jsonPath: $.task.id
+            - jsonPath: $.task.status
+            - jsonPath: $.task.type
+            - jsonPath: $.task.auditDetails.createdBy
+            - jsonPath: $.task.auditDetails.createdTime
+            - jsonPath: $.task.auditDetails.lastModifiedBy
+            - jsonPath: $.task.auditDetails.lastModifiedTime
+            - jsonPath: $.task.additionalDetails
+              type: JSON
+              dbType: JSONB
+
+    - version: 1.0
+      name: bill verification task details create
+      description: create bill verification task details in eg_expense_task_details
+      fromTopic: expense-bill-task-details
+      queryMaps:
+        - query: INSERT INTO eg_expense_task_details (id, tenant_id, bill_id, bill_details_id, payee_id, task_id, reference_id, response_message, status, reason_for_failure, created_by, created_time, last_modified_by, last_modified_time, additional_details) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          basePath: $
+          jsonMaps:
+            - jsonPath: $.id
+            - jsonPath: $.tenantId
+            - jsonPath: $.billId
+            - jsonPath: $.billDetailsId
+            - jsonPath: $.payeeId
+            - jsonPath: $.taskId
+            - jsonPath: $.referenceId
+            - jsonPath: $.responseMessage
+            - jsonPath: $.status
+            - jsonPath: $.reasonForFailure
+            - jsonPath: $.auditDetails.createdBy
+            - jsonPath: $.auditDetails.createdTime
+            - jsonPath: $.auditDetails.lastModifiedBy
+            - jsonPath: $.auditDetails.lastModifiedTime
+            - jsonPath: $.additionalDetails
+              type: JSON
+              dbType: JSONB
+
+    - version: 1.0
+      name: task status update
+      description: update task status in eg_expense_task
+      fromTopic: expense-task-status-update
+      queryMaps:
+        - query: UPDATE eg_expense_task SET status=? WHERE id=?;
+          basePath: $
+          jsonMaps:
+            - jsonPath: $.status
+            - jsonPath: $.id
+
+    - version: 1.0
+      name: task details update
+      description: update task details in eg_expense_task_details
+      fromTopic: expense-task-details-update
+      queryMaps:
+        - query: UPDATE eg_expense_task_details SET status=?,reason_for_failure=?,response_message=?,additional_details=? WHERE id=?;
+          basePath: $
+          jsonMaps:
+            - jsonPath: $.status
+            - jsonPath: $.reasonForFailure
+            - jsonPath: $.responseMessage
+            - jsonPath: $.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.id
