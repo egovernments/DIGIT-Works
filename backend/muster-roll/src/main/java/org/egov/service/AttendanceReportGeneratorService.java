@@ -398,9 +398,7 @@ public class AttendanceReportGeneratorService {
             auditDetails.setLastModifiedBy(userUuid);
             auditDetails.setLastModifiedTime(System.currentTimeMillis());
 
-            if (report.getAuditDetails() == null) {
-                report.setAuditDetails(new AuditDetails());
-            }
+            report.setAuditDetails(auditDetails);
 
             // Save or update the report
             if (report.getId() == null) {
