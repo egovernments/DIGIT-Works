@@ -5,15 +5,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
 import java.util.TimeZone;
 
-@Component
+@Configuration
 @Data
 @Import({TracerConfiguration.class})
+@EnableKafka
+@ComponentScan(basePackages = {"org.egov"})
 @NoArgsConstructor
 @AllArgsConstructor
 public class MusterRollServiceConfiguration {

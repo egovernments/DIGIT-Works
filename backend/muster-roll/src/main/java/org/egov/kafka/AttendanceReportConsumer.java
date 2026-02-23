@@ -2,10 +2,13 @@ package org.egov.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.service.AttendanceReportGeneratorService;
 import org.egov.web.models.report.ReportGenerationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -16,16 +19,18 @@ public class AttendanceReportConsumer {
 
     private final AttendanceReportGeneratorService reportGeneratorService;
     private final ObjectMapper objectMapper;
+    private final MusterRollServiceConfiguration configuration;
 
     @Autowired
     public AttendanceReportConsumer(AttendanceReportGeneratorService reportGeneratorService,
-            ObjectMapper objectMapper) {
+                                    ObjectMapper objectMapper, MusterRollServiceConfiguration musterRollServiceConfiguration) {
         this.reportGeneratorService = reportGeneratorService;
         this.objectMapper = objectMapper;
+        this.configuration = musterRollServiceConfiguration;
     }
 
     @KafkaListener(topics = { "${muster.roll.attendance.report.generate.topic}" })
-    public void listen(Map<String, Object> consumerRecord) {
+    public void listen(Map<String, Object> consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
             log.info("Received message to generate attendance report");
 
