@@ -17,7 +17,6 @@ import java.util.TimeZone;
 @Configuration
 @Data
 @Import({TracerConfiguration.class})
-@EnableKafka
 @ComponentScan(basePackages = {"org.egov"})
 @NoArgsConstructor
 @AllArgsConstructor
