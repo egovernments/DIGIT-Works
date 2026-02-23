@@ -30,4 +30,12 @@ public class AttendanceReportRequest {
     @JsonProperty("tenantId")
     @NotNull
     private String tenantId;
+
+    @JsonProperty("reportType")
+    @NotNull
+    private String reportType;    // "ATTENDANCE_REPORT" | "SIGNATURE_REPORT" | "PHOTO_CAPTURE_REPORT"
+
+    @JsonProperty("reportFormat")
+    @NotNull
+    private String reportFormat;  // "EXCEL" | "PDF"
 }

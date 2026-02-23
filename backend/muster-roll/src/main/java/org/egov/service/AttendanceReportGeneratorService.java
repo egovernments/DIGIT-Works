@@ -18,6 +18,14 @@ import org.egov.web.models.MusterRoll;
 import org.egov.web.models.MusterRollSearchCriteria;
 import org.egov.web.models.report.AttendanceReportData;
 import org.egov.web.models.report.AttendanceReportDetail;
+import org.egov.web.models.report.ReportGenerationRequest;
+import org.egov.web.models.report.ReportMetadata;
+import org.egov.web.models.report.MusterRollReport;
+import org.egov.web.models.report.ReportType;
+import org.egov.web.models.report.ReportFormat;
+import org.egov.web.models.report.ReportStatus;
+import org.egov.repository.MusterRollReportRepository;
+import org.egov.common.contract.models.AuditDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -45,6 +53,7 @@ public class AttendanceReportGeneratorService {
     private final MusterRollProducer musterRollProducer;
     private final MusterRollServiceConfiguration config;
     private final ObjectMapper objectMapper;
+    private final MusterRollReportRepository musterRollReportRepository;
 
     @Autowired
     public AttendanceReportGeneratorService(
@@ -54,7 +63,8 @@ public class AttendanceReportGeneratorService {
             FileStoreUtil fileStoreUtil,
             MusterRollProducer musterRollProducer,
             MusterRollServiceConfiguration config,
-            ObjectMapper objectMapper) {
+            ObjectMapper objectMapper,
+            MusterRollReportRepository musterRollReportRepository) {
         this.musterRollRepository = musterRollRepository;
         this.serviceRequestRepository = serviceRequestRepository;
         this.excelGenerator = excelGenerator;
@@ -62,9 +72,12 @@ public class AttendanceReportGeneratorService {
         this.musterRollProducer = musterRollProducer;
         this.config = config;
         this.objectMapper = objectMapper;
+        this.musterRollReportRepository = musterRollReportRepository;
     }
 
-    public void initiateReportGeneration(String musterRollId, String tenantId, RequestInfo requestInfo) {
+    public void initiateReportGeneration(String musterRollId, String tenantId,
+                                          String reportType, String reportFormat,
+                                          RequestInfo requestInfo) {
         try {
             // Fetch muster roll
             MusterRoll musterRoll = fetchMusterRoll(musterRollId, tenantId);
@@ -83,12 +96,14 @@ public class AttendanceReportGeneratorService {
             }
 
             // Update status to INITIATED
-            updateReportStatus(musterRoll, AttendanceReportConstants.REPORT_STATUS_INITIATED, null, null);
+            updateReportStatus(musterRoll, reportType, reportFormat,
+                    ReportStatus.INITIATED.getValue(), null, null);
 
             // Publish to Kafka for async processing
-            publishReportGenerationRequest(musterRollId, tenantId, requestInfo);
+            publishReportGenerationRequest(musterRollId, tenantId, reportType, reportFormat, requestInfo);
 
-            log.info("Report generation initiated for muster roll: {}", musterRollId);
+            log.info("Report generation initiated for muster roll: {} ({} {})",
+                    musterRollId, reportType, reportFormat);
 
         } catch (CustomException e) {
             log.error("Error initiating report generation: {}", e.getMessage(), e);
@@ -99,19 +114,68 @@ public class AttendanceReportGeneratorService {
         }
     }
 
-    public void generateReport(String musterRollId, String tenantId, RequestInfo requestInfo) {
+    public void generateReport(ReportGenerationRequest request) {
         MusterRoll musterRoll = null;
+        String musterRollId = request.getMusterRollId();
+        String tenantId = request.getTenantId();
+        String reportType = request.getReportType();
+        String reportFormat = request.getReportFormat();
+        RequestInfo requestInfo = request.getRequestInfo();
+
         try {
-            log.info("Starting report generation for muster roll: {}", musterRollId);
+            log.info("Starting report generation for muster roll: {} ({} {})",
+                    musterRollId, reportType, reportFormat);
 
             // Fetch muster roll
             musterRoll = fetchMusterRoll(musterRollId, tenantId);
             if (musterRoll == null) {
                 log.error("Muster roll not found: {}", musterRollId);
-                throw new CustomException(AttendanceReportConstants.MUSTER_NOT_FOUND,
-                        "Muster roll not found with id: " + musterRollId);
+                return;
             }
 
+            // Dispatch to type-specific generator using enums
+            try {
+                ReportType type = ReportType.fromValue(reportType);
+                ReportFormat format = ReportFormat.fromValue(reportFormat);
+
+                if (ReportType.ATTENDANCE_REPORT == type) {
+                    if (ReportFormat.EXCEL == format) {
+                        generateAttendanceExcelReport(musterRoll, musterRollId, tenantId, requestInfo,
+                                reportType, reportFormat);
+                    } else if (ReportFormat.PDF == format) {
+                        log.info("PDF format for ATTENDANCE_REPORT not yet implemented for muster roll: {}",
+                                musterRollId);
+                        updateReportStatus(musterRoll, reportType, reportFormat,
+                                ReportStatus.FAILED.getValue(), null,
+                                "PDF format not yet implemented");
+                    }
+                } else {
+                    log.info("Report type {} not yet implemented for muster roll: {}", reportType, musterRollId);
+                    updateReportStatus(musterRoll, reportType, reportFormat,
+                            ReportStatus.FAILED.getValue(), null,
+                            "Report type not yet implemented");
+                }
+            } catch (IllegalArgumentException e) {
+                log.error("Invalid report type or format: type={}, format={}", reportType, reportFormat, e);
+                updateReportStatus(musterRoll, reportType, reportFormat,
+                        ReportStatus.FAILED.getValue(), null,
+                        "Invalid report type or format");
+            }
+
+        } catch (Exception e) {
+            log.error("Unexpected error during report generation for muster roll: {} ({} {})",
+                    musterRollId, reportType, reportFormat, e);
+            if (musterRoll != null) {
+                updateReportStatus(musterRoll, reportType, reportFormat,
+                        AttendanceReportConstants.REPORT_STATUS_FAILED, null,
+                        "Unexpected error: " + e.getMessage());
+            }
+        }
+    }
+
+    private void generateAttendanceExcelReport(MusterRoll musterRoll, String musterRollId, String tenantId,
+                                                RequestInfo requestInfo, String reportType, String reportFormat) {
+        try {
             // Fetch attendance data
             AttendanceReportData reportData = buildReportData(musterRoll, tenantId, requestInfo);
 
@@ -125,28 +189,24 @@ public class AttendanceReportGeneratorService {
 
             if (fileStoreId == null) {
                 log.error("Failed to upload Excel file to filestore for muster roll: {}", musterRollId);
-                updateReportStatus(musterRoll, AttendanceReportConstants.REPORT_STATUS_FAILED, null,
+                updateReportStatus(musterRoll, reportType, reportFormat,
+                        ReportStatus.FAILED.getValue(), null,
                         "Failed to upload report to filestore");
                 return;
             }
 
             // Update muster roll with report status and file store ID
-            updateReportStatus(musterRoll, AttendanceReportConstants.REPORT_STATUS_COMPLETED, fileStoreId, null);
+            updateReportStatus(musterRoll, reportType, reportFormat,
+                    ReportStatus.COMPLETED.getValue(), fileStoreId, null);
 
-            log.info("Report generation completed successfully for muster roll: {}", musterRollId);
+            log.info("Report generation completed successfully for muster roll: {} ({} {})",
+                    musterRollId, reportType, reportFormat);
 
         } catch (IOException e) {
             log.error("Error generating Excel file for muster roll: {}", musterRollId, e);
-            if (musterRoll != null) {
-                updateReportStatus(musterRoll, AttendanceReportConstants.REPORT_STATUS_FAILED, null,
-                        "Error generating Excel file: " + e.getMessage());
-            }
-        } catch (Exception e) {
-            log.error("Unexpected error during report generation for muster roll: {}", musterRollId, e);
-            if (musterRoll != null) {
-                updateReportStatus(musterRoll, AttendanceReportConstants.REPORT_STATUS_FAILED, null,
-                        "Unexpected error: " + e.getMessage());
-            }
+            updateReportStatus(musterRoll, reportType, reportFormat,
+                    ReportStatus.FAILED.getValue(), null,
+                    "Error generating Excel file: " + e.getMessage());
         }
     }
 
@@ -287,28 +347,42 @@ public class AttendanceReportGeneratorService {
         return dates;
     }
 
-    private void updateReportStatus(MusterRoll musterRoll, String status, String fileStoreId, String errorMessage) {
+    private void updateReportStatus(MusterRoll musterRoll, String reportType, String reportFormat,
+                                    String status, String fileStoreId, String errorMessage) {
         try {
-            // Update additionalDetails with report metadata
-            Map<String, Object> additionalDetails = musterRoll.getAdditionalDetails() instanceof Map
-                    ? (Map<String, Object>) musterRoll.getAdditionalDetails()
-                    : new HashMap<>();
+            // Create or update report in database with multi-tenant support
+            MusterRollReport report = musterRollReportRepository
+                    .findByMusterRollAndTypeAndFormat(
+                            musterRoll.getId(),
+                            reportType,
+                            reportFormat,
+                            musterRoll.getTenantId())
+                    .orElse(MusterRollReport.builder()
+                            .musterRollId(musterRoll.getId())
+                            .tenantId(musterRoll.getTenantId())
+                            .reportType(reportType)
+                            .reportFormat(reportFormat)
+                            .auditDetails(new AuditDetails())
+                            .build());
 
-            Map<String, Object> reportMetadata = new HashMap<>();
-            reportMetadata.put("reportStatus", status);
-            if (StringUtils.hasText(fileStoreId)) {
-                reportMetadata.put("excelFileStoreId", fileStoreId);
+            report.setReportStatus(status);
+            report.setFileStoreId(fileStoreId);
+            report.setGeneratedAt(System.currentTimeMillis());
+            report.setErrorMessage(errorMessage);
+
+            if (report.getAuditDetails() == null) {
+                report.setAuditDetails(new AuditDetails());
             }
-            reportMetadata.put("generatedAt", System.currentTimeMillis());
-            if (StringUtils.hasText(errorMessage)) {
-                reportMetadata.put("errorMessage", errorMessage);
+
+            // Save or update the report
+            if (report.getId() == null) {
+                musterRollReportRepository.save(report);
+            } else {
+                musterRollReportRepository.update(report);
             }
 
-            additionalDetails.put(AttendanceReportConstants.REPORT_KEY, reportMetadata);
-            musterRoll.setAdditionalDetails(additionalDetails);
-
-            // Publish update event to Kafka
-            publishMusterRollUpdate(musterRoll);
+            log.info("Updated report status in database: musterRoll={} ({} {} = {})",
+                    musterRoll.getId(), reportType, reportFormat, status);
 
         } catch (Exception e) {
             log.error("Error updating report status for muster roll: {}", musterRoll.getId(), e);
@@ -365,17 +439,23 @@ public class AttendanceReportGeneratorService {
         }
     }
 
-    private void publishReportGenerationRequest(String musterRollId, String tenantId, RequestInfo requestInfo) {
+    private void publishReportGenerationRequest(String musterRollId, String tenantId,
+                                                 String reportType, String reportFormat,
+                                                 RequestInfo requestInfo) {
         try {
-            Map<String, Object> message = new HashMap<>();
-            message.put("musterRollId", musterRollId);
-            message.put("tenantId", tenantId);
-            message.put("requestInfo", requestInfo);
-            message.put("timestamp", System.currentTimeMillis());
+            ReportGenerationRequest reportRequest = ReportGenerationRequest.builder()
+                    .musterRollId(musterRollId)
+                    .tenantId(tenantId)
+                    .reportType(reportType)
+                    .reportFormat(reportFormat)
+                    .requestInfo(requestInfo)
+                    .timestamp(System.currentTimeMillis())
+                    .build();
 
-            musterRollProducer.push(config.getAttendanceReportGenerateTopic(), message);
+            musterRollProducer.push(config.getAttendanceReportGenerateTopic(), reportRequest);
 
-            log.info("Published report generation request to Kafka for muster roll: {}", musterRollId);
+            log.info("Published report generation request to Kafka for muster roll: {} ({} {})",
+                    musterRollId, reportType, reportFormat);
 
         } catch (Exception e) {
             log.error("Error publishing report generation request to Kafka: {}", e.getMessage(), e);

@@ -7,6 +7,7 @@ import lombok.*;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.workflow.ProcessInstance;
 import org.egov.works.services.common.models.musterroll.Status;
+import org.egov.web.models.report.MusterRollReport;
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.validation.Valid;
@@ -77,6 +78,10 @@ public class MusterRoll {
 
     @JsonProperty("processInstance")
     private ProcessInstance processInstance = null;
+
+    @JsonProperty("reports")
+    @Valid
+    private List<MusterRollReport> reports = null;
 
 
     public MusterRoll addIndividualEntriesItem(IndividualEntry individualEntriesItem) {

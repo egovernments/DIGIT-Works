@@ -46,6 +46,8 @@ public class AttendanceReportApiController {
             attendanceReportGeneratorService.initiateReportGeneration(
                     reportRequest.getMusterRollId(),
                     reportRequest.getTenantId(),
+                    reportRequest.getReportType(),
+                    reportRequest.getReportFormat(),
                     reportRequest.getRequestInfo());
 
             ResponseInfo responseInfo = responseInfoCreator

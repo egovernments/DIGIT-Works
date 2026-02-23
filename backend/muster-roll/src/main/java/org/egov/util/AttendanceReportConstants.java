@@ -8,9 +8,22 @@ public class AttendanceReportConstants {
     public static final String REPORT_STATUS_FAILED = "FAILED";
 
     // Report Configuration
-    public static final String REPORT_KEY = "attendanceReport";
     public static final String REPORT_DATE_FORMAT = "dd/MM/yyyy";
     public static final String REPORT_TIMEZONE = "Asia/Kolkata";
+
+    // Report Types
+    public static final String REPORT_TYPE_ATTENDANCE = "ATTENDANCE_REPORT";
+    public static final String REPORT_TYPE_SIGNATURE = "SIGNATURE_REPORT";
+    public static final String REPORT_TYPE_PHOTO_CAPTURE = "PHOTO_CAPTURE_REPORT";
+
+    // Report Formats
+    public static final String REPORT_FORMAT_EXCEL = "EXCEL";
+    public static final String REPORT_FORMAT_PDF = "PDF";
+
+    // Default auto-generate report combinations (reportType, reportFormat)
+    public static final String[][] DEFAULT_AUTO_GENERATE_REPORTS = {
+            {REPORT_TYPE_ATTENDANCE, REPORT_FORMAT_EXCEL}
+    };
 
     // Column Headers
     public static final String[] FIXED_COLUMN_HEADERS = {
