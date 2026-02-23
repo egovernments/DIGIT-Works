@@ -49,9 +49,18 @@ public class AttendanceExcelGenerator {
             writeColumnHeaders(sheet, reportData, localizedMessages);
             writeDataRows(sheet, reportData);
 
-            // Auto-fit columns (basic approach)
-            for (int i = 0; i < AttendanceReportConstants.FIXED_COLUMNS_COUNT + reportData.getTotalDays(); i++) {
-                sheet.autoSizeColumn(i);
+            // Set fixed column widths (headless-safe approach)
+            // First 11 columns are fixed (S.No, Name, Phone, Role, Team Code, User ID, Enroll, De-enroll, Marker, Present, Modified)
+            int[] fixedColumnWidths = {8, 25, 15, 15, 12, 15, 15, 15, 12, 12, 12};
+            for (int i = 0; i < fixedColumnWidths.length; i++) {
+                sheet.setColumnWidth(i, fixedColumnWidths[i] * 256);
+            }
+
+            // Dynamic date columns - use consistent width
+            int dateColumnWidth = 3072;
+            for (int i = AttendanceReportConstants.FIXED_COLUMNS_COUNT;
+                 i < AttendanceReportConstants.FIXED_COLUMNS_COUNT + reportData.getTotalDays(); i++) {
+                sheet.setColumnWidth(i, dateColumnWidth);
             }
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
