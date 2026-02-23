@@ -27,12 +27,14 @@ import org.egov.web.models.report.ReportStatus;
 import org.egov.repository.MusterRollReportRepository;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.util.LocalizationUtil;
+import org.egov.works.services.common.models.attendance.AttendanceRegisterSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.egov.common.contract.models.AuditDetails;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -52,6 +54,7 @@ public class AttendanceReportGeneratorService {
     private final MusterRollProducer musterRollProducer;
     private final MusterRollServiceConfiguration config;
     private final ObjectMapper objectMapper;
+    private final RestTemplate restTemplate;
     private final MusterRollReportRepository musterRollReportRepository;
     private final LocalizationUtil localizationUtil;
 
@@ -63,7 +66,7 @@ public class AttendanceReportGeneratorService {
             FileStoreUtil fileStoreUtil,
             MusterRollProducer musterRollProducer,
             MusterRollServiceConfiguration config,
-            ObjectMapper objectMapper,
+            ObjectMapper objectMapper, RestTemplate restTemplate,
             MusterRollReportRepository musterRollReportRepository,
             LocalizationUtil localizationUtil) {
         this.musterRollRepository = musterRollRepository;
@@ -73,6 +76,7 @@ public class AttendanceReportGeneratorService {
         this.musterRollProducer = musterRollProducer;
         this.config = config;
         this.objectMapper = objectMapper;
+        this.restTemplate = restTemplate;
         this.musterRollReportRepository = musterRollReportRepository;
         this.localizationUtil = localizationUtil;
     }
@@ -229,7 +233,7 @@ public class AttendanceReportGeneratorService {
 
     private AttendanceReportData buildReportData(MusterRoll musterRoll, String tenantId, RequestInfo requestInfo) {
         // Fetch attendance register
-        AttendanceRegister register = fetchAttendanceRegister(musterRoll.getRegisterId(), tenantId, requestInfo);
+        AttendanceRegister register = fetchAttendanceRegister(requestInfo, tenantId, musterRoll.getRegisterId());
         if (register == null) {
             throw new CustomException(AttendanceReportConstants.ATTENDANCE_REGISTER_NOT_FOUND,
                     "Attendance register not found with id: " + musterRoll.getRegisterId());
@@ -435,31 +439,36 @@ public class AttendanceReportGeneratorService {
         }
     }
 
-    private AttendanceRegister fetchAttendanceRegister(String registerId, String tenantId, RequestInfo requestInfo) {
+    private AttendanceRegister fetchAttendanceRegister(RequestInfo requestInfo, String tenantId, String registerId) {
+        StringBuilder uri = new StringBuilder();
+        uri.append(config.getAttendanceLogHost()).append(config.getAttendanceRegisterEndpoint());
+        uri.append("?tenantId=").append(tenantId);
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("RequestInfo", requestInfo);
+
+        AttendanceRegisterSearchCriteria searchCriteria = new AttendanceRegisterSearchCriteria();
+        searchCriteria.setTenantId(tenantId);
+        searchCriteria.setIds(Collections.singletonList(registerId));
+
+        requestBody.put("searchCriteria", searchCriteria);
+
         try {
-            StringBuilder uri = new StringBuilder(config.getAttendanceLogHost())
-                    .append(config.getAttendanceRegisterEndpoint());
+            AttendanceRegisterResponse response = restTemplate.postForObject(
+                    uri.toString(),
+                    requestBody,
+                    AttendanceRegisterResponse.class
+            );
 
-            Map<String, Object> searchRequest = new HashMap<>();
-            searchRequest.put("RequestInfo", requestInfo);
-            searchRequest.put("id", registerId);
-            searchRequest.put("tenantId", tenantId);
-
-            Object response = serviceRequestRepository.fetchResult(uri, searchRequest);
-
-            if (response instanceof Map) {
-                Map<String, Object> responseMap = (Map<String, Object>) response;
-                List<AttendanceRegister> registers = (List<AttendanceRegister>) responseMap.get("attendanceRegisters");
-                if (!CollectionUtils.isEmpty(registers)) {
-                    return registers.get(0);
-                }
+            if (response == null || CollectionUtils.isEmpty(response.getAttendanceRegister())) {
+                log.error("No attendance register found for ID: {}", registerId);
+                throw new CustomException("ATTENDANCE_REGISTER_FETCH_ERROR", "Attendance Register is empty");
             }
-
-            return null;
-
+            return response.getAttendanceRegister().get(0);
         } catch (Exception e) {
-            log.error("Error fetching attendance register: {}", registerId, e);
-            return null;
+            log.error("Error fetching register {}: {}", registerId, e.getMessage(), e);
+            throw new CustomException("ATTENDANCE_REGISTER_FETCH_ERROR",
+                    "Failed to fetch attendance register: " + e.getMessage());
         }
     }
 
