@@ -33,4 +33,15 @@ public class MusterRollProducer {
         log.info("The Kafka topic for the tenantId : {} is : {}", tenantId, updatedTopic);
         this.kafkaTemplate.send(updatedTopic, value);
     }
+
+    /**
+     * Publishes a message to a Kafka topic without tenant-specific transformation.
+     *
+     * @param topic The topic name for publishing the message.
+     * @param value The value or payload to be sent to the Kafka topic.
+     */
+    public void push(String topic, Object value) {
+        log.info("Publishing message to topic: {}", topic);
+        this.kafkaTemplate.send(topic, value);
+    }
 }

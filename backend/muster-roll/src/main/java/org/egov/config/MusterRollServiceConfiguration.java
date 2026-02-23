@@ -193,6 +193,12 @@ public class MusterRollServiceConfiguration {
     @Value("${musterroll.period.locking.enabled:true}")
     private boolean periodLockingEnabled;
 
+    @Value("${muster.roll.attendance.report.generate.topic}")
+    private String attendanceReportGenerateTopic;
+
+    @Value("${muster.roll.attendance.report.update.topic}")
+    private String attendanceReportUpdateTopic;
+
     @PostConstruct
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
