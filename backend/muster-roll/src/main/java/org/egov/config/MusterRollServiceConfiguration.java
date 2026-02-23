@@ -199,6 +199,19 @@ public class MusterRollServiceConfiguration {
     @Value("${muster.roll.attendance.report.update.topic}")
     private String attendanceReportUpdateTopic;
 
+    // Report Localization and Configuration
+    @Value("${attendance.report.localization.module:muster-roll}")
+    private String reportLocalizationModule;
+
+    @Value("${attendance.report.date.format:dd/MM/yyyy}")
+    private String reportDateFormat;
+
+    @Value("${attendance.report.timezone:Asia/Kolkata}")
+    private String reportTimezone;
+
+    @Value("${attendance.report.filestore.module:ATTENDANCE}")
+    private String reportFilestoreModule;
+
     @PostConstruct
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));

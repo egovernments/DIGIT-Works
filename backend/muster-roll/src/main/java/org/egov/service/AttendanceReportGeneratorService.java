@@ -26,6 +26,7 @@ import org.egov.web.models.report.ReportFormat;
 import org.egov.web.models.report.ReportStatus;
 import org.egov.repository.MusterRollReportRepository;
 import org.egov.common.contract.models.AuditDetails;
+import org.egov.util.LocalizationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -37,6 +38,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -54,6 +56,7 @@ public class AttendanceReportGeneratorService {
     private final MusterRollServiceConfiguration config;
     private final ObjectMapper objectMapper;
     private final MusterRollReportRepository musterRollReportRepository;
+    private final LocalizationUtil localizationUtil;
 
     @Autowired
     public AttendanceReportGeneratorService(
@@ -64,7 +67,8 @@ public class AttendanceReportGeneratorService {
             MusterRollProducer musterRollProducer,
             MusterRollServiceConfiguration config,
             ObjectMapper objectMapper,
-            MusterRollReportRepository musterRollReportRepository) {
+            MusterRollReportRepository musterRollReportRepository,
+            LocalizationUtil localizationUtil) {
         this.musterRollRepository = musterRollRepository;
         this.serviceRequestRepository = serviceRequestRepository;
         this.excelGenerator = excelGenerator;
@@ -73,6 +77,7 @@ public class AttendanceReportGeneratorService {
         this.config = config;
         this.objectMapper = objectMapper;
         this.musterRollReportRepository = musterRollReportRepository;
+        this.localizationUtil = localizationUtil;
     }
 
     public void initiateReportGeneration(String musterRollId, String tenantId,
@@ -176,16 +181,31 @@ public class AttendanceReportGeneratorService {
     private void generateAttendanceExcelReport(MusterRoll musterRoll, String musterRollId, String tenantId,
                                                 RequestInfo requestInfo, String reportType, String reportFormat) {
         try {
+            // Extract locale from requestInfo
+            String locale = AttendanceReportConstants.LOCALIZATION_DEFAULT_LOCALE;
+            if (requestInfo != null && requestInfo.getMsgId() != null && requestInfo.getMsgId().split("\\|").length > 1) {
+                locale = requestInfo.getMsgId().split("\\|")[1];
+            }
+
+            // Extract root tenant (strip sub-tenant suffix)
+            String rootTenantId = tenantId.split("\\.")[0];
+
+            // Fetch localized messages
+            Map<String, Map<String, String>> allMessages = localizationUtil.getLocalisedMessages(
+                    requestInfo, rootTenantId, locale, config.getReportLocalizationModule());
+            Map<String, String> messages = allMessages.getOrDefault(locale + "|" + rootTenantId,
+                    Collections.emptyMap());
+
             // Fetch attendance data
             AttendanceReportData reportData = buildReportData(musterRoll, tenantId, requestInfo);
 
             // Generate Excel file
-            byte[] excelContent = excelGenerator.generateExcel(reportData);
+            byte[] excelContent = excelGenerator.generateExcel(reportData, messages);
 
             // Upload to FileStore
             String fileName = String.format("attendance-report-%s.xlsx", musterRollId);
             String fileStoreId = fileStoreUtil.uploadFile(excelContent, fileName, tenantId,
-                    AttendanceReportConstants.FILESTORE_MODULE_NAME);
+                    config.getReportFilestoreModule());
 
             if (fileStoreId == null) {
                 log.error("Failed to upload Excel file to filestore for muster roll: {}", musterRollId);

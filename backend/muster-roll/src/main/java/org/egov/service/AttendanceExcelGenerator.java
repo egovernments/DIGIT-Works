@@ -11,9 +11,11 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.util.AttendanceReportConstants;
 import org.egov.web.models.report.AttendanceReportData;
 import org.egov.web.models.report.AttendanceReportDetail;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -21,12 +23,21 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
 public class AttendanceExcelGenerator {
 
-    public byte[] generateExcel(AttendanceReportData reportData) throws IOException {
+    private final MusterRollServiceConfiguration config;
+
+    @Autowired
+    public AttendanceExcelGenerator(MusterRollServiceConfiguration config) {
+        this.config = config;
+    }
+
+    public byte[] generateExcel(AttendanceReportData reportData, Map<String, String> localizedMessages)
+            throws IOException {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             XSSFSheet sheet = workbook.createSheet("Attendance Report");
 
@@ -34,8 +45,8 @@ public class AttendanceExcelGenerator {
             sheet.setDefaultColumnWidth(15);
 
             // Create workbook
-            writeHeaderSection(sheet, reportData);
-            writeColumnHeaders(sheet, reportData);
+            writeHeaderSection(sheet, reportData, localizedMessages);
+            writeColumnHeaders(sheet, reportData, localizedMessages);
             writeDataRows(sheet, reportData);
 
             // Auto-fit columns (basic approach)
@@ -53,7 +64,8 @@ public class AttendanceExcelGenerator {
         }
     }
 
-    private void writeHeaderSection(XSSFSheet sheet, AttendanceReportData reportData) {
+    private void writeHeaderSection(XSSFSheet sheet, AttendanceReportData reportData,
+            Map<String, String> localizedMessages) {
         CellStyle headerStyle = createHeaderStyle(sheet.getWorkbook());
         CellStyle subHeaderStyle = createSubHeaderStyle(sheet.getWorkbook());
 
@@ -61,7 +73,8 @@ public class AttendanceExcelGenerator {
         XSSFRow titleRow = sheet.createRow(0);
         titleRow.setHeightInPoints(25);
         XSSFCell titleCell = titleRow.createCell(0);
-        titleCell.setCellValue("Attendance Register Report");
+        titleCell.setCellValue(getLocalized(localizedMessages,
+                AttendanceReportConstants.REPORT_TITLE_KEY));
         titleCell.setCellStyle(headerStyle);
 
         // Merge cells for title
@@ -73,7 +86,9 @@ public class AttendanceExcelGenerator {
         infoRow1.setHeightInPoints(18);
         XSSFCell infoCell1 = infoRow1.createCell(0);
 
-        String registerInfo = String.format("Register: %s | Period: %s-%s | Total: %d",
+        String registerPattern = getLocalized(localizedMessages,
+                AttendanceReportConstants.REPORT_REGISTER_INFO_KEY);
+        String registerInfo = String.format(registerPattern,
                 reportData.getMusterRollNumber(),
                 formatDate(reportData.getStartDate()),
                 formatDate(reportData.getEndDate()),
@@ -88,7 +103,9 @@ public class AttendanceExcelGenerator {
         infoRow2.setHeightInPoints(18);
         XSSFCell infoCell2 = infoRow2.createCell(0);
 
-        String campaignInfo = String.format("Campaign: %s | Muster: %s",
+        String campaignPattern = getLocalized(localizedMessages,
+                AttendanceReportConstants.REPORT_CAMPAIGN_INFO_KEY);
+        String campaignInfo = String.format(campaignPattern,
                 reportData.getCampaignName(),
                 reportData.getMusterRollId());
         infoCell2.setCellValue(campaignInfo);
@@ -97,16 +114,17 @@ public class AttendanceExcelGenerator {
             AttendanceReportConstants.FIXED_COLUMNS_COUNT + reportData.getTotalDays() - 1));
     }
 
-    private void writeColumnHeaders(XSSFSheet sheet, AttendanceReportData reportData) {
+    private void writeColumnHeaders(XSSFSheet sheet, AttendanceReportData reportData,
+            Map<String, String> localizedMessages) {
         XSSFRow headerRow = sheet.createRow(3);
         headerRow.setHeightInPoints(20);
         CellStyle columnHeaderStyle = createColumnHeaderStyle(sheet.getWorkbook());
 
         // Fixed columns
         int columnIndex = 0;
-        for (String header : AttendanceReportConstants.FIXED_COLUMN_HEADERS) {
+        for (String headerKey : AttendanceReportConstants.FIXED_COLUMN_HEADER_KEYS) {
             XSSFCell cell = headerRow.createCell(columnIndex);
-            cell.setCellValue(header);
+            cell.setCellValue(getLocalized(localizedMessages, headerKey));
             cell.setCellStyle(columnHeaderStyle);
             columnIndex++;
         }
@@ -243,11 +261,15 @@ public class AttendanceExcelGenerator {
             return "-";
         }
         try {
-            SimpleDateFormat formatter = new SimpleDateFormat(AttendanceReportConstants.REPORT_DATE_FORMAT);
+            SimpleDateFormat formatter = new SimpleDateFormat(config.getReportDateFormat());
             return formatter.format(new Date(milliseconds));
         } catch (Exception e) {
             log.warn("Error formatting date: {}", e.getMessage());
             return "-";
         }
+    }
+
+    private String getLocalized(Map<String, String> messages, String key) {
+        return messages != null ? messages.getOrDefault(key, key) : key;
     }
 }
