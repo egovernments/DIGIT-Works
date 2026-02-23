@@ -30,19 +30,16 @@ import org.egov.util.LocalizationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import org.egov.common.contract.models.AuditDetails;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -102,7 +99,7 @@ public class AttendanceReportGeneratorService {
 
             // Update status to INITIATED
             updateReportStatus(musterRoll, reportType, reportFormat,
-                    ReportStatus.INITIATED.getValue(), null, null);
+                    ReportStatus.INITIATED.getValue(), null, null, requestInfo.getUserInfo().getUuid());
 
             // Publish to Kafka for async processing
             publishReportGenerationRequest(musterRollId, tenantId, reportType, reportFormat, requestInfo);
@@ -152,19 +149,19 @@ public class AttendanceReportGeneratorService {
                                 musterRollId);
                         updateReportStatus(musterRoll, reportType, reportFormat,
                                 ReportStatus.FAILED.getValue(), null,
-                                "PDF format not yet implemented");
+                                "PDF format not yet implemented", requestInfo.getUserInfo().getUuid());
                     }
                 } else {
                     log.info("Report type {} not yet implemented for muster roll: {}", reportType, musterRollId);
                     updateReportStatus(musterRoll, reportType, reportFormat,
                             ReportStatus.FAILED.getValue(), null,
-                            "Report type not yet implemented");
+                            "Report type not yet implemented", requestInfo.getUserInfo().getUuid());
                 }
             } catch (IllegalArgumentException e) {
                 log.error("Invalid report type or format: type={}, format={}", reportType, reportFormat, e);
                 updateReportStatus(musterRoll, reportType, reportFormat,
                         ReportStatus.FAILED.getValue(), null,
-                        "Invalid report type or format");
+                        "Invalid report type or format", requestInfo.getUserInfo().getUuid());
             }
 
         } catch (Exception e) {
@@ -173,7 +170,7 @@ public class AttendanceReportGeneratorService {
             if (musterRoll != null) {
                 updateReportStatus(musterRoll, reportType, reportFormat,
                         AttendanceReportConstants.REPORT_STATUS_FAILED, null,
-                        "Unexpected error: " + e.getMessage());
+                        "Unexpected error: " + e.getMessage(), requestInfo.getUserInfo().getUuid());
             }
         }
     }
@@ -211,13 +208,13 @@ public class AttendanceReportGeneratorService {
                 log.error("Failed to upload Excel file to filestore for muster roll: {}", musterRollId);
                 updateReportStatus(musterRoll, reportType, reportFormat,
                         ReportStatus.FAILED.getValue(), null,
-                        "Failed to upload report to filestore");
+                        "Failed to upload report to filestore", requestInfo.getUserInfo().getUuid());
                 return;
             }
 
             // Update muster roll with report status and file store ID
             updateReportStatus(musterRoll, reportType, reportFormat,
-                    ReportStatus.COMPLETED.getValue(), fileStoreId, null);
+                    ReportStatus.COMPLETED.getValue(), fileStoreId, null, requestInfo.getUserInfo().getUuid());
 
             log.info("Report generation completed successfully for muster roll: {} ({} {})",
                     musterRollId, reportType, reportFormat);
@@ -226,7 +223,7 @@ public class AttendanceReportGeneratorService {
             log.error("Error generating Excel file for muster roll: {}", musterRollId, e);
             updateReportStatus(musterRoll, reportType, reportFormat,
                     ReportStatus.FAILED.getValue(), null,
-                    "Error generating Excel file: " + e.getMessage());
+                    "Error generating Excel file: " + e.getMessage(), requestInfo.getUserInfo().getUuid());
         }
     }
 
@@ -368,7 +365,7 @@ public class AttendanceReportGeneratorService {
     }
 
     private void updateReportStatus(MusterRoll musterRoll, String reportType, String reportFormat,
-                                    String status, String fileStoreId, String errorMessage) {
+                                    String status, String fileStoreId, String errorMessage, String userUuid) {
         try {
             // Create or update report in database with multi-tenant support
             MusterRollReport report = musterRollReportRepository
@@ -382,13 +379,20 @@ public class AttendanceReportGeneratorService {
                             .tenantId(musterRoll.getTenantId())
                             .reportType(reportType)
                             .reportFormat(reportFormat)
-                            .auditDetails(new AuditDetails())
                             .build());
 
             report.setReportStatus(status);
             report.setFileStoreId(fileStoreId);
             report.setGeneratedAt(System.currentTimeMillis());
             report.setErrorMessage(errorMessage);
+            AuditDetails auditDetails = Optional.ofNullable(report.getAuditDetails())
+                    .orElse(new AuditDetails());
+            if(ObjectUtils.isEmpty(auditDetails.getCreatedBy())) {
+                auditDetails.setCreatedBy(userUuid);
+                auditDetails.setCreatedTime(System.currentTimeMillis());
+            }
+            auditDetails.setLastModifiedBy(userUuid);
+            auditDetails.setLastModifiedTime(System.currentTimeMillis());
 
             if (report.getAuditDetails() == null) {
                 report.setAuditDetails(new AuditDetails());
