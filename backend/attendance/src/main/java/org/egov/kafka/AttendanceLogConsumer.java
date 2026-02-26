@@ -43,7 +43,7 @@ public class AttendanceLogConsumer {
         }
     }
 
-    @KafkaListener(topics = "${attendance.log.kafka.consumer.bulk.create.topic}")
+    @KafkaListener(topics = "${attendance.log.kafka.consumer.bulk.update.topic}")
     public void bulkUpdate(Map<String, Object> consumerRecord,
                            @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
