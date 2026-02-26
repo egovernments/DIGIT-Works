@@ -30,7 +30,7 @@ public class AttendanceLogConsumer {
         this.objectMapper = objectMapper;
     }
 
-    @KafkaListener(topicPattern = "(${attendance.kafka.tenant.id.pattern}){0,1}${attendance.log.kafka.consumer.bulk.create.topic}")
+    @KafkaListener(topics = "${attendance.log.kafka.consumer.bulk.create.topic}")
     public void bulkCreate(Map<String, Object> consumerRecord,
                            @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
@@ -43,7 +43,7 @@ public class AttendanceLogConsumer {
         }
     }
 
-    @KafkaListener(topicPattern = "(${attendance.kafka.tenant.id.pattern}){0,1}${attendance.log.kafka.consumer.bulk.update.topic}")
+    @KafkaListener(topics = "${attendance.log.kafka.consumer.bulk.create.topic}")
     public void bulkUpdate(Map<String, Object> consumerRecord,
                            @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
