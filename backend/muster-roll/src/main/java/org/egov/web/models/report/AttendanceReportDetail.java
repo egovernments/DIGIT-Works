@@ -56,6 +56,9 @@ public class AttendanceReportDetail {
     @JsonProperty("dailyAttendance")
     private Map<String, String> dailyAttendance;
 
+    @JsonProperty("totalPerformance")
+    private Long totalPerformance;
+
     @JsonProperty("additionalDetails")
     private Map<String, Object> additionalDetails;
 }

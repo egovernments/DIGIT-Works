@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.kafka.annotation.EnableKafka;
-import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
 import java.util.TimeZone;
@@ -215,6 +213,23 @@ public class MusterRollServiceConfiguration {
 
     @Value("${attendance.report.filestore.module:ATTENDANCE}")
     private String reportFilestoreModule;
+
+    // Elasticsearch Configuration
+    @Value("${elasticsearch.host:http://localhost:9200}")
+    private String elasticSearchHost;
+
+    @Value("${elasticsearch.username}")
+    private String elasticSearchUsername;
+
+    @Value("${elasticsearch.password}")
+    private String elasticSearchPassword;
+
+    // MDMS schema codes for ES query templates
+    @Value("${elasticsearch.queries.mdms.module:muster-roll}")
+    private String esQueriesMdmsModule;
+
+    @Value("${elasticsearch.queries.mdms.master:ElasticsearchQueries}")
+    private String esQueriesMdmsMaster;
 
     @PostConstruct
     public void initialize() {

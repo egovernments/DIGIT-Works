@@ -42,6 +42,14 @@ public class IndividualEntry {
     @Min(0)
     private BigDecimal actualTotalAttendance = null;
 
+    @JsonProperty("totalRegistrations")
+    @Min(0)
+    private Long totalRegistrations = null;
+
+    @JsonProperty("totalInterventions")
+    @Min(0)
+    private Long totalInterventions = null;
+
     @JsonProperty("modifiedTotalAttendance")
     @Min(0)
     private BigDecimal modifiedTotalAttendance = null;

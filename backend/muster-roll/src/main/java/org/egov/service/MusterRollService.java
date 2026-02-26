@@ -394,7 +394,7 @@ public class MusterRollService {
         if (isComputeAttendance) {
             RequestInfo requestInfo = musterRollRequest.getRequestInfo();
             musterRollValidator.isValidUser(existingMusterRoll, requestInfo);
-            calculationService.updateAttendance(musterRollRequest,mdmsData);
+            calculationService.updateAttendance(musterRollRequest, mdmsData);
         }
 
         // V2 Intermediate Billing - Capture previous status before workflow update

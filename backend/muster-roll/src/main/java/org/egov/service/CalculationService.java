@@ -53,17 +53,22 @@ public class CalculationService {
 
     private final ObjectMapper mapper;
 
+    private final MusterRollAnalyticsService analyticsService;
+
     private int halfDayNumHours;
     private int fullDayNumHours;
     private boolean isRoundOffHours;
 
     @Autowired
-    public CalculationService(RestTemplate restTemplate, MusterRollServiceConfiguration config, MdmsUtil mdmsUtils, MusterRollServiceUtil musterRollServiceUtil, ObjectMapper mapper) {
+    public CalculationService(RestTemplate restTemplate, MusterRollServiceConfiguration config, MdmsUtil mdmsUtils,
+                              MusterRollServiceUtil musterRollServiceUtil, ObjectMapper mapper,
+                              MusterRollAnalyticsService analyticsService) {
         this.restTemplate = restTemplate;
         this.config = config;
         this.mdmsUtils = mdmsUtils;
         this.musterRollServiceUtil = musterRollServiceUtil;
         this.mapper = mapper;
+        this.analyticsService = analyticsService;
     }
 
 
@@ -209,6 +214,13 @@ public class CalculationService {
             individualEntries.add(individualEntry);
         }
 
+        // Enrich individual entries with total registrations and interventions from Elasticsearch
+        try {
+            analyticsService.enrichIndividualMetrics(musterRoll, individuals, musterRollRequest.getRequestInfo());
+        } catch (Exception e) {
+            log.error("CalculationService::createAttendance::Failed to enrich individual metrics from ES, continuing without metrics", e);
+        }
+
         if(config.isAddBankAccountDetails()) {
             List<BankAccount> bankAccounts = fetchBankaccountDetails(individualIds, musterRollRequest.getRequestInfo(),musterRoll.getTenantId());
             if (bankAccounts == null) {
@@ -348,7 +360,9 @@ public class CalculationService {
 
     /**
      * Re-calculates the per day attendance and attendance aggregate for each individual on update
+     *
      * @param musterRollRequest
+     * @param existingMusterRoll
      *
      */
     public void updateAttendance(MusterRollRequest musterRollRequest, Object mdmsData) {

@@ -51,7 +51,7 @@ public class AttendanceExcelGenerator {
 
             // Set fixed column widths (headless-safe approach)
             // First 11 columns are fixed (S.No, Name, Phone, Role, Team Code, User ID, Enroll, De-enroll, Marker, Present, Modified)
-            int[] fixedColumnWidths = {8, 25, 15, 15, 12, 15, 15, 15, 12, 12, 12};
+            int[] fixedColumnWidths = {8, 25, 15, 15, 12, 15, 15, 15, 12, 12, 12, 15};
             for (int i = 0; i < fixedColumnWidths.length; i++) {
                 sheet.setColumnWidth(i, fixedColumnWidths[i] * 256);
             }
@@ -173,6 +173,7 @@ public class AttendanceExcelGenerator {
                 setCellValue(row, columnIndex++, detail.getAttendanceMarker(), dataStyle);
                 setCellValue(row, columnIndex++, detail.getPresentDaysOriginal(), dataStyle);
                 setCellValue(row, columnIndex++, detail.getPresentDaysModified(), dataStyle);
+                setCellValue(row, columnIndex++, detail.getTotalPerformance(), dataStyle);
 
                 // Dynamic attendance columns
                 if (reportData.getCampaignDates() != null && detail.getDailyAttendance() != null) {

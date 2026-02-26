@@ -42,16 +42,18 @@ public class AttendanceReportConstants {
     public static final String HEADER_ATTENDANCE_MARKER = "ATTENDANCE_REPORT_HEADER_ATTENDANCE_MARKER";
     public static final String HEADER_PRESENT_DAYS_ORIGINAL = "ATTENDANCE_REPORT_HEADER_PRESENT_DAYS_ORIGINAL";
     public static final String HEADER_PRESENT_DAYS_MODIFIED = "ATTENDANCE_REPORT_HEADER_PRESENT_DAYS_MODIFIED";
+    public static final String TOTAL_PERFORMANCE_HEADER = "ATTENDANCE_REPORT_TOTAL_PERFORMANCE_HEADER";
 
     // Ordered key array — used by excelGenerator (replaces old FIXED_COLUMN_HEADERS)
     public static final String[] FIXED_COLUMN_HEADER_KEYS = {
             HEADER_SL_NO, HEADER_NAME, HEADER_PHONE, HEADER_ROLE,
             HEADER_TEAM_CODE, HEADER_USER_ID, HEADER_ENROLLMENT_DATE,
             HEADER_DE_ENROLLMENT_DATE, HEADER_ATTENDANCE_MARKER,
-            HEADER_PRESENT_DAYS_ORIGINAL, HEADER_PRESENT_DAYS_MODIFIED
+            HEADER_PRESENT_DAYS_ORIGINAL, HEADER_PRESENT_DAYS_MODIFIED,
+            TOTAL_PERFORMANCE_HEADER
     };
 
-    public static final int FIXED_COLUMNS_COUNT = 11;
+    public static final int FIXED_COLUMNS_COUNT = 13;
 
     // Localization fallback locale
     public static final String LOCALIZATION_DEFAULT_LOCALE = "en_IN";
@@ -63,14 +65,9 @@ public class AttendanceReportConstants {
     public static final String MUSTER_NOT_FOUND = "MUSTER_NOT_FOUND";
     public static final String MUSTER_NOT_APPROVED = "MUSTER_NOT_APPROVED";
     public static final String ATTENDANCE_REGISTER_NOT_FOUND = "ATTENDANCE_REGISTER_NOT_FOUND";
-    public static final String REPORT_GENERATION_FAILED = "REPORT_GENERATION_FAILED";
-    public static final String FILESTORE_UPLOAD_FAILED = "FILESTORE_UPLOAD_FAILED";
 
     // Attendance Status Values
     public static final String ATTENDANCE_STATUS_PRESENT = "PRESENT";
     public static final String ATTENDANCE_STATUS_ABSENT = "ABSENT";
 
-    // Kafka Topics
-    public static final String GENERATE_ATTENDANCE_REPORT_TOPIC = "generate-attendance-report";
-    public static final String ATTENDANCE_REPORT_UPDATE_TOPIC = "attendance-report-update";
 }

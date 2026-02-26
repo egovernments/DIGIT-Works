@@ -246,7 +246,7 @@ public class AttendanceReportGeneratorService {
         // Generate campaign dates
         List<Long> campaignDates = generateCampaignDates(startDate, endDate);
 
-        // Build attendance details
+        // Build attendance details (metrics are already on IndividualEntry from CalculationService)
         List<AttendanceReportDetail> details = buildAttendanceDetails(musterRoll, register, campaignDates,
                 tenantId, requestInfo);
 
@@ -297,6 +297,10 @@ public class AttendanceReportGeneratorService {
                 .filter(s -> AttendanceReportConstants.ATTENDANCE_STATUS_PRESENT.equalsIgnoreCase(s))
                 .count();
 
+        // Use metrics already populated on IndividualEntry from CalculationService
+        long totalRegistrations = entry.getTotalRegistrations() != null ? entry.getTotalRegistrations() : 0L;
+        long totalInterventions = entry.getTotalInterventions() != null ? entry.getTotalInterventions() : 0L;
+
         return AttendanceReportDetail.builder()
                 .serialNumber(serialNumber)
                 .individualId(entry.getIndividualId())
@@ -311,6 +315,7 @@ public class AttendanceReportGeneratorService {
                 .presentDaysOriginal(presentDays)
                 .presentDaysModified(presentDays)
                 .dailyAttendance(dailyAttendance)
+                .totalPerformance(totalInterventions)
                 .build();
     }
 
