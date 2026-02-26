@@ -36,7 +36,7 @@ public class Consumer {
         this.attendanceRegisterService = attendanceRegisterService;
     }
 
-    @KafkaListener(topics = "${organisation.contact.details.update.topic}")
+    @KafkaListener(topicPattern = "(${attendance.kafka.tenant.id.pattern}){0,1}${organisation.contact.details.update.topic}")
     public void updateAttendanceStaff(Map<String, Object> consumerRecord,
                                       @Header(KafkaHeaders.RECEIVED_TOPIC) String topic){
         try {
@@ -52,7 +52,7 @@ public class Consumer {
      * @param consumerRecord
      * @param topic
      */
-    @KafkaListener(topics = "${contracts.revision.topic}")
+    @KafkaListener(topicPattern = "(${attendance.kafka.tenant.id.pattern}){0,1}${contracts.revision.topic}")
     public void updateEndDate(Map<String, Object> consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
             JsonNode attendanceContractRevisionRequest = objectMapper.convertValue(consumerRecord, JsonNode.class);
