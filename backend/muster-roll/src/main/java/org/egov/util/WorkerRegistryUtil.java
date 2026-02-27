@@ -40,7 +40,8 @@ public class WorkerRegistryUtil {
     public Map<String, IndividualWorker> getWorkers(RequestInfo requestInfo, String tenantId, List<String> individualIds) {
         Map<String, IndividualWorker> individualWorkersMap = new HashMap<>();
         if(!enabled || CollectionUtils.isEmpty(individualIds)) return individualWorkersMap;
-        WorkerSearch workerSearch = WorkerSearch.builder().tenantId(tenantId).individualId(individualIds).build();
+        List<String> uniqueIndividualIds = individualIds.stream().distinct().toList();
+        WorkerSearch workerSearch = WorkerSearch.builder().tenantId(tenantId).individualId(uniqueIndividualIds).build();
 
         WorkerSearchRequest request = WorkerSearchRequest.builder().workerSearch(workerSearch).requestInfo(requestInfo).build();
         StringBuilder uri = new StringBuilder(host).append(searchPath).append("?tenantId=").append(tenantId);
@@ -48,6 +49,6 @@ public class WorkerRegistryUtil {
 
         List<IndividualWorker> workers = Optional.ofNullable(response.getWorkers()).orElse(new ArrayList<>());
 
-        return workers.stream().collect(Collectors.toMap(IndividualWorker::getIndividualId, worker -> worker));
+        return workers.stream().collect(Collectors.toMap(worker -> worker.getIndividualIds().stream().findFirst().get(), worker -> worker, (w1, w2) -> w1));
     }
 }

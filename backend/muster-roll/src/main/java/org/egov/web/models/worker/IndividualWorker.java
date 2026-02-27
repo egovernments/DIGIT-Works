@@ -9,6 +9,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.egov.common.contract.models.AuditDetails;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,9 +23,8 @@ public class IndividualWorker {
     @Size(min = 2, max = 64)
     protected String id;
 
-    @JsonProperty("individualId")
-    @Size(min = 2, max = 64)
-    protected String individualId;
+    @JsonProperty("individualIds")
+    private List<String> individualIds;
 
     @JsonProperty("tenantId")
     @NotNull
