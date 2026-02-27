@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -270,11 +271,6 @@ public class AttendanceReportGeneratorService {
         // Generate campaign dates
         List<Long> campaignDates = generateCampaignDates(startDate, endDate);
 
-        LocalDate start = new Date(startDate).toInstant().atZone(ZoneId.systemDefault())
-                .toLocalDate();
-        LocalDate end = new Date(endDate).toInstant().atZone(ZoneId.systemDefault())
-                .toLocalDate();
-
         // Build attendance details (metrics are already on IndividualEntry from CalculationService)
         List<AttendanceReportDetail> details = buildAttendanceDetails(musterRoll, register, campaignDates,
                 tenantId, requestInfo);
@@ -285,10 +281,8 @@ public class AttendanceReportGeneratorService {
                 .musterRollNumber(musterRoll.getMusterRollNumber())
                 .campaignName(register.getName())
                 .campaignCode(register.getServiceCode())
-                .startDate(start.atStartOfDay(ZoneId.of(AttendanceReportConstants.REPORT_TIMEZONE)).toInstant()
-                        .toEpochMilli())
-                .endDate(end.atStartOfDay(ZoneId.of(AttendanceReportConstants.REPORT_TIMEZONE)).toInstant()
-                        .toEpochMilli())
+                .startDate(startDate)
+                .endDate(endDate)
                 .totalAttendees(details.size())
                 .totalDays(campaignDates.size())
                 .attendanceDetails(details)
@@ -406,7 +400,7 @@ public class AttendanceReportGeneratorService {
         long daysBetween = ChronoUnit.DAYS.between(start, end) + 1;
         for (long i = 0; i < daysBetween; i++) {
             LocalDate date = start.plusDays(i);
-            long dateMillis = date.atStartOfDay(ZoneId.of(AttendanceReportConstants.REPORT_TIMEZONE)).toInstant()
+            long dateMillis = date.atStartOfDay().toInstant(ZoneOffset.UTC)
                     .toEpochMilli();
             dates.add(dateMillis);
         }
