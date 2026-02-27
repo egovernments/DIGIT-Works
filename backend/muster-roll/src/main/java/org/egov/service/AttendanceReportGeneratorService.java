@@ -270,6 +270,11 @@ public class AttendanceReportGeneratorService {
         // Generate campaign dates
         List<Long> campaignDates = generateCampaignDates(startDate, endDate);
 
+        LocalDate start = new Date(startDate).toInstant().atZone(ZoneId.systemDefault())
+                .toLocalDate();
+        LocalDate end = new Date(endDate).toInstant().atZone(ZoneId.systemDefault())
+                .toLocalDate();
+
         // Build attendance details (metrics are already on IndividualEntry from CalculationService)
         List<AttendanceReportDetail> details = buildAttendanceDetails(musterRoll, register, campaignDates,
                 tenantId, requestInfo);
@@ -280,8 +285,10 @@ public class AttendanceReportGeneratorService {
                 .musterRollNumber(musterRoll.getMusterRollNumber())
                 .campaignName(register.getName())
                 .campaignCode(register.getServiceCode())
-                .startDate(startDate)
-                .endDate(endDate)
+                .startDate(start.atStartOfDay(ZoneId.of(AttendanceReportConstants.REPORT_TIMEZONE)).toInstant()
+                        .toEpochMilli())
+                .endDate(end.atStartOfDay(ZoneId.of(AttendanceReportConstants.REPORT_TIMEZONE)).toInstant()
+                        .toEpochMilli())
                 .totalAttendees(details.size())
                 .totalDays(campaignDates.size())
                 .attendanceDetails(details)
@@ -341,7 +348,7 @@ public class AttendanceReportGeneratorService {
                 .name(individualWorker.getName())
                 .phoneNumber(individualWorker.getPayeePhoneNumber())
                 .role("") // TODO: fix the role for attendance report
-                .teamCode("")
+                .teamCode(entry.getTag())
                 .userId(individualWorker.getId())
                 .enrollmentDate(null)
                 .deEnrollmentDate(null)
@@ -391,9 +398,9 @@ public class AttendanceReportGeneratorService {
             return dates;
         }
 
-        LocalDate start = new Date(startDate).toInstant().atZone(ZoneId.of(AttendanceReportConstants.REPORT_TIMEZONE))
+        LocalDate start = new Date(startDate).toInstant().atZone(ZoneId.systemDefault())
                 .toLocalDate();
-        LocalDate end = new Date(endDate).toInstant().atZone(ZoneId.of(AttendanceReportConstants.REPORT_TIMEZONE))
+        LocalDate end = new Date(endDate).toInstant().atZone(ZoneId.systemDefault())
                 .toLocalDate();
 
         long daysBetween = ChronoUnit.DAYS.between(start, end) + 1;
