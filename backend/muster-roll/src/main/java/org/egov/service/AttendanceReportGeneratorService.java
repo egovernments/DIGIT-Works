@@ -244,12 +244,25 @@ public class AttendanceReportGeneratorService {
         Long endDate;
 
         try {
-            BillingPeriod period = objectMapper.readValue(objectMapper.writeValueAsString(musterRoll.getAdditionalDetails()), BillingPeriod.class);
-            startDate = period.getPeriodStartDate();
-            endDate = period.getPeriodEndDate();
-        } catch (JsonProcessingException e) {
+            if (musterRoll.getAdditionalDetails() != null) {
+                JsonNode rootNode = objectMapper.valueToTree(musterRoll.getAdditionalDetails());
+                JsonNode billingNode = rootNode.get("billingPeriod");
+                if (billingNode != null && !billingNode.isNull()) {
+                    BillingPeriod period = objectMapper.convertValue(
+                            billingNode,
+                            BillingPeriod.class
+                    );
+                    startDate = period.getPeriodStartDate();
+                    endDate = period.getPeriodEndDate();
+
+                } else {
+                    throw new IllegalStateException("billingPeriod not present in additionalDetails");
+                }
+            } else {
+                throw new IllegalStateException("additionalDetails is null");
+            }
+        } catch (Exception e) {
             log.error("failed to parse billing period for the muster roll. falling back to muster roll startdate, enddate", e);
-            // Calculate date range
             startDate = musterRoll.getStartDate() != null ? musterRoll.getStartDate().longValue() : null;
             endDate = musterRoll.getEndDate() != null ? musterRoll.getEndDate().longValue() : null;
         }
