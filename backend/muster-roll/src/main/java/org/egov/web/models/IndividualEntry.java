@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.validation.constraints.Size;
 import org.egov.common.contract.models.AuditDetails;
 import org.springframework.validation.annotation.Validated;
 
@@ -63,6 +64,10 @@ public class IndividualEntry {
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails = null;
+
+    @Size(max=64)
+    @JsonProperty("tag")
+    private String tag = null; // represent teamcode to group attendees
 
 
     public IndividualEntry addAttendanceEntriesItem(AttendanceEntry attendanceEntriesItem) {

@@ -1,5 +1,7 @@
 package org.egov.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
@@ -10,12 +12,8 @@ import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.AttendanceReportConstants;
 import org.egov.util.FileStoreUtil;
-import org.egov.web.models.AttendanceEntry;
-import org.egov.web.models.AttendanceRegister;
-import org.egov.web.models.AttendanceRegisterResponse;
-import org.egov.web.models.IndividualEntry;
-import org.egov.web.models.MusterRoll;
-import org.egov.web.models.MusterRollSearchCriteria;
+import org.egov.util.WorkerRegistryUtil;
+import org.egov.web.models.*;
 import org.egov.web.models.report.AttendanceReportData;
 import org.egov.web.models.report.AttendanceReportDetail;
 import org.egov.web.models.report.ReportGenerationRequest;
@@ -27,6 +25,7 @@ import org.egov.web.models.report.ReportStatus;
 import org.egov.repository.MusterRollReportRepository;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.util.LocalizationUtil;
+import org.egov.web.models.worker.IndividualWorker;
 import org.egov.works.services.common.models.attendance.AttendanceRegisterSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,6 +56,7 @@ public class AttendanceReportGeneratorService {
     private final RestTemplate restTemplate;
     private final MusterRollReportRepository musterRollReportRepository;
     private final LocalizationUtil localizationUtil;
+    private final WorkerRegistryUtil workerRegistryUtil;
 
     @Autowired
     public AttendanceReportGeneratorService(
@@ -68,7 +68,7 @@ public class AttendanceReportGeneratorService {
             MusterRollServiceConfiguration config,
             ObjectMapper objectMapper, RestTemplate restTemplate,
             MusterRollReportRepository musterRollReportRepository,
-            LocalizationUtil localizationUtil) {
+            LocalizationUtil localizationUtil, WorkerRegistryUtil workerRegistryUtil) {
         this.musterRollRepository = musterRollRepository;
         this.serviceRequestRepository = serviceRequestRepository;
         this.excelGenerator = excelGenerator;
@@ -79,6 +79,7 @@ public class AttendanceReportGeneratorService {
         this.restTemplate = restTemplate;
         this.musterRollReportRepository = musterRollReportRepository;
         this.localizationUtil = localizationUtil;
+        this.workerRegistryUtil = workerRegistryUtil;
     }
 
     public void initiateReportGeneration(String musterRollId, String tenantId,
@@ -239,9 +240,19 @@ public class AttendanceReportGeneratorService {
                     "Attendance register not found with id: " + musterRoll.getRegisterId());
         }
 
-        // Calculate date range
-        Long startDate = musterRoll.getStartDate() != null ? musterRoll.getStartDate().longValue() : null;
-        Long endDate = musterRoll.getEndDate() != null ? musterRoll.getEndDate().longValue() : null;
+        Long startDate;
+        Long endDate;
+
+        try {
+            BillingPeriod period = objectMapper.readValue(objectMapper.writeValueAsString(musterRoll.getAdditionalDetails()), BillingPeriod.class);
+            startDate = period.getPeriodStartDate();
+            endDate = period.getPeriodEndDate();
+        } catch (JsonProcessingException e) {
+            log.error("failed to parse billing period for the muster roll. falling back to muster roll startdate, enddate", e);
+            // Calculate date range
+            startDate = musterRoll.getStartDate() != null ? musterRoll.getStartDate().longValue() : null;
+            endDate = musterRoll.getEndDate() != null ? musterRoll.getEndDate().longValue() : null;
+        }
 
         // Generate campaign dates
         List<Long> campaignDates = generateCampaignDates(startDate, endDate);
@@ -277,8 +288,16 @@ public class AttendanceReportGeneratorService {
             return details;
         }
 
+        List<String> individualIds = Optional.of(musterRoll.getIndividualEntries()).orElse(new ArrayList<>())
+                .stream().map(IndividualEntry::getIndividualId).toList();
+        Map<String, IndividualWorker> individualWorkerMap = workerRegistryUtil.getWorkers(requestInfo, tenantId, individualIds);
+
+//        Map<String, String> individualTeam
+
+        //TODO: fetch attendees to update register report details
+
         for (IndividualEntry entry : musterRoll.getIndividualEntries()) {
-            AttendanceReportDetail detail = buildAttendanceDetail(entry, register, campaignDates, serialNumber++,
+            AttendanceReportDetail detail = buildAttendanceDetail(individualWorkerMap, entry, register, campaignDates, serialNumber++,
                     tenantId, requestInfo);
             details.add(detail);
         }
@@ -286,11 +305,13 @@ public class AttendanceReportGeneratorService {
         return details;
     }
 
-    private AttendanceReportDetail buildAttendanceDetail(IndividualEntry entry, AttendanceRegister register,
+    private AttendanceReportDetail buildAttendanceDetail(Map<String, IndividualWorker> individualWorkerMap, IndividualEntry entry, AttendanceRegister register,
             List<Long> campaignDates, int serialNumber, String tenantId, RequestInfo requestInfo) {
 
         // Build daily attendance map
         Map<String, String> dailyAttendance = buildDailyAttendanceMap(entry, register, campaignDates);
+
+        IndividualWorker individualWorker = individualWorkerMap.getOrDefault(entry.getIndividualId(), new IndividualWorker());
 
         // Count present days
         int presentDays = (int) dailyAttendance.values().stream()
@@ -304,11 +325,11 @@ public class AttendanceReportGeneratorService {
         return AttendanceReportDetail.builder()
                 .serialNumber(serialNumber)
                 .individualId(entry.getIndividualId())
-                .name("")
-                .phoneNumber("")
-                .role("")
+                .name(individualWorker.getName())
+                .phoneNumber(individualWorker.getPayeePhoneNumber())
+                .role("") // TODO: fix the role for attendance report
                 .teamCode("")
-                .userId("")
+                .userId(individualWorker.getId())
                 .enrollmentDate(null)
                 .deEnrollmentDate(null)
                 .attendanceMarker("")

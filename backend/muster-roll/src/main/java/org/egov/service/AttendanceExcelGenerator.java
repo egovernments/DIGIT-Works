@@ -114,9 +114,10 @@ public class AttendanceExcelGenerator {
 
         String campaignPattern = getLocalized(localizedMessages,
                 AttendanceReportConstants.REPORT_CAMPAIGN_INFO_KEY);
-        String campaignInfo = String.format(campaignPattern,
-                reportData.getCampaignName(),
-                reportData.getMusterRollId());
+        String campaignInfo = campaignPattern;
+//        String campaignInfo = String.format(campaignPattern,
+//                reportData.getCampaignName(),
+//                reportData.getMusterRollId());
         infoCell2.setCellValue(campaignInfo);
         infoCell2.setCellStyle(subHeaderStyle);
         sheet.addMergedRegion(new CellRangeAddress(2, 2, 0,

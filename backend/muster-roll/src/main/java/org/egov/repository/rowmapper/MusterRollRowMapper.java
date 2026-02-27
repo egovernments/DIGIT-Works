@@ -90,6 +90,7 @@ public class MusterRollRowMapper implements ResultSetExtractor<List<MusterRoll>>
         BigDecimal modifiedtotalAttendance = rs.getBigDecimal("modifiedTotalAttendance");
         Long totalInterventions = rs.getLong("totalInterventions");
         Long totalRegistrations = rs.getLong("totalRegistrations");
+        String teamcode = rs.getString("tag");
 
         String createdby = rs.getString("indCreatedBy");
         String lastmodifiedby = rs.getString("indModifiedBy");
@@ -107,7 +108,11 @@ public class MusterRollRowMapper implements ResultSetExtractor<List<MusterRoll>>
                     .actualTotalAttendance(actualTotalAttendance)
                     .totalInterventions(totalInterventions)
                     .totalRegistrations(totalRegistrations)
-                    .modifiedTotalAttendance(modifiedtotalAttendance).additionalDetails(additionalDetails).auditDetails(auditDetails).build();
+                    .modifiedTotalAttendance(modifiedtotalAttendance)
+                    .additionalDetails(additionalDetails)
+                    .tag(teamcode)
+                    .auditDetails(auditDetails)
+                    .build();
 
             if (!individualMap.containsKey(id)) {
                 individualMap.put(id, individualEntry);

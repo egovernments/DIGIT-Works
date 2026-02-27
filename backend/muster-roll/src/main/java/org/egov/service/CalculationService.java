@@ -214,6 +214,20 @@ public class CalculationService {
             individualEntries.add(individualEntry);
         }
 
+        // Fetch attendance register & enrich details
+        AttendanceRegisterResponse attendanceRegisterResponse = musterRollServiceUtil.fetchAttendanceRegister(musterRoll, musterRollRequest.getRequestInfo());
+        AttendanceRegister attendanceRegister = attendanceRegisterResponse.getAttendanceRegister().stream().findFirst().orElse(null);
+        if (attendanceRegister != null) {
+            Map<String, IndividualEntry> individualIdAttendeeMap = attendanceRegister.getAttendees().stream()
+                    .collect(Collectors.toMap(IndividualEntry::getIndividualId, entry -> entry));
+            individualEntries.forEach(individualEntry -> {
+                IndividualEntry attendee = individualIdAttendeeMap.get(individualEntry.getIndividualId());
+                individualEntry.setTag(Optional.ofNullable(attendee).orElse(new IndividualEntry()).getTag());
+            });
+        }
+
+        musterRoll.setIndividualEntries(individualEntries);
+
         // Enrich individual entries with total registrations and interventions from Elasticsearch
         try {
             analyticsService.enrichIndividualMetrics(musterRoll, individuals, musterRollRequest.getRequestInfo());
@@ -252,7 +266,6 @@ public class CalculationService {
             }
         }
 
-        musterRoll.setIndividualEntries(individualEntries);
         log.debug("CalculationService::createAttendance::Individuals::size::"+musterRoll.getIndividualEntries().size());
 
     }
