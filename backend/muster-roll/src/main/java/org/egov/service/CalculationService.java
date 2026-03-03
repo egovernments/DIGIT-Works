@@ -223,17 +223,30 @@ public class CalculationService {
             individualEntries.forEach(individualEntry -> {
                 IndividualEntry attendee = individualIdAttendeeMap.get(individualEntry.getIndividualId());
                 individualEntry.setTag(Optional.ofNullable(attendee).orElse(new IndividualEntry()).getTag());
+                if (!CollectionUtils.isEmpty(individuals)) {
+                    Individual individual = individuals.stream()
+                            .filter(ind -> ind.getId().equalsIgnoreCase(individualEntry.getIndividualId())).findFirst()
+                            .orElse(null);
+
+                    if (individual != null) {
+                        setAdditionalDetails(individualEntry, individualEntriesFromRequest, mdmsV2Data, individual,
+                                null, isCreate);
+                    }
+
+                }
             });
+            musterRoll.setReferenceId(attendanceRegister.getReferenceId());
+            musterRoll.setIndividualEntries(individualEntries);
+
+            // Enrich individual entries with total registrations and interventions from Elasticsearch
+            try {
+                analyticsService.enrichIndividualMetrics(musterRoll, individuals, musterRollRequest.getRequestInfo());
+            } catch (Exception e) {
+                log.error("CalculationService::createAttendance::Failed to enrich individual metrics from ES, continuing without metrics", e);
+            }
         }
 
-        musterRoll.setIndividualEntries(individualEntries);
 
-        // Enrich individual entries with total registrations and interventions from Elasticsearch
-        try {
-            analyticsService.enrichIndividualMetrics(musterRoll, individuals, musterRollRequest.getRequestInfo());
-        } catch (Exception e) {
-            log.error("CalculationService::createAttendance::Failed to enrich individual metrics from ES, continuing without metrics", e);
-        }
 
         if(config.isAddBankAccountDetails()) {
             List<BankAccount> bankAccounts = fetchBankaccountDetails(individualIds, musterRollRequest.getRequestInfo(),musterRoll.getTenantId());

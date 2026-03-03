@@ -36,6 +36,7 @@ import org.egov.common.contract.models.AuditDetails;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -276,8 +277,10 @@ public class AttendanceReportGeneratorService {
                 tenantId, requestInfo);
 
         // Build report data
-        AttendanceReportData reportData = AttendanceReportData.builder()
+
+        return AttendanceReportData.builder()
                 .musterRollId(musterRoll.getId())
+                .registerNumber(register.getRegisterNumber())
                 .musterRollNumber(musterRoll.getMusterRollNumber())
                 .campaignName(register.getName())
                 .campaignCode(register.getServiceCode())
@@ -288,8 +291,6 @@ public class AttendanceReportGeneratorService {
                 .attendanceDetails(details)
                 .campaignDates(campaignDates)
                 .build();
-
-        return reportData;
     }
 
     private List<AttendanceReportDetail> buildAttendanceDetails(MusterRoll musterRoll, AttendanceRegister register,
@@ -329,29 +330,42 @@ public class AttendanceReportGeneratorService {
 
         // Count present days
         int presentDays = (int) dailyAttendance.values().stream()
-                .filter(s -> AttendanceReportConstants.ATTENDANCE_STATUS_PRESENT.equalsIgnoreCase(s))
+                .filter(AttendanceReportConstants.ATTENDANCE_STATUS_PRESENT::equalsIgnoreCase)
                 .count();
 
         // Use metrics already populated on IndividualEntry from CalculationService
         long totalRegistrations = entry.getTotalRegistrations() != null ? entry.getTotalRegistrations() : 0L;
         long totalInterventions = entry.getTotalInterventions() != null ? entry.getTotalInterventions() : 0L;
 
-        return AttendanceReportDetail.builder()
+        AttendanceReportDetail attendanceReportDetail = AttendanceReportDetail.builder()
                 .serialNumber(serialNumber)
+                .name(register.getName())
+                .registerNumber(register.getRegisterNumber())
                 .individualId(entry.getIndividualId())
                 .name(individualWorker.getName())
                 .phoneNumber(individualWorker.getPayeePhoneNumber())
                 .role("") // TODO: fix the role for attendance report
                 .teamCode(entry.getTag())
                 .userId(individualWorker.getId())
-                .enrollmentDate(null)
-                .deEnrollmentDate(null)
                 .attendanceMarker("")
                 .presentDaysOriginal(presentDays)
                 .presentDaysModified(presentDays)
                 .dailyAttendance(dailyAttendance)
                 .totalPerformance(totalInterventions)
                 .build();
+        if (!CollectionUtils.isEmpty(register.getAttendees())) {
+            IndividualEntry attendee = register.getAttendees()
+                    .stream().filter(ind -> ind.getIndividualId().equals(entry.getIndividualId())).findFirst().orElse(null);
+            if (attendee != null) {
+                attendanceReportDetail.setEnrollmentDate(Optional.ofNullable(attendee.getEnrollmentDate())
+                        .map(BigDecimal::longValue)
+                        .orElse(null));
+                attendanceReportDetail.setDeEnrollmentDate(Optional.ofNullable(attendee.getDenrollmentDate())
+                        .map(BigDecimal::longValue)
+                        .orElse(null));
+            }
+        }
+        return attendanceReportDetail;
     }
 
     private Map<String, String> buildDailyAttendanceMap(IndividualEntry entry, AttendanceRegister register,

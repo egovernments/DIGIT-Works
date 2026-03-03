@@ -63,7 +63,7 @@ public class MusterRollAnalyticsService {
         List<String> userUuids = musterRoll.getIndividualEntries().stream()
                 .map(IndividualEntry::getIndividualId)
                 .map(individualIdToUserUuid::get)
-                .filter(uuid -> uuid != null)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
         if (userUuids.isEmpty()) {
@@ -74,6 +74,7 @@ public class MusterRollAnalyticsService {
         String tenantId = musterRoll.getTenantId();
         Long startDate = musterRoll.getStartDate().longValue();
         Long endDate = musterRoll.getEndDate().longValue();
+        String projectId = musterRoll.getReferenceId();
 
         // Fetch ES query configs from MDMS
         List<ElasticsearchQueryConfig> esQueryConfigs = fetchEsQueryConfigs(requestInfo, tenantId);
@@ -89,12 +90,12 @@ public class MusterRollAnalyticsService {
         // Fetch and map registrations
         Map<String, Long> registrationsByIndividualId = fetchMetricFromEs(
                 registrationsConfig, userUuids, startDate, endDate, tenantId,
-                userUuidToIndividualId, "total_registrations");
+                userUuidToIndividualId, projectId, "total_registrations");
 
         // Fetch and map interventions
         Map<String, Long> interventionsByIndividualId = fetchMetricFromEs(
                 interventionsConfig, userUuids, startDate, endDate, tenantId,
-                userUuidToIndividualId, "total_interventions");
+                userUuidToIndividualId, projectId, "total_interventions");
 
         // Set metrics on individual entries
         for (IndividualEntry entry : musterRoll.getIndividualEntries()) {
@@ -138,7 +139,7 @@ public class MusterRollAnalyticsService {
     private Map<String, Long> fetchMetricFromEs(ElasticsearchQueryConfig queryConfig, List<String> userUuids,
                                                  Long startDate, Long endDate, String tenantId,
                                                  Map<String, String> userUuidToIndividualId,
-                                                 String metricField) {
+                                                 String projectId, String metricField) {
         Map<String, Long> result = new HashMap<>();
         if (queryConfig == null || queryConfig.getQuery() == null || queryConfig.getIndexName() == null) {
             log.warn("MusterRollAnalyticsService::fetchMetricFromEs::No query config for metric: {}", metricField);
@@ -149,10 +150,11 @@ public class MusterRollAnalyticsService {
             // Replace placeholders in the query template
             String userUuidsJson = objectMapper.writeValueAsString(userUuids);
             String query = queryConfig.getQuery()
-                    .replace("{{userUuids}}", userUuidsJson)
-                    .replace("{{startDate}}", String.valueOf(startDate))
-                    .replace("{{endDate}}", String.valueOf(endDate))
-                    .replace("{{tenantId}}", tenantId);
+                    .replace("{{userUuidsPlaceholder}}", userUuidsJson)
+                    .replace("{{projectIdPlaceholder}}", projectId)
+                    .replace("{{startDatePlaceholder}}", String.valueOf(startDate))
+                    .replace("{{endDatePlaceholder}}", String.valueOf(endDate))
+                    .replace("{{tenantIdPlaceholder}}", tenantId);
 
             log.debug("MusterRollAnalyticsService::fetchMetricFromEs::Executing ES query for metric: {} on index: {}",
                     metricField, queryConfig.getIndexName());
