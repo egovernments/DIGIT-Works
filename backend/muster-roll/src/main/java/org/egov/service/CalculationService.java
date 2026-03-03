@@ -223,16 +223,13 @@ public class CalculationService {
             individualEntries.forEach(individualEntry -> {
                 IndividualEntry attendee = individualIdAttendeeMap.get(individualEntry.getIndividualId());
                 individualEntry.setTag(Optional.ofNullable(attendee).orElse(new IndividualEntry()).getTag());
-                if (!CollectionUtils.isEmpty(individuals)) {
-                    Individual individual = individuals.stream()
-                            .filter(ind -> ind.getId().equalsIgnoreCase(individualEntry.getIndividualId())).findFirst()
-                            .orElse(null);
-
-                    if (individual != null) {
-                        setAdditionalDetails(individualEntry, individualEntriesFromRequest, mdmsV2Data, individual,
-                                null, isCreate);
-                    }
-
+                Individual individual = individuals.stream().filter(ind -> ind.getId().equals(individualEntry.getIndividualId())).findFirst().orElse(null);
+                // Enrich role from individual's first non-deleted skill type
+                if (individual != null && individual.getSkills() != null) {
+                    individual.getSkills().stream()
+                            .filter(skill -> skill != null && (skill.getIsDeleted() == null || !skill.getIsDeleted()))
+                            .findFirst()
+                            .ifPresent(skill -> individualEntry.setRole(skill.getType()));
                 }
             });
             musterRoll.setReferenceId(attendanceRegister.getReferenceId());

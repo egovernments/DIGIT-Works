@@ -306,10 +306,6 @@ public class AttendanceReportGeneratorService {
                 .stream().map(IndividualEntry::getIndividualId).toList();
         Map<String, IndividualWorker> individualWorkerMap = workerRegistryUtil.getWorkers(requestInfo, tenantId, individualIds);
 
-//        Map<String, String> individualTeam
-
-        //TODO: fetch attendees to update register report details
-
         for (IndividualEntry entry : musterRoll.getIndividualEntries()) {
             AttendanceReportDetail detail = buildAttendanceDetail(individualWorkerMap, entry, register, campaignDates, serialNumber++,
                     tenantId, requestInfo);
@@ -343,7 +339,7 @@ public class AttendanceReportGeneratorService {
                 .individualId(entry.getIndividualId())
                 .name(individualWorker.getName())
                 .phoneNumber(individualWorker.getPayeePhoneNumber())
-                .role("") // TODO: fix the role for attendance report
+                .role(entry.getRole() != null ? entry.getRole() : "")
                 .teamCode(entry.getTag())
                 .userId(individualWorker.getId())
                 .attendanceMarker("")

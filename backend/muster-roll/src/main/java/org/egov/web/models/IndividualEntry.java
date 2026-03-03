@@ -83,6 +83,10 @@ public class IndividualEntry {
     @JsonProperty("tag")
     private String tag = null; // represent teamcode to group attendees
 
+    @Size(max=128)
+    @JsonProperty("role")
+    private String role = null; // individual's skill type (e.g., REGISTRAR, DISTRIBUTOR)
+
 
     public IndividualEntry addAttendanceEntriesItem(AttendanceEntry attendanceEntriesItem) {
         if (this.attendanceEntries == null) {
