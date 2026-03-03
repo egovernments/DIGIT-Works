@@ -40,7 +40,6 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -371,7 +370,8 @@ public class AttendanceReportGeneratorService {
     private Map<String, String> buildDailyAttendanceMap(IndividualEntry entry, AttendanceRegister register,
             List<Long> campaignDates) {
         Map<String, String> dailyAttendance = new HashMap<>();
-        SimpleDateFormat dateFormatter = new SimpleDateFormat(AttendanceReportConstants.REPORT_DATE_FORMAT);
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(config.getReportDateFormat());
+        dateFormatter.setTimeZone(TimeZone.getTimeZone(config.getReportTimezone()));
 
         // Initialize all days as ABSENT
         for (Long dateMillis : campaignDates) {
@@ -406,15 +406,17 @@ public class AttendanceReportGeneratorService {
             return dates;
         }
 
-        LocalDate start = new Date(startDate).toInstant().atZone(ZoneId.systemDefault())
+        ZoneId reportZone = ZoneId.of(config.getReportTimezone());
+        LocalDate start = new Date(startDate).toInstant().atZone(reportZone)
                 .toLocalDate();
-        LocalDate end = new Date(endDate).toInstant().atZone(ZoneId.systemDefault())
+        LocalDate end = new Date(endDate).toInstant().atZone(reportZone)
                 .toLocalDate();
 
         long daysBetween = ChronoUnit.DAYS.between(start, end) + 1;
         for (long i = 0; i < daysBetween; i++) {
             LocalDate date = start.plusDays(i);
-            long dateMillis = date.atStartOfDay().toInstant(ZoneOffset.UTC)
+            long dateMillis = date.atStartOfDay(reportZone)
+                    .toInstant()
                     .toEpochMilli();
             dates.add(dateMillis);
         }

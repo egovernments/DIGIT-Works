@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 @Slf4j
 @Service
@@ -273,6 +274,7 @@ public class AttendanceExcelGenerator {
         }
         try {
             SimpleDateFormat formatter = new SimpleDateFormat(config.getReportDateFormat());
+            formatter.setTimeZone(TimeZone.getTimeZone(config.getReportTimezone()));
             return formatter.format(new Date(milliseconds));
         } catch (Exception e) {
             log.warn("Error formatting date: {}", e.getMessage());

@@ -53,7 +53,7 @@ public class AttendanceReportConstants {
             TOTAL_PERFORMANCE_HEADER
     };
 
-    public static final int FIXED_COLUMNS_COUNT = 13;
+    public static final int FIXED_COLUMNS_COUNT = 12;
 
     // Localization fallback locale
     public static final String LOCALIZATION_DEFAULT_LOCALE = "en_IN";
