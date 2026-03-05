@@ -149,8 +149,10 @@ public class MusterRollAnalyticsService {
         try {
             // Replace placeholders in the query template
             String userUuidsJson = objectMapper.writeValueAsString(userUuids);
+            String individualIdsJson = objectMapper.writeValueAsString(userUuidToIndividualId.values());
             String query = queryConfig.getQuery()
                     .replace("{{userUuidsPlaceholder}}", userUuidsJson)
+                    .replace("{{individualIdsPlaceholder}}", individualIdsJson)
                     .replace("{{projectIdPlaceholder}}", projectId)
                     .replace("{{startDatePlaceholder}}", String.valueOf(startDate))
                     .replace("{{endDatePlaceholder}}", String.valueOf(endDate))
@@ -158,6 +160,7 @@ public class MusterRollAnalyticsService {
 
             log.debug("MusterRollAnalyticsService::fetchMetricFromEs::Executing ES query for metric: {} on index: {}",
                     metricField, queryConfig.getIndexName());
+            log.debug("MusterRollAnalyticsService::fetchMetricFromEs::Query: {}", query);
 
             String esUrl = config.getElasticSearchHost() + "/" + queryConfig.getIndexName() + "/_search";
             HttpHeaders headers = new HttpHeaders();
