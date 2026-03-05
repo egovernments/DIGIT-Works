@@ -1,6 +1,7 @@
 package org.egov.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.web.models.worker.IndividualWorker;
@@ -15,6 +16,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class WorkerRegistryUtil {
 
@@ -44,11 +46,24 @@ public class WorkerRegistryUtil {
         WorkerSearch workerSearch = WorkerSearch.builder().tenantId(tenantId).individualId(uniqueIndividualIds).build();
 
         WorkerSearchRequest request = WorkerSearchRequest.builder().workerSearch(workerSearch).requestInfo(requestInfo).build();
-        StringBuilder uri = new StringBuilder(host).append(searchPath).append("?tenantId=").append(tenantId);
-        WorkerResponse response = mapper.convertValue(restRepo.fetchResult(uri, request), WorkerResponse.class);
+        List<IndividualWorker> workers = new ArrayList<>();
 
-        List<IndividualWorker> workers = Optional.ofNullable(response.getWorkers()).orElse(new ArrayList<>());
+        try {
+            StringBuilder uri = new StringBuilder(host).append(searchPath).append("?tenantId=").append(tenantId);
+            WorkerResponse response = mapper.convertValue(restRepo.fetchResult(uri, request), WorkerResponse.class);
+            if (response != null && CollectionUtils.isEmpty(response.getWorkers())) {
+                workers.addAll(response.getWorkers());
+            }
+        }
+        catch (Exception e) {
+            log.error("Error while fetching workers from worker registry: ", e);
+        }
 
-        return workers.stream().collect(Collectors.toMap(worker -> worker.getIndividualIds().stream().findFirst().get(), worker -> worker, (w1, w2) -> w1));
+        return workers.stream()
+                .filter(worker -> !CollectionUtils.isEmpty(worker.getIndividualIds()))
+                .collect(Collectors.toMap(
+                        worker -> worker.getIndividualIds().stream().findFirst().get(),
+                        worker -> worker, (w1, w2) -> w1)
+                );
     }
 }
