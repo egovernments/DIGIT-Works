@@ -166,10 +166,11 @@ public class AttendanceExcelGenerator {
                 // Fixed columns
                 setCellValue(row, columnIndex++, detail.getSerialNumber(), dataStyle);
                 setCellValue(row, columnIndex++, detail.getName(), dataStyle);
-                setCellValue(row, columnIndex++, detail.getPhoneNumber(), dataStyle);
-                setCellValue(row, columnIndex++, detail.getRole(), dataStyle);
-                setCellValue(row, columnIndex++, detail.getTeamCode(), dataStyle);
+                setCellValue(row, columnIndex++, detail.getLoginId(), dataStyle);
                 setCellValue(row, columnIndex++, detail.getUserId(), dataStyle);
+                setCellValue(row, columnIndex++, detail.getTeamCode(), dataStyle);
+                setCellValue(row, columnIndex++, detail.getRole(), dataStyle);
+                setCellValue(row, columnIndex++, detail.getPhoneNumber(), dataStyle);
                 setCellValue(row, columnIndex++, formatDate(detail.getEnrollmentDate()), dateDataStyle);
                 setCellValue(row, columnIndex++, formatDate(detail.getDeEnrollmentDate()), dateDataStyle);
                 setCellValue(row, columnIndex++, detail.getAttendanceMarker(), dataStyle);

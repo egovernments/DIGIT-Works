@@ -51,7 +51,7 @@ public class WorkerRegistryUtil {
         try {
             StringBuilder uri = new StringBuilder(host).append(searchPath).append("?tenantId=").append(tenantId);
             WorkerResponse response = mapper.convertValue(restRepo.fetchResult(uri, request), WorkerResponse.class);
-            if (response != null && CollectionUtils.isEmpty(response.getWorkers())) {
+            if (response != null && !CollectionUtils.isEmpty(response.getWorkers())) {
                 workers.addAll(response.getWorkers());
             }
         }

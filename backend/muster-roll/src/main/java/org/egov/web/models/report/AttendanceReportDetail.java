@@ -44,6 +44,9 @@ public class AttendanceReportDetail {
     @JsonProperty("userId")
     private String userId;
 
+    @JsonProperty("loginId")
+    private String loginId;
+
     @JsonProperty("enrollmentDate")
     private Long enrollmentDate;
 
