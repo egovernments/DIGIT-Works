@@ -344,7 +344,7 @@ public class AttendanceReportGeneratorService {
                 .userId(individualWorker.getId())
                 .attendanceMarker("")
                 .presentDaysOriginal(presentDays)
-                .presentDaysModified(presentDays)
+                .presentDaysModified(entry.getModifiedTotalAttendance() != null ? entry.getModifiedTotalAttendance().intValue() : null)
                 .dailyAttendance(dailyAttendance)
                 .totalPerformance(totalInterventions)
                 .build();
