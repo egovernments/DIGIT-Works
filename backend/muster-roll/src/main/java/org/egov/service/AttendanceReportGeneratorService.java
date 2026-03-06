@@ -25,6 +25,8 @@ import org.egov.repository.MusterRollReportRepository;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.web.models.worker.IndividualWorker;
 import org.egov.works.services.common.models.attendance.AttendanceRegisterSearchCriteria;
+import org.egov.works.services.common.models.attendance.StaffPermission;
+import org.egov.works.services.common.models.attendance.StaffType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -38,6 +40,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -300,9 +303,14 @@ public class AttendanceReportGeneratorService {
             return details;
         }
 
-        List<String> individualIds = Optional.of(musterRoll.getIndividualEntries()).orElse(new ArrayList<>())
-                .stream().map(IndividualEntry::getIndividualId).toList();
+        List<String> individualIds = new ArrayList<>(Optional.of(musterRoll.getIndividualEntries()).orElse(new ArrayList<>())
+                .stream().map(IndividualEntry::getIndividualId).toList());
         Map<String, IndividualWorker> individualWorkerMap = workerRegistryUtil.getWorkers(requestInfo, tenantId, individualIds);
+        if (register != null && !CollectionUtils.isEmpty(register.getStaff())) {
+            register.getStaff().forEach(staffPermission -> {
+                individualIds.add(staffPermission.getUserId());
+            });
+        }
         Map<String, Individual> individualMap = individualUtil.fetchIndividualDetailsAsMap(individualIds, requestInfo, tenantId);
 
         for (IndividualEntry entry : musterRoll.getIndividualEntries()) {
@@ -319,6 +327,21 @@ public class AttendanceReportGeneratorService {
 
         // Build daily attendance map
         Map<String, String> dailyAttendance = buildDailyAttendanceMap(entry, register, campaignDates);
+        String attendanceMarkers = null;
+        if (register != null && !CollectionUtils.isEmpty(register.getStaff())) {
+            attendanceMarkers = register.getStaff().stream()
+                    .filter(staffPermission -> StaffType.OWNER.equals(staffPermission.getStaffType()))
+                    .map(StaffPermission::getUserId)
+                    .filter(individualMap::containsKey)
+                    .map(individualId -> Optional.ofNullable(individualMap
+                            .get(individualId))
+                            .map(Individual::getName)
+                            .map(Name::getGivenName)
+                            .orElse(null)
+                    )
+                    .collect(Collectors.joining(","));
+            ;
+        }
 
         IndividualWorker individualWorker = individualWorkerMap.getOrDefault(entry.getIndividualId(), new IndividualWorker());
         Individual individual = individualMap.get(entry.getIndividualId());
@@ -349,7 +372,7 @@ public class AttendanceReportGeneratorService {
                 .teamCode(entry.getTag())
                 .userId(individualWorker.getId())
                 .loginId(Optional.ofNullable(individual).map(Individual::getUserId).orElse(null))
-                .attendanceMarker("")
+                .attendanceMarker(attendanceMarkers)
                 .presentDaysOriginal(presentDays)
                 .presentDaysModified(entry.getModifiedTotalAttendance() != null ? entry.getModifiedTotalAttendance().intValue() : presentDays)
                 .dailyAttendance(dailyAttendance)
