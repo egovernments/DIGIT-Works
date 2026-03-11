@@ -5,7 +5,8 @@ All notable changes to this module will be documented in this file.
 
 ### Changes
 
-- Upgraded tracer library version; new tracer handles `DataAccessException` errors via `@ControllerAdvice`.
+- Upgraded tracer library version; new tracer handles `DataAccessException` errors via `ExceptionAdvise`.
+- Added OpenTelemetry BOM and Instrumentation BOM dependency management.
 
 ## 0.1.0 - 2023-04-17
 
