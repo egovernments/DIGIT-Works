@@ -13,7 +13,7 @@ serviceMaps:
       transactionCodeJsonPath: $.registerNumber
       auditAttributeBasePath: $.attendanceRegister.*
       queryMaps:
-        - query: INSERT INTO public.eg_wms_attendance_register(id,tenantid,registernumber,name,startdate,enddate,status,additionaldetails,createdby,lastmodifiedby,createdtime,lastmodifiedtime,referenceid,servicecode,localitycode,reviewStatus) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+        - query: INSERT INTO public.eg_wms_attendance_register(id,tenantid,registernumber,name,startdate,enddate,status,additionaldetails,createdby,lastmodifiedby,createdtime,lastmodifiedtime,referenceid,servicecode,localitycode,reviewStatus,campaignid) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: $.attendanceRegister.*
           jsonMaps:
             - jsonPath: $.attendanceRegister.*.id
@@ -49,6 +49,8 @@ serviceMaps:
             - jsonPath: $.attendanceRegister.*.localityCode
 
             - jsonPath: $.attendanceRegister.*.reviewStatus
+
+            - jsonPath: $.attendanceRegister.*.campaignId
 
         - query: INSERT INTO public.eg_wms_attendance_staff(id,tenantid,individual_id,register_id,enrollment_date,deenrollment_date,additionaldetails,createdby,lastmodifiedby,createdtime,lastmodifiedtime,stafftype) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: $.attendanceRegister.*.staff.*
@@ -90,7 +92,7 @@ serviceMaps:
       transactionCodeJsonPath: $.registerNumber
       auditAttributeBasePath: $.attendanceRegister.*
       queryMaps:
-        - query: INSERT INTO mz.eg_wms_attendance_register(id,tenantid,registernumber,name,startdate,enddate,status,additionaldetails,createdby,lastmodifiedby,createdtime,lastmodifiedtime,referenceid,servicecode,localitycode,reviewStatus) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+        - query: INSERT INTO mz.eg_wms_attendance_register(id,tenantid,registernumber,name,startdate,enddate,status,additionaldetails,createdby,lastmodifiedby,createdtime,lastmodifiedtime,referenceid,servicecode,localitycode,reviewStatus,campaignid) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: $.attendanceRegister.*
           jsonMaps:
             - jsonPath: $.attendanceRegister.*.id
@@ -126,6 +128,8 @@ serviceMaps:
             - jsonPath: $.attendanceRegister.*.localityCode
 
             - jsonPath: $.attendanceRegister.*.reviewStatus
+
+            - jsonPath: $.attendanceRegister.*.campaignId
 
         - query: INSERT INTO mz.eg_wms_attendance_staff(id,tenantid,individual_id,register_id,enrollment_date,deenrollment_date,additionaldetails,createdby,lastmodifiedby,createdtime,lastmodifiedtime,stafftype) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: $.attendanceRegister.*.staff.*
@@ -622,7 +626,7 @@ serviceMaps:
       transactionCodeJsonPath: $.registerNumber
       auditAttributeBasePath: $.attendanceRegister.*
       queryMaps:
-        - query: UPDATE public.eg_wms_attendance_register set name=?, startdate=?, enddate=?, status=?,additionaldetails=?,lastmodifiedby=?, lastmodifiedtime=?, localitycode=?, reviewStatus=?, period_statuses=? where id=?;
+        - query: UPDATE public.eg_wms_attendance_register set name=?, startdate=?, enddate=?, status=?,additionaldetails=?,lastmodifiedby=?, lastmodifiedtime=?, localitycode=?, reviewStatus=?, period_statuses=?, campaignid=? where id=?;
           basePath: $.attendanceRegister.*
           jsonMaps:
             - jsonPath: $.attendanceRegister.*.name
@@ -648,6 +652,8 @@ serviceMaps:
             - jsonPath: $.attendanceRegister.*.periodStatuses
               type: JSON
               dbType: JSONB
+
+            - jsonPath: $.attendanceRegister.*.campaignId
 
             - jsonPath: $.attendanceRegister.*.id
     - version: 1.0
@@ -661,7 +667,7 @@ serviceMaps:
       transactionCodeJsonPath: $.registerNumber
       auditAttributeBasePath: $.attendanceRegister.*
       queryMaps:
-        - query: UPDATE mz.eg_wms_attendance_register set name=?, startdate=?, enddate=?, status=?,additionaldetails=?,lastmodifiedby=?, lastmodifiedtime=?, localitycode=?, reviewStatus=?, period_statuses=? where id=?;
+        - query: UPDATE mz.eg_wms_attendance_register set name=?, startdate=?, enddate=?, status=?,additionaldetails=?,lastmodifiedby=?, lastmodifiedtime=?, localitycode=?, reviewStatus=?, period_statuses=?, campaignid=? where id=?;
           basePath: $.attendanceRegister.*
           jsonMaps:
             - jsonPath: $.attendanceRegister.*.name
@@ -687,6 +693,8 @@ serviceMaps:
             - jsonPath: $.attendanceRegister.*.periodStatuses
               type: JSON
               dbType: JSONB
+
+            - jsonPath: $.attendanceRegister.*.campaignId
 
             - jsonPath: $.attendanceRegister.*.id
 
@@ -820,3 +828,51 @@ serviceMaps:
             - jsonPath: $.staff.*.auditDetails.lastModifiedTime
 
             - jsonPath: $.staff.*.id
+
+    - version: 1.0
+      description: Soft-delete attendance register (sets status=INACTIVE, isdeleted=true)
+      fromTopic: delete-attendance
+      isTransaction: true
+      isAuditEnabled: true
+      module: ATND
+      objecIdJsonPath: $.id
+      tenantIdJsonPath: $.tenantId
+      transactionCodeJsonPath: $.registerNumber
+      auditAttributeBasePath: $.attendanceRegister.*
+      queryMaps:
+        - query: UPDATE public.eg_wms_attendance_register SET isdeleted=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id=?;
+          basePath: $.attendanceRegister.*
+          jsonMaps:
+            - jsonPath: $.attendanceRegister.*.isDeleted
+
+            - jsonPath: $.attendanceRegister.*.status
+
+            - jsonPath: $.attendanceRegister.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.attendanceRegister.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.attendanceRegister.*.id
+
+    - version: 1.0
+      description: Soft-delete attendance register (sets status=INACTIVE, isdeleted=true) - mz schema
+      fromTopic: mz-delete-attendance
+      isTransaction: true
+      isAuditEnabled: true
+      module: ATND
+      objecIdJsonPath: $.id
+      tenantIdJsonPath: $.tenantId
+      transactionCodeJsonPath: $.registerNumber
+      auditAttributeBasePath: $.attendanceRegister.*
+      queryMaps:
+        - query: UPDATE mz.eg_wms_attendance_register SET isdeleted=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id=?;
+          basePath: $.attendanceRegister.*
+          jsonMaps:
+            - jsonPath: $.attendanceRegister.*.isDeleted
+
+            - jsonPath: $.attendanceRegister.*.status
+
+            - jsonPath: $.attendanceRegister.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.attendanceRegister.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.attendanceRegister.*.id

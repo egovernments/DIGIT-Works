@@ -67,6 +67,9 @@ public class AttendanceRegisterSearchCriteria {
     @JsonProperty("localityCode")
     private String localityCode;
 
+    @JsonProperty("campaignId")
+    private String campaignId;
+
     @JsonProperty("reviewStatus")
     private String reviewStatus;
 

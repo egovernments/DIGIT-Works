@@ -1,6 +1,7 @@
 package org.egov.service;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import digit.models.coremodels.AuditDetails;
 import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +28,7 @@ import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -1004,6 +1006,73 @@ public class AttendanceRegisterService {
             registerIds.add(String.valueOf(attendanceRegister.getId()));
         }
         return registerIds;
+    }
+
+    /**
+     * Soft-delete attendance registers by setting status to INACTIVE.
+     * Publishes the delete event to Kafka; the persister handles the DB UPDATE.
+     *
+     * @param request
+     * @return
+     */
+    public AttendanceRegisterDeleteRequest deleteAttendanceRegister(AttendanceRegisterDeleteRequest request) {
+        List<AttendanceRegister> registersToDelete = request.getAttendanceRegister();
+
+        // Validate: each register must have id and tenantId
+        for (AttendanceRegister register : registersToDelete) {
+            if (ObjectUtils.isEmpty(register.getId())) {
+                throw new CustomException("INVALID_DELETE_REQUEST", "Register id is required for delete");
+            }
+            if (ObjectUtils.isEmpty(register.getTenantId())) {
+                throw new CustomException("INVALID_DELETE_REQUEST", "TenantId is required for delete");
+            }
+        }
+
+        String tenantId = registersToDelete.get(0).getTenantId();
+        List<String> registerIds = registersToDelete.stream()
+                .map(AttendanceRegister::getId)
+                .collect(Collectors.toList());
+
+        // Fetch registers from DB
+        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
+                .requestInfo(request.getRequestInfo()).build();
+        List<AttendanceRegister> registersFromDB = getAttendanceRegisters(requestInfoWrapper, registerIds, tenantId);
+
+        // Build a map for quick lookup
+        Map<String, AttendanceRegister> dbRegisterMap = registersFromDB.stream()
+                .collect(Collectors.toMap(AttendanceRegister::getId, r -> r));
+
+        // Validate each register exists and is ACTIVE
+        for (AttendanceRegister register : registersToDelete) {
+            AttendanceRegister dbRegister = dbRegisterMap.get(register.getId());
+            if (dbRegister == null) {
+                throw new CustomException("REGISTER_NOT_FOUND",
+                        "Attendance register not found for id: " + register.getId());
+            }
+            if (Status.INACTIVE.equals(dbRegister.getStatus())) {
+                throw new CustomException("REGISTER_ALREADY_DELETED",
+                        "Attendance register is already inactive for id: " + register.getId());
+            }
+        }
+
+        // Enrich: set status INACTIVE and update audit details
+        String userUuid = request.getRequestInfo().getUserInfo().getUuid();
+        long currentTime = System.currentTimeMillis();
+        for (AttendanceRegister register : registersToDelete) {
+            AttendanceRegister dbRegister = dbRegisterMap.get(register.getId());
+            register.setStatus(Status.INACTIVE);
+            register.setIsDeleted(true);
+            AuditDetails auditDetails = dbRegister.getAuditDetails();
+            auditDetails.setLastModifiedBy(userUuid);
+            auditDetails.setLastModifiedTime(currentTime);
+            register.setAuditDetails(auditDetails);
+        }
+
+        // Push to delete topic
+        producer.push(tenantId, attendanceServiceConfiguration.getDeleteAttendanceRegisterTopic(), request);
+        log.info("Pushed delete attendance register request to kafka");
+
+        return request;
     }
 
     /**
