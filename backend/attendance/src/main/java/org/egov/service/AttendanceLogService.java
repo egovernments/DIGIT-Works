@@ -32,14 +32,17 @@ public class AttendanceLogService {
 
     private final AttendanceLogRepository attendanceLogRepository;
 
+    private final AttendanceDocumentEventService attendanceDocumentEventService;
+
     @Autowired
-    public AttendanceLogService(AttendanceLogServiceValidator attendanceLogServiceValidator, ResponseInfoFactory responseInfoFactory, AttendanceLogEnrichment attendanceLogEnricher, Producer producer, AttendanceServiceConfiguration config, AttendanceLogRepository attendanceLogRepository) {
+    public AttendanceLogService(AttendanceLogServiceValidator attendanceLogServiceValidator, ResponseInfoFactory responseInfoFactory, AttendanceLogEnrichment attendanceLogEnricher, Producer producer, AttendanceServiceConfiguration config, AttendanceLogRepository attendanceLogRepository, AttendanceDocumentEventService attendanceDocumentEventService) {
         this.attendanceLogServiceValidator = attendanceLogServiceValidator;
         this.responseInfoFactory = responseInfoFactory;
         this.attendanceLogEnricher = attendanceLogEnricher;
         this.producer = producer;
         this.config = config;
         this.attendanceLogRepository = attendanceLogRepository;
+        this.attendanceDocumentEventService = attendanceDocumentEventService;
     }
 
     /**
@@ -58,6 +61,8 @@ public class AttendanceLogService {
         attendanceLogEnricher.enrichAttendanceLogCreateRequest(attendanceLogRequest);
         // Publish the create request to the configured Kafka topic, partitioned by tenantId
         producer.push(tenantId, config.getCreateAttendanceLogTopic(), attendanceLogRequest);
+        // Publish first-signature document events if applicable
+        attendanceDocumentEventService.processFirstSignatureEvents(attendanceLogRequest);
         // Create the response
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendanceLogRequest.getRequestInfo(), true);
         AttendanceLogResponse attendanceLogResponse = AttendanceLogResponse.builder().responseInfo(responseInfo).attendance(attendanceLogRequest.getAttendance()).build();
@@ -102,6 +107,8 @@ public class AttendanceLogService {
         attendanceLogEnricher.enrichAttendanceLogUpdateRequest(attendanceLogRequest);
         // Publish the update request to the Kafka topic, using tenantId for schema and topic resolution
         producer.push(tenantId, config.getUpdateAttendanceLogTopic(), attendanceLogRequest);
+        // Publish first-signature document events if applicable
+        attendanceDocumentEventService.processFirstSignatureEvents(attendanceLogRequest);
         // Create the response
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendanceLogRequest.getRequestInfo(), true);
         AttendanceLogResponse attendanceLogResponse = AttendanceLogResponse.builder().responseInfo(responseInfo).attendance(attendanceLogRequest.getAttendance()).build();

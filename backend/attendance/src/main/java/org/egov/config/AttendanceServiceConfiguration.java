@@ -75,6 +75,9 @@ public class AttendanceServiceConfiguration {
     @Value("${attendance.log.kafka.update.topic}")
     private String updateAttendanceLogTopic;
 
+    @Value("${attendance.log.kafka.first.signature.topic}")
+    private String firstAttendanceLogTopic;
+
     // service integration config
     @Value("${attendance.individual.service.integration.required}")
     private String individualServiceIntegrationRequired;
