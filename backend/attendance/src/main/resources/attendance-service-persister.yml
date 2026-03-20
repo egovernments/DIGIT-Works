@@ -276,13 +276,14 @@ serviceMaps:
       transactionCodeJsonPath: $.registerId
       auditAttributeBasePath:  $.staff.*
       queryMaps:
-        - query: UPDATE eg_wms_attendance_staff set individual_id=?, register_id=?, enrollment_date=?, deenrollment_date=?,additionaldetails=?,lastmodifiedby=?, lastmodifiedtime=? where id=?;
+        - query: UPDATE eg_wms_attendance_staff set individual_id=?, register_id=?, enrollment_date=?, deenrollment_date=?, stafftype=?, additionaldetails=?,lastmodifiedby=?, lastmodifiedtime=? where id=?;
           basePath: $.staff.*
           jsonMaps:
             - jsonPath: $.staff.*.userId
             - jsonPath: $.staff.*.registerId
             - jsonPath: $.staff.*.enrollmentDate
             - jsonPath: $.staff.*.denrollmentDate
+            - jsonPath: $.staff.*.staffType
             - jsonPath: $.staff.*.additionalDetails
               type: JSON
               dbType: JSONB

@@ -14,11 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import org.egov.util.HRMSUtil;
+
 import java.math.BigDecimal;
 import java.util.*;
 
-import static org.egov.util.AttendanceServiceConstants.MASTER_TENANTS;
-import static org.egov.util.AttendanceServiceConstants.MDMS_TENANT_MODULE_NAME;
+import static org.egov.util.AttendanceServiceConstants.*;
+
 
 
 @Component
@@ -139,6 +141,110 @@ public class StaffServiceValidator {
                 throw new CustomException("STAFF", "Duplicate Staff Objects present in request");
             }
             uniqueIds.add(staffPermission.getRegisterId() + staffPermission.getUserId());
+        }
+    }
+
+    public void validateStaffUpdateRequestParameters(StaffPermissionRequest staffPermissionRequest) {
+        Set<String> userRoles = HRMSUtil.getUserRoleCodes(staffPermissionRequest.getRequestInfo());
+        if (!userRoles.contains(ROLE_CAMPAIGN_MANAGER)) {
+            throw new CustomException(ERROR_KEY_UNAUTHORIZED, ERROR_MSG_UNAUTHORIZED_UPDATE_STAFF);
+        }
+
+        List<StaffPermission> staffPermissionList = staffPermissionRequest.getStaff();
+        Map<String, String> errorMap = new HashMap<>();
+
+        if (staffPermissionList == null || staffPermissionList.isEmpty()) {
+            throw new CustomException("STAFF", "Staff is mandatory");
+        }
+
+        String baseTenantId = staffPermissionList.get(0).getTenantId();
+        for (StaffPermission staffPermission : staffPermissionList) {
+            if (StringUtils.isBlank(staffPermission.getId())) {
+                errorMap.put("ID", "id is mandatory for update");
+            }
+            if (StringUtils.isBlank(staffPermission.getRegisterId())) {
+                errorMap.put("REGISTER_ID", "Register id is mandatory");
+            }
+            if (StringUtils.isBlank(staffPermission.getUserId())) {
+                errorMap.put("USER_ID", "User id is mandatory");
+            }
+            if (StringUtils.isBlank(staffPermission.getTenantId())) {
+                errorMap.put("TENANT_ID", "Tenant id is mandatory");
+            }
+        }
+
+        if (!errorMap.isEmpty()) {
+            throw new CustomException(errorMap);
+        }
+
+        validateTenantIds(staffPermissionRequest, baseTenantId);
+
+        // no duplicate (registerId + userId)
+        Set<String> uniqueKeys = new HashSet<>();
+        for (StaffPermission staffPermission : staffPermissionList) {
+            String key = staffPermission.getRegisterId() + staffPermission.getUserId();
+            if (!uniqueKeys.add(key)) {
+                throw new CustomException("STAFF", "Duplicate Staff Objects present in update request");
+            }
+        }
+
+        validateMDMSAndRequestInfoForStaff(staffPermissionRequest);
+    }
+
+    public void validateStaffOnUpdate(StaffPermissionRequest staffPermissionRequest,
+                                      List<StaffPermission> staffFromDB,
+                                      List<AttendanceRegister> registers) {
+        List<StaffPermission> staffFromRequest = staffPermissionRequest.getStaff();
+
+        // Build lookup maps
+        Map<String, StaffPermission> dbById = staffFromDB.stream()
+                .collect(java.util.stream.Collectors.toMap(StaffPermission::getId, s -> s));
+        Map<String, AttendanceRegister> registerById = registers.stream()
+                .collect(java.util.stream.Collectors.toMap(AttendanceRegister::getId, r -> r));
+
+        for (StaffPermission staff : staffFromRequest) {
+            StaffPermission dbRecord = dbById.get(staff.getId());
+            if (dbRecord == null) {
+                throw new CustomException(ERROR_KEY_INVALID_ID, ERROR_MSG_STAFF_NOT_FOUND_IN_DB_PREFIX + staff.getId());
+            }
+
+            AttendanceRegister register = registerById.get(staff.getRegisterId());
+            if (register == null) {
+                continue;
+            }
+
+            // Validate enrollmentDate if provided
+            if (staff.getEnrollmentDate() != null) {
+                if (staff.getEnrollmentDate().compareTo(register.getStartDate()) < 0) {
+                    throw new CustomException(ERROR_KEY_ENROLLMENT_DATE,
+                            "Enrollment date for staff " + staff.getUserId() + ERROR_MSG_ENROLLMENT_DATE_BEFORE_REGISTER_START);
+                }
+                // Only enrollmentDate updated, denrollmentDate unchanged — new enrollment must not exceed existing de-enrollment
+                if (staff.getDenrollmentDate() == null && dbRecord.getDenrollmentDate() != null) {
+                    if (staff.getEnrollmentDate().compareTo(dbRecord.getDenrollmentDate()) > 0) {
+                        throw new CustomException(ERROR_KEY_ENROLLMENT_DATE,
+                                "Enrollment date for staff " + staff.getUserId() + ERROR_MSG_ENROLLMENT_DATE_EXCEEDS_DENROLLMENT);
+                    }
+                }
+            }
+
+            // Resolve effective enrollmentDate: if both dates are being updated, compare new vs new only
+            BigDecimal effectiveEnrollmentDate = staff.getEnrollmentDate() != null
+                    ? staff.getEnrollmentDate()
+                    : dbRecord.getEnrollmentDate();
+
+            // Validate denrollmentDate if provided
+            if (staff.getDenrollmentDate() != null) {
+                if (staff.getDenrollmentDate().compareTo(effectiveEnrollmentDate) < 0) {
+                    throw new CustomException(ERROR_KEY_DENROLLMENT_DATE,
+                            "De-enrollment date for staff " + staff.getUserId() + ERROR_MSG_DENROLLMENT_DATE_BEFORE_ENROLLMENT);
+                }
+                if (register.getEndDate() != null &&
+                        staff.getDenrollmentDate().compareTo(register.getEndDate()) > 0) {
+                    throw new CustomException(ERROR_KEY_DENROLLMENT_DATE,
+                            "De-enrollment date for staff " + staff.getUserId() + ERROR_MSG_DENROLLMENT_DATE_AFTER_REGISTER_END);
+                }
+            }
         }
     }
 
