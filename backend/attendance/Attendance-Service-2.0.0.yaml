@@ -233,6 +233,30 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorRes'
 
+  /attendance/staff/v1/_update:
+    post:
+      description: Update enrollment details (enrollmentDate, denrollmentDate, staffType) for an enrolled staff member. Requires CAMPAIGN_MANAGER role.
+      tags:
+        - Register Permission
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StaffPermissionRequest'
+      responses:
+        '202':
+          description: 'Update staff permission request accepted'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaffPermissionResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
   /attendance/attendee/v1/_create:
     post:
       description: Users with permission to access the register can enroll / denroll attendees.
@@ -274,6 +298,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AttendeeDeleteResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /attendance/attendee/v1/_update:
+    post:
+      description: Update enrollment details (enrollmentDate, denrollmentDate) for an enrolled attendee. Requires CAMPAIGN_MANAGER role.
+      tags:
+        - Individual Enrollment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttendeeCreateRequest'
+      responses:
+        '202':
+          description: 'Update attendee request accepted'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendeeUpdateResponse'
         '400':
           description: Invalid input.
           content:
@@ -515,7 +563,7 @@ components:
     AttendanceRegisterRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: '#/components/schemas/RequestInfo'
         attendanceRegister:
           type: array
@@ -528,7 +576,7 @@ components:
     AttendanceRegisterResponse:
       type: object
       properties:
-        responseInfo:
+        ResponseInfo:
           $ref: '#/components/schemas/ResponseInfo'
         attendanceRegister:
           type: array
@@ -569,7 +617,7 @@ components:
     AttendeeCreateRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: '#/components/schemas/RequestInfo'
         attendees:
           type: array
@@ -586,7 +634,7 @@ components:
     AttendeeCreateResponse:
       type: object
       properties:
-        responseInfo:
+        ResponseInfo:
           $ref: '#/components/schemas/ResponseInfo'
         attendees:
           type: array
@@ -597,7 +645,7 @@ components:
     AttendeeDeleteRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: '#/components/schemas/RequestInfo'
         attendees:
           type: array
@@ -614,7 +662,18 @@ components:
     AttendeeDeleteResponse:
       type: object
       properties:
-        responseInfo:
+        ResponseInfo:
+          $ref: '#/components/schemas/ResponseInfo'
+        attendees:
+          type: array
+          maxItems: 500
+          items:
+            $ref: '#/components/schemas/IndividualEntry'
+
+    AttendeeUpdateResponse:
+      type: object
+      properties:
+        ResponseInfo:
           $ref: '#/components/schemas/ResponseInfo'
         attendees:
           type: array
@@ -663,7 +722,7 @@ components:
     StaffPermissionRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: '#/components/schemas/RequestInfo'
         staff:
           type: array
@@ -679,7 +738,7 @@ components:
     StaffPermissionResponse:
       type: object
       properties:
-        responseInfo:
+        ResponseInfo:
           $ref: '#/components/schemas/ResponseInfo'
         staff:
           type: array
@@ -737,7 +796,7 @@ components:
     AttendanceLogRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: '#/components/schemas/RequestInfo'
         attendance:
           type: array
@@ -748,7 +807,7 @@ components:
     AttendanceLogResponse:
       type: object
       properties:
-        responseInfo:
+        ResponseInfo:
           $ref: '#/components/schemas/ResponseInfo'
         attendance:
           type: array
@@ -759,7 +818,7 @@ components:
     RequestInfoWrapper:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: '#/components/schemas/RequestInfo'
 
     # DIGIT Common Schemas (following eGov standards)
