@@ -154,10 +154,17 @@ public class AttendanceServiceValidator {
             }
 
             // If the user who is trying to update the register is not associated with the register, throw error that the user does not have permission to modify the attendance register
+            // Exception: CAMPAIGN_MANAGER can update if register start date has not yet passed
+            Set<String> userRoles = HRMSUtil.getUserRoleCodes(attendanceRegisterRequest.getRequestInfo());
+            boolean isCampaignManager = userRoles.contains(ROLE_CAMPAIGN_MANAGER);
+            boolean isRegisterNotStarted = registerFromDB.getStartDate() != null
+                    && registerFromDB.getStartDate().compareTo(BigDecimal.valueOf(System.currentTimeMillis())) > 0;
+            boolean isCampaignManagerAllowed = isCampaignManager && isRegisterNotStarted;
+
             if (registerFromDB.getStaff() != null) {
                 Set<String> staffUserIdsFromDB = registerFromDB.getStaff().stream().map(StaffPermission:: getUserId).collect(Collectors.toSet());
                 String individualId = individualServiceUtil.getIndividualDetailsFromUserId(attendanceRegisterRequest.getRequestInfo().getUserInfo().getId(),attendanceRegisterRequest.getRequestInfo(), registerFromRequest.getTenantId()).get(0).getId();
-                if (!staffUserIdsFromDB.contains(individualId)) {
+                if (!staffUserIdsFromDB.contains(individualId) && !isCampaignManagerAllowed) {
                     log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
                     throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
                 }
@@ -185,7 +192,7 @@ public class AttendanceServiceValidator {
                         throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
                     }
                 }
-            } else if(registerFirstStaffInsertEnabled) {
+            } else if(registerFirstStaffInsertEnabled && !isCampaignManagerAllowed) {
                 log.error("The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
                 throw new CustomException("INVALID_REGISTER_MODIFY", "The user " + attendanceRegisterRequest.getRequestInfo().getUserInfo().getUuid() + " does not have permission to modify the register " + registerFromDB.getId());
             }
