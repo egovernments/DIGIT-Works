@@ -657,22 +657,6 @@ public class AttendeeServiceValidator {
                 .map(IndividualEntry::getRegisterId)
                 .collect(Collectors.toList());
 
-        //creating a register Id to First Staff Map
-        Map<String, StaffPermission> registerIdToFirstStaffMap;
-        if(config.isRegisterFirstOwnerStaffEnabled()) {
-            log.info("Using first owner staff mapping strategy");
-            registerIdToFirstStaffMap = staffService.fetchRegisterIdtoFirstOwnerStaffMap(tenantId,registerIds);
-        }
-        else {
-            log.info("Using first staff mapping strategy");
-            registerIdToFirstStaffMap = staffService.fetchRegisterIdtoFirstStaffMap(tenantId,registerIds);
-        }
-
-        if(registerIdToFirstStaffMap.isEmpty()) {
-            log.error("No staff mapping found for registers: {}", registerIds);
-            throw new CustomException("STAFF_MAPPING_NOT_FOUND", "No staff mapping found for the registers");
-        }
-
         //Fetching all the attendees's uuids for hrms search
         List<String> userUuids = attendeeCreateRequest.getAttendees().stream()
                 .map(IndividualEntry::getIndividualId)
@@ -684,6 +668,22 @@ public class AttendeeServiceValidator {
         Map<String, Employee> individualIdVsEmployeeMap = employeeList.stream()
                 .collect(Collectors.toMap(Employee::getUuid, emp -> emp));
 
+        // Only fetch staff mapping when reportingTo validation is needed (registerFirstStaffInsertEnabled=true)
+        Map<String, StaffPermission> registerIdToFirstStaffMap = null;
+        if (config.getRegisterFirstStaffInsertEnabled()) {
+            if (config.isRegisterFirstOwnerStaffEnabled()) {
+                log.info("Using first owner staff mapping strategy");
+                registerIdToFirstStaffMap = staffService.fetchRegisterIdtoFirstOwnerStaffMap(tenantId, registerIds);
+            } else {
+                log.info("Using first staff mapping strategy");
+                registerIdToFirstStaffMap = staffService.fetchRegisterIdtoFirstStaffMap(tenantId, registerIds);
+            }
+            if (registerIdToFirstStaffMap.isEmpty()) {
+                log.error("No staff mapping found for registers: {}", registerIds);
+                throw new CustomException("STAFF_MAPPING_NOT_FOUND", "No staff mapping found for the registers");
+            }
+        }
+
         //looping through attendees for validating their details
         for (IndividualEntry entry : attendeeCreateRequest.getAttendees()) {
             try {
@@ -692,23 +692,27 @@ public class AttendeeServiceValidator {
                     throw new CustomException("HRMS_EMPLOYEE_NOT_FOUND", "Employee not present in HRMS for the individual ID - " + entry.getIndividualId());
                 }
 
-                //fetch reportingTo uuids from employees assignments
-                List<String> reportingToList = individualIdVsEmployeeMap.get(entry.getIndividualId()).getAssignments().stream()
-                        .map(Assignment::getReportingTo)
-                        .filter(reportingTo -> reportingTo != null && !reportingTo.isEmpty())
-                        .collect(Collectors.toList());
+                // Validate reportingTo only when registerFirstStaffInsertEnabled=true
+                if (config.getRegisterFirstStaffInsertEnabled()) {
+                    //fetch reportingTo uuids from employees assignments
+                    List<String> reportingToList = individualIdVsEmployeeMap.get(entry.getIndividualId()).getAssignments().stream()
+                            .map(Assignment::getReportingTo)
+                            .filter(reportingTo -> reportingTo != null && !reportingTo.isEmpty())
+                            .collect(Collectors.toList());
 
-                //fetch the first staff's User Id
-                String reportersUuid = registerIdToFirstStaffMap.get(entry.getRegisterId()).getUserId();
+                    //fetch the first staff's User Id
+                    String reportersUuid = registerIdToFirstStaffMap.get(entry.getRegisterId()).getUserId();
 
-                List<Employee> reportersEmployeeList = hrmsUtil.getEmployee(tenantId, Collections.singletonList(reportersUuid), requestInfo);
-                if(reportersEmployeeList.isEmpty())
-                    throw new CustomException("FAILED_TO_FETCH_REPORTERS_UUID", "Failed to fetch reporters hrms uuid for userserviceId - " + reportersUuid);
+                    List<Employee> reportersEmployeeList = hrmsUtil.getEmployee(tenantId, Collections.singletonList(reportersUuid), requestInfo);
+                    if (reportersEmployeeList.isEmpty())
+                        throw new CustomException("FAILED_TO_FETCH_REPORTERS_UUID", "Failed to fetch reporters hrms uuid for userserviceId - " + reportersUuid);
 
-                if (!reportingToList.contains(reportersEmployeeList.get(0).getUser().getUserServiceUuid())) {
-                    //throw validation error if attendee's reportingTo is not First Staff of the Register
-                    throw new CustomException("REPORTING_STAFF_INCORRECT_FOR_ATTENDEE", "Attendees reporting uuid does not match with the register owner uuid");
+                    if (!reportingToList.contains(reportersEmployeeList.get(0).getUser().getUserServiceUuid())) {
+                        //throw validation error if attendee's reportingTo is not First Staff of the Register
+                        throw new CustomException("REPORTING_STAFF_INCORRECT_FOR_ATTENDEE", "Attendees reporting uuid does not match with the register owner uuid");
+                    }
                 }
+
                 validIndividualEntries.add(entry);
             }
             catch (CustomException e) {
