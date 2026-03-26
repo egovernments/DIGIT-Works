@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   version: 2.0.0
   title: Attendance Service
-  description: 'Payments V2: period-aware attendance register search, persisted periodStatuses, Kafka-driven muster status sync, and backward-compatible reviewStatus.'
+  description: 'Payments V2: period-aware attendance register search, persisted periodStatuses, Kafka-driven muster status sync, and backward-compatible reviewStatus. Includes v1.3.0 tag support, bulk log operations, and staff/attendee update APIs.'
 
 paths:
 
@@ -86,6 +86,14 @@ paths:
           in: query
           schema:
             type: string
+        - name: referenceIds
+          description: List of Reference Ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+            maxItems: 100
         - name: serviceCode
           description: Service Code
           in: query
@@ -106,6 +114,9 @@ paths:
           in: query
           schema:
             type: string
+            enum:
+              - ACTIVE
+              - INACTIVE
         - name: attendeeId
           description: Get all the registers where the given Individual was registered.
           in: query
@@ -121,6 +132,11 @@ paths:
           in: query
           schema:
             type: string
+        - name: campaignNumber
+          description: Get all the registers associated with the given campaign number
+          in: query
+          schema:
+            type: string
         - name: isChildrenRequired
           description: Get all the registers including child Project registers
           in: query
@@ -131,6 +147,19 @@ paths:
           in: query
           schema:
             type: string
+        - name: tags
+          description: Filter registers by attendee tags (v1.3.0+)
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: includeTaggedAttendees
+          description: Include tagged attendees in the register results (v1.3.0+, default false)
+          in: query
+          schema:
+            type: boolean
+            default: false
         - name: billingPeriodId
           description: Payments V2 - filter registers overlapping the billing period; use value `AGGREGATE` to map to legacy aggregate billing search.
           in: query
@@ -155,7 +184,7 @@ paths:
               - lastModifiedTime
         - name: sortOrder
           in: query
-          description: sorting order of the search resulsts
+          description: sorting order of the search results
           schema:
             type: string
             enum:
@@ -163,12 +192,12 @@ paths:
               - desc
         - name: limit
           in: query
-          description: limit on the resulsts
+          description: limit on the results
           schema:
             type: number
         - name: offset
           in: query
-          description: offset index of the overall search resulsts
+          description: offset index of the overall search results
           schema:
             type: number
       responses:
@@ -178,6 +207,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AttendanceRegisterResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /attendance/v1/_delete:
+    post:
+      tags:
+        - Attendance Register
+      description: Soft-delete an attendance register.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttendanceRegisterDeleteRequest'
+      responses:
+        '202':
+          description: 'Request to delete the register has been accepted.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceRegisterDeleteResponse'
         '400':
           description: Invalid input.
           content:
@@ -329,6 +382,30 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorRes'
 
+  /attendance/attendee/v1/_updateTag:
+    post:
+      description: Update the tag field for enrolled attendees to support grouping (v1.3.0+). Requires CAMPAIGN_MANAGER role.
+      tags:
+        - Individual Enrollment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttendeeUpdateTagRequest'
+      responses:
+        '202':
+          description: 'Update attendee tag request accepted'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendeeUpdateTagResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
   /attendance/log/v1/_create:
     post:
       tags:
@@ -353,6 +430,30 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorRes'
 
+  /attendance/log/v1/bulk/_create:
+    post:
+      tags:
+        - Attendance Log
+      description: Bulk creates attendance log entries asynchronously via Kafka. Returns HTTP 202 with ResponseInfo only.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttendanceLogRequest'
+      responses:
+        '202':
+          description: 'Bulk Attendance Records Create Request accepted. Processing asynchronously.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseInfo'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
   /attendance/log/v1/_update:
     post:
       tags:
@@ -370,6 +471,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AttendanceLogResponse'
+        '400':
+          description: Invalid input.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /attendance/log/v1/bulk/_update:
+    post:
+      tags:
+        - Attendance Log
+      description: Bulk updates attendance log entries asynchronously via Kafka. Returns HTTP 202 with ResponseInfo only.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttendanceLogRequest'
+      responses:
+        '202':
+          description: 'Bulk Attendance Records Update Request accepted. Processing asynchronously.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseInfo'
         '400':
           description: Invalid input.
           content:
@@ -414,7 +539,15 @@ paths:
             maxItems: 100
         - name: ids
           in: query
-          description: List of ids
+          description: List of attendance log ids
+          schema:
+            type: array
+            items:
+              type: string
+            maxItems: 100
+        - name: clientReferenceId
+          in: query
+          description: List of client reference ids
           schema:
             type: array
             items:
@@ -428,6 +561,31 @@ paths:
             enum:
               - ACTIVE
               - INACTIVE
+        - name: sortBy
+          in: query
+          description: Sort the search results by fields
+          schema:
+            type: string
+            enum:
+              - lastModifiedTime
+        - name: sortOrder
+          in: query
+          description: Sorting order of the search results
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+        - name: limit
+          in: query
+          description: Limit on the results
+          schema:
+            type: number
+        - name: offset
+          in: query
+          description: Offset index of the overall search results
+          schema:
+            type: number
       responses:
         '200':
           description: 'Complete table of attendance entries.'
@@ -486,7 +644,11 @@ components:
           enum:
             - ACTIVE
             - INACTIVE
-          description: Stores if the register is active or not. Inactive registers can be archieved later.
+          description: Stores if the register is active or not. Inactive registers can be archived later.
+        isDeleted:
+          type: boolean
+          description: Soft-delete flag for the register.
+          readOnly: true
         staff:
           readOnly: true
           type: array
@@ -507,6 +669,10 @@ components:
           type: string
           example: HIERARCHYTEST_MO_13_02_01_01_23_LIPIRANI
           description: A reference to the boundary code associated with the attendance register, representing the geographical or administrative area the register is bounded by.
+        campaignNumber:
+          type: string
+          example: CAMP-2026-001
+          description: Human-readable campaign number associated with the register.
         reviewStatus:
           type: string
           example: PENDINGFORAPPROVAL
@@ -529,26 +695,7 @@ components:
           maxItems: 100
           description: Payments V2 - persisted per-period statuses received from muster-roll Kafka events.
           items:
-            type: object
-            properties:
-              periodId:
-                type: string
-                description: Billing period identifier (links to eg_wms_billing_period.id)
-              status:
-                type: string
-                enum:
-                  - NOT_CREATED
-                  - PENDING
-                  - APPROVED
-                  - REJECTED
-                  - SENT_BACK
-                description: Muster roll status for this period
-              musterRollId:
-                type: string
-                description: Muster roll identifier (links to eg_wms_muster_roll.id). Null when status is NOT_CREATED.
-              lastModifiedTime:
-                type: number
-                description: Epoch millis when this status was last updated.
+            $ref: '#/components/schemas/RegisterPeriodStatus'
         auditDetails:
           $ref: '#/components/schemas/AuditDetails'
         additionalDetails:
@@ -583,6 +730,70 @@ components:
           maxItems: 100
           items:
             $ref: '#/components/schemas/AttendanceRegister'
+        totalCount:
+          type: integer
+          format: int64
+          description: Total count of matching registers (for pagination)
+          readOnly: true
+        statusCount:
+          type: object
+          description: Count of registers grouped by status
+          additionalProperties:
+            type: integer
+            format: int64
+          readOnly: true
+
+    AttendanceRegisterDeleteRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: '#/components/schemas/RequestInfo'
+        attendanceRegister:
+          type: array
+          maxItems: 100
+          items:
+            allOf:
+              - $ref: '#/components/schemas/AttendanceRegister'
+              - description: 'Entries of the attendance register to be deleted.'
+
+    AttendanceRegisterDeleteResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: '#/components/schemas/ResponseInfo'
+        attendanceRegister:
+          type: array
+          maxItems: 100
+          items:
+            $ref: '#/components/schemas/AttendanceRegister'
+
+    RegisterPeriodStatus:
+      type: object
+      description: Payments V2 - per-period muster-roll status persisted from Kafka events.
+      properties:
+        periodId:
+          type: string
+          description: Billing period identifier (links to eg_wms_billing_period.id)
+        status:
+          type: string
+          enum:
+            - NOT_CREATED
+            - PENDING
+            - APPROVED
+            - REJECTED
+            - SENT_BACK
+          description: Muster roll status for this period
+        musterRollId:
+          type: string
+          description: Muster roll identifier (links to eg_wms_muster_roll.id). Null when status is NOT_CREATED.
+        lastModifiedTime:
+          type: integer
+          format: int64
+          description: Epoch millis when this status was last updated.
+      required:
+        - periodId
+        - status
+        - lastModifiedTime
 
     IndividualEntry:
       type: object
@@ -608,11 +819,20 @@ components:
           description: The timestamp of the date on which the individual is enrolled onto the register. Defaults to current time.
         denrollmentDate:
           type: number
-          description: The timestamp of the date on which the individual is denrolled from the register. Defaults to current time.
+          description: The timestamp of the date on which the individual is denrolled from the register.
+        tag:
+          type: string
+          description: Tag for grouping attendees (v1.3.0+). Configurable group label assigned to the attendee.
+          maxLength: 64
         tenantId:
           type: string
           example: pb.amritsar
           description: Tenant Id
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+        additionalDetails:
+          type: object
+          description: Any additional details of the attendee enrollment
 
     AttendeeCreateRequest:
       type: object
@@ -681,6 +901,36 @@ components:
           items:
             $ref: '#/components/schemas/IndividualEntry'
 
+    AttendeeUpdateTagRequest:
+      type: object
+      description: Request to update the tag field for enrolled attendees (v1.3.0+).
+      properties:
+        RequestInfo:
+          $ref: '#/components/schemas/RequestInfo'
+        attendees:
+          type: array
+          minItems: 1
+          maxItems: 500
+          items:
+            allOf:
+              - $ref: '#/components/schemas/IndividualEntry'
+              - required:
+                  - registerId
+                  - individualId
+                  - tenantId
+                  - tag
+
+    AttendeeUpdateTagResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: '#/components/schemas/ResponseInfo'
+        attendees:
+          type: array
+          maxItems: 500
+          items:
+            $ref: '#/components/schemas/IndividualEntry'
+
     StaffPermission:
       type: object
       properties:
@@ -701,13 +951,11 @@ components:
           example: pb.amritsar
           description: Tenant Id to which the staff belongs
         enrollmentDate:
-          readOnly: true
           type: number
-          description: The timestamp at which the permission is granted. It is set to the current time when the create api is called.
+          description: The timestamp at which the permission is granted. Set to current time on create; can be updated via _update API.
         denrollmentDate:
-          readOnly: true
           type: number
-          description: The timestamp at which the access permission is revoked. It is set to the current time when the delete api is called.
+          description: The timestamp at which the access permission is revoked. Set to current time on delete; can be updated via _update API.
         staffType:
           type: string
           description: Defines the role assigned to a staff member within the attendance register. Roles determine the level of access and responsibilities.
@@ -715,6 +963,11 @@ components:
             - EDITOR
             - OWNER
             - APPROVER
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+        additionalDetails:
+          type: object
+          description: Any additional details of the staff enrollment
       required:
         - registerId
         - userId
@@ -754,6 +1007,9 @@ components:
           format: uuid
           description: System generated unique identifier for the entry
           readOnly: true
+        clientReferenceId:
+          type: string
+          description: Client-generated reference identifier for idempotent operations
         registerId:
           type: string
           description: Unique identifier of the register
@@ -784,8 +1040,13 @@ components:
           maxItems: 20
           items:
             $ref: '#/components/schemas/Document'
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+        clientAuditDetails:
+          $ref: '#/components/schemas/AuditDetails'
         additionalDetails:
           type: object
+          description: Any additional details of the attendance log
       required:
         - registerId
         - individualId
@@ -975,13 +1236,13 @@ components:
           $ref: '#/components/schemas/ResponseInfo'
         Errors:
           type: array
-          description: Error response array corresponding to Request Object array. In case of single object submission or Software Software related errors where each object in request/response can not be identified then this array will have only single error.
+          description: Error response array corresponding to Request Object array. In case of single object submission or Software related errors where each object in request/response can not be identified then this array will have only single error.
           items:
             $ref: '#/components/schemas/Error'
 
     Error:
       type: object
-      description: Error object will be returned as a part of reponse body in conjunction with ResponseInfo as part of ErrorResponse whenever the request processing status in the ResponseInfo is FAILED.
+      description: Error object will be returned as a part of response body in conjunction with ResponseInfo as part of ErrorResponse whenever the request processing status in the ResponseInfo is FAILED.
       properties:
         code:
           type: string
@@ -1040,6 +1301,12 @@ components:
           type: string
           description: The unique id of the document.
           maxLength: 64
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+          description: Status of the document. Defaults to ACTIVE.
         additionalDetails:
           type: object
           description: Json object to capture any extra information which is not accommodated by model

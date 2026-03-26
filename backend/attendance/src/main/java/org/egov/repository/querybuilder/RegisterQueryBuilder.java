@@ -45,7 +45,7 @@ public class RegisterQueryBuilder {
             "reg.localitycode, " +
             "reg.reviewstatus, " +
             "reg.period_statuses, " +
-            "reg.campaignid, " +
+            "reg.campaignnumber, " +
             "reg.isdeleted " +
             "FROM %s.eg_wms_attendance_register reg ";
 
@@ -183,10 +183,10 @@ public class RegisterQueryBuilder {
             preparedStmtList.add(reviewStatus);
         }
 
-        if (!ObjectUtils.isEmpty(searchCriteria.getCampaignId())) {
+        if (!ObjectUtils.isEmpty(searchCriteria.getCampaignNumber())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" reg.campaignid = ? ");
-            preparedStmtList.add(searchCriteria.getCampaignId());
+            query.append(" reg.campaignnumber = ? ");
+            preparedStmtList.add(searchCriteria.getCampaignNumber());
         }
 
         addOrderByClause(query, searchCriteria);

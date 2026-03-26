@@ -13,7 +13,7 @@ serviceMaps:
       transactionCodeJsonPath: $.registerNumber
       auditAttributeBasePath: $.attendanceRegister.*
       queryMaps:
-        - query: INSERT INTO eg_wms_attendance_register(id,tenantid,registernumber,name,startdate,enddate,status,additionaldetails,createdby,lastmodifiedby,createdtime,lastmodifiedtime,referenceid,servicecode,localitycode,reviewStatus,campaignid) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+        - query: INSERT INTO eg_wms_attendance_register(id,tenantid,registernumber,name,startdate,enddate,status,additionaldetails,createdby,lastmodifiedby,createdtime,lastmodifiedtime,referenceid,servicecode,localitycode,reviewStatus,campaignnumber) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: $.attendanceRegister.*
           jsonMaps:
             - jsonPath: $.attendanceRegister.*.id
@@ -34,7 +34,7 @@ serviceMaps:
             - jsonPath: $.attendanceRegister.*.serviceCode
             - jsonPath: $.attendanceRegister.*.localityCode
             - jsonPath: $.attendanceRegister.*.reviewStatus
-            - jsonPath: $.attendanceRegister.*.campaignId
+            - jsonPath: $.attendanceRegister.*.campaignNumber
         - query: INSERT INTO eg_wms_attendance_staff(id,tenantid,individual_id,register_id,enrollment_date,deenrollment_date,additionaldetails,createdby,lastmodifiedby,createdtime,lastmodifiedtime,stafftype) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: $.attendanceRegister.*.staff.*
           jsonMaps:
@@ -221,7 +221,7 @@ serviceMaps:
       transactionCodeJsonPath: $.registerNumber
       auditAttributeBasePath: $.attendanceRegister.*
       queryMaps:
-        - query: UPDATE eg_wms_attendance_register set name=?, startdate=?, enddate=?, status=?,additionaldetails=?,lastmodifiedby=?, lastmodifiedtime=?, localitycode=?, reviewStatus=?, period_statuses=?, campaignid=? where id=?;
+        - query: UPDATE eg_wms_attendance_register set name=?, startdate=?, enddate=?, status=?,additionaldetails=?,lastmodifiedby=?, lastmodifiedtime=?, localitycode=?, reviewStatus=?, period_statuses=?, campaignnumber=? where id=?;
           basePath: $.attendanceRegister.*
           jsonMaps:
             - jsonPath: $.attendanceRegister.*.name
@@ -238,7 +238,7 @@ serviceMaps:
             - jsonPath: $.attendanceRegister.*.periodStatuses
               type: JSON
               dbType: JSONB
-            - jsonPath: $.attendanceRegister.*.campaignId
+            - jsonPath: $.attendanceRegister.*.campaignNumber
             - jsonPath: $.attendanceRegister.*.id
     - version: 1.0
       description: update Attendee
