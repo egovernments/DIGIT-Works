@@ -16,10 +16,12 @@ import org.egov.digit.expense.calculator.web.models.BillingPeriod;
 import org.egov.digit.expense.calculator.web.models.BillingPeriodSearchCriteria;
 import org.egov.digit.expense.calculator.web.models.BillingPeriodSearchRequest;
 import org.egov.digit.expense.calculator.web.models.BillingPeriodSearchResponse;
+import org.egov.digit.expense.calculator.web.models.boundary.BoundaryHierarchyResult;
 import org.egov.digit.expense.calculator.web.models.report.BillReportRequest;
 import org.egov.digit.expense.calculator.web.models.report.ReportBill;
 import org.egov.digit.expense.calculator.web.models.report.ReportBillDetail;
 import org.egov.digit.expense.calculator.web.models.report.ReportGenerationRequest;
+import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.services.common.models.expense.calculator.IndividualEntry;
 import org.egov.works.services.common.models.musterroll.MusterRoll;
@@ -38,8 +40,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static org.egov.digit.expense.calculator.util.BillReportConstraints.*;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.NO_OF_BILL_DETAILS;
-import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.WF_SUBMIT_ACTION_CONSTANT;
+import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.*;
 
 @Slf4j
 @Service
@@ -56,10 +57,11 @@ public class HealthBillReportGenerator {
     private final ExpenseCalculatorService expenseCalculatorService;
     private final ObjectMapper objectMapper;
     private final BillingConfigurationService billingConfigurationService;
+    private final BoundaryService boundaryService;
 
 
     @Autowired
-    public HealthBillReportGenerator(IndividualUtil individualUtil, ExpenseCalculatorUtil expenseCalculatorUtil, BillExcelGenerate billExcelGenerate, ExpenseCalculatorConfiguration config, ProjectUtil projectUtil, LocalizationUtil localizationUtil, PDFServiceUtil pdfServiceUtil, BillUtils billUtils, ExpenseCalculatorService expenseCalculatorService, ObjectMapper objectMapper, BillingConfigurationService billingConfigurationService) {
+    public HealthBillReportGenerator(IndividualUtil individualUtil, ExpenseCalculatorUtil expenseCalculatorUtil, BillExcelGenerate billExcelGenerate, ExpenseCalculatorConfiguration config, ProjectUtil projectUtil, LocalizationUtil localizationUtil, PDFServiceUtil pdfServiceUtil, BillUtils billUtils, ExpenseCalculatorService expenseCalculatorService, ObjectMapper objectMapper, BillingConfigurationService billingConfigurationService, BoundaryService boundaryService) {
         this.individualUtil = individualUtil;
         this.expenseCalculatorUtil = expenseCalculatorUtil;
         this.billExcelGenerate = billExcelGenerate;
@@ -71,6 +73,7 @@ public class HealthBillReportGenerator {
         this.expenseCalculatorService = expenseCalculatorService;
         this.objectMapper = objectMapper;
         this.billingConfigurationService = billingConfigurationService;
+        this.boundaryService = boundaryService;
     }
 
     /**
@@ -134,9 +137,32 @@ public class HealthBillReportGenerator {
      */
     public Bill generateHealthBillReportRequest(BillRequest billRequest) {
         try {
-            log.info("Generating report for bill id: " + billRequest.getBill().getId());
+            log.info("Generating report for bill id: {}", billRequest.getBill().getId());
+
+            ProjectResponse projectResponse = projectUtil.getProjectDetails(
+                    billRequest.getRequestInfo(),
+                    billRequest.getRequestInfo().getUserInfo().getTenantId(),
+                    getReferenceId(billRequest),
+                    billRequest.getBill().getLocalityCode()
+            );
+
+            if (projectResponse == null || projectResponse.getProject() == null) {
+                log.error("Project Response null");
+                throw new CustomException("PROJECT_RESPONSE_NULL", "Project response null");
+            }
+            if (projectResponse.getProject().isEmpty()) {
+                log.error("Project not found");
+                throw new CustomException("PROJECT_NOT_FOUND", "Project not found");
+            }
+
+            String eventName = null;
+            if (projectResponse.getProject().get(0).getName() == null) {
+                eventName = null;
+            } else {
+                eventName = projectResponse.getProject().get(0).getName();
+            }
             // Update the report status to initiated
-            updateReportStatus(billRequest, REPORT_STATUS_INITIATED, null, null, null);
+            updateReportStatus(billRequest, REPORT_STATUS_INITIATED, null, null, null, eventName);
             // Fetch the report bill details
             List<ReportBillDetail> reportBillDetail = getReportBillDetail(billRequest.getRequestInfo(), billRequest.getBill());
             // Enrich the report request
@@ -161,14 +187,31 @@ public class HealthBillReportGenerator {
             log.info("PDF FileStoreId: " + pdfFileStoreId);
             log.info("Excel FileStoreId: " + excelFileStoreId);
             // Update the report status to completed
-            updateReportStatus(billRequest, REPORT_STATUS_COMPLETED, excelFileStoreId, pdfFileStoreId, null);
+            updateReportStatus(billRequest, REPORT_STATUS_COMPLETED, excelFileStoreId, pdfFileStoreId, null, eventName);
+            Map<String, Object> additionalDetails = (Map<String, Object>) billRequest.getBill().getAdditionalDetails();
+            Map<String, Object> reportDetails = (Map<String, Object>) additionalDetails.get("reportDetails");
+            if (reportDetails.get("status") == REPORT_STATUS_COMPLETED) {
+                updateBillBusinessService(billRequest);
+            }
+
             return billRequest.getBill();
         } catch (Exception e) {
             log.error("Error while generating report", e);
-            updateReportStatus(billRequest, REPORT_STATUS_FAILED, null, null, e.getMessage());
+            updateReportStatus(billRequest, REPORT_STATUS_FAILED, null, null, e.getMessage(),null);
             throw new CustomException("REPORT_GENERATION_FAILED", "Error occurred while generating the report. Please check logs or contact support. Original error: " + e.getMessage());
         }
 
+    }
+
+    private void updateBillBusinessService( BillRequest billRequest){
+        Bill bill = billRequest.getBill();
+        if(!bill.getBusinessService().equalsIgnoreCase(PAYMENTS_BILL_BUSINESS_SERVICE)) {
+            Workflow expenseWorkflow1 = Workflow.builder()
+                    .action(WF_CREATE_ACTION_CONSTANT)
+                    .build();
+            log.info("updating business service for bill");
+            billUtils.postUpdateBillDetailStatus(billRequest.getRequestInfo(), bill, expenseWorkflow1);
+        }
     }
 
     /**
@@ -189,7 +232,10 @@ public class HealthBillReportGenerator {
 
         ReportBill reportBill = ReportBill.builder()
                 .totalAmount(billRequest.getBill().getTotalAmount())
-                .reportTitle(config.getReportHeaderTitle())
+                .totalFoodAmount(billRequest.getBill().getTotalFoodAmount())
+                .totalTransportAmount(billRequest.getBill().getTotalTransportAmount())
+                .totalWageAmount(billRequest.getBill().getTotalWageAmount())
+                .reportTitle(billRequest.getBill().getLocalityCode())
                 .createdBy(createdBy)
                 .createdTime(System.currentTimeMillis())
                 .campaignName(null)
@@ -202,7 +248,7 @@ public class HealthBillReportGenerator {
                 .build();
 
         enrichCampaignName(reportBill, billRequest);
-        enrichLocalization(reportBill, billRequest);
+//        enrichLocalization(reportBill, billRequest);
         billRequest.getRequestInfo().setMsgId(getMsgIdWithLocalCode(billRequest.getRequestInfo().getMsgId()));
 
         return BillReportRequest.builder()
@@ -589,13 +635,16 @@ public class HealthBillReportGenerator {
         if (individual != null) {
             reportBillDetail.setIndividualName(individual.getName().getGivenName());
             reportBillDetail.setMobileNumber(individual.getMobileNumber());
+            reportBillDetail.setIdNumber(individual.getName().getFamilyName());
 
             if (individual.getSkills() != null) {
                 for (Skill skill : individual.getSkills()) {
                     if (skill != null && skill.getIsDeleted() != null && !skill.getIsDeleted()) {
                         // Found the first non-deleted skill
                         reportBillDetail.setRole(skill.getType()); // Set the role based on the skill level
-                        break; // Exit the loop once the first non-deleted skill is found
+                        if (skillCodeRateMap != null && skillCodeRateMap.containsKey(skill.getType())) {
+                            break; // Exit the loop once the first non-deleted skill having a rate configured is found
+                        }
                     }
                 }
             }
@@ -728,8 +777,13 @@ public class HealthBillReportGenerator {
      * @param billRequest BillRequest containing the request info and bill
      */
     private void enrichCampaignName(ReportBill reportBill, BillRequest billRequest) {
-        ProjectResponse projectResponse = projectUtil.getProjectDetails(billRequest.getRequestInfo(), billRequest.getBill().getTenantId(), billRequest.getBill().getReferenceId(), billRequest.getBill().getLocalityCode());
-        if (projectResponse != null && projectResponse.getProject() != null && projectResponse.getProject().size() > 0) {
+        ProjectResponse projectResponse = projectUtil.getProjectDetails(
+                billRequest.getRequestInfo(),
+                billRequest.getBill().getTenantId(),
+                getReferenceId(billRequest),
+                billRequest.getBill().getLocalityCode()
+        );
+        if (projectResponse != null && projectResponse.getProject() != null && !projectResponse.getProject().isEmpty()) {
             reportBill.setCampaignName(projectResponse.getProject().get(0).getName());
         }
     }
@@ -752,13 +806,39 @@ public class HealthBillReportGenerator {
                 return;
             }
             reportBill.setCampaignName(localization.getOrDefault(reportBill.getCampaignName(), reportBill.getCampaignName()));
+            String campaignName = reportBill.getCampaignName();
+            String boundaryCode = reportBill.getReportTitle();
+            String localizedBoundary = localization.getOrDefault(boundaryCode, boundaryCode);
+            String startingConstant = localization.getOrDefault(REPORT_FIRST_CONSTANT,REPORT_FIRST_CONSTANT);
+            String middleConstant = localization.getOrDefault(REPORT_MIDDLE_CONSTANT, REPORT_MIDDLE_CONSTANT);
+            String newReportTitle = startingConstant + " " + campaignName + " " + middleConstant + " " + localizedBoundary;
+            reportBill.setReportTitle(newReportTitle);
             for (ReportBillDetail reportBillDetail : reportBill.getReportBillDetails()) {
-                reportBillDetail.setLocality(localization.getOrDefault(reportBillDetail.getLocality(), reportBillDetail.getLocality()));
+                BoundaryHierarchyResult boundaryHierarchyResult = boundaryService.getBoundaryHierarchyWithLocalityCode(reportBillDetail.getLocality(),billRequest.getRequestInfo().getUserInfo().getTenantId());
+                if(boundaryHierarchyResult != null) {
+                    Map<String, String> boundaryMap = boundaryHierarchyResult.getBoundaryHierarchy();
+                    // Check if "COUNTRY" is the only entry
+                    if (boundaryMap.size() == 1 && boundaryMap.containsKey("COUNTRY")) {
+                        reportBillDetail.setLocality(boundaryMap.get("COUNTRY")); // Set COUNTRY if it's the only value
+                    } else {
+                        // Remove COUNTRY if other values are present
+                        String filteredLocality = boundaryMap.entrySet().stream()
+                                .filter(entry -> !"COUNTRY".equalsIgnoreCase(entry.getKey()))  // Exclude COUNTRY if others exist
+                                .map(Map.Entry::getValue)  // Get only values
+                                .collect(Collectors.joining(" / ")); // Join as "/" separated string
+
+                        reportBillDetail.setLocality(filteredLocality);
+                    }
+                }
+                else{
+                    log.warn("No boundary hierarchy found for locality code {} setting NA as fallback", reportBillDetail.getLocality());
+                    reportBillDetail.setLocality("NA");
+                }
                 reportBillDetail.setRole(localization.getOrDefault(reportBillDetail.getRole(), reportBillDetail.getRole()));
             }
         }
     }
-    
+
     /**
      * Updates the report status of the given bill request.
      * IMPORTANT: This method preserves existing V2 metadata (billingPeriodId, periodNumber, etc.)
@@ -770,7 +850,7 @@ public class HealthBillReportGenerator {
      * @param pdfReportId    the id of the pdf report
      * @param errorMessage   the error message if the report generation failed
      */
-    private void updateReportStatus(BillRequest billRequest, String status, String excelReportId, String pdfReportId, String errorMessage) {
+    private void updateReportStatus(BillRequest billRequest, String status, String excelReportId, String pdfReportId, String errorMessage, String eventName) {
         Bill bill = billRequest.getBill();
 
         // Safely convert additionalDetails to Map (handles both Map and JsonNode types)
@@ -806,6 +886,7 @@ public class HealthBillReportGenerator {
         reportDetails.put(PDF_REPORT_ID_KEY, pdfReportId);
         reportDetails.put(EXCEL_REPORT_ID_KEY, excelReportId);
         reportDetails.put(ERROR_ERROR_MESSAGE_KEY, errorMessage);
+        reportDetails.put(EVENT_NAME,eventName);
 
         // Add or update reportDetails while preserving all other keys (V2 metadata, etc.)
         additionalDetailsMap.put(REPORT_KEY, reportDetails);
@@ -823,4 +904,15 @@ public class HealthBillReportGenerator {
 
         log.info("Successfully updated bill {} with report details", bill.getId());
     }
+
+    // The reference id is concatenated as parent.child.child
+    private String getReferenceId(BillRequest billRequest) {
+        String referenceId = billRequest.getBill().getReferenceId();
+        if (referenceId == null || referenceId.isEmpty()) {
+            return null;
+        }
+        String[] referenceIds = referenceId.split("\\.");
+        return referenceIds[referenceIds.length - 1];
+    }
+
 }

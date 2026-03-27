@@ -92,4 +92,11 @@ public class ExpenseCalculatorServiceConstants {
     public static final String REPORT_STATUS_FAILED = "FAILED";
 
     public static final String EXPENSE_WAGES_BUSINESS_SERVICE = "EXPENSE.WAGES";
+    public static final String DISTRICT_BOUNDARYTYPE = "District Sanitaire";
+    public static final String REPORT_FIRST_CONSTANT = "PAYMENT_TITLE";
+    public static final String REPORT_MIDDLE_CONSTANT = "FOR_CONSTANT";
+    public static final String LOCALIZATION_CODES_JSONPATH = "$.messages.*.code";
+    public static final String LOCALIZATION_MSGS_JSONPATH = "$.messages.*.message";
+    public static final String WF_CREATE_ACTION_CONSTANT = "CREATE";
+    public static final String PAYMENTS_BILL_BUSINESS_SERVICE = "PAYMENTS.BILL";
 }
