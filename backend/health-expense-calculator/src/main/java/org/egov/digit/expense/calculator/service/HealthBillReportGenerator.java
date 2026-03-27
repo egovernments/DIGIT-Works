@@ -40,6 +40,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static org.egov.digit.expense.calculator.util.BillReportConstraints.*;
+import static org.egov.digit.expense.calculator.util.BillReportConstraints.REPORT_STATUS_COMPLETED;
+import static org.egov.digit.expense.calculator.util.BillReportConstraints.REPORT_STATUS_FAILED;
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.*;
 
 @Slf4j
