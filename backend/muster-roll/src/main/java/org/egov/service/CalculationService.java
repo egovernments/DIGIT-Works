@@ -10,11 +10,9 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.Individual;
-import org.egov.common.models.individual.IndividualBulkResponse;
-import org.egov.common.models.individual.IndividualSearch;
-import org.egov.common.models.individual.IndividualSearchRequest;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.IndividualUtil;
 import org.egov.util.MdmsUtil;
 import org.egov.util.MusterRollServiceUtil;
 import org.egov.web.models.*;
@@ -55,6 +53,8 @@ public class CalculationService {
 
     private final MusterRollAnalyticsService analyticsService;
 
+    private final IndividualUtil individualUtil;
+
     private int halfDayNumHours;
     private int fullDayNumHours;
     private boolean isRoundOffHours;
@@ -62,13 +62,14 @@ public class CalculationService {
     @Autowired
     public CalculationService(RestTemplate restTemplate, MusterRollServiceConfiguration config, MdmsUtil mdmsUtils,
                               MusterRollServiceUtil musterRollServiceUtil, ObjectMapper mapper,
-                              MusterRollAnalyticsService analyticsService) {
+                              MusterRollAnalyticsService analyticsService, IndividualUtil individualUtil) {
         this.restTemplate = restTemplate;
         this.config = config;
         this.mdmsUtils = mdmsUtils;
         this.musterRollServiceUtil = musterRollServiceUtil;
         this.mapper = mapper;
         this.analyticsService = analyticsService;
+        this.individualUtil = individualUtil;
     }
 
 
@@ -131,7 +132,12 @@ public class CalculationService {
         individualIds.addAll(individualExitAttendanceMap.keySet());
         //Add all absentee individualIds as well
         individualIds.addAll(absenteesList.stream().map(entry-> entry.getIndividualId()).collect(Collectors.toSet()));
-        List<Individual> individuals = fetchIndividualDetails(individualIds, musterRollRequest.getRequestInfo(),musterRoll.getTenantId(),musterRoll);
+        List<Individual> individuals = individualUtil.fetchIndividualDetails(individualIds, musterRollRequest.getRequestInfo(),musterRoll.getTenantId());
+        if (CollectionUtils.isEmpty(individuals)) {
+            throw new CustomException("INDIVIDUAL_SEARCH_SERVICE_EMPTY",
+                    "Individual search returned empty response for registerId " + musterRoll.getRegisterId()
+                    + " with startDate - " + musterRoll.getStartDate() + " and endDate - " + musterRoll.getEndDate());
+        }
 
         for (Map.Entry<String,List<LocalDateTime>> entry : individualExitAttendanceMap.entrySet()) {
             IndividualEntry individualEntry = new IndividualEntry();
@@ -223,17 +229,27 @@ public class CalculationService {
             individualEntries.forEach(individualEntry -> {
                 IndividualEntry attendee = individualIdAttendeeMap.get(individualEntry.getIndividualId());
                 individualEntry.setTag(Optional.ofNullable(attendee).orElse(new IndividualEntry()).getTag());
+                Individual individual = individuals.stream().filter(ind -> ind.getId().equals(individualEntry.getIndividualId())).findFirst().orElse(null);
+                // Enrich role from individual's first non-deleted skill type
+                if (individual != null && individual.getSkills() != null) {
+                    individual.getSkills().stream()
+                            .filter(skill -> skill != null && (skill.getIsDeleted() == null || !skill.getIsDeleted()))
+                            .findFirst()
+                            .ifPresent(skill -> individualEntry.setRole(skill.getType()));
+                }
             });
+            musterRoll.setReferenceId(attendanceRegister.getReferenceId());
+            musterRoll.setIndividualEntries(individualEntries);
+
+            // Enrich individual entries with total registrations and interventions from Elasticsearch
+            try {
+                analyticsService.enrichIndividualMetrics(musterRoll, individuals, musterRollRequest.getRequestInfo());
+            } catch (Exception e) {
+                log.error("CalculationService::createAttendance::Failed to enrich individual metrics from ES, continuing without metrics", e);
+            }
         }
 
-        musterRoll.setIndividualEntries(individualEntries);
 
-        // Enrich individual entries with total registrations and interventions from Elasticsearch
-        try {
-            analyticsService.enrichIndividualMetrics(musterRoll, individuals, musterRollRequest.getRequestInfo());
-        } catch (Exception e) {
-            log.error("CalculationService::createAttendance::Failed to enrich individual metrics from ES, continuing without metrics", e);
-        }
 
         if(config.isAddBankAccountDetails()) {
             List<BankAccount> bankAccounts = fetchBankaccountDetails(individualIds, musterRollRequest.getRequestInfo(),musterRoll.getTenantId());
@@ -639,51 +655,6 @@ public class CalculationService {
 
         //Update the skill value based on the code from request or set as default skill
         musterRollServiceUtil.populateAdditionalDetails(mdmsData, individualEntry, skillCode, matchedIndividual, bankAccount, isCreate);
-    }
-
-    /**
-     * Fetch the individual details - Name, Father's name and Aadhar details from individual service
-     * @param ids
-     *
-     */
-    private List<Individual> fetchIndividualDetails(List<String> ids,RequestInfo requestInfo, String tenantId, MusterRoll musterRoll){
-        // fetch the individual details from individual service
-        StringBuilder uri = new StringBuilder();
-        uri.append(config.getIndividualHost()).append(config.getIndividualSearchEndpoint());
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
-                .queryParam("limit",100)
-                .queryParam("offset",0)
-                .queryParam("tenantId",tenantId);
-
-        IndividualSearch individualSearch = IndividualSearch.builder().id(ids).build();
-        IndividualSearchRequest individualSearchRequest = IndividualSearchRequest.builder()
-                                    .requestInfo(requestInfo).individual(individualSearch).build();
-
-        IndividualBulkResponse response = null;
-        log.info("CalculationService::fetchIndividualDetails::call individual search with tenantId::"+tenantId
-                +"::individual ids::"+ids);
-
-        try {
-            response  = restTemplate.postForObject(uriBuilder.toUriString(),individualSearchRequest,IndividualBulkResponse.class);
-        }  catch (HttpClientErrorException | HttpServerErrorException httpClientOrServerExc) {
-            log.error("CalculationService::fetchIndividualDetails::Error thrown from individual search service::"+httpClientOrServerExc.getStatusCode());
-            throw new CustomException("INDIVIDUAL_SEARCH_SERVICE_EXCEPTION","Error thrown from individual search service::"+httpClientOrServerExc.getStatusCode());
-        }
-
-        if (response == null || CollectionUtils.isEmpty(response.getIndividual())) {
-            StringBuilder exceptionMessage = new StringBuilder();
-            exceptionMessage.append("Indiviudal search returned empty response for registerId ");
-            exceptionMessage.append(musterRoll.getRegisterId());
-            exceptionMessage.append(" with startDate - ");
-            exceptionMessage.append(musterRoll.getStartDate());
-            exceptionMessage.append(" and endDate - ");
-            exceptionMessage.append(musterRoll.getEndDate());
-            throw new CustomException("INDIVIDUAL_SEARCH_SERVICE_EMPTY",exceptionMessage.toString());
-        }
-
-        log.info("CalculationService::fetchIndividualDetails::Individual search fetched successfully");
-        return response.getIndividual();
-
     }
 
     /**

@@ -7,6 +7,7 @@ import org.egov.enrichment.AttendeeEnrichmentService;
 import org.egov.common.producer.Producer;
 import org.egov.repository.AttendeeRepository;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.HRMSUtil;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
 import org.egov.validator.AttendeeServiceValidator;
@@ -18,7 +19,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.egov.util.AttendanceServiceConstants.*;
 
 @Service
 @Slf4j
@@ -123,6 +127,20 @@ public class AttendeeService {
         //db call to get the attendeeList data
         List<IndividualEntry> attendeeListFromDB = getAttendees(tenantId, registerIds,attendeeIds);
 
+        // If register has no attendees at all, only CAMPAIGN_MANAGER can enroll first attendee
+        for (String registerId : registerIds) {
+            AttendeeSearchCriteria allAttendeeCriteria = AttendeeSearchCriteria.builder()
+                    .registerIds(java.util.Collections.singletonList(registerId)).tenantId(tenantId).build();
+            List<IndividualEntry> allAttendeesInRegister = attendeeRepository.getAttendees(tenantId, allAttendeeCriteria);
+            if (allAttendeesInRegister.isEmpty()) {
+                Set<String> userRoles = HRMSUtil.getUserRoleCodes(attendeeCreateRequest.getRequestInfo());
+                if (!userRoles.contains(ROLE_CAMPAIGN_MANAGER)) {
+                    throw new CustomException(ERROR_KEY_UNAUTHORIZED, ERROR_MSG_UNAUTHORIZED_FIRST_ATTENDEE_PREFIX + registerId);
+                }
+                break; // one role check is sufficient since all attendees share same user
+            }
+        }
+
         //db call to get registers from db
         List<AttendanceRegister> attendanceRegisterListFromDB = getAttendanceRegisters(attendeeCreateRequest,registerIds,tenantId);
 
@@ -214,6 +232,35 @@ public class AttendeeService {
         return attendeeDeleteRequest;
     }
 
+
+    public AttendeeCreateRequest updateAttendee(AttendeeCreateRequest attendeeCreateRequest) {
+        log.info("validating update attendee request parameters");
+        attendeeServiceValidator.validateAttendeeUpdateRequestParameters(attendeeCreateRequest);
+
+        String tenantId = attendeeCreateRequest.getAttendees().get(0).getTenantId();
+        List<String> ids = attendeeCreateRequest.getAttendees().stream()
+                .map(IndividualEntry::getId)
+                .collect(Collectors.toList());
+        List<String> registerIds = extractRegisterIdsFromCreateRequest(attendeeCreateRequest);
+
+        List<IndividualEntry> attendeeListFromDB = getAttendeesByIds(ids, tenantId);
+
+        List<AttendanceRegister> attendanceRegisters = getAttendanceRegisters(attendeeCreateRequest, registerIds, tenantId);
+
+        log.info("validating register ids from request against DB");
+        attendanceServiceValidator.validateRegisterAgainstDB(registerIds, attendanceRegisters, tenantId);
+
+        log.info("validating update attendee request against DB");
+        attendeeServiceValidator.validateAttendeeOnUpdate(attendeeCreateRequest, attendeeListFromDB, attendanceRegisters);
+
+        log.info("enriching update attendee request");
+        attendeeEnrichmentService.enrichAttendeeOnUpdate(attendeeCreateRequest, attendeeListFromDB);
+
+        log.info("pushing updated attendees via producer");
+        producer.push(tenantId, attendanceServiceConfiguration.getUpdateAttendeeTopic(), attendeeCreateRequest);
+
+        return attendeeCreateRequest;
+    }
 
     private List<String> extractRegisterIdsFromCreateRequest(AttendeeCreateRequest attendeeCreateRequest) {
         List<IndividualEntry> attendeeListFromRequest = attendeeCreateRequest.getAttendees();

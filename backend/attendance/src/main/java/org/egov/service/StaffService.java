@@ -7,9 +7,13 @@ import org.egov.enrichment.StaffEnrichmentService;
 import org.egov.common.producer.Producer;
 import org.egov.repository.RegisterRepository;
 import org.egov.repository.StaffRepository;
+import org.egov.tracer.model.CustomException;
+import org.egov.util.HRMSUtil;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
 import org.egov.validator.StaffServiceValidator;
+
+import static org.egov.util.AttendanceServiceConstants.*;
 import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.StaffPermission;
 import org.egov.web.models.StaffPermissionRequest;
@@ -73,6 +77,17 @@ public class StaffService {
 
         //db call to get the staffList data whose de enrollment date is null
         List<StaffPermission> staffPermissionListFromDB = getActiveStaff(registerIds, staffIds, tenantId);
+
+        // If register has no staff at all, only CAMPAIGN_MANAGER can enroll first staff
+        StaffSearchCriteria allStaffCriteria = StaffSearchCriteria.builder()
+                .registerIds(registerIds).tenantId(tenantId).build();
+        List<StaffPermission> allStaffInRegister = staffRepository.getAllStaff(allStaffCriteria);
+        if (allStaffInRegister.isEmpty()) {
+            Set<String> userRoles = HRMSUtil.getUserRoleCodes(staffPermissionRequest.getRequestInfo());
+            if (!userRoles.contains(ROLE_CAMPAIGN_MANAGER)) {
+                throw new CustomException(ERROR_KEY_UNAUTHORIZED, ERROR_MSG_UNAUTHORIZED_FIRST_STAFF);
+            }
+        }
 
         //db call to get registers from db
         List<AttendanceRegister> attendanceRegisterListFromDB = getRegistersFromDB(staffPermissionRequest, registerIds, tenantId);
@@ -154,6 +169,39 @@ public class StaffService {
         // Push the staff de-enrollment (delete) request to the Kafka topic for the tenant
         producer.push(tenantId, serviceConfiguration.getUpdateStaffTopic(), staffPermissionRequest);
         log.info("staff present in Delete StaffPermission request are deenrolled from the register");
+        return staffPermissionRequest;
+    }
+
+    public StaffPermissionRequest updateStaff(StaffPermissionRequest staffPermissionRequest) {
+        log.info("Validating incoming staff update request");
+        staffServiceValidator.validateStaffUpdateRequestParameters(staffPermissionRequest);
+
+        String tenantId = staffPermissionRequest.getStaff().get(0).getTenantId();
+        List<String> staffUserIds = extractStaffIdsFromRequest(staffPermissionRequest);
+        List<String> registerIds = extractRegisterIdsFromRequest(staffPermissionRequest);
+
+        // Fetch all staff (including de-enrolled) by registerId + userId
+        StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder()
+                .registerIds(registerIds)
+                .individualIds(staffUserIds)
+                .tenantId(tenantId)
+                .build();
+        List<StaffPermission> staffFromDB = staffRepository.getAllStaff(staffSearchCriteria);
+
+        List<AttendanceRegister> attendanceRegisters = getRegistersFromDB(staffPermissionRequest, registerIds, tenantId);
+
+        log.info("Validating register ids from request against DB");
+        attendanceServiceValidator.validateRegisterAgainstDB(registerIds, attendanceRegisters, tenantId);
+
+        log.info("staffServiceValidator called to validate Update StaffPermission request");
+        staffServiceValidator.validateStaffOnUpdate(staffPermissionRequest, staffFromDB, attendanceRegisters);
+
+        log.info("staffEnrichmentService called to enrich Update StaffPermission request");
+        staffEnrichmentService.enrichStaffOnUpdate(staffPermissionRequest, staffFromDB);
+
+        log.info("staff objects pushed via producer for update");
+        producer.push(tenantId, serviceConfiguration.getUpdateStaffTopic(), staffPermissionRequest);
+
         return staffPermissionRequest;
     }
 

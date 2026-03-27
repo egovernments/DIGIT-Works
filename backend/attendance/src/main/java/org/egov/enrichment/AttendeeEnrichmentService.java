@@ -85,6 +85,42 @@ public class AttendeeEnrichmentService {
         }
     }
 
+    public void enrichAttendeeOnUpdate(AttendeeCreateRequest attendeeCreateRequest, List<IndividualEntry> attendeesFromDB) {
+        RequestInfo requestInfo = attendeeCreateRequest.getRequestInfo();
+        List<IndividualEntry> attendeesFromRequest = attendeeCreateRequest.getAttendees();
+
+        Map<String, IndividualEntry> dbById = attendeesFromDB.stream()
+                .collect(Collectors.toMap(IndividualEntry::getId, Function.identity()));
+
+        for (IndividualEntry attendee : attendeesFromRequest) {
+            IndividualEntry dbRecord = dbById.get(attendee.getId());
+
+            // Preserve immutable fields from DB
+            attendee.setId(dbRecord.getId());
+            attendee.setRegisterId(dbRecord.getRegisterId());
+            attendee.setIndividualId(dbRecord.getIndividualId());
+            attendee.setTenantId(dbRecord.getTenantId());
+
+            // Partial update: preserve DB value if not provided in request
+            if (attendee.getEnrollmentDate() == null) {
+                attendee.setEnrollmentDate(dbRecord.getEnrollmentDate());
+            }
+            if (attendee.getDenrollmentDate() == null) {
+                attendee.setDenrollmentDate(dbRecord.getDenrollmentDate());
+            }
+            if (attendee.getTag() == null) {
+                attendee.setTag(dbRecord.getTag());
+            }
+            if (attendee.getAdditionalDetails() == null) {
+                attendee.setAdditionalDetails(dbRecord.getAdditionalDetails());
+            }
+
+            AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(
+                    requestInfo.getUserInfo().getUuid(), dbRecord.getAuditDetails(), false);
+            attendee.setAuditDetails(auditDetails);
+        }
+    }
+
     public void enrichAttendeeOnDelete(AttendeeDeleteRequest attendeeDeleteRequest, List<IndividualEntry> attendeesFromDB) {
         RequestInfo requestInfo = attendeeDeleteRequest.getRequestInfo();
         List<IndividualEntry> attendeesListFromRequest = attendeeDeleteRequest.getAttendees();

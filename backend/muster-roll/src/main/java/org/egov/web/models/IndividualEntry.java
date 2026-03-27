@@ -1,5 +1,6 @@
 package org.egov.web.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
@@ -31,13 +32,26 @@ import jakarta.validation.constraints.Min;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class IndividualEntry {
 
     @JsonProperty("id")
     private String id = null;
 
+    @JsonProperty("tenantId")
+    private String tenantId = null;
+
     @JsonProperty("individualId")
     private String individualId = null;
+
+    @JsonProperty("musterRollId")
+    private String musterRollId = null;
+
+    @JsonProperty("enrollmentDate")
+    private BigDecimal enrollmentDate = null;
+
+    @JsonProperty("denrollmentDate")
+    private BigDecimal denrollmentDate = null;
 
     @JsonProperty("actualTotalAttendance")
     @Min(0)
@@ -68,6 +82,10 @@ public class IndividualEntry {
     @Size(max=64)
     @JsonProperty("tag")
     private String tag = null; // represent teamcode to group attendees
+
+    @Size(max=128)
+    @JsonProperty("role")
+    private String role = null; // individual's skill type (e.g., REGISTRAR, DISTRIBUTOR)
 
 
     public IndividualEntry addAttendanceEntriesItem(AttendanceEntry attendanceEntriesItem) {

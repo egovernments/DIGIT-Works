@@ -20,6 +20,12 @@ public class AttendanceReportDetail {
     @JsonProperty("serialNumber")
     private Integer serialNumber;
 
+    @JsonProperty("registerName")
+    private String registerName;
+
+    @JsonProperty("registerNumber")
+    private String registerNumber;
+
     @JsonProperty("individualId")
     private String individualId;
 
@@ -37,6 +43,9 @@ public class AttendanceReportDetail {
 
     @JsonProperty("userId")
     private String userId;
+
+    @JsonProperty("loginId")
+    private String loginId;
 
     @JsonProperty("enrollmentDate")
     private Long enrollmentDate;

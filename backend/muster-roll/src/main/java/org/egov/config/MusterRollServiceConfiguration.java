@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import jakarta.annotation.PostConstruct;
+
+import java.util.List;
 import java.util.TimeZone;
 
 @Configuration
@@ -230,6 +232,9 @@ public class MusterRollServiceConfiguration {
 
     @Value("${elasticsearch.queries.mdms.master:ElasticsearchQueries}")
     private String esQueriesMdmsMaster;
+
+    @Value("${attendance.report.allowed.skills}")
+    private List<String> allowedAttendanceReportSkills;
 
     @PostConstruct
     public void initialize() {

@@ -44,7 +44,9 @@ public class RegisterQueryBuilder {
             "reg.servicecode, " +
             "reg.localitycode, " +
             "reg.reviewstatus, " +
-            "reg.period_statuses " +
+            "reg.period_statuses, " +
+            "reg.campaignid, " +
+            "reg.isdeleted " +
             "FROM %s.eg_wms_attendance_register reg ";
 
     private static final String JOIN_STAFF = " JOIN %s.eg_wms_attendance_staff staff ";
@@ -74,6 +76,11 @@ public class RegisterQueryBuilder {
             query.append(String.format(JOIN_ATTENDEE, SCHEMA_REPLACE_STRING));
             query.append(JOIN_ATTENDEE_CONDITION);
         }
+
+        // Always exclude soft-deleted records
+        addClauseIfRequired(query, preparedStmtList);
+        query.append(" reg.isdeleted = ? ");
+        preparedStmtList.add(false);
 
         if (!ObjectUtils.isEmpty(searchCriteria.getTenantId())) {
             addClauseIfRequired(query, preparedStmtList);
@@ -176,6 +183,11 @@ public class RegisterQueryBuilder {
             preparedStmtList.add(reviewStatus);
         }
 
+        if (!ObjectUtils.isEmpty(searchCriteria.getCampaignId())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" reg.campaignid = ? ");
+            preparedStmtList.add(searchCriteria.getCampaignId());
+        }
 
         addOrderByClause(query, searchCriteria);
         //addLimitAndOffset(query, searchCriteria, preparedStmtList);

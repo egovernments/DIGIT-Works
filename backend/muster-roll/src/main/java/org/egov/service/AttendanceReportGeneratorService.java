@@ -1,47 +1,46 @@
 package org.egov.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.individual.Individual;
+import org.egov.common.models.individual.Name;
+import org.egov.common.models.individual.Skill;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.kafka.MusterRollProducer;
 import org.egov.repository.MusterRollRepository;
 import org.egov.repository.ServiceRequestRepository;
 import org.egov.tracer.model.CustomException;
-import org.egov.util.AttendanceReportConstants;
-import org.egov.util.FileStoreUtil;
-import org.egov.util.WorkerRegistryUtil;
+import org.egov.util.*;
 import org.egov.web.models.*;
 import org.egov.web.models.report.AttendanceReportData;
 import org.egov.web.models.report.AttendanceReportDetail;
 import org.egov.web.models.report.ReportGenerationRequest;
-import org.egov.web.models.report.ReportMetadata;
 import org.egov.web.models.report.MusterRollReport;
 import org.egov.web.models.report.ReportType;
 import org.egov.web.models.report.ReportFormat;
 import org.egov.web.models.report.ReportStatus;
 import org.egov.repository.MusterRollReportRepository;
 import org.egov.common.contract.models.AuditDetails;
-import org.egov.util.LocalizationUtil;
 import org.egov.web.models.worker.IndividualWorker;
 import org.egov.works.services.common.models.attendance.AttendanceRegisterSearchCriteria;
+import org.egov.works.services.common.models.attendance.StaffPermission;
+import org.egov.works.services.common.models.attendance.StaffType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
-import org.egov.common.contract.models.AuditDetails;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -58,6 +57,7 @@ public class AttendanceReportGeneratorService {
     private final MusterRollReportRepository musterRollReportRepository;
     private final LocalizationUtil localizationUtil;
     private final WorkerRegistryUtil workerRegistryUtil;
+    private final IndividualUtil individualUtil;
 
     @Autowired
     public AttendanceReportGeneratorService(
@@ -69,7 +69,7 @@ public class AttendanceReportGeneratorService {
             MusterRollServiceConfiguration config,
             ObjectMapper objectMapper, RestTemplate restTemplate,
             MusterRollReportRepository musterRollReportRepository,
-            LocalizationUtil localizationUtil, WorkerRegistryUtil workerRegistryUtil) {
+            LocalizationUtil localizationUtil, WorkerRegistryUtil workerRegistryUtil, IndividualUtil individualUtil) {
         this.musterRollRepository = musterRollRepository;
         this.serviceRequestRepository = serviceRequestRepository;
         this.excelGenerator = excelGenerator;
@@ -81,6 +81,7 @@ public class AttendanceReportGeneratorService {
         this.musterRollReportRepository = musterRollReportRepository;
         this.localizationUtil = localizationUtil;
         this.workerRegistryUtil = workerRegistryUtil;
+        this.individualUtil = individualUtil;
     }
 
     public void initiateReportGeneration(String musterRollId, String tenantId,
@@ -276,8 +277,10 @@ public class AttendanceReportGeneratorService {
                 tenantId, requestInfo);
 
         // Build report data
-        AttendanceReportData reportData = AttendanceReportData.builder()
+
+        return AttendanceReportData.builder()
                 .musterRollId(musterRoll.getId())
+                .registerNumber(register.getRegisterNumber())
                 .musterRollNumber(musterRoll.getMusterRollNumber())
                 .campaignName(register.getName())
                 .campaignCode(register.getServiceCode())
@@ -288,8 +291,6 @@ public class AttendanceReportGeneratorService {
                 .attendanceDetails(details)
                 .campaignDates(campaignDates)
                 .build();
-
-        return reportData;
     }
 
     private List<AttendanceReportDetail> buildAttendanceDetails(MusterRoll musterRoll, AttendanceRegister register,
@@ -302,16 +303,18 @@ public class AttendanceReportGeneratorService {
             return details;
         }
 
-        List<String> individualIds = Optional.of(musterRoll.getIndividualEntries()).orElse(new ArrayList<>())
-                .stream().map(IndividualEntry::getIndividualId).toList();
+        List<String> individualIds = new ArrayList<>(Optional.of(musterRoll.getIndividualEntries()).orElse(new ArrayList<>())
+                .stream().map(IndividualEntry::getIndividualId).toList());
         Map<String, IndividualWorker> individualWorkerMap = workerRegistryUtil.getWorkers(requestInfo, tenantId, individualIds);
-
-//        Map<String, String> individualTeam
-
-        //TODO: fetch attendees to update register report details
+        if (register != null && !CollectionUtils.isEmpty(register.getStaff())) {
+            register.getStaff().forEach(staffPermission -> {
+                individualIds.add(staffPermission.getUserId());
+            });
+        }
+        Map<String, Individual> individualMap = individualUtil.fetchIndividualDetailsAsMap(individualIds, requestInfo, tenantId);
 
         for (IndividualEntry entry : musterRoll.getIndividualEntries()) {
-            AttendanceReportDetail detail = buildAttendanceDetail(individualWorkerMap, entry, register, campaignDates, serialNumber++,
+            AttendanceReportDetail detail = buildAttendanceDetail(individualWorkerMap, individualMap, entry, register, campaignDates, serialNumber++,
                     tenantId, requestInfo);
             details.add(detail);
         }
@@ -319,45 +322,82 @@ public class AttendanceReportGeneratorService {
         return details;
     }
 
-    private AttendanceReportDetail buildAttendanceDetail(Map<String, IndividualWorker> individualWorkerMap, IndividualEntry entry, AttendanceRegister register,
-            List<Long> campaignDates, int serialNumber, String tenantId, RequestInfo requestInfo) {
+    private AttendanceReportDetail buildAttendanceDetail(Map<String, IndividualWorker> individualWorkerMap, Map<String, Individual> individualMap, IndividualEntry entry, AttendanceRegister register,
+                                                         List<Long> campaignDates, int serialNumber, String tenantId, RequestInfo requestInfo) {
 
         // Build daily attendance map
         Map<String, String> dailyAttendance = buildDailyAttendanceMap(entry, register, campaignDates);
+        String attendanceMarkers = null;
+        if (register != null && !CollectionUtils.isEmpty(register.getStaff())) {
+            attendanceMarkers = register.getStaff().stream()
+                    .filter(staffPermission -> StaffType.OWNER.equals(staffPermission.getStaffType()))
+                    .map(StaffPermission::getUserId)
+                    .filter(individualMap::containsKey)
+                    .map(individualId -> Optional.ofNullable(individualMap
+                            .get(individualId))
+                            .map(Individual::getName)
+                            .map(Name::getGivenName)
+                            .orElse(null)
+                    )
+                    .collect(Collectors.joining(","));
+            ;
+        }
 
         IndividualWorker individualWorker = individualWorkerMap.getOrDefault(entry.getIndividualId(), new IndividualWorker());
+        Individual individual = individualMap.get(entry.getIndividualId());
+        String rolecode = null;
+        if(individual != null && !CollectionUtils.isEmpty(individual.getSkills())) {
+            rolecode = individual.getSkills().stream().map(Skill::getType)
+                    .filter(config.getAllowedAttendanceReportSkills()::contains).findFirst()
+                    .orElse(null);
+        }
 
         // Count present days
         int presentDays = (int) dailyAttendance.values().stream()
-                .filter(s -> AttendanceReportConstants.ATTENDANCE_STATUS_PRESENT.equalsIgnoreCase(s))
+                .filter(AttendanceReportConstants.ATTENDANCE_STATUS_PRESENT::equalsIgnoreCase)
                 .count();
 
         // Use metrics already populated on IndividualEntry from CalculationService
         long totalRegistrations = entry.getTotalRegistrations() != null ? entry.getTotalRegistrations() : 0L;
         long totalInterventions = entry.getTotalInterventions() != null ? entry.getTotalInterventions() : 0L;
 
-        return AttendanceReportDetail.builder()
+        AttendanceReportDetail attendanceReportDetail = AttendanceReportDetail.builder()
                 .serialNumber(serialNumber)
+                .registerName(register.getName())
+                .registerNumber(register.getRegisterNumber())
                 .individualId(entry.getIndividualId())
-                .name(individualWorker.getName())
-                .phoneNumber(individualWorker.getPayeePhoneNumber())
-                .role("") // TODO: fix the role for attendance report
+                .name(Optional.ofNullable(individual).map(Individual::getName).map(Name::getGivenName).orElse(null))
+                .phoneNumber(Optional.ofNullable(individual).map(Individual::getMobileNumber).orElse(null))
+                .role(rolecode)
                 .teamCode(entry.getTag())
                 .userId(individualWorker.getId())
-                .enrollmentDate(null)
-                .deEnrollmentDate(null)
-                .attendanceMarker("")
+                .loginId(Optional.ofNullable(individual).map(Individual::getUserId).orElse(null))
+                .attendanceMarker(attendanceMarkers)
                 .presentDaysOriginal(presentDays)
-                .presentDaysModified(presentDays)
+                .presentDaysModified(entry.getModifiedTotalAttendance() != null ? entry.getModifiedTotalAttendance().intValue() : presentDays)
                 .dailyAttendance(dailyAttendance)
                 .totalPerformance(totalInterventions)
                 .build();
+        if (!CollectionUtils.isEmpty(register.getAttendees())) {
+            IndividualEntry attendee = register.getAttendees()
+                    .stream().filter(ind -> ind.getIndividualId().equals(entry.getIndividualId())).findFirst().orElse(null);
+            if (attendee != null) {
+                attendanceReportDetail.setEnrollmentDate(Optional.ofNullable(attendee.getEnrollmentDate())
+                        .map(BigDecimal::longValue)
+                        .orElse(null));
+                attendanceReportDetail.setDeEnrollmentDate(Optional.ofNullable(attendee.getDenrollmentDate())
+                        .map(BigDecimal::longValue)
+                        .orElse(null));
+            }
+        }
+        return attendanceReportDetail;
     }
 
     private Map<String, String> buildDailyAttendanceMap(IndividualEntry entry, AttendanceRegister register,
             List<Long> campaignDates) {
         Map<String, String> dailyAttendance = new HashMap<>();
-        SimpleDateFormat dateFormatter = new SimpleDateFormat(AttendanceReportConstants.REPORT_DATE_FORMAT);
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(config.getReportDateFormat());
+        dateFormatter.setTimeZone(TimeZone.getTimeZone(config.getReportTimezone()));
 
         // Initialize all days as ABSENT
         for (Long dateMillis : campaignDates) {
@@ -392,15 +432,17 @@ public class AttendanceReportGeneratorService {
             return dates;
         }
 
-        LocalDate start = new Date(startDate).toInstant().atZone(ZoneId.systemDefault())
+        ZoneId reportZone = ZoneId.of(config.getReportTimezone());
+        LocalDate start = new Date(startDate).toInstant().atZone(reportZone)
                 .toLocalDate();
-        LocalDate end = new Date(endDate).toInstant().atZone(ZoneId.systemDefault())
+        LocalDate end = new Date(endDate).toInstant().atZone(reportZone)
                 .toLocalDate();
 
         long daysBetween = ChronoUnit.DAYS.between(start, end) + 1;
         for (long i = 0; i < daysBetween; i++) {
             LocalDate date = start.plusDays(i);
-            long dateMillis = date.atStartOfDay().toInstant(ZoneOffset.UTC)
+            long dateMillis = date.atStartOfDay(reportZone)
+                    .toInstant()
                     .toEpochMilli();
             dates.add(dateMillis);
         }

@@ -61,6 +61,7 @@ public class StaffEnrichmentService {
                         && staffPermissionFromDB.getDenrollmentDate() == null) {
                     staffPermissionFromRequest.setId(staffPermissionFromDB.getId());
                     staffPermissionFromRequest.setEnrollmentDate(staffPermissionFromDB.getEnrollmentDate());
+                    staffPermissionFromRequest.setStaffType(staffPermissionFromDB.getStaffType());
 
                     AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), staffPermissionFromDB.getAuditDetails(), false);
 
@@ -71,8 +72,42 @@ public class StaffEnrichmentService {
                 }
             }
         }
+    }
 
+    public void enrichStaffOnUpdate(StaffPermissionRequest request, List<StaffPermission> staffFromDB) {
+        RequestInfo requestInfo = request.getRequestInfo();
+        List<StaffPermission> staffFromRequest = request.getStaff();
 
+        Map<String, StaffPermission> dbById = staffFromDB.stream()
+                .collect(java.util.stream.Collectors.toMap(StaffPermission::getId, s -> s));
+
+        for (StaffPermission staffFromReq : staffFromRequest) {
+            StaffPermission dbRecord = dbById.get(staffFromReq.getId());
+
+            // Preserve immutable fields from DB
+            staffFromReq.setId(dbRecord.getId());
+            staffFromReq.setRegisterId(dbRecord.getRegisterId());
+            staffFromReq.setUserId(dbRecord.getUserId());
+            staffFromReq.setTenantId(dbRecord.getTenantId());
+
+            // Partial update: preserve DB value if not provided in request
+            if (staffFromReq.getEnrollmentDate() == null) {
+                staffFromReq.setEnrollmentDate(dbRecord.getEnrollmentDate());
+            }
+            if (staffFromReq.getDenrollmentDate() == null) {
+                staffFromReq.setDenrollmentDate(dbRecord.getDenrollmentDate());
+            }
+            if (staffFromReq.getStaffType() == null) {
+                staffFromReq.setStaffType(dbRecord.getStaffType());
+            }
+            if (staffFromReq.getAdditionalDetails() == null) {
+                staffFromReq.setAdditionalDetails(dbRecord.getAdditionalDetails());
+            }
+
+            AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(
+                    requestInfo.getUserInfo().getUuid(), dbRecord.getAuditDetails(), false);
+            staffFromReq.setAuditDetails(auditDetails);
+        }
     }
 
 

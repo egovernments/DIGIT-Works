@@ -463,6 +463,113 @@ public class AttendeeServiceValidator {
         }
     }
 
+    public void validateAttendeeUpdateRequestParameters(AttendeeCreateRequest attendeeCreateRequest) {
+        Set<String> userRoles = HRMSUtil.getUserRoleCodes(attendeeCreateRequest.getRequestInfo());
+        if (!userRoles.contains(ROLE_CAMPAIGN_MANAGER)) {
+            throw new CustomException(ERROR_KEY_UNAUTHORIZED, ERROR_MSG_UNAUTHORIZED_UPDATE_ATTENDEE);
+        }
+
+        List<IndividualEntry> attendeeList = attendeeCreateRequest.getAttendees();
+        Map<String, String> errorMap = new HashMap<>();
+
+        if (attendeeList == null || attendeeList.isEmpty()) {
+            throw new CustomException("ATTENDEE", "ATTENDEE Object is empty in attendee update request");
+        }
+
+        String tenantId = attendeeList.get(0).getTenantId();
+        for (IndividualEntry attendee : attendeeList) {
+            if (StringUtils.isBlank(attendee.getId())) {
+                errorMap.put("ID", "id is mandatory for update");
+            }
+            if (StringUtils.isBlank(attendee.getRegisterId())) {
+                errorMap.put("REGISTER_ID", "Register id is mandatory");
+            }
+            if (StringUtils.isBlank(attendee.getIndividualId())) {
+                errorMap.put("INDIVIDUAL_ID", "Individual id is mandatory");
+            }
+            if (StringUtils.isBlank(attendee.getTenantId())) {
+                errorMap.put("TENANT_ID", "Tenant id is mandatory");
+            }
+        }
+
+        if (!errorMap.isEmpty()) {
+            throw new CustomException(errorMap);
+        }
+
+        // all attendees must share the same tenantId
+        for (IndividualEntry attendee : attendeeList) {
+            if (!attendee.getTenantId().equals(tenantId)) {
+                throw new CustomException("TENANT_ID", "All Attendees must have the same tenant id");
+            }
+        }
+
+        // no duplicate (registerId + individualId)
+        Set<String> uniqueKeys = new HashSet<>();
+        for (IndividualEntry attendee : attendeeList) {
+            String key = attendee.getRegisterId() + attendee.getIndividualId();
+            if (!uniqueKeys.add(key)) {
+                throw new CustomException("ATTENDEE", "Duplicate attendee objects present in update request");
+            }
+        }
+    }
+
+    public void validateAttendeeOnUpdate(AttendeeCreateRequest attendeeCreateRequest,
+                                         List<IndividualEntry> attendeeListFromDB,
+                                         List<AttendanceRegister> registers) {
+        List<IndividualEntry> attendeeListFromRequest = attendeeCreateRequest.getAttendees();
+
+        // Build lookup maps
+        Map<String, IndividualEntry> dbById = attendeeListFromDB.stream()
+                .collect(Collectors.toMap(IndividualEntry::getId, a -> a));
+        Map<String, AttendanceRegister> registerById = registers.stream()
+                .collect(Collectors.toMap(AttendanceRegister::getId, r -> r));
+
+        for (IndividualEntry attendee : attendeeListFromRequest) {
+            IndividualEntry dbRecord = dbById.get(attendee.getId());
+            if (dbRecord == null) {
+                throw new CustomException(ERROR_KEY_INVALID_ID, ERROR_MSG_ATTENDEE_NOT_FOUND_IN_DB_PREFIX + attendee.getId());
+            }
+
+            AttendanceRegister register = registerById.get(attendee.getRegisterId());
+            if (register == null) {
+                continue; // already validated by validateRegisterAgainstDB
+            }
+
+            // Validate enrollmentDate if provided
+            if (attendee.getEnrollmentDate() != null) {
+                if (attendee.getEnrollmentDate().compareTo(register.getStartDate()) < 0) {
+                    throw new CustomException(ERROR_KEY_ENROLLMENT_DATE,
+                            "Enrollment date for attendee " + attendee.getIndividualId() + ERROR_MSG_ENROLLMENT_DATE_BEFORE_REGISTER_START);
+                }
+                // Only enrollmentDate updated, denrollmentDate unchanged — new enrollment must not exceed existing de-enrollment
+                if (attendee.getDenrollmentDate() == null && dbRecord.getDenrollmentDate() != null) {
+                    if (attendee.getEnrollmentDate().compareTo(dbRecord.getDenrollmentDate()) > 0) {
+                        throw new CustomException(ERROR_KEY_ENROLLMENT_DATE,
+                                "Enrollment date for attendee " + attendee.getIndividualId() + ERROR_MSG_ENROLLMENT_DATE_EXCEEDS_DENROLLMENT);
+                    }
+                }
+            }
+
+            // Resolve effective enrollmentDate: if both dates are being updated, compare new vs new only
+            BigDecimal effectiveEnrollmentDate = attendee.getEnrollmentDate() != null
+                    ? attendee.getEnrollmentDate()
+                    : dbRecord.getEnrollmentDate();
+
+            // Validate denrollmentDate if provided
+            if (attendee.getDenrollmentDate() != null) {
+                if (attendee.getDenrollmentDate().compareTo(effectiveEnrollmentDate) < 0) {
+                    throw new CustomException(ERROR_KEY_DENROLLMENT_DATE,
+                            "De-enrollment date for attendee " + attendee.getIndividualId() + ERROR_MSG_DENROLLMENT_DATE_BEFORE_ENROLLMENT);
+                }
+                if (register.getEndDate() != null &&
+                        attendee.getDenrollmentDate().compareTo(register.getEndDate()) > 0) {
+                    throw new CustomException(ERROR_KEY_DENROLLMENT_DATE,
+                            "De-enrollment date for attendee " + attendee.getIndividualId() + ERROR_MSG_DENROLLMENT_DATE_AFTER_REGISTER_END);
+                }
+            }
+        }
+    }
+
     public void validateAttendeeOnDelete(AttendeeDeleteRequest attendeeDeleteRequest,
                                          List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
 
@@ -550,22 +657,6 @@ public class AttendeeServiceValidator {
                 .map(IndividualEntry::getRegisterId)
                 .collect(Collectors.toList());
 
-        //creating a register Id to First Staff Map
-        Map<String, StaffPermission> registerIdToFirstStaffMap;
-        if(config.isRegisterFirstOwnerStaffEnabled()) {
-            log.info("Using first owner staff mapping strategy");
-            registerIdToFirstStaffMap = staffService.fetchRegisterIdtoFirstOwnerStaffMap(tenantId,registerIds);
-        }
-        else {
-            log.info("Using first staff mapping strategy");
-            registerIdToFirstStaffMap = staffService.fetchRegisterIdtoFirstStaffMap(tenantId,registerIds);
-        }
-
-        if(registerIdToFirstStaffMap.isEmpty()) {
-            log.error("No staff mapping found for registers: {}", registerIds);
-            throw new CustomException("STAFF_MAPPING_NOT_FOUND", "No staff mapping found for the registers");
-        }
-
         //Fetching all the attendees's uuids for hrms search
         List<String> userUuids = attendeeCreateRequest.getAttendees().stream()
                 .map(IndividualEntry::getIndividualId)
@@ -577,6 +668,22 @@ public class AttendeeServiceValidator {
         Map<String, Employee> individualIdVsEmployeeMap = employeeList.stream()
                 .collect(Collectors.toMap(Employee::getUuid, emp -> emp));
 
+        // Only fetch staff mapping when reportingTo validation is needed (registerFirstStaffInsertEnabled=true)
+        Map<String, StaffPermission> registerIdToFirstStaffMap = null;
+        if (config.getRegisterFirstStaffInsertEnabled()) {
+            if (config.isRegisterFirstOwnerStaffEnabled()) {
+                log.info("Using first owner staff mapping strategy");
+                registerIdToFirstStaffMap = staffService.fetchRegisterIdtoFirstOwnerStaffMap(tenantId, registerIds);
+            } else {
+                log.info("Using first staff mapping strategy");
+                registerIdToFirstStaffMap = staffService.fetchRegisterIdtoFirstStaffMap(tenantId, registerIds);
+            }
+            if (registerIdToFirstStaffMap.isEmpty()) {
+                log.error("No staff mapping found for registers: {}", registerIds);
+                throw new CustomException("STAFF_MAPPING_NOT_FOUND", "No staff mapping found for the registers");
+            }
+        }
+
         //looping through attendees for validating their details
         for (IndividualEntry entry : attendeeCreateRequest.getAttendees()) {
             try {
@@ -585,23 +692,27 @@ public class AttendeeServiceValidator {
                     throw new CustomException("HRMS_EMPLOYEE_NOT_FOUND", "Employee not present in HRMS for the individual ID - " + entry.getIndividualId());
                 }
 
-                //fetch reportingTo uuids from employees assignments
-                List<String> reportingToList = individualIdVsEmployeeMap.get(entry.getIndividualId()).getAssignments().stream()
-                        .map(Assignment::getReportingTo)
-                        .filter(reportingTo -> reportingTo != null && !reportingTo.isEmpty())
-                        .collect(Collectors.toList());
+                // Validate reportingTo only when registerFirstStaffInsertEnabled=true
+                if (config.getRegisterFirstStaffInsertEnabled()) {
+                    //fetch reportingTo uuids from employees assignments
+                    List<String> reportingToList = individualIdVsEmployeeMap.get(entry.getIndividualId()).getAssignments().stream()
+                            .map(Assignment::getReportingTo)
+                            .filter(reportingTo -> reportingTo != null && !reportingTo.isEmpty())
+                            .collect(Collectors.toList());
 
-                //fetch the first staff's User Id
-                String reportersUuid = registerIdToFirstStaffMap.get(entry.getRegisterId()).getUserId();
+                    //fetch the first staff's User Id
+                    String reportersUuid = registerIdToFirstStaffMap.get(entry.getRegisterId()).getUserId();
 
-                List<Employee> reportersEmployeeList = hrmsUtil.getEmployee(tenantId, Collections.singletonList(reportersUuid), requestInfo);
-                if(reportersEmployeeList.isEmpty())
-                    throw new CustomException("FAILED_TO_FETCH_REPORTERS_UUID", "Failed to fetch reporters hrms uuid for userserviceId - " + reportersUuid);
+                    List<Employee> reportersEmployeeList = hrmsUtil.getEmployee(tenantId, Collections.singletonList(reportersUuid), requestInfo);
+                    if (reportersEmployeeList.isEmpty())
+                        throw new CustomException("FAILED_TO_FETCH_REPORTERS_UUID", "Failed to fetch reporters hrms uuid for userserviceId - " + reportersUuid);
 
-                if (!reportingToList.contains(reportersEmployeeList.get(0).getUser().getUserServiceUuid())) {
-                    //throw validation error if attendee's reportingTo is not First Staff of the Register
-                    throw new CustomException("REPORTING_STAFF_INCORRECT_FOR_ATTENDEE", "Attendees reporting uuid does not match with the register owner uuid");
+                    if (!reportingToList.contains(reportersEmployeeList.get(0).getUser().getUserServiceUuid())) {
+                        //throw validation error if attendee's reportingTo is not First Staff of the Register
+                        throw new CustomException("REPORTING_STAFF_INCORRECT_FOR_ATTENDEE", "Attendees reporting uuid does not match with the register owner uuid");
+                    }
                 }
+
                 validIndividualEntries.add(entry);
             }
             catch (CustomException e) {

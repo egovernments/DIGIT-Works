@@ -91,6 +91,7 @@ public class MusterRollRowMapper implements ResultSetExtractor<List<MusterRoll>>
         Long totalInterventions = rs.getLong("totalInterventions");
         Long totalRegistrations = rs.getLong("totalRegistrations");
         String teamcode = rs.getString("tag");
+        String role = rs.getString("role");
 
         String createdby = rs.getString("indCreatedBy");
         String lastmodifiedby = rs.getString("indModifiedBy");
@@ -111,6 +112,7 @@ public class MusterRollRowMapper implements ResultSetExtractor<List<MusterRoll>>
                     .modifiedTotalAttendance(modifiedtotalAttendance)
                     .additionalDetails(additionalDetails)
                     .tag(teamcode)
+                    .role(role)
                     .auditDetails(auditDetails)
                     .build();
 
