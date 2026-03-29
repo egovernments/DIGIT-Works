@@ -25,4 +25,13 @@ public class AttendanceLogConfiguration {
     @Value("${attendance.log.kafka.consumer.bulk.update.topic}")
     private String updateAttendanceLogBulkTopic;
 
+    @Value("${egov.filestore.host}")
+    private String filestoreHost;
+
+    @Value("${egov.filestore.upload.endpoint}")
+    private String filestoreUploadEndpoint;
+
+    @Value("${egov.filestore.url.endpoint}")
+    private String filestoreUrlEndpoint;
+
 }

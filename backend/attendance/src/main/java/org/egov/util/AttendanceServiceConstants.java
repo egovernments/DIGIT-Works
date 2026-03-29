@@ -51,4 +51,8 @@ public class AttendanceServiceConstants {
     public static final String ERROR_MSG_ENROLLMENT_DATE_EXCEEDS_DENROLLMENT = " must be <= existing de-enrollment date";
     public static final String ERROR_MSG_DENROLLMENT_DATE_BEFORE_ENROLLMENT = " must be >= enrollment date";
     public static final String ERROR_MSG_DENROLLMENT_DATE_AFTER_REGISTER_END = " must be <= register end date";
+
+    // File Store Service Errors
+    public static final String FILE_STORE_SERVICE_ERROR = "FILE_STORE_SERVICE_ERROR";
+    public static final String FILE_STORE_SERVICE_ERROR_MESSAGE = "Error while uploading file to file store";
 }
