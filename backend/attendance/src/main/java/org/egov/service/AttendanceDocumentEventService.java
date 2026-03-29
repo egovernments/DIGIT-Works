@@ -9,6 +9,7 @@ import org.egov.web.models.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Service
@@ -20,41 +21,44 @@ public class AttendanceDocumentEventService {
     private final AttendanceServiceConfiguration config;
     private final ObjectMapper objectMapper;
 
+    @SuppressWarnings("unchecked")
     public void processFirstSignatureEvents(AttendanceLogRequest request) {
         if (CollectionUtils.isEmpty(request.getAttendance())) return;
 
         for (AttendanceLog log : request.getAttendance()) {
-            if (CollectionUtils.isEmpty(log.getDocumentIds())) continue;
+            Object additionalDetails = log.getAdditionalDetails();
+            if (additionalDetails == null) continue;
 
-            for (Document doc : log.getDocumentIds()) {
-                if (!isFirstSignature(doc)) continue;
-
-                AttendanceDocumentEventRequest event = AttendanceDocumentEventRequest.builder()
-                        .requestInfo(request.getRequestInfo())
-                        .attendanceDocumentEvent(AttendanceDocumentEvent.builder()
-                                .individualId(log.getIndividualId())
-                                .tenantId(log.getTenantId())
-                                .fileStore(doc.getFileStore())
-                                .type("SIGNATURE")
-                                .clientAuditDetails(log.getClientAuditDetails())
-                                .build())
-                        .build();
-
-                producer.push(log.getTenantId(), config.getFirstAttendanceLogTopic(), event);
+            Map<String, Object> detailsMap;
+            if (additionalDetails instanceof Map) {
+                detailsMap = (Map<String, Object>) additionalDetails;
+            } else {
+                detailsMap = objectMapper.convertValue(additionalDetails, LinkedHashMap.class);
             }
+
+            String fileStoreId = (String) detailsMap.get("signatureFileStoreId");
+            if (fileStoreId == null || fileStoreId.isEmpty()) continue;
+
+            if (!isFirstSignature(detailsMap)) continue;
+
+            AttendanceDocumentEventRequest event = AttendanceDocumentEventRequest.builder()
+                    .requestInfo(request.getRequestInfo())
+                    .attendanceDocumentEvent(AttendanceDocumentEvent.builder()
+                            .individualId(log.getIndividualId())
+                            .tenantId(log.getTenantId())
+                            .fileStore(fileStoreId)
+                            .type("SIGNATURE")
+                            .clientAuditDetails(log.getClientAuditDetails())
+                            .build())
+                    .build();
+
+            producer.push(log.getTenantId(), config.getFirstAttendanceLogTopic(), event);
         }
     }
 
-    private boolean isFirstSignature(Document doc) {
-        if (!"SIGNATURE".equals(doc.getDocumentType())) return false;
-        if (doc.getAdditionalDetails() == null) return false;
-        try {
-            Map<String, Object> details = objectMapper.convertValue(doc.getAdditionalDetails(), Map.class);
-            Object flag = details.get("isFirstSignature");
-            return Boolean.TRUE.equals(flag) || "true".equals(String.valueOf(flag));
-        } catch (Exception e) {
-            log.warn("Could not parse additionalDetails for document {}", doc.getId());
-            return false;
-        }
+    private boolean isFirstSignature(Map<String, Object> detailsMap) {
+        Object flag = detailsMap.get("isFirstSignature");
+        if (flag == null) return false;
+        return Boolean.TRUE.equals(flag) || "true".equals(String.valueOf(flag));
     }
 }
