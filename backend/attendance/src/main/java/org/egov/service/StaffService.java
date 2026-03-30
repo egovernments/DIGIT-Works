@@ -172,39 +172,6 @@ public class StaffService {
         return staffPermissionRequest;
     }
 
-    public StaffPermissionRequest updateStaff(StaffPermissionRequest staffPermissionRequest) {
-        log.info("Validating incoming staff update request");
-        staffServiceValidator.validateStaffUpdateRequestParameters(staffPermissionRequest);
-
-        String tenantId = staffPermissionRequest.getStaff().get(0).getTenantId();
-        List<String> staffUserIds = extractStaffIdsFromRequest(staffPermissionRequest);
-        List<String> registerIds = extractRegisterIdsFromRequest(staffPermissionRequest);
-
-        // Fetch all staff (including de-enrolled) by registerId + userId
-        StaffSearchCriteria staffSearchCriteria = StaffSearchCriteria.builder()
-                .registerIds(registerIds)
-                .individualIds(staffUserIds)
-                .tenantId(tenantId)
-                .build();
-        List<StaffPermission> staffFromDB = staffRepository.getAllStaff(staffSearchCriteria);
-
-        List<AttendanceRegister> attendanceRegisters = getRegistersFromDB(staffPermissionRequest, registerIds, tenantId);
-
-        log.info("Validating register ids from request against DB");
-        attendanceServiceValidator.validateRegisterAgainstDB(registerIds, attendanceRegisters, tenantId);
-
-        log.info("staffServiceValidator called to validate Update StaffPermission request");
-        staffServiceValidator.validateStaffOnUpdate(staffPermissionRequest, staffFromDB, attendanceRegisters);
-
-        log.info("staffEnrichmentService called to enrich Update StaffPermission request");
-        staffEnrichmentService.enrichStaffOnUpdate(staffPermissionRequest, staffFromDB);
-
-        log.info("staff objects pushed via producer for update");
-        producer.push(tenantId, serviceConfiguration.getUpdateStaffTopic(), staffPermissionRequest);
-
-        return staffPermissionRequest;
-    }
-
     private List<String> extractRegisterIdsFromRequest(StaffPermissionRequest staffPermissionRequest) {
         List<StaffPermission> staffPermissionListFromRequest = staffPermissionRequest.getStaff();
         List<String> registerIds = new ArrayList<>();

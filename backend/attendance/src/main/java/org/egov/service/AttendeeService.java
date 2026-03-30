@@ -233,35 +233,6 @@ public class AttendeeService {
     }
 
 
-    public AttendeeCreateRequest updateAttendee(AttendeeCreateRequest attendeeCreateRequest) {
-        log.info("validating update attendee request parameters");
-        attendeeServiceValidator.validateAttendeeUpdateRequestParameters(attendeeCreateRequest);
-
-        String tenantId = attendeeCreateRequest.getAttendees().get(0).getTenantId();
-        List<String> ids = attendeeCreateRequest.getAttendees().stream()
-                .map(IndividualEntry::getId)
-                .collect(Collectors.toList());
-        List<String> registerIds = extractRegisterIdsFromCreateRequest(attendeeCreateRequest);
-
-        List<IndividualEntry> attendeeListFromDB = getAttendeesByIds(ids, tenantId);
-
-        List<AttendanceRegister> attendanceRegisters = getAttendanceRegisters(attendeeCreateRequest, registerIds, tenantId);
-
-        log.info("validating register ids from request against DB");
-        attendanceServiceValidator.validateRegisterAgainstDB(registerIds, attendanceRegisters, tenantId);
-
-        log.info("validating update attendee request against DB");
-        attendeeServiceValidator.validateAttendeeOnUpdate(attendeeCreateRequest, attendeeListFromDB, attendanceRegisters);
-
-        log.info("enriching update attendee request");
-        attendeeEnrichmentService.enrichAttendeeOnUpdate(attendeeCreateRequest, attendeeListFromDB);
-
-        log.info("pushing updated attendees via producer");
-        producer.push(tenantId, attendanceServiceConfiguration.getUpdateAttendeeTopic(), attendeeCreateRequest);
-
-        return attendeeCreateRequest;
-    }
-
     private List<String> extractRegisterIdsFromCreateRequest(AttendeeCreateRequest attendeeCreateRequest) {
         List<IndividualEntry> attendeeListFromRequest = attendeeCreateRequest.getAttendees();
         List<String> registerIds = new ArrayList<>();

@@ -56,17 +56,6 @@ public class AttendeeApiController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/_update", method = RequestMethod.POST)
-    public ResponseEntity<AttendeeUpdateResponse> updateAttendee(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody AttendeeCreateRequest attendeeCreateRequest) {
-        AttendeeCreateRequest enrichedRequest = attendeeService.updateAttendee(attendeeCreateRequest);
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendeeCreateRequest.getRequestInfo(), true);
-        AttendeeUpdateResponse response = AttendeeUpdateResponse.builder()
-                .responseInfo(responseInfo)
-                .attendees(enrichedRequest.getAttendees())
-                .build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
     @RequestMapping(value = "/_delete", method = RequestMethod.POST)
     public ResponseEntity<AttendeeDeleteResponse> deleteAttendee(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody AttendeeDeleteRequest attendeeDeleteRequest) {
         AttendeeDeleteRequest enrichedRequest = attendeeService.deleteAttendee(attendeeDeleteRequest);

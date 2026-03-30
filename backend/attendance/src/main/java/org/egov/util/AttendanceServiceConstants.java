@@ -41,16 +41,8 @@ public class AttendanceServiceConstants {
     public static final String ERROR_MSG_TAG_MANDATORY = "New tag value must be provided";
     public static final String ERROR_MSG_ATTENDEES_NOT_FOUND = "Attendees not found in database for IDs: ";
     public static final String ERROR_MSG_INCONSISTENT_TENANT_ID = "All Attendees to be enrolled or de enrolled must have the same tenant id. Please raise a new request for a different tenant id.";
-    public static final String ERROR_MSG_UNAUTHORIZED_UPDATE_ATTENDEE = "Only CAMPAIGN_MANAGER role is allowed to update attendees";
-    public static final String ERROR_MSG_UNAUTHORIZED_UPDATE_STAFF = "Only CAMPAIGN_MANAGER role is allowed to update staff";
     public static final String ERROR_MSG_UNAUTHORIZED_FIRST_STAFF = "Only CAMPAIGN_MANAGER role is allowed to enroll the first staff in a register";
     public static final String ERROR_MSG_UNAUTHORIZED_FIRST_ATTENDEE_PREFIX = "Only CAMPAIGN_MANAGER role is allowed to enroll the first attendee in register: ";
-    public static final String ERROR_MSG_ATTENDEE_NOT_FOUND_IN_DB_PREFIX = "Attendee not found in DB for id: ";
-    public static final String ERROR_MSG_STAFF_NOT_FOUND_IN_DB_PREFIX = "Staff not found in DB for id: ";
-    public static final String ERROR_MSG_ENROLLMENT_DATE_BEFORE_REGISTER_START = " must be >= register start date";
-    public static final String ERROR_MSG_ENROLLMENT_DATE_EXCEEDS_DENROLLMENT = " must be <= existing de-enrollment date";
-    public static final String ERROR_MSG_DENROLLMENT_DATE_BEFORE_ENROLLMENT = " must be >= enrollment date";
-    public static final String ERROR_MSG_DENROLLMENT_DATE_AFTER_REGISTER_END = " must be <= register end date";
 
     // File Store Service Errors
     public static final String FILE_STORE_SERVICE_ERROR = "FILE_STORE_SERVICE_ERROR";

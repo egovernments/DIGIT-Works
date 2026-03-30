@@ -49,17 +49,6 @@ public class StaffApiController {
         return new ResponseEntity<StaffPermissionResponse>(staffPermissionResponse, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/_update", method = RequestMethod.POST)
-    public ResponseEntity<StaffPermissionResponse> updateStaff(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody StaffPermissionRequest staffPermissionRequest) {
-        StaffPermissionRequest enrichedRequest = staffService.updateStaff(staffPermissionRequest);
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(staffPermissionRequest.getRequestInfo(), true);
-        StaffPermissionResponse staffPermissionResponse = StaffPermissionResponse.builder()
-                .responseInfo(responseInfo)
-                .staff(enrichedRequest.getStaff())
-                .build();
-        return new ResponseEntity<>(staffPermissionResponse, HttpStatus.OK);
-    }
-
     @RequestMapping(value = "/_delete", method = RequestMethod.POST)
     public ResponseEntity<StaffPermissionResponse> deleteStaff(@ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType, @ApiParam(value = "") @Valid @RequestBody StaffPermissionRequest staffPermissionRequest) {
         StaffPermissionRequest enrichedRequest = staffService.deleteAttendanceStaff(staffPermissionRequest);
