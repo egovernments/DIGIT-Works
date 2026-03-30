@@ -1,6 +1,7 @@
 package org.egov.service;
 
 import digit.models.coremodels.RequestInfoWrapper;
+import org.egov.common.contract.request.RequestInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.AttendeeEnrichmentService;
@@ -276,22 +277,24 @@ public class AttendeeService {
         return attendeeIds;
     }
 
-    public List<IndividualEntry> searchAttendees(AttendeeSearchRequest request) {
-        String tenantId = request.getTenantId();
+    public List<IndividualEntry> searchAttendees(RequestInfo requestInfo, AttendeeSearchCriteria criteria, Integer limit, Integer offset) {
+        String tenantId = criteria.getTenantId();
 
         // RBAC: only open-search-enabled roles (includes CAMPAIGN_MANAGER via config) can call this
-        Set<String> userRoles = HRMSUtil.getUserRoleCodes(request.getRequestInfo());
+        Set<String> userRoles = HRMSUtil.getUserRoleCodes(requestInfo);
         Set<String> openSearchEnabledRoles = HRMSUtil.getRegisterOpenSearchEnabledRoles(
                 attendanceServiceConfiguration.getRegisterOpenSearchEnabledRoles());
         if (!HRMSUtil.isUserEnabledForOpenSearch(userRoles, openSearchEnabledRoles)) {
             throw new CustomException(ERROR_KEY_UNAUTHORIZED, "User does not have permission to perform attendee search");
         }
 
-        AttendeeSearchCriteria criteria = AttendeeSearchCriteria.builder()
-                .tenantId(tenantId)
-                .build();
+        int resolvedLimit = (limit == null) ? attendanceServiceConfiguration.getAttendanceRegisterDefaultLimit()
+                : Math.min(limit, attendanceServiceConfiguration.getAttendanceRegisterMaxLimit());
+        int resolvedOffset = (offset == null) ? attendanceServiceConfiguration.getAttendanceRegisterDefaultOffset() : offset;
+        criteria.setLimit(resolvedLimit);
+        criteria.setOffset(resolvedOffset);
 
-        List<String> usernames = request.getUsernames();
+        List<String> usernames = criteria.getUsernames();
         if (usernames != null && !usernames.isEmpty()) {
             IndividualSearch individualSearch = IndividualSearch.builder()
                     .username(usernames)
@@ -299,7 +302,7 @@ public class AttendeeService {
             List<Individual> individuals;
             try {
                 individuals = individualServiceUtil.getIndividualDetailsFromSearchCriteria(
-                        individualSearch, request.getRequestInfo(), tenantId);
+                        individualSearch, requestInfo, tenantId);
             } catch (CustomException e) {
                 if ("INDIVIDUAL_SEARCH_RESPONSE_IS_EMPTY".equals(e.getCode())) {
                     return Collections.emptyList();

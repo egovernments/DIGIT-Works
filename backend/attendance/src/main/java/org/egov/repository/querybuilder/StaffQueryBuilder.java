@@ -84,6 +84,7 @@ public class StaffQueryBuilder {
             preparedStmtList.add("%" + staffName + "%");
         }
 
+        addLimitAndOffset(query, criteria, preparedStmtList);
         return multiStateInstanceUtil.replaceSchemaPlaceholder(query.toString(), tenantId);
     }
     private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList) {

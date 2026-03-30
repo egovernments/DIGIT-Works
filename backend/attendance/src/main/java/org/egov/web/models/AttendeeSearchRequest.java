@@ -7,8 +7,6 @@ import lombok.*;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.List;
-
 @Validated
 @Getter
 @Setter
@@ -22,10 +20,7 @@ public class AttendeeSearchRequest {
     @Valid
     private RequestInfo requestInfo = null;
 
-    @JsonProperty("tenantId")
-    @NotNull
-    private String tenantId;
-
-    @JsonProperty("usernames")
-    private List<String> usernames;
+    @JsonProperty("attendees")
+    @Valid
+    private AttendeeSearchCriteria attendeeSearchCriteria;
 }

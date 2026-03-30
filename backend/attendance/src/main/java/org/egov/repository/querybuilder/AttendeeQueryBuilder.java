@@ -93,6 +93,7 @@ public class AttendeeQueryBuilder {
                 throw new CustomException("INVALID_SEARCH_PARAM", "Cannot specify denrollmentDate without a enrollmentDate");
             }
         }
+        addLimitAndOffset(query, criteria, preparedStmtList);
         // After building full query, replace schema placeholders with actual schema using MultiStateInstanceUtil
         return multiStateInstanceUtil.replaceSchemaPlaceholder(query.toString(), tenantId);
     }

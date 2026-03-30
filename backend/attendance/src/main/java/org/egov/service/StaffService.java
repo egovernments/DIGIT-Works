@@ -1,6 +1,7 @@
 package org.egov.service;
 
 import digit.models.coremodels.RequestInfoWrapper;
+import org.egov.common.contract.request.RequestInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.StaffEnrichmentService;
@@ -21,7 +22,6 @@ import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.StaffPermission;
 import org.egov.web.models.StaffPermissionRequest;
 import org.egov.web.models.StaffSearchCriteria;
-import org.egov.web.models.StaffSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -239,22 +239,24 @@ public class StaffService {
         return registerIdToFirstStaffMap;
     }
 
-    public List<StaffPermission> searchStaff(StaffSearchRequest request) {
-        String tenantId = request.getTenantId();
+    public List<StaffPermission> searchStaff(RequestInfo requestInfo, StaffSearchCriteria criteria, Integer limit, Integer offset) {
+        String tenantId = criteria.getTenantId();
 
         // RBAC: only open-search-enabled roles (includes CAMPAIGN_MANAGER via config) can call this
-        Set<String> userRoles = HRMSUtil.getUserRoleCodes(request.getRequestInfo());
+        Set<String> userRoles = HRMSUtil.getUserRoleCodes(requestInfo);
         Set<String> openSearchEnabledRoles = HRMSUtil.getRegisterOpenSearchEnabledRoles(
                 serviceConfiguration.getRegisterOpenSearchEnabledRoles());
         if (!HRMSUtil.isUserEnabledForOpenSearch(userRoles, openSearchEnabledRoles)) {
             throw new CustomException(ERROR_KEY_UNAUTHORIZED, "User does not have permission to perform staff search");
         }
 
-        StaffSearchCriteria criteria = StaffSearchCriteria.builder()
-                .tenantId(tenantId)
-                .build();
+        int resolvedLimit = (limit == null) ? serviceConfiguration.getAttendanceRegisterDefaultLimit()
+                : Math.min(limit, serviceConfiguration.getAttendanceRegisterMaxLimit());
+        int resolvedOffset = (offset == null) ? serviceConfiguration.getAttendanceRegisterDefaultOffset() : offset;
+        criteria.setLimit(resolvedLimit);
+        criteria.setOffset(resolvedOffset);
 
-        List<String> usernames = request.getUsernames();
+        List<String> usernames = criteria.getUsernames();
         if (usernames != null && !usernames.isEmpty()) {
             IndividualSearch individualSearch = IndividualSearch.builder()
                     .username(usernames)
@@ -262,7 +264,7 @@ public class StaffService {
             List<Individual> individuals;
             try {
                 individuals = individualServiceUtil.getIndividualDetailsFromSearchCriteria(
-                        individualSearch, request.getRequestInfo(), tenantId);
+                        individualSearch, requestInfo, tenantId);
             } catch (CustomException e) {
                 if ("INDIVIDUAL_SEARCH_RESPONSE_IS_EMPTY".equals(e.getCode())) {
                     return Collections.emptyList();

@@ -68,8 +68,14 @@ public class AttendeeApiController {
     @RequestMapping(value = "/_search", method = RequestMethod.POST)
     public ResponseEntity<AttendeeSearchResponse> searchAttendees(
             @ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType,
-            @ApiParam(value = "") @Valid @RequestBody AttendeeSearchRequest attendeeSearchRequest) {
-        List<IndividualEntry> attendees = attendeeService.searchAttendees(attendeeSearchRequest);
+            @ApiParam(value = "") @Valid @RequestBody AttendeeSearchRequest attendeeSearchRequest,
+            @RequestParam String tenantId,
+            @RequestParam(required = false) Integer limit,
+            @RequestParam(required = false) Integer offset) {
+        AttendeeSearchCriteria criteria = attendeeSearchRequest.getAttendeeSearchCriteria();
+        if (criteria == null) criteria = new AttendeeSearchCriteria();
+        criteria.setTenantId(tenantId);
+        List<IndividualEntry> attendees = attendeeService.searchAttendees(attendeeSearchRequest.getRequestInfo(), criteria, limit, offset);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendeeSearchRequest.getRequestInfo(), true);
         AttendeeSearchResponse response = AttendeeSearchResponse.builder()
                 .responseInfo(responseInfo)
