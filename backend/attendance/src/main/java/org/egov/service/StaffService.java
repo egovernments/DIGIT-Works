@@ -4,11 +4,14 @@ import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.StaffEnrichmentService;
+import org.egov.common.models.individual.Individual;
+import org.egov.common.models.individual.IndividualSearch;
 import org.egov.common.producer.Producer;
 import org.egov.repository.RegisterRepository;
 import org.egov.repository.StaffRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.HRMSUtil;
+import org.egov.util.IndividualServiceUtil;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
 import org.egov.validator.StaffServiceValidator;
@@ -18,10 +21,12 @@ import org.egov.web.models.AttendanceRegister;
 import org.egov.web.models.StaffPermission;
 import org.egov.web.models.StaffPermissionRequest;
 import org.egov.web.models.StaffSearchCriteria;
+import org.egov.web.models.StaffSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -45,8 +50,10 @@ public class StaffService {
 
     private final AttendanceServiceValidator attendanceServiceValidator;
 
+    private final IndividualServiceUtil individualServiceUtil;
+
     @Autowired
-    public StaffService(StaffServiceValidator staffServiceValidator, ResponseInfoFactory responseInfoFactory, StaffEnrichmentService staffEnrichmentService, StaffRepository staffRepository, RegisterRepository registerRepository, Producer producer, AttendanceServiceConfiguration serviceConfiguration, AttendanceRegisterService attendanceRegisterService, AttendanceServiceValidator attendanceServiceValidator) {
+    public StaffService(StaffServiceValidator staffServiceValidator, ResponseInfoFactory responseInfoFactory, StaffEnrichmentService staffEnrichmentService, StaffRepository staffRepository, RegisterRepository registerRepository, Producer producer, AttendanceServiceConfiguration serviceConfiguration, AttendanceRegisterService attendanceRegisterService, AttendanceServiceValidator attendanceServiceValidator, IndividualServiceUtil individualServiceUtil) {
         this.staffServiceValidator = staffServiceValidator;
         this.responseInfoFactory = responseInfoFactory;
         this.staffEnrichmentService = staffEnrichmentService;
@@ -56,6 +63,7 @@ public class StaffService {
         this.serviceConfiguration = serviceConfiguration;
         this.attendanceRegisterService = attendanceRegisterService;
         this.attendanceServiceValidator = attendanceServiceValidator;
+        this.individualServiceUtil = individualServiceUtil;
     }
 
 
@@ -229,6 +237,49 @@ public class StaffService {
             }
         }
         return registerIdToFirstStaffMap;
+    }
+
+    public List<StaffPermission> searchStaff(StaffSearchRequest request) {
+        String tenantId = request.getTenantId();
+
+        // RBAC: only open-search-enabled roles (includes CAMPAIGN_MANAGER via config) can call this
+        Set<String> userRoles = HRMSUtil.getUserRoleCodes(request.getRequestInfo());
+        Set<String> openSearchEnabledRoles = HRMSUtil.getRegisterOpenSearchEnabledRoles(
+                serviceConfiguration.getRegisterOpenSearchEnabledRoles());
+        if (!HRMSUtil.isUserEnabledForOpenSearch(userRoles, openSearchEnabledRoles)) {
+            throw new CustomException(ERROR_KEY_UNAUTHORIZED, "User does not have permission to perform staff search");
+        }
+
+        StaffSearchCriteria criteria = StaffSearchCriteria.builder()
+                .tenantId(tenantId)
+                .build();
+
+        List<String> usernames = request.getUsernames();
+        if (usernames != null && !usernames.isEmpty()) {
+            IndividualSearch individualSearch = IndividualSearch.builder()
+                    .username(usernames)
+                    .build();
+            List<Individual> individuals;
+            try {
+                individuals = individualServiceUtil.getIndividualDetailsFromSearchCriteria(
+                        individualSearch, request.getRequestInfo(), tenantId);
+            } catch (CustomException e) {
+                if ("INDIVIDUAL_SEARCH_RESPONSE_IS_EMPTY".equals(e.getCode())) {
+                    return Collections.emptyList();
+                }
+                throw e;
+            }
+            List<String> individualIds = individuals.stream()
+                    .map(Individual::getId)
+                    .collect(Collectors.toList());
+            if (individualIds.isEmpty()) {
+                return Collections.emptyList();
+            }
+            criteria.setIndividualIds(individualIds);
+        }
+
+        log.info("Searching staff for tenantId: {}", tenantId);
+        return staffRepository.getAllStaff(criteria);
     }
 
 }
