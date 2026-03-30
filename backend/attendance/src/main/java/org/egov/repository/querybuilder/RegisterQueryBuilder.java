@@ -116,10 +116,20 @@ public class RegisterQueryBuilder {
         }
 
         if (!ObjectUtils.isEmpty(searchCriteria.getServiceCode())) {
-            String serviceCode = searchCriteria.getServiceCode();
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" reg.servicecode = ? ");
-            preparedStmtList.add(serviceCode);
+            List<String> serviceCodes = java.util.Arrays.stream(searchCriteria.getServiceCode().split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .collect(java.util.stream.Collectors.toList());
+            if (!serviceCodes.isEmpty()) {
+                addClauseIfRequired(query, preparedStmtList);
+                if (serviceCodes.size() == 1) {
+                    query.append(" reg.servicecode = ? ");
+                    preparedStmtList.add(serviceCodes.get(0));
+                } else {
+                    query.append(" reg.servicecode IN (").append(createQuery(serviceCodes)).append(") ");
+                    preparedStmtList.addAll(serviceCodes);
+                }
+            }
         }
 
         if (!ObjectUtils.isEmpty(searchCriteria.getName())) {
