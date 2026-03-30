@@ -1,5 +1,6 @@
 package org.egov.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.common.utils.CommonUtils;
@@ -14,7 +15,10 @@ import org.egov.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Base64;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -34,8 +38,12 @@ public class AttendanceLogService {
 
     private final AttendanceDocumentEventService attendanceDocumentEventService;
 
+    private final FileStoreService fileStoreService;
+
+    private final ObjectMapper objectMapper;
+
     @Autowired
-    public AttendanceLogService(AttendanceLogServiceValidator attendanceLogServiceValidator, ResponseInfoFactory responseInfoFactory, AttendanceLogEnrichment attendanceLogEnricher, Producer producer, AttendanceServiceConfiguration config, AttendanceLogRepository attendanceLogRepository, AttendanceDocumentEventService attendanceDocumentEventService) {
+    public AttendanceLogService(AttendanceLogServiceValidator attendanceLogServiceValidator, ResponseInfoFactory responseInfoFactory, AttendanceLogEnrichment attendanceLogEnricher, Producer producer, AttendanceServiceConfiguration config, AttendanceLogRepository attendanceLogRepository, AttendanceDocumentEventService attendanceDocumentEventService, FileStoreService fileStoreService, ObjectMapper objectMapper) {
         this.attendanceLogServiceValidator = attendanceLogServiceValidator;
         this.responseInfoFactory = responseInfoFactory;
         this.attendanceLogEnricher = attendanceLogEnricher;
@@ -43,6 +51,8 @@ public class AttendanceLogService {
         this.config = config;
         this.attendanceLogRepository = attendanceLogRepository;
         this.attendanceDocumentEventService = attendanceDocumentEventService;
+        this.fileStoreService = fileStoreService;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -59,6 +69,8 @@ public class AttendanceLogService {
         attendanceLogServiceValidator.validateCreateAttendanceLogRequest(attendanceLogRequest);
         //Enrich the incoming request
         attendanceLogEnricher.enrichAttendanceLogCreateRequest(attendanceLogRequest);
+        // Upload signatures to file store and store fileStoreId in additionalDetails
+        uploadSignaturesToFileStore(attendanceLogRequest.getAttendance());
         // Publish the create request to the configured Kafka topic, partitioned by tenantId
         producer.push(tenantId, config.getCreateAttendanceLogTopic(), attendanceLogRequest);
         // Publish first-signature document events if applicable
@@ -105,6 +117,8 @@ public class AttendanceLogService {
         attendanceLogServiceValidator.validateUpdateAttendanceLogRequest(attendanceLogRequest);
         //Enrich the incoming request
         attendanceLogEnricher.enrichAttendanceLogUpdateRequest(attendanceLogRequest);
+        // Upload signatures to file store and store fileStoreId in additionalDetails
+        uploadSignaturesToFileStore(attendanceLogRequest.getAttendance());
         // Publish the update request to the Kafka topic, using tenantId for schema and topic resolution
         producer.push(tenantId, config.getUpdateAttendanceLogTopic(), attendanceLogRequest);
         // Publish first-signature document events if applicable
@@ -115,6 +129,42 @@ public class AttendanceLogService {
         String registerId = attendanceLogRequest.getAttendance().get(0).getRegisterId();
         log.info("Attendance logs updated successfully for register ["+registerId+"]");
         return attendanceLogResponse;
+    }
+
+    /**
+     * Uploads signatureData from additionalDetails to FileStore and stores the fileStoreId
+     * back in additionalDetails as signatureFileStoreId.
+     */
+    @SuppressWarnings("unchecked")
+    private void uploadSignaturesToFileStore(List<AttendanceLog> attendanceLogs) {
+        for (AttendanceLog attendanceLog : attendanceLogs) {
+            Object additionalDetails = attendanceLog.getAdditionalDetails();
+            if (additionalDetails == null) continue;
+
+            Map<String, Object> detailsMap;
+            if (additionalDetails instanceof Map) {
+                detailsMap = (Map<String, Object>) additionalDetails;
+            } else {
+                detailsMap = objectMapper.convertValue(additionalDetails, LinkedHashMap.class);
+            }
+
+            Object signatureData = detailsMap.get("signatureData");
+            if (signatureData == null || !(signatureData instanceof String) || ((String) signatureData).isEmpty()) {
+                continue;
+            }
+
+            try {
+                String base64Signature = (String) signatureData;
+                byte[] signatureBytes = Base64.getDecoder().decode(base64Signature);
+                String fileName = "signature_" + attendanceLog.getIndividualId() + "_" + System.currentTimeMillis() + ".png";
+                String fileStoreId = fileStoreService.uploadFile(signatureBytes, attendanceLog.getTenantId(), fileName);
+                detailsMap.put("signatureFileStoreId", fileStoreId);
+                attendanceLog.setAdditionalDetails(detailsMap);
+                log.info("Signature uploaded to filestore for individualId: {}, fileStoreId: {}", attendanceLog.getIndividualId(), fileStoreId);
+            } catch (Exception e) {
+                log.error("Failed to upload signature to filestore for individualId: {}", attendanceLog.getIndividualId(), e);
+            }
+        }
     }
 
     public void putInCache(List<AttendanceLog> attendanceLogs) {
