@@ -29,4 +29,10 @@ public class StaffSearchCriteria {
 
     @JsonProperty("staffType")
     private String staffType = null;
+
+    @JsonProperty("staffName")
+    private String staffName;
+
+    @JsonProperty("staffTypes")
+    private List<String> staffTypes;
 }

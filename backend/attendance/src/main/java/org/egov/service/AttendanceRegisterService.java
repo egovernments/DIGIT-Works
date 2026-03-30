@@ -339,7 +339,9 @@ public class AttendanceRegisterService {
 
             boolean includeStaff    = !Boolean.FALSE.equals(searchCriteria.getIncludeStaff());
             boolean includeAttendee = !Boolean.FALSE.equals(searchCriteria.getIncludeAttendee());
-            boolean needStaffForFilter    = searchCriteria.getStaffId() != null;
+            boolean needStaffForFilter    = searchCriteria.getStaffId() != null
+                    || searchCriteria.getStaffName() != null
+                    || (searchCriteria.getStaffTypes() != null && !searchCriteria.getStaffTypes().isEmpty());
             boolean needAttendeeForFilter = searchCriteria.getAttendeeId() != null;
 
             // Fetch staff members based on the supplied search criteria.
@@ -353,9 +355,15 @@ public class AttendanceRegisterService {
                 if (includeStaff) {
                     // Extra call: fetch ALL staff (for owner name enrichment) — only when including staff in response
                     String staffId = searchCriteria.getStaffId();
+                    String staffName = searchCriteria.getStaffName();
+                    List<String> staffTypes = searchCriteria.getStaffTypes();
                     searchCriteria.setStaffId(null);
+                    searchCriteria.setStaffName(null);
+                    searchCriteria.setStaffTypes(null);
                     List<StaffPermission> allStaffMembers = fetchAllStaffMembersAssociatedToRegisterIds(registerIdsToSearch, searchCriteria);
                     searchCriteria.setStaffId(staffId);
+                    searchCriteria.setStaffName(staffName);
+                    searchCriteria.setStaffTypes(staffTypes);
                     Map<String, List<StaffPermission>> registerIdAllStaffMapping = allStaffMembers.stream().collect(Collectors.groupingBy(StaffPermission::getRegisterId));
                     enrichOwnerNameOfAttendanceRegister(registerIdStaffMapping, registerIdAllStaffMapping);
                 }
@@ -488,7 +496,9 @@ public class AttendanceRegisterService {
 
             boolean includeStaff    = !Boolean.FALSE.equals(searchCriteria.getIncludeStaff());
             boolean includeAttendee = !Boolean.FALSE.equals(searchCriteria.getIncludeAttendee());
-            boolean needStaffForFilter    = searchCriteria.getStaffId() != null;
+            boolean needStaffForFilter    = searchCriteria.getStaffId() != null
+                    || searchCriteria.getStaffName() != null
+                    || (searchCriteria.getStaffTypes() != null && !searchCriteria.getStaffTypes().isEmpty());
             boolean needAttendeeForFilter = searchCriteria.getAttendeeId() != null;
 
             // Fetch staff members based on the supplied search criteria.
@@ -502,9 +512,15 @@ public class AttendanceRegisterService {
                 if (includeStaff) {
                     // Extra call: fetch ALL staff (for owner name enrichment) — only when including staff in response
                     String staffId = searchCriteria.getStaffId();
+                    String staffName = searchCriteria.getStaffName();
+                    List<String> staffTypes = searchCriteria.getStaffTypes();
                     searchCriteria.setStaffId(null);
+                    searchCriteria.setStaffName(null);
+                    searchCriteria.setStaffTypes(null);
                     List<StaffPermission> allStaffMembers = fetchAllStaffMembersAssociatedToRegisterIds(registerIdsToSearch, searchCriteria);
                     searchCriteria.setStaffId(staffId);
+                    searchCriteria.setStaffName(staffName);
+                    searchCriteria.setStaffTypes(staffTypes);
                     Map<String, List<StaffPermission>> registerIdAllStaffMapping = allStaffMembers.stream().collect(Collectors.groupingBy(StaffPermission::getRegisterId));
                     enrichOwnerNameOfAttendanceRegister(registerIdStaffMapping, registerIdAllStaffMapping);
                 }
@@ -876,13 +892,19 @@ public class AttendanceRegisterService {
 
     /* Get all staff members associated for the register */
     private List<StaffPermission> fetchAllStaffMembersAssociatedToRegisterIds(List<String> registerIdsToSearch, AttendanceRegisterSearchCriteria searchCriteria) {
-        StaffSearchCriteria staffSearchCriteria = null ;
-        if(searchCriteria.getStaffId() != null){
-            staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIdsToSearch).individualIds(Collections.singletonList(searchCriteria.getStaffId())).tenantId(searchCriteria.getTenantId()).build();
-        } else {
-            staffSearchCriteria = StaffSearchCriteria.builder().registerIds(registerIdsToSearch).tenantId(searchCriteria.getTenantId()).build();
+        StaffSearchCriteria.StaffSearchCriteriaBuilder builder = StaffSearchCriteria.builder()
+                .registerIds(registerIdsToSearch)
+                .tenantId(searchCriteria.getTenantId());
+        if (searchCriteria.getStaffId() != null) {
+            builder.individualIds(Collections.singletonList(searchCriteria.getStaffId()));
         }
-        return staffRepository.getAllStaff(staffSearchCriteria);
+        if (searchCriteria.getStaffName() != null) {
+            builder.staffName(searchCriteria.getStaffName());
+        }
+        if (searchCriteria.getStaffTypes() != null && !searchCriteria.getStaffTypes().isEmpty()) {
+            builder.staffTypes(searchCriteria.getStaffTypes());
+        }
+        return staffRepository.getAllStaff(builder.build());
     }
 
     /* Returns list of user roles */

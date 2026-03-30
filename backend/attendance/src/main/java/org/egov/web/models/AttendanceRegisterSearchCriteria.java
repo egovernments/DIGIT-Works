@@ -43,6 +43,12 @@ public class AttendanceRegisterSearchCriteria {
     @JsonProperty("staffId")
     private String staffId;
 
+    @JsonProperty("staffName")
+    private String staffName;
+
+    @JsonProperty("staffTypes")
+    private List<String> staffTypes;
+
     @JsonProperty("referenceId")
     private String referenceId;
 

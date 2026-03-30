@@ -70,6 +70,20 @@ public class StaffQueryBuilder {
             preparedStmtList.add(staffType);
         }
 
+        List<String> staffTypes = criteria.getStaffTypes();
+        if (staffTypes != null && !staffTypes.isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" stf.stafftype IN (").append(createQuery(staffTypes)).append(") ");
+            preparedStmtList.addAll(staffTypes);
+        }
+
+        String staffName = criteria.getStaffName();
+        if (staffName != null && !staffName.isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" stf.additionaldetails->>'staffName' ILIKE ? ");
+            preparedStmtList.add("%" + staffName + "%");
+        }
+
         return multiStateInstanceUtil.replaceSchemaPlaceholder(query.toString(), tenantId);
     }
     private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList) {
