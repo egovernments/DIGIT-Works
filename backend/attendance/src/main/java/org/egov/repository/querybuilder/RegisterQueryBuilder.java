@@ -123,8 +123,8 @@ public class RegisterQueryBuilder {
             if (!serviceCodes.isEmpty()) {
                 addClauseIfRequired(query, preparedStmtList);
                 if (serviceCodes.size() == 1) {
-                    query.append(" reg.servicecode = ? ");
-                    preparedStmtList.add(serviceCodes.get(0));
+                    query.append(" reg.servicecode ILIKE ? ");
+                    preparedStmtList.add("%" + serviceCodes.get(0) + "%");
                 } else {
                     query.append(" reg.servicecode IN (").append(createQuery(serviceCodes)).append(") ");
                     preparedStmtList.addAll(serviceCodes);
