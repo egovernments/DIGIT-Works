@@ -119,6 +119,12 @@ public class AttendanceRegisterSearchCriteria {
     @JsonProperty("registerPeriodStatus")
     private String registerPeriodStatus;
 
+    @JsonProperty("includeStaff")
+    private Boolean includeStaff = Boolean.TRUE;
+
+    @JsonProperty("includeAttendee")
+    private Boolean includeAttendee = Boolean.TRUE;
+
     public enum SortOrder {
         ASC,
         DESC
