@@ -55,6 +55,9 @@ public class AttendanceRegisterSearchCriteria {
     @JsonProperty("serviceCode")
     private String serviceCode;
 
+    @JsonProperty("isServiceCodeExact")
+    private Boolean isServiceCodeExact = Boolean.TRUE;
+
     @JsonProperty("referenceIds")
     private List<String> referenceIds;
 

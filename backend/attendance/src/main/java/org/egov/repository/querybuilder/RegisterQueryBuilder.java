@@ -122,7 +122,11 @@ public class RegisterQueryBuilder {
                     .collect(java.util.stream.Collectors.toList());
             if (!serviceCodes.isEmpty()) {
                 addClauseIfRequired(query, preparedStmtList);
-                if (serviceCodes.size() == 1) {
+                boolean exactMatch = !Boolean.FALSE.equals(searchCriteria.getIsServiceCodeExact());
+                if (exactMatch && serviceCodes.size() == 1) {
+                    query.append(" reg.servicecode = ? ");
+                    preparedStmtList.add(serviceCodes.get(0));
+                } else if (!exactMatch && serviceCodes.size() == 1) {
                     query.append(" reg.servicecode ILIKE ? ");
                     preparedStmtList.add("%" + serviceCodes.get(0) + "%");
                 } else {
