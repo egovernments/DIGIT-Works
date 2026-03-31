@@ -107,12 +107,18 @@ public class StaffQueryBuilder {
 
 
     private void addLimitAndOffset(StringBuilder query, StaffSearchCriteria criteria, List<Object> preparedStmtList) {
-        query.append(" OFFSET ? ");
-        preparedStmtList.add(criteria.getOffset());
+        Integer offset = criteria.getOffset();
+        Integer limit = criteria.getLimit();
 
-        query.append(" LIMIT ? ");
-        preparedStmtList.add(criteria.getLimit());
+        if (offset != null) {
+            query.append(" OFFSET ? ");
+            preparedStmtList.add(offset);
+        }
 
+        if (limit != null) {
+            query.append(" LIMIT ? ");
+            preparedStmtList.add(limit);
+        }
     }
 
     public static String appendOrderLimit(String query) {

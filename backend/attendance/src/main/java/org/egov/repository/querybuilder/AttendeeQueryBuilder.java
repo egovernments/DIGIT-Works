@@ -98,12 +98,18 @@ public class AttendeeQueryBuilder {
         return multiStateInstanceUtil.replaceSchemaPlaceholder(query.toString(), tenantId);
     }
     private void addLimitAndOffset(StringBuilder query, AttendeeSearchCriteria criteria, List<Object> preparedStmtList) {
-        query.append(" OFFSET ? ");
-        preparedStmtList.add(criteria.getOffset());
+        Integer offset = criteria.getOffset();
+        Integer limit = criteria.getLimit();
 
-        query.append(" LIMIT ? ");
-        preparedStmtList.add(criteria.getLimit());
+        if (offset != null) {
+            query.append(" OFFSET ? ");
+            preparedStmtList.add(offset);
+        }
 
+        if (limit != null) {
+            query.append(" LIMIT ? ");
+            preparedStmtList.add(limit);
+        }
     }
 
     private String createQuery(Collection<String> ids) {
