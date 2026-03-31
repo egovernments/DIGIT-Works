@@ -159,6 +159,7 @@ public class AttendanceLogService {
                 String fileName = "signature_" + attendanceLog.getIndividualId() + "_" + System.currentTimeMillis() + ".png";
                 String fileStoreId = fileStoreService.uploadFile(signatureBytes, attendanceLog.getTenantId(), fileName);
                 detailsMap.put("signatureFileStoreId", fileStoreId);
+                detailsMap.put("signatureData", fileStoreId);
                 attendanceLog.setAdditionalDetails(detailsMap);
                 log.info("Signature uploaded to filestore for individualId: {}, fileStoreId: {}", attendanceLog.getIndividualId(), fileStoreId);
             } catch (Exception e) {
