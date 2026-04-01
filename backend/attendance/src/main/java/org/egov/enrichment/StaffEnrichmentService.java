@@ -15,6 +15,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -70,6 +71,15 @@ public class StaffEnrichmentService {
 
                     if (staffPermissionFromRequest.getDenrollmentDate() == null) {
                         staffPermissionFromRequest.setDenrollmentDate(new BigDecimal(System.currentTimeMillis()));
+                    }
+
+                    if (staffPermissionFromRequest.getAdditionalDetails() == null) {
+                        staffPermissionFromRequest.setAdditionalDetails(staffPermissionFromDB.getAdditionalDetails());
+                    } else if (staffPermissionFromDB.getAdditionalDetails() instanceof Map
+                            && staffPermissionFromRequest.getAdditionalDetails() instanceof Map) {
+                        Map<String, Object> merged = new HashMap<>((Map<String, Object>) staffPermissionFromDB.getAdditionalDetails());
+                        merged.putAll((Map<String, Object>) staffPermissionFromRequest.getAdditionalDetails());
+                        staffPermissionFromRequest.setAdditionalDetails(merged);
                     }
                 }
             }
