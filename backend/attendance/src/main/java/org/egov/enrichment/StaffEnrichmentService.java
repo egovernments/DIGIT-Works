@@ -44,8 +44,9 @@ public class StaffEnrichmentService {
             AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), staffPermissionFromRequest.getAuditDetails(), true);
             staffPermissionFromRequest.setAuditDetails(auditDetails);
             staffPermissionFromRequest.setId(UUID.randomUUID().toString());
-            BigDecimal enrollmentDate = new BigDecimal(System.currentTimeMillis());
-            staffPermissionFromRequest.setEnrollmentDate(enrollmentDate);
+            if (staffPermissionFromRequest.getEnrollmentDate() == null) {
+                staffPermissionFromRequest.setEnrollmentDate(new BigDecimal(System.currentTimeMillis()));
+            }
             staffPermissionFromRequest.setAdditionalDetails(Map.of("staffName", !individualList.isEmpty() ? individualList.get(0).getName().getGivenName() : "NA"));
         }
     }
