@@ -247,6 +247,27 @@ public class StaffServiceValidator {
             }
         }
 
+        // validate that de-enrollment date falls within register's start and end dates
+        log.info("validating that de-enrollment date falls within register start and end dates");
+        for (StaffPermission staffFromRequest : staffPermissionListFromRequest) {
+            AttendanceRegister register = attendanceRegisterListFromDB.stream()
+                    .filter(r -> r.getId().equals(staffFromRequest.getRegisterId()))
+                    .findFirst().orElse(null);
+            if (register != null) {
+                BigDecimal denrollmentDate = staffFromRequest.getDenrollmentDate() != null
+                        ? staffFromRequest.getDenrollmentDate()
+                        : new BigDecimal(System.currentTimeMillis());
+                if (denrollmentDate.compareTo(register.getStartDate()) < 0) {
+                    log.error("De-enrollment date is before register start date for register id " + register.getId());
+                    throw new CustomException("DENROLLMENT_DATE", "De-enrollment date cannot be before register start date for register id: " + register.getId());
+                }
+                if (denrollmentDate.compareTo(register.getEndDate()) > 0) {
+                    log.error("De-enrollment date is after register end date for register id " + register.getId());
+                    throw new CustomException("DENROLLMENT_DATE", "De-enrollment date cannot be after register end date for register id: " + register.getId());
+                }
+            }
+        }
+
         //match the regitser ids between request and db. subtract the staff, If <1 throw error
         for (String registerId : staffCountInEachRegisterIdFromRequest.keySet()) {
             if (staffCountInEachRegisterIdFromDB.containsKey(registerId)) {

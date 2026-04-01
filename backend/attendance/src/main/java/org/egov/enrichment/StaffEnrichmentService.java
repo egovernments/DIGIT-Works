@@ -68,8 +68,9 @@ public class StaffEnrichmentService {
 
                     staffPermissionFromRequest.setAuditDetails(auditDetails);
 
-                    BigDecimal deenrollmentDate = new BigDecimal(System.currentTimeMillis());
-                    staffPermissionFromRequest.setDenrollmentDate(deenrollmentDate);
+                    if (staffPermissionFromRequest.getDenrollmentDate() == null) {
+                        staffPermissionFromRequest.setDenrollmentDate(new BigDecimal(System.currentTimeMillis()));
+                    }
                 }
             }
         }
