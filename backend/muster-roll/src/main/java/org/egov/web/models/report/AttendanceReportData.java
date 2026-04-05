@@ -54,4 +54,8 @@ public class AttendanceReportData {
 
     @JsonProperty("additionalMetadata")
     private Map<String, Object> additionalMetadata;
+
+    // 1 = morning only, 2 = morning + evening
+    @JsonProperty("sessions")
+    private int sessions;
 }

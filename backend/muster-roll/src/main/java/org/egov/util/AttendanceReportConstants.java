@@ -71,4 +71,14 @@ public class AttendanceReportConstants {
     public static final String ATTENDANCE_STATUS_PRESENT = "PRESENT";
     public static final String ATTENDANCE_STATUS_ABSENT = "ABSENT";
 
+    // Signature sub-column header localization keys
+    public static final String HEADER_MORNING   = "ATTENDANCE_REPORT_HEADER_MORNING";
+    public static final String HEADER_EVENING   = "ATTENDANCE_REPORT_HEADER_EVENING";
+    public static final String HEADER_STATUS    = "ATTENDANCE_REPORT_HEADER_STATUS";
+    public static final String HEADER_SIGNATURE = "ATTENDANCE_REPORT_HEADER_SIGNATURE";
+
+    // Signature column structural constants
+    public static final int SIGNATURE_COLS_PER_DATE = 4; // AM Status, AM Signature, PM Status, PM Signature
+    public static final String SIGNATURE_NA = "NA";
+
 }

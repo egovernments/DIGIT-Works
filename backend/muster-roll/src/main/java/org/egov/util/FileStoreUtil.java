@@ -27,6 +27,9 @@ public class FileStoreUtil {
     @Value("${egov.filestore.endpoint:/filestore/v1/files}")
     private String fileStoreEndpoint;
 
+    @Value("${egov.filestore.download.endpoint:/filestore/v1/files/id}")
+    private String fileStoreDownloadEndpoint;
+
     private final RestTemplate restTemplate;
 
     public FileStoreUtil(RestTemplate restTemplate) {
@@ -72,6 +75,29 @@ public class FileStoreUtil {
             return null;
         } catch (Exception e) {
             log.error("Unexpected error uploading file to filestore: {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    /**
+     * Downloads a file from the filestore service by fileStoreId.
+     * Returns null on failure so the caller can render "NA" in its place.
+     */
+    public byte[] downloadFileBytes(String fileStoreId, String tenantId) {
+        try {
+            String url = fileStoreHost + fileStoreDownloadEndpoint
+                    + "?tenantId=" + tenantId + "&fileStoreId=" + fileStoreId;
+            byte[] bytes = restTemplate.getForObject(url, byte[].class);
+            if (bytes == null || bytes.length == 0) {
+                log.warn("Empty response downloading fileStoreId: {}", fileStoreId);
+                return null;
+            }
+            return bytes;
+        } catch (RestClientException e) {
+            log.warn("Failed to download file from filestore, fileStoreId={}: {}", fileStoreId, e.getMessage());
+            return null;
+        } catch (Exception e) {
+            log.warn("Unexpected error downloading file from filestore, fileStoreId={}: {}", fileStoreId, e.getMessage());
             return null;
         }
     }

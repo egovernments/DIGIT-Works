@@ -70,4 +70,8 @@ public class AttendanceReportDetail {
 
     @JsonProperty("additionalDetails")
     private Map<String, Object> additionalDetails;
+
+    // Key: dateStr (e.g. "25/02/2026"), Value: [morningFileStoreId, eveningFileStoreId] (null = NA)
+    @JsonProperty("dailySignatureIds")
+    private Map<String, String[]> dailySignatureIds;
 }

@@ -3,6 +3,7 @@ package org.egov.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.Individual;
 import org.egov.common.models.individual.Name;
@@ -27,11 +28,13 @@ import org.egov.web.models.worker.IndividualWorker;
 import org.egov.works.services.common.models.attendance.AttendanceRegisterSearchCriteria;
 import org.egov.works.services.common.models.attendance.StaffPermission;
 import org.egov.works.services.common.models.attendance.StaffType;
+import org.egov.works.services.common.models.musterroll.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -203,8 +206,11 @@ public class AttendanceReportGeneratorService {
             // Fetch attendance data
             AttendanceReportData reportData = buildReportData(musterRoll, tenantId, requestInfo);
 
+            // Collect all unique fileStoreIds from signature data and bulk-download images
+            Map<String, byte[]> signatureImages = downloadSignatureImages(reportData, tenantId);
+
             // Generate Excel file
-            byte[] excelContent = excelGenerator.generateExcel(reportData, messages);
+            byte[] excelContent = excelGenerator.generateExcel(reportData, messages, signatureImages);
 
             // Upload to FileStore
             String fileName = String.format("attendance-report-%s.xlsx", musterRollId);
@@ -269,14 +275,30 @@ public class AttendanceReportGeneratorService {
             endDate = musterRoll.getEndDate() != null ? musterRoll.getEndDate().longValue() : null;
         }
 
+    // Read sessions count from register additionalDetails (default 2)
+        int sessions = 2;
+        try {
+            if (register.getAdditionalDetails() != null) {
+                JsonNode regNode = objectMapper.valueToTree(register.getAdditionalDetails());
+                JsonNode sessionsNode = regNode.get("sessions");
+                if (sessionsNode != null && !sessionsNode.isNull()) {
+                    sessions = sessionsNode.asInt(2);
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Failed to read sessions from register additionalDetails, defaulting to 2: {}", e.getMessage());
+        }
+
+        // Fetch ENTRY attendance logs and build signature lookup map
+        List<AttendanceLog> entryLogs = fetchEntryAttendanceLogs(musterRoll, startDate, endDate, tenantId, requestInfo);
+        Map<String, Map<String, List<AttendanceLog>>> signatureLogMap = buildSignatureLogMap(entryLogs);
+
         // Generate campaign dates
         List<Long> campaignDates = generateCampaignDates(startDate, endDate);
 
         // Build attendance details (metrics are already on IndividualEntry from CalculationService)
         List<AttendanceReportDetail> details = buildAttendanceDetails(musterRoll, register, campaignDates,
-                tenantId, requestInfo);
-
-        // Build report data
+                tenantId, requestInfo, signatureLogMap, sessions);
 
         return AttendanceReportData.builder()
                 .musterRollId(musterRoll.getId())
@@ -290,11 +312,13 @@ public class AttendanceReportGeneratorService {
                 .totalDays(campaignDates.size())
                 .attendanceDetails(details)
                 .campaignDates(campaignDates)
+                .sessions(sessions)
                 .build();
     }
 
     private List<AttendanceReportDetail> buildAttendanceDetails(MusterRoll musterRoll, AttendanceRegister register,
-            List<Long> campaignDates, String tenantId, RequestInfo requestInfo) {
+            List<Long> campaignDates, String tenantId, RequestInfo requestInfo,
+            Map<String, Map<String, List<AttendanceLog>>> signatureLogMap, int sessions) {
         List<AttendanceReportDetail> details = new ArrayList<>();
         int serialNumber = 1;
 
@@ -314,16 +338,18 @@ public class AttendanceReportGeneratorService {
         Map<String, Individual> individualMap = individualUtil.fetchIndividualDetailsAsMap(individualIds, requestInfo, tenantId);
 
         for (IndividualEntry entry : musterRoll.getIndividualEntries()) {
-            AttendanceReportDetail detail = buildAttendanceDetail(individualWorkerMap, individualMap, entry, register, campaignDates, serialNumber++,
-                    tenantId, requestInfo);
+            AttendanceReportDetail detail = buildAttendanceDetail(individualWorkerMap, individualMap, entry, register,
+                    campaignDates, serialNumber++, tenantId, requestInfo, signatureLogMap, sessions);
             details.add(detail);
         }
 
         return details;
     }
 
-    private AttendanceReportDetail buildAttendanceDetail(Map<String, IndividualWorker> individualWorkerMap, Map<String, Individual> individualMap, IndividualEntry entry, AttendanceRegister register,
-                                                         List<Long> campaignDates, int serialNumber, String tenantId, RequestInfo requestInfo) {
+    private AttendanceReportDetail buildAttendanceDetail(Map<String, IndividualWorker> individualWorkerMap,
+            Map<String, Individual> individualMap, IndividualEntry entry, AttendanceRegister register,
+            List<Long> campaignDates, int serialNumber, String tenantId, RequestInfo requestInfo,
+            Map<String, Map<String, List<AttendanceLog>>> signatureLogMap, int sessions) {
 
         // Build daily attendance map
         Map<String, String> dailyAttendance = buildDailyAttendanceMap(entry, register, campaignDates);
@@ -361,6 +387,20 @@ public class AttendanceReportGeneratorService {
         long totalRegistrations = entry.getTotalRegistrations() != null ? entry.getTotalRegistrations() : 0L;
         long totalInterventions = entry.getTotalInterventions() != null ? entry.getTotalInterventions() : 0L;
 
+        // Build daily signature IDs map
+        SimpleDateFormat sigDateFormatter = new SimpleDateFormat(config.getReportDateFormat());
+        sigDateFormatter.setTimeZone(TimeZone.getTimeZone(config.getReportTimezone()));
+        Map<String, String[]> dailySignatureIds = new HashMap<>();
+        Map<String, List<AttendanceLog>> logsForIndividual =
+                signatureLogMap.getOrDefault(entry.getIndividualId(), Collections.emptyMap());
+        for (Long dateMillis : campaignDates) {
+            String dateStr = sigDateFormatter.format(new Date(dateMillis));
+            List<AttendanceLog> logsForDay = logsForIndividual.getOrDefault(dateStr, Collections.emptyList());
+            String morningId = extractSignatureFileStoreId(logsForDay, 0);
+            String eveningId = (sessions > 1) ? extractSignatureFileStoreId(logsForDay, 1) : null;
+            dailySignatureIds.put(dateStr, new String[]{morningId, eveningId});
+        }
+
         AttendanceReportDetail attendanceReportDetail = AttendanceReportDetail.builder()
                 .serialNumber(serialNumber)
                 .registerName(register.getName())
@@ -376,6 +416,7 @@ public class AttendanceReportGeneratorService {
                 .presentDaysOriginal(presentDays)
                 .presentDaysModified(entry.getModifiedTotalAttendance() != null ? entry.getModifiedTotalAttendance().intValue() : presentDays)
                 .dailyAttendance(dailyAttendance)
+                .dailySignatureIds(dailySignatureIds)
                 .totalPerformance(totalInterventions)
                 .build();
         if (!CollectionUtils.isEmpty(register.getAttendees())) {
@@ -422,6 +463,113 @@ public class AttendanceReportGeneratorService {
         }
 
         return dailyAttendance;
+    }
+
+    /**
+     * Fetches all ENTRY-type attendance logs for the muster roll's register within the billing period window.
+     */
+    private List<AttendanceLog> fetchEntryAttendanceLogs(MusterRoll musterRoll, Long startDate, Long endDate,
+            String tenantId, RequestInfo requestInfo) {
+        try {
+            long windowStart = startDate != null ? startDate : musterRoll.getStartDate().longValue();
+            long windowEnd = endDate != null ? endDate
+                    : musterRoll.getEndDate().longValue() + (24 * 60 * 60 * 1000L) - 1;
+
+            StringBuilder uri = new StringBuilder();
+            uri.append(config.getAttendanceLogHost()).append(config.getAttendanceLogEndpoint());
+            UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(uri.toString())
+                    .queryParam("tenantId", tenantId)
+                    .queryParam("registerId", musterRoll.getRegisterId())
+                    .queryParam("fromTime", BigDecimal.valueOf(windowStart))
+                    .queryParam("toTime", BigDecimal.valueOf(windowEnd))
+                    .queryParam("status", Status.ACTIVE);
+
+            RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+            AttendanceLogResponse response = restTemplate.postForObject(
+                    uriBuilder.toUriString(), requestInfoWrapper, AttendanceLogResponse.class);
+
+            if (response == null || CollectionUtils.isEmpty(response.getAttendance())) {
+                log.info("No attendance logs found for register: {}", musterRoll.getRegisterId());
+                return Collections.emptyList();
+            }
+
+            return response.getAttendance().stream()
+                    .filter(log -> "ENTRY".equals(log.getType()))
+                    .collect(Collectors.toList());
+
+        } catch (Exception e) {
+            log.warn("Failed to fetch entry attendance logs for register {}: {}", musterRoll.getRegisterId(), e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
+    /**
+     * Builds a lookup map: individualId → dateStr → List of ENTRY logs sorted by time ASC.
+     */
+    private Map<String, Map<String, List<AttendanceLog>>> buildSignatureLogMap(List<AttendanceLog> entryLogs) {
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(config.getReportDateFormat());
+        dateFormatter.setTimeZone(TimeZone.getTimeZone(config.getReportTimezone()));
+
+        Map<String, Map<String, List<AttendanceLog>>> result = new HashMap<>();
+        for (AttendanceLog log : entryLogs) {
+            if (log.getIndividualId() == null || log.getTime() == null) continue;
+            String dateStr = dateFormatter.format(new Date(log.getTime().longValue()));
+            result.computeIfAbsent(log.getIndividualId(), k -> new HashMap<>())
+                  .computeIfAbsent(dateStr, k -> new ArrayList<>())
+                  .add(log);
+        }
+        // Sort each day's list by time ASC
+        result.values().forEach(dayMap ->
+                dayMap.values().forEach(logs ->
+                        logs.sort(Comparator.comparing(l -> l.getTime().longValue()))));
+        return result;
+    }
+
+    /**
+     * Extracts signatureFileStoreId from the log at the given index in the list.
+     * Returns null if the index is out of bounds or the field is absent.
+     */
+    private String extractSignatureFileStoreId(List<AttendanceLog> logs, int index) {
+        if (logs == null || index >= logs.size()) return null;
+        try {
+            AttendanceLog attendanceLog = logs.get(index);
+            if (attendanceLog.getAdditionalDetails() == null) return null;
+            JsonNode node = objectMapper.valueToTree(attendanceLog.getAdditionalDetails());
+            JsonNode idNode = node.get("signatureFileStoreId");
+            if (idNode != null && !idNode.isNull() && !idNode.asText().isBlank()) {
+                return idNode.asText();
+            }
+        } catch (Exception e) {
+            log.warn("Failed to extract signatureFileStoreId from attendance log: {}", e.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Collects all unique fileStoreIds from report details and downloads the images in bulk.
+     * Returns a map of fileStoreId → image bytes. Failed downloads are absent from the map.
+     */
+    private Map<String, byte[]> downloadSignatureImages(AttendanceReportData reportData, String tenantId) {
+        Map<String, byte[]> signatureImages = new HashMap<>();
+        if (reportData.getAttendanceDetails() == null) return signatureImages;
+
+        Set<String> fileStoreIds = new HashSet<>();
+        for (AttendanceReportDetail detail : reportData.getAttendanceDetails()) {
+            if (detail.getDailySignatureIds() == null) continue;
+            for (String[] ids : detail.getDailySignatureIds().values()) {
+                if (ids[0] != null) fileStoreIds.add(ids[0]);
+                if (ids[1] != null) fileStoreIds.add(ids[1]);
+            }
+        }
+
+        for (String fileStoreId : fileStoreIds) {
+            byte[] bytes = fileStoreUtil.downloadFileBytes(fileStoreId, tenantId);
+            if (bytes != null) {
+                signatureImages.put(fileStoreId, bytes);
+            }
+        }
+        log.info("Downloaded {}/{} signature images for report", signatureImages.size(), fileStoreIds.size());
+        return signatureImages;
     }
 
     private List<Long> generateCampaignDates(Long startDate, Long endDate) {
