@@ -350,6 +350,7 @@ public class AttendanceExcelGenerator {
         style.setBorderTop(BorderStyle.THIN);
         style.setBorderLeft(BorderStyle.THIN);
         style.setBorderRight(BorderStyle.THIN);
+        style.setWrapText(true);
         return style;
     }
 
@@ -361,6 +362,7 @@ public class AttendanceExcelGenerator {
         style.setBorderTop(BorderStyle.THIN);
         style.setBorderLeft(BorderStyle.THIN);
         style.setBorderRight(BorderStyle.THIN);
+        style.setWrapText(true);
         return style;
     }
 
@@ -372,6 +374,7 @@ public class AttendanceExcelGenerator {
         style.setBorderTop(BorderStyle.THIN);
         style.setBorderLeft(BorderStyle.THIN);
         style.setBorderRight(BorderStyle.THIN);
+        style.setWrapText(true);
         return style;
     }
 
