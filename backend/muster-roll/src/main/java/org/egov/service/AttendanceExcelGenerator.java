@@ -55,7 +55,7 @@ public class AttendanceExcelGenerator {
             writeDataRows(sheet, reportData, signatureImages);
 
             // Fixed column widths (same as original)
-            int[] fixedColumnWidths = {8, 25, 15, 15, 12, 15, 15, 15, 12, 12, 12, 15};
+            int[] fixedColumnWidths = {8, 25, 15, 15, 12, 15, 15, 15, 12, 25, 12, 15, 15, 22};
             for (int i = 0; i < fixedColumnWidths.length; i++) {
                 sheet.setColumnWidth(i, fixedColumnWidths[i] * 256);
             }
@@ -216,6 +216,17 @@ public class AttendanceExcelGenerator {
             setCellValue(row, col++, detail.getPresentDaysOriginal(), dataStyle);
             setCellValue(row, col++, detail.getPresentDaysModified(), dataStyle);
             setCellValue(row, col++, detail.getTotalPerformance(), dataStyle);
+
+            // Base Signature
+            byte[] baseSigImg = (detail.getBaseSignatureFileStoreId() != null)
+                    ? signatureImages.get(detail.getBaseSignatureFileStoreId()) : null;
+            if (baseSigImg != null) {
+                row.createCell(col).setCellStyle(dataStyle);
+                embedImage(sheet, baseSigImg, rowIndex, col);
+            } else {
+                setCellValue(row, col, SIGNATURE_NA, dataStyle);
+            }
+            col++;
 
             // Dynamic date columns
             if (reportData.getCampaignDates() != null && detail.getDailyAttendance() != null) {

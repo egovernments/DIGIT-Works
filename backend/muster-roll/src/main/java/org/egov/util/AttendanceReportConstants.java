@@ -45,16 +45,19 @@ public class AttendanceReportConstants {
     public static final String HEADER_PRESENT_DAYS_MODIFIED = "ATTENDANCE_REPORT_HEADER_PRESENT_DAYS_MODIFIED";
     public static final String TOTAL_PERFORMANCE_HEADER = "ATTENDANCE_REPORT_TOTAL_PERFORMANCE_HEADER";
 
+    // Base signature column localization key
+    public static final String HEADER_BASE_SIGNATURE = "ATTENDANCE_REPORT_HEADER_BASE_SIGNATURE";
+
     // Ordered key array — used by excelGenerator (replaces old FIXED_COLUMN_HEADERS)
     public static final String[] FIXED_COLUMN_HEADER_KEYS = {
             HEADER_SL_NO, HEADER_NAME, HEADER_LOGIN_ID, HEADER_USER_ID, HEADER_TEAM_CODE, HEADER_ROLE,
             HEADER_PHONE, HEADER_ENROLLMENT_DATE,
             HEADER_DE_ENROLLMENT_DATE, HEADER_ATTENDANCE_MARKER,
             HEADER_PRESENT_DAYS_ORIGINAL, HEADER_PRESENT_DAYS_MODIFIED,
-            TOTAL_PERFORMANCE_HEADER
+            TOTAL_PERFORMANCE_HEADER, HEADER_BASE_SIGNATURE
     };
 
-    public static final int FIXED_COLUMNS_COUNT = 13;
+    public static final int FIXED_COLUMNS_COUNT = 14;
 
     // Localization fallback locale
     public static final String LOCALIZATION_DEFAULT_LOCALE = "en_IN";

@@ -417,6 +417,7 @@ public class AttendanceReportGeneratorService {
                 .presentDaysModified(entry.getModifiedTotalAttendance() != null ? entry.getModifiedTotalAttendance().intValue() : presentDays)
                 .dailyAttendance(dailyAttendance)
                 .dailySignatureIds(dailySignatureIds)
+                .baseSignatureFileStoreId(individualWorker.getSignatureId())
                 .totalPerformance(totalInterventions)
                 .build();
         if (!CollectionUtils.isEmpty(register.getAttendees())) {
@@ -555,6 +556,8 @@ public class AttendanceReportGeneratorService {
 
         Set<String> fileStoreIds = new HashSet<>();
         for (AttendanceReportDetail detail : reportData.getAttendanceDetails()) {
+            if (detail.getBaseSignatureFileStoreId() != null)
+                fileStoreIds.add(detail.getBaseSignatureFileStoreId());
             if (detail.getDailySignatureIds() == null) continue;
             for (String[] ids : detail.getDailySignatureIds().values()) {
                 if (ids[0] != null) fileStoreIds.add(ids[0]);
