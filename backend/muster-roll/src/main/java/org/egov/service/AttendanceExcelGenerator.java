@@ -48,11 +48,12 @@ public class AttendanceExcelGenerator {
             sheet.setDefaultColumnWidth(15);
 
             int totalDays = reportData.getTotalDays() != null ? reportData.getTotalDays() : 0;
-            int totalCols = FIXED_COLUMNS_COUNT + totalDays * SIGNATURE_COLS_PER_DATE;
+            int colsPerDate = reportData.getSessions() > 1 ? SIGNATURE_COLS_PER_DATE : 2;
+            int totalCols = FIXED_COLUMNS_COUNT + totalDays * colsPerDate;
 
             writeHeaderSection(sheet, reportData, localizedMessages, totalCols);
-            writeColumnHeaders(sheet, reportData, localizedMessages);
-            writeDataRows(sheet, reportData, signatureImages);
+            writeColumnHeaders(sheet, reportData, localizedMessages, colsPerDate);
+            writeDataRows(sheet, reportData, signatureImages, colsPerDate);
 
             // Fixed column widths (same as original)
             int[] fixedColumnWidths = {8, 25, 15, 15, 12, 15, 15, 15, 12, 25, 12, 15, 15, 22};
@@ -60,13 +61,15 @@ public class AttendanceExcelGenerator {
                 sheet.setColumnWidth(i, fixedColumnWidths[i] * 256);
             }
 
-            // Signature sub-column widths: Status=10, Signature=22, Status=10, Signature=22
+            // Signature sub-column widths per date
             for (int d = 0; d < totalDays; d++) {
-                int base = FIXED_COLUMNS_COUNT + d * SIGNATURE_COLS_PER_DATE;
+                int base = FIXED_COLUMNS_COUNT + d * colsPerDate;
                 sheet.setColumnWidth(base,     10 * 256); // AM Status
                 sheet.setColumnWidth(base + 1, 22 * 256); // AM Signature
-                sheet.setColumnWidth(base + 2, 10 * 256); // PM Status
-                sheet.setColumnWidth(base + 3, 22 * 256); // PM Signature
+                if (colsPerDate > 2) {
+                    sheet.setColumnWidth(base + 2, 10 * 256); // PM Status
+                    sheet.setColumnWidth(base + 3, 22 * 256); // PM Signature
+                }
             }
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -120,7 +123,7 @@ public class AttendanceExcelGenerator {
     // ── 3-level column headers (rows 3, 4, 5) ───────────────────────────────────
 
     private void writeColumnHeaders(XSSFSheet sheet, AttendanceReportData reportData,
-            Map<String, String> localizedMessages) {
+            Map<String, String> localizedMessages, int colsPerDate) {
         CellStyle columnHeaderStyle = createColumnHeaderStyle(sheet.getWorkbook());
 
         XSSFRow row3 = sheet.createRow(3);
@@ -144,46 +147,64 @@ public class AttendanceExcelGenerator {
         if (reportData.getCampaignDates() != null) {
             for (int d = 0; d < reportData.getCampaignDates().size(); d++) {
                 Long dateMillis = reportData.getCampaignDates().get(d);
-                int base = FIXED_COLUMNS_COUNT + d * SIGNATURE_COLS_PER_DATE;
+                int base = FIXED_COLUMNS_COUNT + d * colsPerDate;
 
-                // Row 3: date merged across 4 cols
+                // Row 3: date merged across colsPerDate cols
                 XSSFCell dateCell = row3.createCell(base);
                 dateCell.setCellValue(formatDate(dateMillis));
                 dateCell.setCellStyle(columnHeaderStyle);
-                sheet.addMergedRegion(new CellRangeAddress(3, 3, base, base + 3));
-                for (int k = 1; k < SIGNATURE_COLS_PER_DATE; k++) {
+                sheet.addMergedRegion(new CellRangeAddress(3, 3, base, base + colsPerDate - 1));
+                for (int k = 1; k < colsPerDate; k++) {
                     row3.createCell(base + k).setCellStyle(columnHeaderStyle);
                 }
 
-                // Row 4: Morning merged over cols 0-1, Evening merged over cols 2-3
-                XSSFCell morningCell = row4.createCell(base);
-                morningCell.setCellValue(getLocalized(localizedMessages, HEADER_MORNING));
-                morningCell.setCellStyle(columnHeaderStyle);
-                sheet.addMergedRegion(new CellRangeAddress(4, 4, base, base + 1));
-                row4.createCell(base + 1).setCellStyle(columnHeaderStyle);
+                if (colsPerDate > 2) {
+                    // Row 4: Morning merged over cols 0-1, Evening merged over cols 2-3
+                    XSSFCell morningCell = row4.createCell(base);
+                    morningCell.setCellValue(getLocalized(localizedMessages, HEADER_MORNING));
+                    morningCell.setCellStyle(columnHeaderStyle);
+                    sheet.addMergedRegion(new CellRangeAddress(4, 4, base, base + 1));
+                    row4.createCell(base + 1).setCellStyle(columnHeaderStyle);
 
-                XSSFCell eveningCell = row4.createCell(base + 2);
-                eveningCell.setCellValue(getLocalized(localizedMessages, HEADER_EVENING));
-                eveningCell.setCellStyle(columnHeaderStyle);
-                sheet.addMergedRegion(new CellRangeAddress(4, 4, base + 2, base + 3));
-                row4.createCell(base + 3).setCellStyle(columnHeaderStyle);
+                    XSSFCell eveningCell = row4.createCell(base + 2);
+                    eveningCell.setCellValue(getLocalized(localizedMessages, HEADER_EVENING));
+                    eveningCell.setCellStyle(columnHeaderStyle);
+                    sheet.addMergedRegion(new CellRangeAddress(4, 4, base + 2, base + 3));
+                    row4.createCell(base + 3).setCellStyle(columnHeaderStyle);
 
-                // Row 5: Status, Signature, Status, Signature
-                XSSFCell s1 = row5.createCell(base);
-                s1.setCellValue(getLocalized(localizedMessages, HEADER_STATUS));
-                s1.setCellStyle(columnHeaderStyle);
+                    // Row 5: Status, Signature, Status, Signature
+                    XSSFCell s1 = row5.createCell(base);
+                    s1.setCellValue(getLocalized(localizedMessages, HEADER_STATUS));
+                    s1.setCellStyle(columnHeaderStyle);
 
-                XSSFCell s2 = row5.createCell(base + 1);
-                s2.setCellValue(getLocalized(localizedMessages, HEADER_SIGNATURE));
-                s2.setCellStyle(columnHeaderStyle);
+                    XSSFCell s2 = row5.createCell(base + 1);
+                    s2.setCellValue(getLocalized(localizedMessages, HEADER_SIGNATURE));
+                    s2.setCellStyle(columnHeaderStyle);
 
-                XSSFCell s3 = row5.createCell(base + 2);
-                s3.setCellValue(getLocalized(localizedMessages, HEADER_STATUS));
-                s3.setCellStyle(columnHeaderStyle);
+                    XSSFCell s3 = row5.createCell(base + 2);
+                    s3.setCellValue(getLocalized(localizedMessages, HEADER_STATUS));
+                    s3.setCellStyle(columnHeaderStyle);
 
-                XSSFCell s4 = row5.createCell(base + 3);
-                s4.setCellValue(getLocalized(localizedMessages, HEADER_SIGNATURE));
-                s4.setCellStyle(columnHeaderStyle);
+                    XSSFCell s4 = row5.createCell(base + 3);
+                    s4.setCellValue(getLocalized(localizedMessages, HEADER_SIGNATURE));
+                    s4.setCellStyle(columnHeaderStyle);
+                } else {
+                    // Single session: Morning header merged across both cols in row 4
+                    XSSFCell morningCell = row4.createCell(base);
+                    morningCell.setCellValue(getLocalized(localizedMessages, HEADER_MORNING));
+                    morningCell.setCellStyle(columnHeaderStyle);
+                    sheet.addMergedRegion(new CellRangeAddress(4, 4, base, base + 1));
+                    row4.createCell(base + 1).setCellStyle(columnHeaderStyle);
+
+                    // Row 5: Status, Signature only
+                    XSSFCell s1 = row5.createCell(base);
+                    s1.setCellValue(getLocalized(localizedMessages, HEADER_STATUS));
+                    s1.setCellStyle(columnHeaderStyle);
+
+                    XSSFCell s2 = row5.createCell(base + 1);
+                    s2.setCellValue(getLocalized(localizedMessages, HEADER_SIGNATURE));
+                    s2.setCellStyle(columnHeaderStyle);
+                }
             }
         }
     }
@@ -191,7 +212,7 @@ public class AttendanceExcelGenerator {
     // ── Data rows (starting row 6) ───────────────────────────────────────────────
 
     private void writeDataRows(XSSFSheet sheet, AttendanceReportData reportData,
-            Map<String, byte[]> signatureImages) {
+            Map<String, byte[]> signatureImages, int colsPerDate) {
         CellStyle dataStyle     = createDataStyle(sheet.getWorkbook());
         CellStyle dateDataStyle = createDateDataStyle(sheet.getWorkbook());
 
@@ -237,7 +258,6 @@ public class AttendanceExcelGenerator {
                     String[] sigIds = detail.getDailySignatureIds() != null
                             ? detail.getDailySignatureIds().get(dateStr) : null;
                     String morningId = (sigIds != null) ? sigIds[0] : null;
-                    String eveningId = (sigIds != null && sigIds.length > 1) ? sigIds[1] : null;
 
                     // AM Status
                     setCellValue(row, col++, status, dataStyle);
@@ -252,16 +272,13 @@ public class AttendanceExcelGenerator {
                     }
                     col++;
 
-                    // PM Status
-                    if (reportData.getSessions() > 1) {
-                        setCellValue(row, col, "", dataStyle);
-                    } else {
-                        row.createCell(col).setCellStyle(dataStyle);
-                    }
-                    col++;
+                    if (colsPerDate > 2) {
+                        String eveningId = (sigIds != null && sigIds.length > 1) ? sigIds[1] : null;
 
-                    // PM Signature
-                    if (reportData.getSessions() > 1) {
+                        // PM Status
+                        setCellValue(row, col++, status, dataStyle);
+
+                        // PM Signature
                         byte[] pmImg = (eveningId != null) ? signatureImages.get(eveningId) : null;
                         if (pmImg != null) {
                             row.createCell(col).setCellStyle(dataStyle);
@@ -269,10 +286,8 @@ public class AttendanceExcelGenerator {
                         } else {
                             setCellValue(row, col, SIGNATURE_NA, dataStyle);
                         }
-                    } else {
-                        row.createCell(col).setCellStyle(dataStyle);
+                        col++;
                     }
-                    col++;
                 }
             }
 
