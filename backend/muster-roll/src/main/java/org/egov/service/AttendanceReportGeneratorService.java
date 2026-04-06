@@ -8,6 +8,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.Individual;
 import org.egov.common.models.individual.Name;
 import org.egov.common.models.individual.Skill;
+import org.egov.common.models.individual.UserDetails;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.kafka.MusterRollProducer;
 import org.egov.repository.MusterRollRepository;
@@ -411,7 +412,7 @@ public class AttendanceReportGeneratorService {
                 .role(rolecode)
                 .teamCode(entry.getTag())
                 .userId(individualWorker.getId())
-                .loginId(Optional.ofNullable(individual).map(Individual::getUserId).orElse(null))
+                .loginId(Optional.ofNullable(individual).map(Individual::getUserDetails).map(UserDetails::getUsername).orElse(null))
                 .attendanceMarker(attendanceMarkers)
                 .presentDaysOriginal(presentDays)
                 .presentDaysModified(entry.getModifiedTotalAttendance() != null ? entry.getModifiedTotalAttendance().intValue() : presentDays)
