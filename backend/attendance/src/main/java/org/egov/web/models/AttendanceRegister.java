@@ -65,6 +65,12 @@ public class AttendanceRegister {
     @JsonProperty("localityCode")
     private String localityCode = null;
 
+    @JsonProperty("campaignNumber")
+    private String campaignNumber = null;
+
+    @JsonProperty("isDeleted")
+    private Boolean isDeleted = false;
+
     @JsonProperty("reviewStatus")
     private String reviewStatus = null;
 

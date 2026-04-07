@@ -321,6 +321,7 @@ public class PeriodAwareMusterRollService {
     private AttendanceRegisterResponse fetchAttendanceRegister(RequestInfo requestInfo, String tenantId, String registerId) {
         StringBuilder uri = new StringBuilder();
         uri.append(config.getAttendanceLogHost()).append(config.getAttendanceRegisterEndpoint());
+        uri.append("?tenantId=").append(tenantId);
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("RequestInfo", requestInfo);

@@ -12,6 +12,9 @@ import java.util.List;
 @Builder
 public class StaffSearchCriteria {
 
+    @JsonProperty("usernames")
+    private List<String> usernames;
+
     @JsonProperty("tenantId")
     private String tenantId;
 
@@ -29,4 +32,10 @@ public class StaffSearchCriteria {
 
     @JsonProperty("staffType")
     private String staffType = null;
+
+    @JsonProperty("staffName")
+    private String staffName;
+
+    @JsonProperty("staffTypes")
+    private List<String> staffTypes;
 }

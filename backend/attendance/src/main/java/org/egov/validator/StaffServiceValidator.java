@@ -14,11 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import org.egov.util.HRMSUtil;
+
 import java.math.BigDecimal;
 import java.util.*;
 
-import static org.egov.util.AttendanceServiceConstants.MASTER_TENANTS;
-import static org.egov.util.AttendanceServiceConstants.MDMS_TENANT_MODULE_NAME;
+import static org.egov.util.AttendanceServiceConstants.*;
+
 
 
 @Component
@@ -147,14 +149,24 @@ public class StaffServiceValidator {
 
         List<StaffPermission> staffPermissionListFromRequest = request.getStaff();
 
-        // staff cannot be added to register if register's end date has passed
-        log.info("checking that staff cannot be added to register if register's end date has passed");
-        BigDecimal enrollmentDate = new BigDecimal(System.currentTimeMillis());
-        for (AttendanceRegister attendanceRegister : attendanceRegisterListFromDB) {
-            int dateComparisonResult = attendanceRegister.getEndDate().compareTo(enrollmentDate);
-            if (dateComparisonResult < 0) {
-                log.error("Staff cannot be enrolled as END_DATE of register id " + attendanceRegister.getId() + " has already passed.");
-                throw new CustomException("END_DATE", "Staff cannot be enrolled as END_DATE of register id " + attendanceRegister.getId() + " has already passed.");
+        // validate that enrollment date falls within register's start and end dates
+        log.info("validating that enrollment date falls within register start and end dates");
+        for (StaffPermission staffFromRequest : staffPermissionListFromRequest) {
+            AttendanceRegister register = attendanceRegisterListFromDB.stream()
+                    .filter(r -> r.getId().equals(staffFromRequest.getRegisterId()))
+                    .findFirst().orElse(null);
+            if (register != null) {
+                BigDecimal enrollmentDate = staffFromRequest.getEnrollmentDate() != null
+                        ? staffFromRequest.getEnrollmentDate()
+                        : new BigDecimal(System.currentTimeMillis());
+                if (enrollmentDate.compareTo(register.getStartDate()) < 0) {
+                    log.error("Enrollment date is before register start date for register id " + register.getId());
+                    throw new CustomException("ENROLLMENT_DATE", "Enrollment date cannot be before register start date for register id: " + register.getId());
+                }
+                if (enrollmentDate.compareTo(register.getEndDate()) > 0) {
+                    log.error("Enrollment date is after register end date for register id " + register.getId());
+                    throw new CustomException("ENROLLMENT_DATE", "Enrollment date cannot be after register end date for register id: " + register.getId());
+                }
             }
         }
 
@@ -232,6 +244,27 @@ public class StaffServiceValidator {
                 int count = staffCountInEachRegisterIdFromDB.get(staffRegisterId);
                 count++;
                 staffCountInEachRegisterIdFromDB.put(staffRegisterId, count);
+            }
+        }
+
+        // validate that de-enrollment date falls within register's start and end dates
+        log.info("validating that de-enrollment date falls within register start and end dates");
+        for (StaffPermission staffFromRequest : staffPermissionListFromRequest) {
+            AttendanceRegister register = attendanceRegisterListFromDB.stream()
+                    .filter(r -> r.getId().equals(staffFromRequest.getRegisterId()))
+                    .findFirst().orElse(null);
+            if (register != null) {
+                BigDecimal denrollmentDate = staffFromRequest.getDenrollmentDate() != null
+                        ? staffFromRequest.getDenrollmentDate()
+                        : new BigDecimal(System.currentTimeMillis());
+                if (denrollmentDate.compareTo(register.getStartDate()) < 0) {
+                    log.error("De-enrollment date is before register start date for register id " + register.getId());
+                    throw new CustomException("DENROLLMENT_DATE", "De-enrollment date cannot be before register start date for register id: " + register.getId());
+                }
+                if (denrollmentDate.compareTo(register.getEndDate()) > 0) {
+                    log.error("De-enrollment date is after register end date for register id " + register.getId());
+                    throw new CustomException("DENROLLMENT_DATE", "De-enrollment date cannot be after register end date for register id: " + register.getId());
+                }
             }
         }
 

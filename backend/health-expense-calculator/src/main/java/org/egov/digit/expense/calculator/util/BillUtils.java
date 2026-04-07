@@ -42,6 +42,11 @@ public class BillUtils {
         return postBill(requestInfo,bill,workflow,url);
     }
 
+    public void postUpdateBillDetailStatus(RequestInfo requestInfo, Bill bill, Workflow workflow) {
+        StringBuilder url = getBillDetailStatusUpdateURI();
+        postBill(requestInfo, bill, workflow, url);
+    }
+
     public BillResponse searchBills(CalculationRequest calculationRequest, String referenceId) {
         BillCriteria billCriteria = BillCriteria.builder()
                 .tenantId(calculationRequest.getCriteria().getTenantId())
@@ -73,6 +78,7 @@ public class BillUtils {
                 .workflow(expenseWorkflow1)
                 .build();
         log.info("Posting Bill to expense service");
+        log.info("requestInfoWrapper",requestInfoWrapper);
         Object responseObj = restRepo.fetchResult(url, requestInfoWrapper);
         if(responseObj!=null)
         	log.info("Received Bill Response");
@@ -89,6 +95,12 @@ public class BillUtils {
     private StringBuilder getBillUpdateURI() {
         StringBuilder builder = new StringBuilder(configs.getBillHost());
         builder.append(configs.getBillUpdateEndPoint());
+        return builder;
+    }
+
+    private StringBuilder getBillDetailStatusUpdateURI() {
+        StringBuilder builder = new StringBuilder(configs.getBillHost());
+        builder.append(configs.getBillDetailStatusUpdateEndPoint());
         return builder;
     }
 

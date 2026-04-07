@@ -1,6 +1,7 @@
 package org.egov.digit.expense.calculator.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
@@ -106,21 +107,40 @@ public class WageSeekerBillGeneratorService {
 				}
 				Individual individual = individualMap.get(individualEntry.getIndividualId());
 				Map<String, BigDecimal> rateBreakup = new HashMap<>();
-				if (individual.getSkills().isEmpty() || StringUtils.isBlank(individual.getSkills().get(0).getType())) {
-					log.error("Skill not present in individual service :: " + individualEntry.getIndividualId());
+				// Find the skill that has a configured work rate
+				String matchedSkillCode = getSkillWithConfiguredWorkRate(individual, workerMdms.get(0));
+				if (matchedSkillCode == null) {
+					log.error("No skill with configured work rate found for individual :: " + individualEntry.getIndividualId());
 				} else {
-					String skillCode = individual.getSkills().get(0).getType();
-					//fetch correct skillCode for given role
-					Optional<WorkerRate> rate = workerMdms.get(0).getRates().stream().filter(workerRate -> workerRate.getSkillCode() != null && workerRate.getSkillCode().equalsIgnoreCase(skillCode)).findAny();
+					//fetch rate breakup for the matched skill code
+					Optional<WorkerRate> rate = workerMdms.get(0).getRates().stream()
+							.filter(workerRate -> workerRate.getSkillCode() != null && workerRate.getSkillCode().equalsIgnoreCase(matchedSkillCode))
+							.findFirst();
 					rateBreakup = rate
 							.map(WorkerRate::getRateBreakup)
 							.orElse(new HashMap<>());
 				}
 				List<LineItem> payableLineItem = new ArrayList<>();
 				BigDecimal totalBillDetailAmount = BigDecimal.ZERO;
+				BigDecimal food = BigDecimal.ZERO;
+				BigDecimal transport = BigDecimal.ZERO;
+				BigDecimal wage = BigDecimal.ZERO;
 				for (Map.Entry<String, BigDecimal> entry : rateBreakup.entrySet()) {
 					//Create line item for each skill
 					BigDecimal amount = calculateAmount(individualEntry, entry.getValue());
+					switch (entry.getKey()) {
+						case "FOOD":
+							food = food.add(amount);
+							break;
+						case "TRAVEL":
+							transport = transport.add(amount);
+							break;
+						case "PER_DAY":
+							wage = wage.add(amount);
+							break;
+						default:
+							break;
+					}
 					LineItem lineItem = buildLineItem(musterRoll.getTenantId(), amount, entry.getKey(), LineItem.TypeEnum.PAYABLE);
 					totalBillDetailAmount = totalBillDetailAmount.add(lineItem.getAmount());
 					payableLineItem.add(lineItem);
@@ -149,7 +169,18 @@ public class WageSeekerBillGeneratorService {
 						.additionalDetails(billDetailAdditionalDetails)
 						.build();
 
+				ObjectNode additionalDetails = mapper.createObjectNode();
+				if (individualEntry.getModifiedTotalAttendance() != null) {
+					additionalDetails.put("noOfDaysWorked", individualEntry.getModifiedTotalAttendance());
+				} else {
+					additionalDetails.put("noOfDaysWorked", individualEntry.getActualTotalAttendance());
+				}
+				billDetail.setAdditionalDetails(additionalDetails);
+
 				bill.addBillDetailsItem(billDetail);
+				bill.setTotalFoodAmount(bill.getTotalFoodAmount().add(food));
+				bill.setTotalWageAmount(bill.getTotalWageAmount().add(wage));
+				bill.setTotalTransportAmount(bill.getTotalTransportAmount().add(transport));
 				bill.setTotalAmount(bill.getTotalAmount().add(billDetail.getTotalAmount()));
 			}
 		}
@@ -557,5 +588,42 @@ public class WageSeekerBillGeneratorService {
 		String generatedWBId = idList.get(0);
 		log.info("ReferenceId generated. Generated generatedUniqueId is [" + generatedWBId + "]");
 		return generatedWBId;
+	}
+
+	/**
+	 * Finds the skill code from individual's skills that has a configured work rate in WorkerMdms.
+	 * Iterates through individual's skills and returns the first skill type that matches
+	 * a configured skillCode in the WorkerMdms rates.
+	 *
+	 * @param individual The individual whose skills to check
+	 * @param workerMdms The WorkerMdms containing configured skill rates
+	 * @return The skill code (type) with configured work rate, or null if none found
+	 */
+	private String getSkillWithConfiguredWorkRate(Individual individual, WorkerMdms workerMdms) {
+		if (individual == null || individual.getSkills() == null || individual.getSkills().isEmpty()) {
+			return null;
+		}
+		if (workerMdms == null || workerMdms.getRates() == null || workerMdms.getRates().isEmpty()) {
+			return null;
+		}
+
+		// Create a set of configured skill codes from WorkerMdms for efficient lookup
+		Set<String> configuredSkillCodes = workerMdms.getRates().stream()
+				.filter(rate -> rate.getSkillCode() != null)
+				.map(rate -> rate.getSkillCode().toLowerCase())
+				.collect(Collectors.toSet());
+
+		// Iterate through individual's skills and find the first one with a configured work rate
+		for (org.egov.common.models.individual.Skill skill : individual.getSkills()) {
+			if (skill == null || skill.getIsDeleted() != null && skill.getIsDeleted()) {
+				continue;
+			}
+			// Check if skill's type matches a configured skill code
+			if (skill.getType() != null && configuredSkillCodes.contains(skill.getType().toLowerCase())) {
+				return skill.getType();
+			}
+		}
+
+		return null;
 	}
 }

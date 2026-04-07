@@ -157,6 +157,35 @@ public class MdmsUtil {
     }
 
     /**
+     * Calls MDMS service to fetch Elasticsearch query configs for metrics.
+     */
+    public Object mDMSCallEsQueries(RequestInfo requestInfo, String tenantId) {
+        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequestEsQueries(requestInfo, tenantId);
+        return serviceRequestRepository.fetchResult(getMdmsV2SearchUrl(), mdmsCriteriaReq);
+    }
+
+    private MdmsCriteriaReq getMDMSRequestEsQueries(RequestInfo requestInfo, String tenantId) {
+        ModuleDetail esQueriesModuleDetail = getEsQueriesModuleRequestData();
+
+        List<ModuleDetail> moduleDetails = new LinkedList<>();
+        moduleDetails.add(esQueriesModuleDetail);
+
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
+                .build();
+        return MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
+                .requestInfo(requestInfo).build();
+    }
+
+    private ModuleDetail getEsQueriesModuleRequestData() {
+        List<MasterDetail> masterDetails = new ArrayList<>();
+        MasterDetail esQueryMasterDetail = MasterDetail.builder().name(config.getEsQueriesMdmsMaster()).build();
+        masterDetails.add(esQueryMasterDetail);
+
+        return ModuleDetail.builder().masterDetails(masterDetails)
+                .moduleName(config.getEsQueriesMdmsModule()).build();
+    }
+
+    /**
      * Returns the url for mdms search endpoint
      *
      * @return url for mdms search endpoint

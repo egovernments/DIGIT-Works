@@ -44,7 +44,9 @@ public class RegisterQueryBuilder {
             "reg.servicecode, " +
             "reg.localitycode, " +
             "reg.reviewstatus, " +
-            "reg.period_statuses " +
+            "reg.period_statuses, " +
+            "reg.campaignnumber, " +
+            "reg.isdeleted " +
             "FROM %s.eg_wms_attendance_register reg ";
 
     private static final String JOIN_STAFF = " JOIN %s.eg_wms_attendance_staff staff ";
@@ -74,6 +76,11 @@ public class RegisterQueryBuilder {
             query.append(String.format(JOIN_ATTENDEE, SCHEMA_REPLACE_STRING));
             query.append(JOIN_ATTENDEE_CONDITION);
         }
+
+        // Always exclude soft-deleted records
+        addClauseIfRequired(query, preparedStmtList);
+        query.append(" reg.isdeleted = ? ");
+        preparedStmtList.add(false);
 
         if (!ObjectUtils.isEmpty(searchCriteria.getTenantId())) {
             addClauseIfRequired(query, preparedStmtList);
@@ -109,10 +116,24 @@ public class RegisterQueryBuilder {
         }
 
         if (!ObjectUtils.isEmpty(searchCriteria.getServiceCode())) {
-            String serviceCode = searchCriteria.getServiceCode();
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" reg.servicecode = ? ");
-            preparedStmtList.add(serviceCode);
+            List<String> serviceCodes = java.util.Arrays.stream(searchCriteria.getServiceCode().split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .collect(java.util.stream.Collectors.toList());
+            if (!serviceCodes.isEmpty()) {
+                addClauseIfRequired(query, preparedStmtList);
+                boolean exactMatch = !Boolean.FALSE.equals(searchCriteria.getIsServiceCodeExact());
+                if (exactMatch && serviceCodes.size() == 1) {
+                    query.append(" reg.servicecode = ? ");
+                    preparedStmtList.add(serviceCodes.get(0));
+                } else if (!exactMatch && serviceCodes.size() == 1) {
+                    query.append(" reg.servicecode ILIKE ? ");
+                    preparedStmtList.add("%" + serviceCodes.get(0) + "%");
+                } else {
+                    query.append(" reg.servicecode IN (").append(createQuery(serviceCodes)).append(") ");
+                    preparedStmtList.addAll(serviceCodes);
+                }
+            }
         }
 
         if (!ObjectUtils.isEmpty(searchCriteria.getName())) {
@@ -176,6 +197,11 @@ public class RegisterQueryBuilder {
             preparedStmtList.add(reviewStatus);
         }
 
+        if (!ObjectUtils.isEmpty(searchCriteria.getCampaignNumber())) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" reg.campaignnumber = ? ");
+            preparedStmtList.add(searchCriteria.getCampaignNumber());
+        }
 
         addOrderByClause(query, searchCriteria);
         //addLimitAndOffset(query, searchCriteria, preparedStmtList);

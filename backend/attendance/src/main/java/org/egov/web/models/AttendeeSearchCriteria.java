@@ -1,7 +1,6 @@
 package org.egov.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -13,6 +12,9 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class AttendeeSearchCriteria {
+
+    @JsonProperty("usernames")
+    private List<String> usernames;
 
     @JsonProperty("ids")
     private List<String> ids;
@@ -38,7 +40,6 @@ public class AttendeeSearchCriteria {
     @JsonProperty("tags")
     private List<String> tags;
 
-    @NotNull
     @JsonProperty("tenantId")
     private String tenantId;
 

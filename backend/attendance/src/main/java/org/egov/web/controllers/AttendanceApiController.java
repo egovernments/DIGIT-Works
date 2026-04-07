@@ -67,5 +67,16 @@ public class AttendanceApiController {
         return new ResponseEntity<AttendanceRegisterResponse>(attendanceRegisterResponse, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/_delete", method = RequestMethod.POST)
+    public ResponseEntity<AttendanceRegisterDeleteResponse> deleteAttendanceRegister(@Valid @RequestBody AttendanceRegisterDeleteRequest request) {
+        AttendanceRegisterDeleteRequest result = attendanceRegisterService.deleteAttendanceRegister(request);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
+        AttendanceRegisterDeleteResponse response = AttendanceRegisterDeleteResponse.builder()
+                .responseInfo(responseInfo)
+                .attendanceRegister(result.getAttendanceRegister())
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 
 }

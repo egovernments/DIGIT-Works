@@ -5,15 +5,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
+
+import java.util.List;
 import java.util.TimeZone;
 
-@Component
+@Configuration
 @Data
 @Import({TracerConfiguration.class})
+@ComponentScan(basePackages = {"org.egov"})
 @NoArgsConstructor
 @AllArgsConstructor
 public class MusterRollServiceConfiguration {
@@ -192,6 +196,48 @@ public class MusterRollServiceConfiguration {
     // Period Locking Configuration (V2 Data Consistency)
     @Value("${musterroll.period.locking.enabled:true}")
     private boolean periodLockingEnabled;
+
+    @Value("${muster.roll.attendance.report.generate.topic}")
+    private String attendanceReportGenerateTopic;
+
+    @Value("${muster.roll.attendance.report.update.topic}")
+    private String attendanceReportUpdateTopic;
+
+    // Report Localization and Configuration
+    @Value("${attendance.report.localization.module:muster-roll}")
+    private String reportLocalizationModule;
+
+    @Value("${attendance.report.date.format:dd/MM/yyyy}")
+    private String reportDateFormat;
+
+    @Value("${attendance.report.timezone:Asia/Kolkata}")
+    private String reportTimezone;
+
+    @Value("${attendance.report.session.boundary.time:12:00}")
+    private String sessionBoundaryTime;
+
+    @Value("${attendance.report.filestore.module:ATTENDANCE}")
+    private String reportFilestoreModule;
+
+    // Elasticsearch Configuration
+    @Value("${elasticsearch.host:http://localhost:9200}")
+    private String elasticSearchHost;
+
+    @Value("${elasticsearch.username}")
+    private String elasticSearchUsername;
+
+    @Value("${elasticsearch.password}")
+    private String elasticSearchPassword;
+
+    // MDMS schema codes for ES query templates
+    @Value("${elasticsearch.queries.mdms.module:muster-roll}")
+    private String esQueriesMdmsModule;
+
+    @Value("${elasticsearch.queries.mdms.master:ElasticsearchQueries}")
+    private String esQueriesMdmsMaster;
+
+    @Value("${attendance.report.allowed.skills}")
+    private List<String> allowedAttendanceReportSkills;
 
     @PostConstruct
     public void initialize() {
