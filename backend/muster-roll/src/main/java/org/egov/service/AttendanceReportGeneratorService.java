@@ -380,16 +380,15 @@ public class AttendanceReportGeneratorService {
                     .orElse(null);
         }
 
-        // Count present days
-        int presentDays = (int) dailyAttendance.values().stream()
-                .filter(AttendanceReportConstants.ATTENDANCE_STATUS_PRESENT::equalsIgnoreCase)
-                .count();
-
         // Use metrics already populated on IndividualEntry from CalculationService
         long totalRegistrations = entry.getTotalRegistrations() != null ? entry.getTotalRegistrations() : 0L;
         long totalInterventions = entry.getTotalInterventions() != null ? entry.getTotalInterventions() : 0L;
 
         // Build daily signature IDs and session attendance maps
+        // presentDaysOriginal comes from actualTotalAttendance already computed by CalculationService
+        // (which uses MDMS hour thresholds: halfDayNumHours, fullDayNumHours, isRoundOffHours)
+        double presentDays = entry.getActualTotalAttendance() != null
+                ? entry.getActualTotalAttendance().doubleValue() : 0.0;
         SimpleDateFormat sigDateFormatter = new SimpleDateFormat(config.getReportDateFormat());
         sigDateFormatter.setTimeZone(TimeZone.getTimeZone(config.getReportTimezone()));
         Map<String, String[]> dailySignatureIds = new HashMap<>();
@@ -432,7 +431,7 @@ public class AttendanceReportGeneratorService {
                 .loginId(Optional.ofNullable(individual).map(Individual::getUserDetails).map(UserDetails::getUsername).orElse(null))
                 .attendanceMarker(attendanceMarkers)
                 .presentDaysOriginal(presentDays)
-                .presentDaysModified(entry.getModifiedTotalAttendance() != null ? entry.getModifiedTotalAttendance().intValue() : presentDays)
+                .presentDaysModified(entry.getModifiedTotalAttendance() != null ? entry.getModifiedTotalAttendance().doubleValue() : presentDays)
                 .dailyAttendance(dailyAttendance)
                 .dailySignatureIds(dailySignatureIds)
                 .dailySessionAttendance(dailySessionAttendance)

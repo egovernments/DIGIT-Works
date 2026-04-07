@@ -57,10 +57,10 @@ public class AttendanceReportDetail {
     private String attendanceMarker;
 
     @JsonProperty("presentDaysOriginal")
-    private Integer presentDaysOriginal;
+    private Double presentDaysOriginal;
 
     @JsonProperty("presentDaysModified")
-    private Integer presentDaysModified;
+    private Double presentDaysModified;
 
     @JsonProperty("dailyAttendance")
     private Map<String, String> dailyAttendance;
