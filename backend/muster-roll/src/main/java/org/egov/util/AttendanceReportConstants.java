@@ -90,4 +90,11 @@ public class AttendanceReportConstants {
     public static final int SIGNATURE_COLS_PER_DATE = 4; // AM Status, AM Signature, PM Status, PM Signature
     public static final String SIGNATURE_NA = "NA";
 
+    // Attendance log additionalDetails keys
+    public static final String LOG_ADDITIONAL_DETAILS_SESSION_TYPE = "SESSION_TYPE";
+
+    // Session type values (from attendance log additionalDetails.SESSION_TYPE)
+    public static final String SESSION_TYPE_MORNING = "MORNING";
+    public static final String SESSION_TYPE_EVENING = "EVENING";
+
 }

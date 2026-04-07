@@ -553,12 +553,28 @@ public class AttendanceReportGeneratorService {
 
     /**
      * Returns the ENTRY log that belongs to the given session (morning/evening) for a day.
-     * For 1-session registers, always uses the first log as morning (boundary ignored).
-     * For 2-session registers, splits by boundary: morning = time < boundary, evening = time >= boundary.
+     * <p>
+     * Primary: if any log in the day has {@code additionalDetails.SESSION_TYPE} set,
+     * use that field to match ("MORNING" / "EVENING").
+     * <p>
+     * Fallback (SESSION_TYPE absent on all logs): for 1-session registers the first log
+     * is morning; for 2-session registers splits by the configured time boundary.
      */
     private AttendanceLog findSessionLog(List<AttendanceLog> logsForDay,
             boolean isMorning, int sessions, long boundaryMillis) {
         if (logsForDay == null || logsForDay.isEmpty()) return null;
+
+        boolean anyHasSessionType = logsForDay.stream()
+                .anyMatch(l -> getSessionType(l) != null);
+
+        if (anyHasSessionType) {
+            String targetType = isMorning ? AttendanceReportConstants.SESSION_TYPE_MORNING : AttendanceReportConstants.SESSION_TYPE_EVENING;
+            return logsForDay.stream()
+                    .filter(l -> targetType.equalsIgnoreCase(getSessionType(l)))
+                    .findFirst().orElse(null);
+        }
+
+        // Fallback: time-based
         if (sessions == 1) {
             return isMorning ? logsForDay.get(0) : null;
         }
@@ -571,6 +587,24 @@ public class AttendanceReportGeneratorService {
                     .filter(l -> l.getTime().longValue() >= boundaryMillis)
                     .findFirst().orElse(null);
         }
+    }
+
+    /**
+     * Extracts {@code additionalDetails.SESSION_TYPE} from an attendance log.
+     * Returns null if the field is absent or unreadable.
+     */
+    private String getSessionType(AttendanceLog attendanceLog) {
+        try {
+            if (attendanceLog.getAdditionalDetails() == null) return null;
+            JsonNode node = objectMapper.valueToTree(attendanceLog.getAdditionalDetails());
+            JsonNode sessionTypeNode = node.get(AttendanceReportConstants.LOG_ADDITIONAL_DETAILS_SESSION_TYPE);
+            if (sessionTypeNode != null && !sessionTypeNode.isNull() && !sessionTypeNode.asText().isBlank()) {
+                return sessionTypeNode.asText();
+            }
+        } catch (Exception e) {
+            log.warn("Failed to extract SESSION_TYPE from attendance log: {}", e.getMessage());
+        }
+        return null;
     }
 
     /**
