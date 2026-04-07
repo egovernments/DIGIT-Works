@@ -339,7 +339,15 @@ public class AttendanceReportGeneratorService {
         }
         Map<String, Individual> individualMap = individualUtil.fetchIndividualDetailsAsMap(individualIds, requestInfo, tenantId);
 
-        for (IndividualEntry entry : musterRoll.getIndividualEntries()) {
+        List<IndividualEntry> sortedEntries = musterRoll.getIndividualEntries().stream()
+                .sorted(Comparator.comparing(entry -> {
+                    Individual ind = individualMap.get(entry.getIndividualId());
+                    String name = (ind != null && ind.getName() != null) ? ind.getName().getGivenName() : null;
+                    return name != null ? name.toLowerCase() : "";
+                }))
+                .collect(Collectors.toList());
+
+        for (IndividualEntry entry : sortedEntries) {
             AttendanceReportDetail detail = buildAttendanceDetail(individualWorkerMap, individualMap, entry, register,
                     campaignDates, serialNumber++, tenantId, requestInfo, signatureLogMap, sessions);
             details.add(detail);
