@@ -53,7 +53,7 @@ public class AttendanceExcelGenerator {
 
             writeHeaderSection(sheet, reportData, localizedMessages, totalCols);
             writeColumnHeaders(sheet, reportData, localizedMessages, colsPerDate);
-            writeDataRows(sheet, reportData, signatureImages, colsPerDate);
+            writeDataRows(sheet, reportData, localizedMessages, signatureImages, colsPerDate);
 
             // Fixed column widths (same as original)
             int[] fixedColumnWidths = {8, 25, 15, 15, 12, 15, 15, 15, 12, 25, 12, 15, 15, 22};
@@ -212,7 +212,7 @@ public class AttendanceExcelGenerator {
     // ── Data rows (starting row 6) ───────────────────────────────────────────────
 
     private void writeDataRows(XSSFSheet sheet, AttendanceReportData reportData,
-            Map<String, byte[]> signatureImages, int colsPerDate) {
+            Map<String, String> localizedMessages, Map<String, byte[]> signatureImages, int colsPerDate) {
         CellStyle dataStyle     = createDataStyle(sheet.getWorkbook());
         CellStyle dateDataStyle = createDateDataStyle(sheet.getWorkbook());
 
@@ -229,7 +229,7 @@ public class AttendanceExcelGenerator {
             setCellValue(row, col++, detail.getLoginId(), dataStyle);
             setCellValue(row, col++, detail.getUserId(), dataStyle);
             setCellValue(row, col++, detail.getTeamCode(), dataStyle);
-            setCellValue(row, col++, detail.getRole(), dataStyle);
+            setCellValue(row, col++, localizeCode(localizedMessages, ROLE_LOCALIZATION_KEY_PREFIX, detail.getRole()), dataStyle);
             setCellValue(row, col++, detail.getPhoneNumber(), dataStyle);
             setCellValue(row, col++, formatDate(detail.getEnrollmentDate()), dateDataStyle);
             setCellValue(row, col++, formatDate(detail.getDeEnrollmentDate()), dateDataStyle);
@@ -266,7 +266,7 @@ public class AttendanceExcelGenerator {
                             ? sessionStatus[1] : ATTENDANCE_STATUS_ABSENT;
 
                     // AM Status
-                    setCellValue(row, col++, morningStatus, dataStyle);
+                    setCellValue(row, col++, localizeCode(localizedMessages, STATUS_LOCALIZATION_KEY_PREFIX, morningStatus), dataStyle);
 
                     // AM Signature
                     byte[] amImg = (morningId != null) ? signatureImages.get(morningId) : null;
@@ -282,7 +282,7 @@ public class AttendanceExcelGenerator {
                         String eveningId = (sigIds != null && sigIds.length > 1) ? sigIds[1] : null;
 
                         // PM Status
-                        setCellValue(row, col++, eveningStatus, dataStyle);
+                        setCellValue(row, col++, localizeCode(localizedMessages, STATUS_LOCALIZATION_KEY_PREFIX, eveningStatus), dataStyle);
 
                         // PM Signature
                         byte[] pmImg = (eveningId != null) ? signatureImages.get(eveningId) : null;
@@ -415,5 +415,12 @@ public class AttendanceExcelGenerator {
 
     private String getLocalized(Map<String, String> messages, String key) {
         return messages != null ? messages.getOrDefault(key, key) : key;
+    }
+
+    /** Localizes a dynamic code value (e.g. role code, status code) using a key prefix.
+     *  Falls back to the raw code if no localization entry is found. */
+    private String localizeCode(Map<String, String> messages, String keyPrefix, String code) {
+        if (code == null) return null;
+        return messages != null ? messages.getOrDefault(keyPrefix + code, code) : code;
     }
 }

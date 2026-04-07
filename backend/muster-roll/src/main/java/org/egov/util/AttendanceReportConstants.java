@@ -80,6 +80,12 @@ public class AttendanceReportConstants {
     public static final String HEADER_STATUS    = "ATTENDANCE_REPORT_HEADER_STATUS";
     public static final String HEADER_SIGNATURE = "ATTENDANCE_REPORT_HEADER_SIGNATURE";
 
+    // Role value localization key prefix — append skill type code (e.g. ATTENDANCE_REPORT_ROLE_DISTRIBUTOR)
+    public static final String ROLE_LOCALIZATION_KEY_PREFIX = "ATTENDANCE_REPORT_ROLE_";
+
+    // Attendance status value localization key prefix — append status code (e.g. ATTENDANCE_REPORT_STATUS_PRESENT)
+    public static final String STATUS_LOCALIZATION_KEY_PREFIX = "ATTENDANCE_REPORT_STATUS_";
+
     // Signature column structural constants
     public static final int SIGNATURE_COLS_PER_DATE = 4; // AM Status, AM Signature, PM Status, PM Signature
     public static final String SIGNATURE_NA = "NA";
