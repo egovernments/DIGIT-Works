@@ -213,6 +213,9 @@ public class MusterRollServiceConfiguration {
     @Value("${attendance.report.timezone:Asia/Kolkata}")
     private String reportTimezone;
 
+    @Value("${attendance.report.session.boundary.time:12:00}")
+    private String sessionBoundaryTime;
+
     @Value("${attendance.report.filestore.module:ATTENDANCE}")
     private String reportFilestoreModule;
 

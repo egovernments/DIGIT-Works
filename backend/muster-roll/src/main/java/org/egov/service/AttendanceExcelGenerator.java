@@ -253,14 +253,20 @@ public class AttendanceExcelGenerator {
             if (reportData.getCampaignDates() != null && detail.getDailyAttendance() != null) {
                 for (Long dateMillis : reportData.getCampaignDates()) {
                     String dateStr = formatDate(dateMillis);
-                    String status = detail.getDailyAttendance().getOrDefault(dateStr, "");
 
                     String[] sigIds = detail.getDailySignatureIds() != null
                             ? detail.getDailySignatureIds().get(dateStr) : null;
                     String morningId = (sigIds != null) ? sigIds[0] : null;
 
+                    String[] sessionStatus = (detail.getDailySessionAttendance() != null)
+                            ? detail.getDailySessionAttendance().get(dateStr) : null;
+                    String morningStatus = (sessionStatus != null && sessionStatus[0] != null)
+                            ? sessionStatus[0] : ATTENDANCE_STATUS_ABSENT;
+                    String eveningStatus = (sessionStatus != null && sessionStatus.length > 1 && sessionStatus[1] != null)
+                            ? sessionStatus[1] : ATTENDANCE_STATUS_ABSENT;
+
                     // AM Status
-                    setCellValue(row, col++, status, dataStyle);
+                    setCellValue(row, col++, morningStatus, dataStyle);
 
                     // AM Signature
                     byte[] amImg = (morningId != null) ? signatureImages.get(morningId) : null;
@@ -276,7 +282,7 @@ public class AttendanceExcelGenerator {
                         String eveningId = (sigIds != null && sigIds.length > 1) ? sigIds[1] : null;
 
                         // PM Status
-                        setCellValue(row, col++, status, dataStyle);
+                        setCellValue(row, col++, eveningStatus, dataStyle);
 
                         // PM Signature
                         byte[] pmImg = (eveningId != null) ? signatureImages.get(eveningId) : null;

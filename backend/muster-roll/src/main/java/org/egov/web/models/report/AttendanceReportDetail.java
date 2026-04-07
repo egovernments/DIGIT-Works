@@ -77,4 +77,8 @@ public class AttendanceReportDetail {
 
     @JsonProperty("baseSignatureFileStoreId")
     private String baseSignatureFileStoreId;
+
+    // Key: dateStr, Value: [morningStatus, eveningStatus] ("PRESENT"/"ABSENT")
+    @JsonProperty("dailySessionAttendance")
+    private Map<String, String[]> dailySessionAttendance;
 }

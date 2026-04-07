@@ -39,6 +39,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -388,18 +389,34 @@ public class AttendanceReportGeneratorService {
         long totalRegistrations = entry.getTotalRegistrations() != null ? entry.getTotalRegistrations() : 0L;
         long totalInterventions = entry.getTotalInterventions() != null ? entry.getTotalInterventions() : 0L;
 
-        // Build daily signature IDs map
+        // Build daily signature IDs and session attendance maps
         SimpleDateFormat sigDateFormatter = new SimpleDateFormat(config.getReportDateFormat());
         sigDateFormatter.setTimeZone(TimeZone.getTimeZone(config.getReportTimezone()));
         Map<String, String[]> dailySignatureIds = new HashMap<>();
+        Map<String, String[]> dailySessionAttendance = new HashMap<>();
         Map<String, List<AttendanceLog>> logsForIndividual =
                 signatureLogMap.getOrDefault(entry.getIndividualId(), Collections.emptyMap());
         for (Long dateMillis : campaignDates) {
             String dateStr = sigDateFormatter.format(new Date(dateMillis));
             List<AttendanceLog> logsForDay = logsForIndividual.getOrDefault(dateStr, Collections.emptyList());
-            String morningId = extractSignatureFileStoreId(logsForDay, 0);
-            String eveningId = (sessions > 1) ? extractSignatureFileStoreId(logsForDay, 1) : null;
+
+            long boundaryMillis = computeSessionBoundaryMillis(dateMillis);
+            AttendanceLog morningLog = findSessionLog(logsForDay, true, sessions, boundaryMillis);
+            AttendanceLog eveningLog = findSessionLog(logsForDay, false, sessions, boundaryMillis);
+
+            String morningId = extractSignatureFileStoreId(
+                    morningLog != null ? Collections.singletonList(morningLog) : Collections.emptyList(), 0);
+            String eveningId = extractSignatureFileStoreId(
+                    eveningLog != null ? Collections.singletonList(eveningLog) : Collections.emptyList(), 0);
             dailySignatureIds.put(dateStr, new String[]{morningId, eveningId});
+
+            String morningStatus = morningLog != null
+                    ? AttendanceReportConstants.ATTENDANCE_STATUS_PRESENT
+                    : AttendanceReportConstants.ATTENDANCE_STATUS_ABSENT;
+            String eveningStatus = eveningLog != null
+                    ? AttendanceReportConstants.ATTENDANCE_STATUS_PRESENT
+                    : AttendanceReportConstants.ATTENDANCE_STATUS_ABSENT;
+            dailySessionAttendance.put(dateStr, new String[]{morningStatus, eveningStatus});
         }
 
         AttendanceReportDetail attendanceReportDetail = AttendanceReportDetail.builder()
@@ -418,6 +435,7 @@ public class AttendanceReportGeneratorService {
                 .presentDaysModified(entry.getModifiedTotalAttendance() != null ? entry.getModifiedTotalAttendance().intValue() : presentDays)
                 .dailyAttendance(dailyAttendance)
                 .dailySignatureIds(dailySignatureIds)
+                .dailySessionAttendance(dailySessionAttendance)
                 .baseSignatureFileStoreId(individualWorker.getSignatureId())
                 .totalPerformance(totalInterventions)
                 .build();
@@ -525,6 +543,48 @@ public class AttendanceReportGeneratorService {
                 dayMap.values().forEach(logs ->
                         logs.sort(Comparator.comparing(l -> l.getTime().longValue()))));
         return result;
+    }
+
+    /**
+     * Returns the ENTRY log that belongs to the given session (morning/evening) for a day.
+     * For 1-session registers, always uses the first log as morning (boundary ignored).
+     * For 2-session registers, splits by boundary: morning = time < boundary, evening = time >= boundary.
+     */
+    private AttendanceLog findSessionLog(List<AttendanceLog> logsForDay,
+            boolean isMorning, int sessions, long boundaryMillis) {
+        if (logsForDay == null || logsForDay.isEmpty()) return null;
+        if (sessions == 1) {
+            return isMorning ? logsForDay.get(0) : null;
+        }
+        if (isMorning) {
+            return logsForDay.stream()
+                    .filter(l -> l.getTime().longValue() < boundaryMillis)
+                    .findFirst().orElse(null);
+        } else {
+            return logsForDay.stream()
+                    .filter(l -> l.getTime().longValue() >= boundaryMillis)
+                    .findFirst().orElse(null);
+        }
+    }
+
+    /**
+     * Computes the epoch-millis for the session boundary time (e.g. "12:00") on the given date,
+     * using the configured report timezone. Falls back to noon (12:00) if config is malformed.
+     */
+    private long computeSessionBoundaryMillis(Long dateMillis) {
+        ZoneId zone = ZoneId.of(config.getReportTimezone());
+        LocalDate date = new Date(dateMillis).toInstant().atZone(zone).toLocalDate();
+        int hour = 12;
+        int minute = 0;
+        try {
+            String[] parts = config.getSessionBoundaryTime().split(":");
+            hour = Integer.parseInt(parts[0]);
+            minute = Integer.parseInt(parts[1]);
+        } catch (Exception e) {
+            log.warn("Invalid sessionBoundaryTime config '{}', defaulting to 12:00: {}",
+                    config.getSessionBoundaryTime(), e.getMessage());
+        }
+        return date.atTime(hour, minute).atZone(zone).toInstant().toEpochMilli();
     }
 
     /**
