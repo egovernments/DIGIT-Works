@@ -147,6 +147,8 @@ public class MusterRollAnalyticsService {
         }
 
         try {
+            // log query before replacing placeholders and after replacing
+            log.info("MusterRollAnalyticsService::fetchMetricFromEs::Query before placeholders: {}", queryConfig.getQuery());
             // Replace placeholders in the query template
             String userUuidsJson = objectMapper.writeValueAsString(userUuids);
             String individualIdsJson = objectMapper.writeValueAsString(userUuidToIndividualId.values());
@@ -160,7 +162,7 @@ public class MusterRollAnalyticsService {
 
             log.debug("MusterRollAnalyticsService::fetchMetricFromEs::Executing ES query for metric: {} on index: {}",
                     metricField, queryConfig.getIndexName());
-            log.debug("MusterRollAnalyticsService::fetchMetricFromEs::Query: {}", query);
+            log.info("MusterRollAnalyticsService::fetchMetricFromEs::Query after placeholders: {}", query);
 
             String esUrl = config.getElasticSearchHost() + "/" + queryConfig.getIndexName() + "/_search";
             HttpHeaders headers = new HttpHeaders();
@@ -169,6 +171,7 @@ public class MusterRollAnalyticsService {
             HttpEntity<String> requestEntity = new HttpEntity<>(query, headers);
 
             String responseStr = restTemplate.postForObject(esUrl, requestEntity, String.class);
+            log.info("MusterRollAnalyticsService::fetchMetricFromEs::ES response for metric: {}: {}", metricField, responseStr);
             JsonNode responseJson = objectMapper.readTree(responseStr);
 
             // Parse aggregation buckets: aggregations.Users.buckets[]
