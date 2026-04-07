@@ -409,10 +409,10 @@ public class AttendanceReportGeneratorService {
                     eveningLog != null ? Collections.singletonList(eveningLog) : Collections.emptyList(), 0);
             dailySignatureIds.put(dateStr, new String[]{morningId, eveningId});
 
-            String morningStatus = morningLog != null
+            String morningStatus = (morningLog != null && Status.ACTIVE.equals(morningLog.getStatus()))
                     ? AttendanceReportConstants.ATTENDANCE_STATUS_PRESENT
                     : AttendanceReportConstants.ATTENDANCE_STATUS_ABSENT;
-            String eveningStatus = eveningLog != null
+            String eveningStatus = (eveningLog != null && Status.ACTIVE.equals(eveningLog.getStatus()))
                     ? AttendanceReportConstants.ATTENDANCE_STATUS_PRESENT
                     : AttendanceReportConstants.ATTENDANCE_STATUS_ABSENT;
             dailySessionAttendance.put(dateStr, new String[]{morningStatus, eveningStatus});
@@ -500,8 +500,7 @@ public class AttendanceReportGeneratorService {
                     .queryParam("tenantId", tenantId)
                     .queryParam("registerId", musterRoll.getRegisterId())
                     .queryParam("fromTime", BigDecimal.valueOf(windowStart))
-                    .queryParam("toTime", BigDecimal.valueOf(windowEnd))
-                    .queryParam("status", Status.ACTIVE);
+                    .queryParam("toTime", BigDecimal.valueOf(windowEnd));
 
             RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
             AttendanceLogResponse response = restTemplate.postForObject(
