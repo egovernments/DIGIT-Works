@@ -14,6 +14,7 @@ import org.egov.repository.RegisterRepository;
 import org.egov.repository.StaffRepository;
 import org.egov.service.AttendanceRegisterService;
 import org.egov.service.AttendeeService;
+import org.egov.service.FaceAuthEventService;
 import org.egov.service.StaffService;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ErrorRes;
@@ -79,6 +80,9 @@ public class AttendeeApiControllerTest {
 
     @MockBean
     private RegisterRepository registerRepository;
+
+    @MockBean
+    private FaceAuthEventService faceAuthEventService;
 
 
     @Test
