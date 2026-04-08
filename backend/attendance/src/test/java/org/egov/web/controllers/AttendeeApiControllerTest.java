@@ -10,6 +10,7 @@ import org.egov.enrichment.StaffEnrichmentService;
 import org.egov.helper.AttendeeRequestBuilderTest;
 import org.egov.repository.AttendanceLogRepository;
 import org.egov.repository.AttendeeRepository;
+import org.egov.repository.FaceAuthEventRepository;
 import org.egov.repository.RegisterRepository;
 import org.egov.repository.StaffRepository;
 import org.egov.service.AttendanceRegisterService;
@@ -87,6 +88,9 @@ public class AttendeeApiControllerTest {
 
     @MockBean
     private FaceAuthEventConsumer faceAuthEventConsumer;
+
+    @MockBean
+    private FaceAuthEventRepository faceAuthEventRepository;
 
 
     @Test
