@@ -200,6 +200,14 @@ public class AttendanceServiceConfiguration {
 
     @Value("${musterroll.workflow.business.service}")
     private String musterRollWorkflowBusinessService;
+
+    // Face Auth Event Topics
+    @Value("${attendance.face.auth.kafka.create.topic}")
+    private String saveFaceAuthEventTopic;
+
+    @Value("${attendance.face.auth.kafka.consumer.bulk.create.topic}")
+    private String bulkCreateFaceAuthEventTopic;
+
 }
 
 
