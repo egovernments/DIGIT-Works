@@ -67,14 +67,4 @@ public class TaskQueryBuilder {
         return query.toString();
     }
 
-
-    public String getTasksInProgressQuery(String seconds, String type, List<Object> preparedStmtList) {
-        StringBuilder query = new StringBuilder(TASK_IN_PROGRESS_SEARCH_QUERY);
-
-        long millis = Long.parseLong(seconds) * 1000;
-        preparedStmtList.add(millis);
-        preparedStmtList.add(type);
-
-        return query.toString();
-    }
 }

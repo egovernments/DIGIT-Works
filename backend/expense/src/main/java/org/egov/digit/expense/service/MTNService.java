@@ -152,8 +152,12 @@ public class MTNService {
 
 
         for (BillDetail billDetail : billDetailsToBeUpdatedById.values()) {
+            if (billDetail == null) {
+                log.error("BillDetail from search is null for one of the requested IDs in bill number: {}. Skipping.", billFromSearch.getBillNumber());
+                continue;
+            }
             if (billDetail.getStatus() == Status.PENDING_VERIFICATION ||
-                    billDetail.getStatus() == Status.EDITED) {
+                    billDetail.getStatus() == Status.VERIFICATION_FAILED) {
                 IndividualDetails individualDetails = individualUtil.getIndividualDetails(taskRequest.getRequestInfo(), billFromSearch.getTenantId(), billDetail.getPayee().getIdentifier());
                 TaskDetails taskDetails = TaskDetails.builder()
                         .id(UUID.randomUUID().toString())
@@ -167,49 +171,43 @@ public class MTNService {
                         .referenceId(individualDetails.getPhoneNumber())
                         .build();
                 boolean updateBillDetailWorkflow = true;
-                Workflow workflow = Workflow.builder().build();
+
+                // ── WF Step 1: VERIFY → VERIFICATION_IN_PROGRESS (unconditional) ──
+                // setBillDetailStatus catches HttpClientErrorException internally; check status to detect failure.
+                Workflow verifyWorkflow = Workflow.builder()
+                        .action(Actions.VERIFY.toString())
+                        .build();
+                setBillDetailStatus(billDetail, verifyWorkflow, taskRequest.getRequestInfo(), updateBillDetailWorkflow);
+
+                // Guard: Step 2 is only valid from VERIFICATION_IN_PROGRESS.
+                // If Step 1 failed (exception swallowed internally), status is unchanged — skip to next BillDetail.
+                if (billDetail.getStatus() != Status.VERIFICATION_IN_PROGRESS) {
+                    log.error("WF Step 1 (VERIFY) did not reach VERIFICATION_IN_PROGRESS for billDetail Id: {}, bill number: {}, current status: {}. Skipping Step 2.",
+                            billDetail.getId(), billFromSearch.getBillNumber(), billDetail.getStatus());
+                    continue;
+                }
+
+                // ── Account check — sets failure reason on taskDetails BEFORE Kafka push ──
+                boolean verificationSucceeded = false;
                 try {
                     boolean isActive = mtnUtil.isMsisdnActive(individualDetails.getPhoneNumber());
-
                     if (isActive) {
-                        workflow.setAction(Actions.VERIFY.toString());
+                        verificationSucceeded = true;
                     } else {
-                        workflow.setAction(Actions.REFUTE.toString());
                         taskDetails.setReasonForFailure("MTN_ACCOUNT_INACTIVE_" + EXCEPTION);
                         taskDetails.setResponseMessage("Account is not active");
                     }
-
                 } catch (CustomException e) {
-                    log.error("Exception while verifying MSISDN : {}",
-                            individualDetails.getPhoneNumber(), e);
-                        workflow.setAction(Actions.REFUTE.toString());
-
+                    log.error("Exception while verifying MSISDN : {}", individualDetails.getPhoneNumber(), e);
                     taskDetails.setResponseMessage(e.getMessage());
                     taskDetails.setReasonForFailure(e.getCode());
                 }
-//                try {
-//                    String name = mtnUtil.getNameIfActive(individualDetails.getPhoneNumber());
-//
-//                    if (!name.equalsIgnoreCase(individualDetails.getName())) {
-//                        workflow.setAction(Actions.REFUTE.toString());
-//                        taskDetails.setReasonForFailure("NAME_MISMATCH");
-//                        taskDetails.setResponseMessage("Please check the name");
-//                    } else {
-//                        workflow.setAction(Actions.VERIFY.toString());
-//                    }
-//                } catch (CustomException e) {
-//                    log.error("Exception while verifying MSISDN : {} ",individualDetails.getPhoneNumber(),e);
-//                    if (Objects.equals(e.getCode(), "MTN_SERVICE_" + EXCEPTION)) {
-//                        updateBillDetailWorkflow = false;
-//                    } else {
-//                        workflow.setAction(Actions.REFUTE.toString());
-//                    }
-//                    taskDetails.setResponseMessage(e.getMessage());
-//                    taskDetails.setReasonForFailure(e.getCode());
-//                }
+
+                // ── Kafka push — failure reason already set (unchanged from original intent) ──
                 taskDetails.setStatus(Status.DONE);
                 expenseProducer.push(billFromSearch.getTenantId(), config.getBillTaskDetailsTopic(), taskDetails);
 
+                // ── additionalDetails enrichment (unchanged — ErrorDetails reads from taskDetails) ──
                 Object additionalDetailsObj = billDetail.getAdditionalDetails();
                 Map<String, Object> additionalDetails;
 
@@ -229,44 +227,81 @@ public class MTNService {
                         .response(taskDetails.getAdditionalDetails()).build();
                 additionalDetails.put("errorDetails", errorDetails);
                 billDetail.setAdditionalDetails(additionalDetails);
-                try {
-                    setBillDetailStatus(billDetail, workflow, taskRequest.getRequestInfo(), updateBillDetailWorkflow);
-                } catch (HttpClientErrorException e) {
-                    log.error("Error in updating workflow state change for billDetail Id: {}, bill number : {}, from status: {} to action: {}"
-                            , billDetail.getId(), billFromSearch.getBillNumber(), billDetail.getStatus(), workflow.getAction(), e);
+
+                // ── WF Step 2: VERIFICATION_SUCCESS or FAILED from VERIFICATION_IN_PROGRESS ──
+                // setBillDetailStatus catches HttpClientErrorException internally.
+                // If Step 2 fails, billDetail.getStatus() stays VERIFICATION_IN_PROGRESS — not retried by
+                // automated flow; requires manual operator action (IGNORE_ERRORS_AND_VERIFY).
+                if (verificationSucceeded) {
+                    Workflow successWorkflow = Workflow.builder()
+                            .action(Actions.VERIFICATION_SUCCESS.toString())
+                            .build();
+                    setBillDetailStatus(billDetail, successWorkflow, taskRequest.getRequestInfo(), updateBillDetailWorkflow);
+                    if (billDetail.getStatus() == Status.VERIFICATION_IN_PROGRESS) {
+                        log.error("WF Step 2 (VERIFICATION_SUCCESS) failed for billDetail Id: {}, bill number: {}. BillDetail stuck at VERIFICATION_IN_PROGRESS — manual intervention required.",
+                                billDetail.getId(), billFromSearch.getBillNumber());
+                    }
+                } else {
+                    Workflow failedWorkflow = Workflow.builder()
+                            .action(Actions.FAILED.toString())
+                            .build();
+                    setBillDetailStatus(billDetail, failedWorkflow, taskRequest.getRequestInfo(), updateBillDetailWorkflow);
+                    if (billDetail.getStatus() == Status.VERIFICATION_IN_PROGRESS) {
+                        log.error("WF Step 2 (FAILED) failed for billDetail Id: {}, bill number: {}. BillDetail stuck at VERIFICATION_IN_PROGRESS — manual intervention required.",
+                                billDetail.getId(), billFromSearch.getBillNumber());
+                    }
                 }
             }
         }
         if (billFromSearch.getStatus() == Status.PENDING_VERIFICATION
-                || billFromSearch.getStatus() == Status.PARTIALLY_VERIFIED
-                || billFromSearch.getStatus() == Status.PARTIALLY_PAID
-                || billFromSearch.getStatus() == Status.PAYMENT_FAILED
-        ) {
+                || billFromSearch.getStatus() == Status.PARTIALLY_VERIFIED) {
+
+            // Count verified BillDetails (unchanged filter logic)
             List<BillDetail> verifiedBillDetails = billFromSearch.getBillDetails()
                     .stream()
                     .filter(billDetail -> billDetail.getStatus() == Status.VERIFIED
                             || billDetail.getStatus() == Status.PAID)
                     .collect(Collectors.toList());
-            boolean isWorkflowChange = true;
-            Workflow workflow = Workflow.builder()
-                    .build();
-            if (verifiedBillDetails.size() == billFromSearch.getBillDetails().size()) {
-                workflow.setAction(Actions.FULLY_VERIFY.toString());
-            } else if (!verifiedBillDetails.isEmpty() &&
-                    (billFromSearch.getStatus() == Status.PENDING_VERIFICATION || billFromSearch.getStatus() == Status.PAYMENT_FAILED)) {
-                workflow.setAction(Actions.PARTIALLY_VERIFY.toString());
+
+            if (!verifiedBillDetails.isEmpty()) {
+                // Step 1: VERIFY → VERIFICATION_IN_PROGRESS
+                // updateBillWfStatus catches HttpClientErrorException internally; check status to detect failure.
+                Workflow verifyWorkflow = Workflow.builder()
+                        .action(Actions.VERIFY.toString())
+                        .build();
+                BillRequest verifyBillRequest = BillRequest.builder()
+                        .bill(billFromSearch)
+                        .requestInfo(taskRequest.getRequestInfo())
+                        .workflow(verifyWorkflow)
+                        .build();
+                updateBillWfStatus(verifyBillRequest, true);
+
+                // Guard: Step 2 is only valid from VERIFICATION_IN_PROGRESS.
+                // If Step 1 failed (exception swallowed internally), status is unchanged — skip Step 2.
+                if (billFromSearch.getStatus() != Status.VERIFICATION_IN_PROGRESS) {
+                    log.error("Bill WF Step 1 (VERIFY) did not reach VERIFICATION_IN_PROGRESS for bill number: {}, task id: {}. Current status: {}. Skipping Step 2.",
+                            billFromSearch.getBillNumber(), task.getId(), billFromSearch.getStatus());
+                } else {
+                    // Step 2: FULLY_VERIFY or PARTIALLY_VERIFY from VERIFICATION_IN_PROGRESS
+                    // verifiedBillDetails was computed post-BillDetail-loop — reflects current BillDetail statuses.
+                    // billFromSearch.getStatus() is VERIFICATION_IN_PROGRESS — do NOT use it for branching.
+                    Workflow aggregateWorkflow = Workflow.builder().build();
+                    if (verifiedBillDetails.size() == billFromSearch.getBillDetails().size()) {
+                        aggregateWorkflow.setAction(Actions.FULLY_VERIFY.toString());
+                    } else {
+                        aggregateWorkflow.setAction(Actions.PARTIALLY_VERIFY.toString());
+                    }
+                    BillRequest aggregateBillRequest = BillRequest.builder()
+                            .bill(billFromSearch)
+                            .requestInfo(taskRequest.getRequestInfo())
+                            .workflow(aggregateWorkflow)
+                            .build();
+                    updateBillWfStatus(aggregateBillRequest, true);
+                }
             } else {
-                log.info("No workflow state change for bill number : {}, task id: {}", billFromSearch.getBillNumber(), task.getId());
-                isWorkflowChange = false;
+                log.info("No verified BillDetails — skipping bill workflow change for bill number: {}, task id: {}",
+                        billFromSearch.getBillNumber(), task.getId());
             }
-
-            BillRequest billRequest = BillRequest.builder()
-                    .bill(billFromSearch)
-                    .requestInfo(taskRequest.getRequestInfo())
-                    .workflow(workflow)
-                    .build();
-
-            updateBillWfStatus(billRequest, isWorkflowChange);
         }
         task.setStatus(Status.DONE);
         expenseProducer.push(billFromSearch.getTenantId(), config.getTaskUpdateTopic(), task);
@@ -366,7 +401,11 @@ public class MTNService {
 
 
         for (BillDetail billDetail : billDetailsToBeupdatedById.values()) {
-            if (billDetail.getStatus() == Status.VERIFIED || billDetail.getStatus() == Status.PAYMENT_FAILED) {
+            if (billDetail == null) {
+                log.error("BillDetail from search is null for one of the requested IDs in bill number: {}. Skipping.", billFromSearch.getBillNumber());
+                continue;
+            }
+            if (billDetail.getStatus() == Status.PAYMENT_IN_PROGRESS) {
                 IndividualDetails individualDetails = individualUtil.getIndividualDetails(taskRequest.getRequestInfo(), billFromSearch.getTenantId(), billDetail.getPayee().getIdentifier());
                 TaskDetails taskDetails = TaskDetails.builder()
                         .id(UUID.randomUUID().toString())
@@ -579,18 +618,23 @@ public class MTNService {
         for (TaskDetails taskDetail : taskDetails) {
             boolean isUpdateWorkflow = true;
             BillDetail billDetail = billDetailsById.get(taskDetail.getBillDetailsId());
-            if (taskDetail.getStatus() == Status.IN_PROGRESS && (billDetail.getStatus() == Status.VERIFIED || billDetail.getStatus() == Status.PAYMENT_FAILED)) {
+            if (billDetail == null) {
+                log.error("BillDetail not found for taskDetail id: {}, billDetailsId: {}. Skipping.",
+                        taskDetail.getId(), taskDetail.getBillDetailsId());
+                continue;
+            }
+            if (taskDetail.getStatus() == Status.IN_PROGRESS && billDetail.getStatus() == Status.PAYMENT_IN_PROGRESS) {
                 Workflow billDetailWorkflow = Workflow.builder().build();
                 try {
                     if (billDetail.getTotalAmount().compareTo(BigDecimal.ZERO) == 0) {
-                        billDetailWorkflow.setAction(Actions.DECLINE.toString());
+                        billDetailWorkflow.setAction(Actions.FAILED.toString());
                         taskDetail.setStatus(Status.DONE);
                         log.info("Payment couldn't be processed for bill detail id {} as total amount is 0", billDetail.getId());
                     } else if (
                             (taskDetail.getReasonForFailure() != null && !taskDetail.getReasonForFailure().isBlank()) &&
                                     (taskDetail.getReasonForFailure().toLowerCase().contains(EXCEPTION.toLowerCase()) || taskDetail.getReasonForFailure().toLowerCase().contains(ERROR.toLowerCase()))
                     ) {
-                        billDetailWorkflow.setAction(Actions.DECLINE.toString());
+                        billDetailWorkflow.setAction(Actions.FAILED.toString());
                         taskDetail.setStatus(Status.DONE);
                         log.info("Payment couldn't be processed for bill detail id {} : {}", billDetail.getId(),
                                 taskDetail.getReasonForFailure() + " " + taskDetail.getResponseMessage());
@@ -598,16 +642,26 @@ public class MTNService {
                         PaymentTransferResponse paymentTransferResponse = mtnUtil.getTransferStatus(taskDetail.getId());
                         if (paymentTransferResponse.getStatus().equalsIgnoreCase(ResponseStatus.SUCCESSFUL.toString())) {
                             billDetailWorkflow.setAction(Actions.PAY.toString());
+                            taskDetail.setReasonForFailure(paymentTransferResponse.getReason());
+                            taskDetail.setAdditionalDetails((Object) paymentTransferResponse);
+                            taskDetail.setStatus(Status.DONE);
                         } else if (paymentTransferResponse.getStatus().equalsIgnoreCase(ResponseStatus.FAILED.toString())) {
-                            billDetailWorkflow.setAction(Actions.DECLINE.toString());
+                            billDetailWorkflow.setAction(Actions.FAILED.toString());
+                            taskDetail.setReasonForFailure(paymentTransferResponse.getReason());
+                            taskDetail.setAdditionalDetails((Object) paymentTransferResponse);
+                            taskDetail.setStatus(Status.DONE);
                         } else {
-                            log.info("unknown response status: {} for bill number : {}, task id: {}, task detail id: {}", paymentTransferResponse.getStatus(), billFromSearch.getBillNumber(), task.getId(), taskDetail.getId());
+                            // Unknown/pending status — do not finalize taskDetail; leave IN_PROGRESS for retry on next run.
+                            log.warn("Unknown/pending MTN response status: {} for bill number: {}, task id: {}, task detail id: {}. Will retry on next run.",
+                                    paymentTransferResponse.getStatus(), billFromSearch.getBillNumber(), task.getId(), taskDetail.getId());
+                            taskDetail.setReasonForFailure(paymentTransferResponse.getReason());
+                            taskDetail.setAdditionalDetails((Object) paymentTransferResponse);
+                            isUpdateWorkflow = false;
+                            // taskDetail.setStatus(Status.DONE) intentionally NOT set — stays IN_PROGRESS for retry
                         }
-                        taskDetail.setReasonForFailure(paymentTransferResponse.getReason());
-                        taskDetail.setAdditionalDetails((Object) paymentTransferResponse);
-                        taskDetail.setStatus(Status.DONE);
                     }
-                    if (billDetail.getStatus() == Status.PAYMENT_FAILED && Objects.equals(billDetailWorkflow.getAction(), Actions.DECLINE.toString()))
+                    // Safety net (dead code after 4a/4b): PAYMENT_FAILED BillDetails can no longer enter this block
+                    if (billDetail.getStatus() == Status.PAYMENT_FAILED && Objects.equals(billDetailWorkflow.getAction(), Actions.FAILED.toString()))
                         isUpdateWorkflow = false;
                 } catch (CustomException e) {
                     log.error("error in fetching payment transfer status from mtn for bill number : {}, billDetail: {},task: {}, taskDetail: {}",
@@ -637,15 +691,11 @@ public class MTNService {
                         .response(taskDetail.getAdditionalDetails()).build();
                 additionalDetails.put("errorDetails", errorDetails);
                 billDetail.setAdditionalDetails(additionalDetails);
-                try {
-                    setBillDetailStatus(billDetail, billDetailWorkflow, taskRequest.getRequestInfo(), isUpdateWorkflow);
-                } catch (HttpClientErrorException e) {
-                    log.error("Error in updating workflow state change for billDetail Id: {}, bill number : {}, from status: {} to action: {}"
-                            , billDetail.getId(), billFromSearch.getBillNumber(), billDetail.getStatus(), billDetailWorkflow.getAction(), e);
-                }
+                // setBillDetailStatus catches HttpClientErrorException internally — no outer try-catch needed.
+                setBillDetailStatus(billDetail, billDetailWorkflow, taskRequest.getRequestInfo(), isUpdateWorkflow);
             }
         }
-        if (billFromSearch.getStatus() == Status.PARTIALLY_VERIFIED || billFromSearch.getStatus() == Status.FULLY_VERIFIED || billFromSearch.getStatus() == Status.PARTIALLY_PAID) {
+        if (billFromSearch.getStatus() == Status.PAYMENT_IN_PROGRESS) {
 
             List<BillDetail> paidBillDetails = new ArrayList<>();
             List<BillDetail> declinedBillDetails = new ArrayList<>();
@@ -663,10 +713,10 @@ public class MTNService {
             boolean isWorkflowChange = true;
             if (paidBillDetails.size() == billFromSearch.getBillDetails().size()) {
                 workflow.setAction(Actions.FULLY_PAY.toString());
-            } else if (!paidBillDetails.isEmpty() && billFromSearch.getStatus() != Status.PARTIALLY_PAID) {
+            } else if (!paidBillDetails.isEmpty()) {
                 workflow.setAction(Actions.PARTIALLY_PAY.toString());
             } else if (declinedBillDetails.size() == billFromSearch.getBillDetails().size()) {
-                workflow.setAction(Actions.DECLINE_PAYMENT.toString());
+                workflow.setAction(Actions.FAILED.toString());
             } else {
                 log.info("no workflow state change for bill number : {}, task id: {}", billFromSearch.getBillNumber(), task.getId());
                 isWorkflowChange = false;
