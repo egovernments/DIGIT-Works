@@ -32,6 +32,7 @@ public class TaskRowMapper implements RowMapper<Task> {
     public Task mapRow(ResultSet rs, int rowNum) throws SQLException {
         Task.TaskBuilder builder = Task.builder()
                 .id(rs.getString("id"))
+                .tenantId(rs.getString("tenant_id"))
                 .billId(rs.getString("bill_id"))
                 .status(Status.valueOf(rs.getString("status")))
                 .type(Task.Type.valueOf(rs.getString("type")));

@@ -24,7 +24,7 @@ public class TaskConsumer {
         this.mtnService = mtnService;
     }
 
-    @KafkaListener(topics = {"${expense.bill.task}"})
+    @KafkaListener(topicPattern = "(${expense.kafka.tenant.id.pattern}){0,1}${expense.bill.task}")
     public void listen(final Map<String, Object> message) {
         log.info("Consuming message from kafka topic: " + message);
         TaskRequest taskRequest = objectMapper.convertValue(message, TaskRequest.class);

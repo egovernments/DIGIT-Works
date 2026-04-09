@@ -6,14 +6,16 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
+import static org.egov.common.utils.MultiStateInstanceUtil.SCHEMA_REPLACE_STRING;
+
 @Component
 public class BillTransactionReportQueryBuilder {
 
     private static final String BASE_QUERY = "SELECT id, bill_id, tenant_id, type, status, file_store_id, " +
             "error_details, created_by, created_time, last_modified_by, last_modified_time " +
-            "FROM eg_expense_bill_transaction_report ";
+            "FROM " + SCHEMA_REPLACE_STRING + ".eg_expense_bill_transaction_report ";
 
-    private static final String COUNT_QUERY = "SELECT COUNT(*) FROM eg_expense_bill_transaction_report ";
+    private static final String COUNT_QUERY = "SELECT COUNT(*) FROM " + SCHEMA_REPLACE_STRING + ".eg_expense_bill_transaction_report ";
 
     private static final String ORDER_BY_CLAUSE = " ORDER BY last_modified_time DESC ";
 

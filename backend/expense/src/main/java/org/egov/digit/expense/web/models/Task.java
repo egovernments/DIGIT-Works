@@ -28,6 +28,9 @@ public class Task {
 	@Valid
 	private String id;
 
+	@JsonProperty("tenantId")
+	private String tenantId;
+
 	@JsonProperty("billId")
 	private String billId;
 	

@@ -29,7 +29,7 @@ public class BillTransactionReportConsumer {
         this.config = config;
     }
 
-    @KafkaListener(topics = {"${expense.bill.transaction.report.save}"})
+    @KafkaListener(topicPattern = "(${expense.kafka.tenant.id.pattern}){0,1}${expense.bill.transaction.report.save}")
     public void listen(final Map<String, Object> message) {
         log.info("Consuming message from kafka topic: expense.bill.transaction.report.save");
         try {
@@ -59,7 +59,7 @@ public class BillTransactionReportConsumer {
             updateAuditDetails(report, request);
 
             // Push to update topic
-            producer.push(config.getBillTransactionReportUpdateTopic(), request);
+            producer.push(request.getBillTransactionReport().getTenantId(), config.getBillTransactionReportUpdateTopic(), request);
             log.info("Report generated successfully for billId: {}", report.getBillId());
 
         } catch (Exception e) {
@@ -71,7 +71,7 @@ public class BillTransactionReportConsumer {
             updateAuditDetails(report, request);
 
             // Push to update topic
-            producer.push(config.getBillTransactionReportUpdateTopic(), request);
+            producer.push(request.getBillTransactionReport().getTenantId(), config.getBillTransactionReportUpdateTopic(), request);
         }
     }
 

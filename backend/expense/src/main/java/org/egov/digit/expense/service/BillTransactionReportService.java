@@ -49,7 +49,7 @@ public class BillTransactionReportService {
         enrichGenerateRequest(request);
 
         // Push to Kafka save topic for async processing
-        producer.push(config.getBillTransactionReportSaveTopic(), request);
+        producer.push(request.getBillTransactionReport().getTenantId(), config.getBillTransactionReportSaveTopic(), request);
 
         // Build response
         return BillTransactionReportResponse.builder()

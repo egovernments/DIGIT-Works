@@ -16,6 +16,7 @@ import org.egov.digit.expense.repository.TaskRepository;
 import org.egov.digit.expense.util.*;
 import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.enums.Actions;
+import org.egov.digit.expense.web.models.TaskStatusCheckRequest;
 import org.egov.digit.expense.web.models.enums.ResponseStatus;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.digit.expense.web.validators.BillValidator;
@@ -85,6 +86,7 @@ public class MTNService {
         }
 
         task.setId(UUID.randomUUID().toString());
+        task.setTenantId(billFromRequest.getTenantId());
 
         task.setAuditDetails(billTaskRequest.getBill().getAuditDetails());
 
@@ -95,7 +97,7 @@ public class MTNService {
                         .requestInfo(billTaskRequest.getRequestInfo())
                         .build();
 
-        expenseProducer.push(config.getBillTaskTopic(), taskRequest);
+        expenseProducer.push(billFromRequest.getTenantId(), config.getBillTaskTopic(), taskRequest);
 
         return task;
     }
@@ -206,7 +208,7 @@ public class MTNService {
 //                    taskDetails.setReasonForFailure(e.getCode());
 //                }
                 taskDetails.setStatus(Status.DONE);
-                expenseProducer.push(config.getBillTaskDetailsTopic(), taskDetails);
+                expenseProducer.push(billFromSearch.getTenantId(), config.getBillTaskDetailsTopic(), taskDetails);
 
                 Object additionalDetailsObj = billDetail.getAdditionalDetails();
                 Map<String, Object> additionalDetails;
@@ -267,7 +269,7 @@ public class MTNService {
             updateBillWfStatus(billRequest, isWorkflowChange);
         }
         task.setStatus(Status.DONE);
-        expenseProducer.push(config.getTaskUpdateTopic(), task);
+        expenseProducer.push(billFromSearch.getTenantId(), config.getTaskUpdateTopic(), task);
     }
 
     private List<Bill> getBills(BillRequest billRequest, Boolean isCreate) {
@@ -382,7 +384,7 @@ public class MTNService {
                 if (billDetail.getTotalAmount().compareTo(BigDecimal.ZERO) == 0) {
                     taskDetails.setResponseMessage("Payment couldn't be processed as total amount is 0.");
                     taskDetails.setReasonForFailure("TOTAL_AMOUNT_ZERO_" + EXCEPTION);
-                    expenseProducer.push(config.getBillTaskDetailsTopic(), taskDetails);
+                    expenseProducer.push(billFromSearch.getTenantId(), config.getBillTaskDetailsTopic(), taskDetails);
                     log.info("payment couldn't be processed for bill detail id {} as total amount is 0", billDetail.getId());
                 } else {
                     PaymentTransferRequest paymentTransferRequest = createPaymentTransferRequest(billDetail, individualDetails.getPhoneNumber());
@@ -392,14 +394,29 @@ public class MTNService {
                         taskDetails.setResponseMessage(e.getMessage());
                         taskDetails.setReasonForFailure(e.getCode());
                     }
-                    expenseProducer.push(config.getBillTaskDetailsTopic(), taskDetails);
+                    expenseProducer.push(billFromSearch.getTenantId(), config.getBillTaskDetailsTopic(), taskDetails);
                 }
             }
         }
         task.setAdditionalDetails(taskRequest.getRequestInfo());
         AuditDetails auditDetails = task.getAuditDetails();
         auditDetails.setLastModifiedTime(System.currentTimeMillis());
-        expenseProducer.push(config.getTaskUpdateTopic(), task);
+        expenseProducer.push(billFromSearch.getTenantId(), config.getTaskUpdateTopic(), task);
+
+        // Push delayed status check event — consumed after retryDelayMs
+        TaskStatusCheckRequest checkRequest = TaskStatusCheckRequest.builder()
+                .taskId(task.getId())
+                .tenantId(billFromSearch.getTenantId())
+                .requestInfo(taskRequest.getRequestInfo())
+                .retryCount(0)
+                .maxRetries(config.getTaskStatusCheckMaxRetries())
+                .build();
+        expenseProducer.pushWithDelay(
+                billFromSearch.getTenantId(),
+                config.getTaskStatusCheckTopic(),
+                checkRequest,
+                System.currentTimeMillis() + config.getTaskStatusCheckRetryDelayMs()
+        );
     }
 
     private PaymentTransferRequest createPaymentTransferRequest(BillDetail billDetail, String partyId) {
@@ -428,11 +445,12 @@ public class MTNService {
     }
 
     public TaskDetailsResponse getTaskDetails(TaskDetailsRequest taskDetailsRequest) {
+        String tenantId = taskDetailsRequest.getRequestInfo().getUserInfo().getTenantId();
         List<TaskDetails> taskDetails = new ArrayList<>();
         if (taskDetailsRequest.getBillDetailsId() != null) {
             taskDetails.add(taskRepository.searchTaskDetails(taskDetailsRequest));
         } else {
-            taskDetails = taskRepository.searchTaskDetailsByTaskId(taskDetailsRequest.getTaskId());
+            taskDetails = taskRepository.searchTaskDetailsByTaskId(taskDetailsRequest.getTaskId(), tenantId);
         }
         ResponseInfo responseInfo = responseInfoFactory.
                 createResponseInfoFromRequestInfo(taskDetailsRequest.getRequestInfo(), true);
@@ -454,7 +472,7 @@ public class MTNService {
         } catch (HttpClientErrorException e) {
             log.error("Error in updating workflow state change for bill number : {} from status: {}", bill.getBillNumber(), bill.getStatus(), e);
         }
-        expenseProducer.push(config.getBillUpdateTopic(), billRequest);
+        expenseProducer.push(bill.getTenantId(), config.getBillUpdateTopic(), billRequest);
     }
 
     private void setBillDetailStatus(BillDetail billDetail, Workflow workflow, RequestInfo requestInfo, boolean isWorkflowUpdate) {
@@ -557,7 +575,7 @@ public class MTNService {
         Map<String, BillDetail> billDetailsById = billFromSearch.getBillDetails().stream()
                 .collect(Collectors.toMap(BillDetail::getId, billDetail -> billDetail));
 
-        List<TaskDetails> taskDetails = taskRepository.searchTaskDetailsByTaskId(task.getId());
+        List<TaskDetails> taskDetails = taskRepository.searchTaskDetailsByTaskId(task.getId(), billFromSearch.getTenantId());
         for (TaskDetails taskDetail : taskDetails) {
             boolean isUpdateWorkflow = true;
             BillDetail billDetail = billDetailsById.get(taskDetail.getBillDetailsId());
@@ -598,7 +616,7 @@ public class MTNService {
                     taskDetail.setResponseMessage(e.getMessage());
                     isUpdateWorkflow = false;
                 }
-                expenseProducer.push(config.getTaskDetailsUpdateTopic(), taskDetail);
+                expenseProducer.push(billFromSearch.getTenantId(), config.getTaskDetailsUpdateTopic(), taskDetail);
 
                 Object additionalDetailsObj = billDetail.getAdditionalDetails();
                 Map<String, Object> additionalDetails;
@@ -663,6 +681,53 @@ public class MTNService {
         }
 
         log.info("finished updating payment status for task {}, bill number {}", task.getId(), billFromSearch.getBillNumber());
+    }
+
+    /**
+     * Called by TaskStatusCheckConsumer. Fetches the task, runs the MTN status check,
+     * updates task details + bill workflow, and returns whether any task details
+     * are still IN_PROGRESS (i.e. MTN response was still pending).
+     *
+     * @return true if any task detail is still IN_PROGRESS (retry needed), false if all done
+     */
+    public boolean checkAndFinalizeTaskStatus(TaskStatusCheckRequest checkRequest) {
+        String tenantId = checkRequest.getTenantId();
+
+        Task taskSearch = Task.builder()
+                .id(checkRequest.getTaskId())
+                .tenantId(tenantId)
+                .build();
+        Task task = taskRepository.searchTask(taskSearch);
+
+        if (task == null) {
+            log.warn("Task not found for id: {}, tenantId: {}", checkRequest.getTaskId(), tenantId);
+            return false;
+        }
+
+        TaskRequest taskRequest = TaskRequest.builder()
+                .task(task)
+                .bill(Bill.builder().id(task.getBillId()).tenantId(tenantId).build())
+                .requestInfo(checkRequest.getRequestInfo())
+                .build();
+
+        updatePaymentTaskStatus(taskRequest);
+
+        // Re-fetch task details to check remaining IN_PROGRESS items
+        List<TaskDetails> taskDetails = taskRepository.searchTaskDetailsByTaskId(task.getId(), tenantId);
+        boolean anyInProgress = taskDetails.stream()
+                .anyMatch(td -> td.getStatus() == Status.IN_PROGRESS);
+
+        // Finalize task status and push update
+        AuditDetails auditDetails = task.getAuditDetails();
+        if (auditDetails != null) {
+            auditDetails.setLastModifiedTime(System.currentTimeMillis());
+        }
+        if (!anyInProgress) {
+            task.setStatus(Status.DONE);
+        }
+        expenseProducer.push(tenantId, config.getTaskUpdateTopic(), task);
+
+        return anyInProgress;
     }
 
 }

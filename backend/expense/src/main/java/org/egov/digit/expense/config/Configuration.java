@@ -248,11 +248,6 @@ public class Configuration {
 	@Value("${bill.detail.business.service}")
 	private String billDetailBusinessService;
 
-	@Value("${bill.scheduled.task.delay.sec}")
-	private String scheduledTaskDelay;
-
-	@Value("${bill.scheduled.task.fixed.rate.millisec}")
-	private String scheduledTaskFixedRate;
 
 	@Value("${expense.calculator.host}")
 	private String calculatorHost;
@@ -269,5 +264,18 @@ public class Configuration {
 
 	@Value("${expense.bill.transaction.report.update}")
 	private String billTransactionReportUpdateTopic;
+
+	// Task Status Check Topics
+	@Value("${expense.task.status.check.topic}")
+	private String taskStatusCheckTopic;
+
+	@Value("${expense.task.status.check.dlt.topic}")
+	private String taskStatusCheckDltTopic;
+
+	@Value("${expense.task.status.check.retry.delay.ms:60000}")
+	private long taskStatusCheckRetryDelayMs;
+
+	@Value("${expense.task.status.check.max.retries:200}")
+	private int taskStatusCheckMaxRetries;
 
 }

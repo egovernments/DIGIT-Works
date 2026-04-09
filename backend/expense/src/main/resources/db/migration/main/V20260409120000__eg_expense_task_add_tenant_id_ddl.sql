@@ -1,0 +1,1 @@
+ALTER TABLE eg_expense_task ADD COLUMN IF NOT EXISTS tenant_id VARCHAR(64);
