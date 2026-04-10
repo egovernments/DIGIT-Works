@@ -548,4 +548,43 @@ public class BillValidator {
 				+ " and referenceId : " + bill.getReferenceId()
 				+ ". Only one bill is allowed per register (V1 mode).";
 	}
+
+	/**
+	 * Rejects any API mutation when the bill is in a locked state (isStateUpdatable=false).
+	 * Must be called before any update or workflow action on a PAYMENTS.BILL entity.
+	 */
+	public void validateBillStateUpdatable(Bill bill) {
+		Set<Status> lockedStates = Set.of(
+				Status.VERIFICATION_IN_PROGRESS,
+				Status.IGNORING_ERRORS_IN_PROGRESS,
+				Status.SENDING_FOR_REVIEW,
+				Status.REVIEW_IN_PROGRESS,
+				Status.PAYMENT_IN_PROGRESS,
+				Status.FULLY_PAID
+		);
+
+		if (lockedStates.contains(bill.getStatus())) {
+			throw new CustomException("BILL_STATE_LOCKED",
+					"Bill " + bill.getId() + " is in locked state " + bill.getStatus()
+							+ " — no API mutations allowed");
+		}
+	}
+
+	/**
+	 * Rejects any API mutation when the bill detail is in a locked state (isStateUpdatable=false).
+	 * Must be called before any update or workflow action on a PAYMENTS.BILLDETAILS entity.
+	 */
+	public void validateBillDetailStateUpdatable(BillDetail detail) {
+		Set<Status> lockedStates = Set.of(
+				Status.VERIFICATION_IN_PROGRESS,
+				Status.PAYMENT_IN_PROGRESS,
+				Status.PAID
+		);
+
+		if (lockedStates.contains(detail.getStatus())) {
+			throw new CustomException("BILL_DETAIL_STATE_LOCKED",
+					"Bill detail " + detail.getId() + " is in locked state " + detail.getStatus()
+							+ " — no API mutations allowed");
+		}
+	}
 }

@@ -46,8 +46,10 @@ public class BillService {
 
 	private final CalculatorUtil calculatorUtil;
 
+	private final PaymentWorkflowService paymentWorkflowService;
+
 	@Autowired
-	public BillService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator, WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, NotificationService notificationService, CalculatorUtil calculatorUtil) {
+	public BillService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator, WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, NotificationService notificationService, CalculatorUtil calculatorUtil, PaymentWorkflowService paymentWorkflowService) {
 		this.expenseProducer = expenseProducer;
 		this.config = config;
 		this.validator = validator;
@@ -57,6 +59,7 @@ public class BillService {
 		this.responseInfoFactory = responseInfoFactory;
 		this.notificationService = notificationService;
 		this.calculatorUtil = calculatorUtil;
+		this.paymentWorkflowService = paymentWorkflowService;
     }
 
 	/**
@@ -79,6 +82,12 @@ public class BillService {
 
 			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
 			bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+
+			// Create PAYMENTS.BILLDETAILS process instances for each detail when PAYMENTS.BILL is created
+			if (config.getBillBusinessService().equalsIgnoreCase(bill.getBusinessService())) {
+				paymentWorkflowService.createBillDetailProcessInstances(billRequest);
+			}
+
 			try {
 				if (billRequest.getBill().getBusinessService().equalsIgnoreCase("EXPENSE.SUPERVISION"))
 					notificationService.sendNotificationForSupervisionBill(billRequest);
