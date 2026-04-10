@@ -1,6 +1,8 @@
 package org.egov.digit.expense.config;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.egov.tracer.config.TracerConfiguration;
@@ -265,17 +267,55 @@ public class Configuration {
 	@Value("${expense.bill.transaction.report.update}")
 	private String billTransactionReportUpdateTopic;
 
-	// Task Status Check Topics
-	@Value("${expense.task.status.check.topic}")
-	private String taskStatusCheckTopic;
+	// Generic Scheduler Configuration
+	@Value("${task.scheduler.batch.size:100}")
+	private int schedulerBatchSize;
 
-	@Value("${expense.task.status.check.dlt.topic}")
-	private String taskStatusCheckDltTopic;
+	@Value("${task.scheduler.max.attempts:200}")
+	private int schedulerMaxAttempts;
 
-	@Value("${expense.task.status.check.retry.delay.ms:60000}")
-	private long taskStatusCheckRetryDelayMs;
+	@Value("${task.scheduler.min.interval.ms:5000}")
+	private long schedulerMinIntervalMs;
 
-	@Value("${expense.task.status.check.max.retries:200}")
-	private int taskStatusCheckMaxRetries;
+	@Value("${task.scheduler.max.interval.ms:30000}")
+	private long schedulerMaxIntervalMs;
+
+	@Value("${task.scheduler.initial.delay.ms:10000}")
+	private long schedulerInitialDelayMs;
+
+	@Value("${task.scheduler.max.duration.ms:86400000}")
+	private long schedulerMaxDurationMs;
+
+	@Value("${task.scheduler.stuck.threshold.ms:180000}")
+	private long schedulerStuckThresholdMs;
+
+	@Value("${task.scheduler.cleanup.after.ms:604800000}")
+	private long schedulerCleanupAfterMs;
+
+	@Value("${task.scheduler.recovery.interval.ms:120000}")
+	private long schedulerRecoveryIntervalMs;
+
+	@Value("${task.scheduler.cleanup.interval.ms:3600000}")
+	private long schedulerCleanupIntervalMs;
+
+	/**
+	 * Comma-separated list of tenant IDs to pre-register in the scheduler registry at startup.
+	 * Ensures PENDING jobs in DB are picked up after a full cluster restart, without waiting
+	 * for a new transfer request to re-register the tenant.
+	 * Example: ng.narayi,ng.gombe
+	 */
+	@Value("${task.scheduler.bootstrap.tenants:}")
+	private String schedulerBootstrapTenantsRaw;
+
+	public List<String> getSchedulerBootstrapTenants() {
+		if (schedulerBootstrapTenantsRaw == null || schedulerBootstrapTenantsRaw.isBlank()) {
+			return Collections.emptyList();
+		}
+		return List.of(schedulerBootstrapTenantsRaw.split(","))
+				.stream()
+				.map(String::trim)
+				.filter(s -> !s.isEmpty())
+				.toList();
+	}
 
 }

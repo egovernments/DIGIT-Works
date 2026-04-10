@@ -12,12 +12,15 @@ import org.egov.common.contract.workflow.State;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.kafka.ExpenseProducer;
 import org.egov.digit.expense.repository.BillRepository;
+import org.egov.digit.expense.repository.SchedulerJobRepository;
 import org.egov.digit.expense.repository.TaskRepository;
+import org.egov.digit.expense.service.scheduler.SchedulerJobRegistry;
 import org.egov.digit.expense.util.*;
 import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.enums.Actions;
-import org.egov.digit.expense.web.models.TaskStatusCheckRequest;
 import org.egov.digit.expense.web.models.enums.ResponseStatus;
+import org.egov.digit.expense.web.models.enums.SchedulerJobStatus;
+import org.egov.digit.expense.web.models.enums.SchedulerJobType;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.digit.expense.web.validators.BillValidator;
 import org.egov.tracer.model.CustomException;
@@ -58,8 +61,19 @@ public class MTNService {
 
     private final MTNUtil mtnUtil;
 
+    private final SchedulerJobRepository schedulerJobRepository;
+
+    private final SchedulerJobRegistry schedulerJobRegistry;
+
+    private final ObjectMapper objectMapper;
+
     @Autowired
-    public MTNService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator, WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, IndividualUtil individualUtil, TaskRepository taskRepository, MTNUtil mtnUtil) {
+    public MTNService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator,
+                      WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil,
+                      ResponseInfoFactory responseInfoFactory, IndividualUtil individualUtil,
+                      TaskRepository taskRepository, MTNUtil mtnUtil,
+                      SchedulerJobRepository schedulerJobRepository, SchedulerJobRegistry schedulerJobRegistry,
+                      ObjectMapper objectMapper) {
         this.expenseProducer = expenseProducer;
         this.config = config;
         this.validator = validator;
@@ -70,6 +84,9 @@ public class MTNService {
         this.individualUtil = individualUtil;
         this.taskRepository = taskRepository;
         this.mtnUtil = mtnUtil;
+        this.schedulerJobRepository = schedulerJobRepository;
+        this.schedulerJobRegistry = schedulerJobRegistry;
+        this.objectMapper = objectMapper;
     }
 
     private Task fetchOrCreateTask(BillTaskRequest billTaskRequest, Task.Type type) {
@@ -442,20 +459,37 @@ public class MTNService {
         auditDetails.setLastModifiedTime(System.currentTimeMillis());
         expenseProducer.push(billFromSearch.getTenantId(), config.getTaskUpdateTopic(), task);
 
-        // Push delayed status check event — consumed after retryDelayMs
-        TaskStatusCheckRequest checkRequest = TaskStatusCheckRequest.builder()
-                .taskId(task.getId())
-                .tenantId(billFromSearch.getTenantId())
-                .requestInfo(taskRequest.getRequestInfo())
-                .retryCount(0)
-                .maxRetries(config.getTaskStatusCheckMaxRetries())
-                .build();
-        expenseProducer.pushWithDelay(
-                billFromSearch.getTenantId(),
-                config.getTaskStatusCheckTopic(),
-                checkRequest,
-                System.currentTimeMillis() + config.getTaskStatusCheckRetryDelayMs()
-        );
+        // Register a scheduler job to poll MTN for transfer status (replaces Kafka delayed retry)
+        insertSchedulerJob(task, billFromSearch.getTenantId(), taskRequest.getRequestInfo());
+    }
+
+    /**
+     * Creates a {@code TASK_STATUS_CHECK} scheduler job for the given transfer task.
+     * The generic scheduler will poll MTN transfer status using exponential backoff
+     * until the task is resolved or max attempts are exceeded.
+     */
+    private void insertSchedulerJob(Task task, String tenantId, RequestInfo requestInfo) {
+        try {
+            long now = System.currentTimeMillis();
+            SchedulerJob schedulerJob = SchedulerJob.builder()
+                    .id(UUID.randomUUID().toString())
+                    .tenantId(tenantId)
+                    .jobType(SchedulerJobType.TASK_STATUS_CHECK)
+                    .referenceId(task.getId())
+                    .schedulerStatus(SchedulerJobStatus.PENDING)
+                    .nextCheckAt(null)
+                    .attemptCount(0)
+                    .maxAttempts(config.getSchedulerMaxAttempts())
+                    .context(requestInfo)
+                    .createdAt(now)
+                    .updatedAt(now)
+                    .build();
+            schedulerJobRepository.insert(schedulerJob);
+            schedulerJobRegistry.register(tenantId);
+            log.info("Scheduler job created for task {} tenant {}", task.getId(), tenantId);
+        } catch (Exception e) {
+            log.error("Failed to insert scheduler job for task {} — status polling will not run", task.getId(), e);
+        }
     }
 
     private PaymentTransferRequest createPaymentTransferRequest(BillDetail billDetail, String partyId) {
@@ -604,7 +638,7 @@ public class MTNService {
         return billDetailsToBeUpdatedById;
     }
 
-    public void updatePaymentTaskStatus(TaskRequest taskRequest) {
+    public List<TaskDetails> updatePaymentTaskStatus(TaskRequest taskRequest) {
 
         Task task = taskRequest.getTask();
         Bill billFromRequest = taskRequest.getBill();
@@ -731,51 +765,36 @@ public class MTNService {
         }
 
         log.info("finished updating payment status for task {}, bill number {}", task.getId(), billFromSearch.getBillNumber());
+        return taskDetails;
     }
 
     /**
-     * Called by TaskStatusCheckConsumer. Fetches the task, runs the MTN status check,
-     * updates task details + bill workflow, and returns whether any task details
-     * are still IN_PROGRESS (i.e. MTN response was still pending).
+     * Called by the scheduler handler after the transfer is initiated.
+     * Polls MTN status for all IN_PROGRESS task details, updates bill detail workflow,
+     * and finalizes the task by pushing {@code status=DONE} to Kafka once all details are resolved.
      *
-     * @return true if any task detail is still IN_PROGRESS (retry needed), false if all done
+     * @return {@code true} if any task detail is still IN_PROGRESS (scheduler should retry),
+     *         {@code false} if all task details are resolved
      */
-    public boolean checkAndFinalizeTaskStatus(TaskStatusCheckRequest checkRequest) {
-        String tenantId = checkRequest.getTenantId();
+    public boolean updatePaymentTaskStatusAndFinalize(TaskRequest taskRequest) {
+        Task task = taskRequest.getTask();
+        String tenantId = taskRequest.getBill().getTenantId();
 
-        Task taskSearch = Task.builder()
-                .id(checkRequest.getTaskId())
-                .tenantId(tenantId)
-                .build();
-        Task task = taskRepository.searchTask(taskSearch);
-
-        if (task == null) {
-            log.warn("Task not found for id: {}, tenantId: {}", checkRequest.getTaskId(), tenantId);
-            return false;
-        }
-
-        TaskRequest taskRequest = TaskRequest.builder()
-                .task(task)
-                .bill(Bill.builder().id(task.getBillId()).tenantId(tenantId).build())
-                .requestInfo(checkRequest.getRequestInfo())
-                .build();
-
-        updatePaymentTaskStatus(taskRequest);
-
-        // Re-fetch task details to check remaining IN_PROGRESS items
-        List<TaskDetails> taskDetails = taskRepository.searchTaskDetailsByTaskId(task.getId(), tenantId);
-        boolean anyInProgress = taskDetails.stream()
+        // Use in-memory updated taskDetails — avoids a stale DB re-read before the persister
+        // has committed the Kafka events pushed by updatePaymentTaskStatus.
+        List<TaskDetails> updatedTaskDetails = updatePaymentTaskStatus(taskRequest);
+        boolean anyInProgress = updatedTaskDetails.stream()
                 .anyMatch(td -> td.getStatus() == Status.IN_PROGRESS);
 
-        // Finalize task status and push update
-        AuditDetails auditDetails = task.getAuditDetails();
-        if (auditDetails != null) {
-            auditDetails.setLastModifiedTime(System.currentTimeMillis());
-        }
         if (!anyInProgress) {
+            AuditDetails auditDetails = task.getAuditDetails();
+            if (auditDetails != null) {
+                auditDetails.setLastModifiedTime(System.currentTimeMillis());
+            }
             task.setStatus(Status.DONE);
+            log.info("Task {} fully resolved — pushing DONE status", task.getId());
+            expenseProducer.push(tenantId, config.getTaskUpdateTopic(), task);
         }
-        expenseProducer.push(tenantId, config.getTaskUpdateTopic(), task);
 
         return anyInProgress;
     }
