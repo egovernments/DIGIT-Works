@@ -30,6 +30,9 @@ import org.egov.digit.expense.web.models.BillCriteria;
 import org.egov.digit.expense.web.models.BillDetail;
 import org.egov.digit.expense.web.models.BillRequest;
 import org.egov.digit.expense.web.models.BillSearchRequest;
+import org.egov.digit.expense.web.models.BulkBillStatusUpdateRequest;
+import org.egov.digit.expense.web.models.BulkBillUpdateRequest;
+import org.egov.digit.expense.web.models.BulkUpdateError;
 import org.egov.digit.expense.web.models.LineItem;
 import org.egov.digit.expense.web.models.Party;
 import org.egov.digit.expense.web.models.enums.Status;
@@ -586,5 +589,186 @@ public class BillValidator {
 					"Bill detail " + detail.getId() + " is in locked state " + detail.getStatus()
 							+ " — no API mutations allowed");
 		}
+	}
+
+	public static final int BULK_UPDATE_MAX_BILLS = 100;
+
+	public List<BulkUpdateError> validateBulkUpdateRequest(BulkBillUpdateRequest bulkRequest) {
+		List<BulkUpdateError> errors = new ArrayList<>();
+
+		List<Bill> bills = bulkRequest.getBills();
+
+		if (CollectionUtils.isEmpty(bills)) {
+			errors.add(BulkUpdateError.builder()
+					.code("EG_EXPENSE_BULK_EMPTY")
+					.message("At least one bill is required for bulk update")
+					.build());
+			return errors;
+		}
+
+		if (bills.size() > BULK_UPDATE_MAX_BILLS) {
+			errors.add(BulkUpdateError.builder()
+					.code("EG_EXPENSE_BULK_MAX_LIMIT")
+					.message("Maximum " + BULK_UPDATE_MAX_BILLS + " bills allowed per bulk update request")
+					.build());
+			return errors;
+		}
+
+		String tenantId = bills.get(0).getTenantId();
+		for (Bill bill : bills) {
+			if (!tenantId.equals(bill.getTenantId())) {
+				errors.add(BulkUpdateError.builder()
+						.billId(bill.getId())
+						.code("EG_EXPENSE_BULK_TENANT_MISMATCH")
+						.message("All bills must have the same tenantId")
+						.build());
+			}
+		}
+
+		Set<String> billIds = bills.stream()
+				.map(Bill::getId)
+				.collect(Collectors.toSet());
+		if (billIds.size() != bills.size()) {
+			errors.add(BulkUpdateError.builder()
+					.code("EG_EXPENSE_BULK_DUPLICATE_IDS")
+					.message("Duplicate bill IDs are not allowed in bulk update request")
+					.build());
+		}
+
+		if (!errors.isEmpty()) {
+			return errors;
+		}
+
+		for (Bill bill : bills) {
+			try {
+				validateBillForBulkUpdate(bill, bulkRequest.getRequestInfo(), bulkRequest.getWorkflow());
+			} catch (CustomException e) {
+				errors.add(BulkUpdateError.builder()
+						.billId(bill.getId())
+						.code(e.getCode())
+						.message(e.getMessage())
+						.build());
+			}
+		}
+
+		return errors;
+	}
+
+	private void validateBillForBulkUpdate(Bill bill, org.egov.common.contract.request.RequestInfo requestInfo, Workflow workflow) {
+		Map<String, String> errorMap = new HashMap<>();
+
+		if (isWorkflowActiveForBusinessService(bill.getBusinessService())) {
+			if (workflow == null || workflow.getAction() == null) {
+				throw new CustomException("EG_BILL_WF_ERROR", "workflow is mandatory when workflow is active");
+			}
+		}
+
+		BillSearchRequest searchRequest = BillSearchRequest.builder()
+				.requestInfo(requestInfo)
+				.billCriteria(BillCriteria.builder()
+						.ids(Set.of(bill.getId()))
+						.tenantId(bill.getTenantId())
+						.statusNot(Status.INACTIVE.toString())
+						.build())
+				.build();
+
+		List<Bill> billsFromSearch = billRepository.search(searchRequest, true);
+		if (CollectionUtils.isEmpty(billsFromSearch)) {
+			throw new CustomException("EG_EXPENSE_INVALID_BILL",
+					"The bill does not exist for the given combination of id: " + bill.getId() + " and tenantId: " + bill.getTenantId());
+		}
+
+		if (!configs.isHealthContextEnabled()) {
+			validateFieldsForUpdate(bill, billsFromSearch.get(0), errorMap);
+		}
+
+		if (!CollectionUtils.isEmpty(errorMap)) {
+			throw new CustomException(errorMap);
+		}
+	}
+
+	public List<BulkUpdateError> validateBulkStatusUpdateRequest(BulkBillStatusUpdateRequest bulkRequest) {
+		List<BulkUpdateError> errors = new ArrayList<>();
+
+		List<String> billIds = bulkRequest.getBillIds();
+
+		if (CollectionUtils.isEmpty(billIds)) {
+			errors.add(BulkUpdateError.builder()
+					.code("EG_EXPENSE_BULK_STATUS_EMPTY")
+					.message("At least one bill ID is required for bulk status update")
+					.build());
+			return errors;
+		}
+
+		if (billIds.size() > BULK_UPDATE_MAX_BILLS) {
+			errors.add(BulkUpdateError.builder()
+					.code("EG_EXPENSE_BULK_STATUS_MAX_LIMIT")
+					.message("Maximum " + BULK_UPDATE_MAX_BILLS + " bill IDs allowed per bulk status update request")
+					.build());
+			return errors;
+		}
+
+		Set<String> uniqueBillIds = new HashSet<>(billIds);
+		if (uniqueBillIds.size() != billIds.size()) {
+			errors.add(BulkUpdateError.builder()
+					.code("EG_EXPENSE_BULK_STATUS_DUPLICATE_IDS")
+					.message("Duplicate bill IDs are not allowed in bulk status update request")
+					.build());
+		}
+
+		if (bulkRequest.getStatus() == null || bulkRequest.getStatus().isBlank()) {
+			errors.add(BulkUpdateError.builder()
+					.code("EG_EXPENSE_BULK_STATUS_INVALID")
+					.message("Status is required for bulk status update")
+					.build());
+		}
+
+		if (!errors.isEmpty()) {
+			return errors;
+		}
+
+		for (String billId : billIds) {
+			try {
+				BillSearchRequest searchRequest = BillSearchRequest.builder()
+						.requestInfo(bulkRequest.getRequestInfo())
+						.billCriteria(BillCriteria.builder()
+								.ids(Set.of(billId))
+								.tenantId(bulkRequest.getBillIds().get(0).contains(".") ? 
+										bulkRequest.getBillIds().get(0).substring(0, bulkRequest.getBillIds().get(0).lastIndexOf('.')) : null)
+								.statusNot(Status.INACTIVE.toString())
+								.build())
+						.build();
+
+				List<Bill> billsFromSearch = billRepository.search(searchRequest, true);
+				if (CollectionUtils.isEmpty(billsFromSearch)) {
+					throw new CustomException("EG_EXPENSE_INVALID_BILL",
+							"Bill does not exist for id: " + billId);
+				}
+
+				validateBillStateUpdatable(billsFromSearch.get(0));
+
+			} catch (CustomException e) {
+				errors.add(BulkUpdateError.builder()
+						.billId(billId)
+						.code(e.getCode())
+						.message(e.getMessage())
+						.build());
+			}
+		}
+
+		return errors;
+	}
+
+	public List<Bill> getBillsByIds(List<String> billIds, String tenantId, org.egov.common.contract.request.RequestInfo requestInfo) {
+		BillSearchRequest searchRequest = BillSearchRequest.builder()
+				.requestInfo(requestInfo)
+				.billCriteria(BillCriteria.builder()
+						.ids(new HashSet<>(billIds))
+						.tenantId(tenantId)
+						.statusNot(Status.INACTIVE.toString())
+						.build())
+				.build();
+
+		return billRepository.search(searchRequest, true);
 	}
 }

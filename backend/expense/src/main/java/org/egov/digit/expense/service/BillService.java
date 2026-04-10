@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -273,5 +274,163 @@ public class BillService {
 			isBillCalculationComplete = true;
 		}
 		return isBillCalculationComplete;
+	}
+
+	public BulkBillUpdateResponse bulkUpdate(BulkBillUpdateRequest bulkRequest) {
+		RequestInfo requestInfo = bulkRequest.getRequestInfo();
+		List<Bill> bills = bulkRequest.getBills();
+		List<Bill> successfulBills = new ArrayList<>();
+		List<BulkUpdateError> errors = new ArrayList<>();
+
+		List<BulkUpdateError> validationErrors = validator.validateBulkUpdateRequest(bulkRequest);
+		if (!validationErrors.isEmpty()) {
+			return BulkBillUpdateResponse.builder()
+					.bills(new ArrayList<>())
+					.errors(validationErrors)
+					.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true))
+					.build();
+		}
+
+		for (Bill bill : bills) {
+			try {
+				Bill updatedBill = updateBill(bill, bulkRequest.getWorkflow(), requestInfo);
+				successfulBills.add(updatedBill);
+			} catch (Exception e) {
+				log.error("Error updating bill {}: {}", bill.getId(), e.getMessage());
+				errors.add(BulkUpdateError.builder()
+						.billId(bill.getId())
+						.code("EG_EXPENSE_BILL_UPDATE_FAILED")
+						.message(e.getMessage())
+						.build());
+			}
+		}
+
+		return BulkBillUpdateResponse.builder()
+				.bills(successfulBills)
+				.errors(errors)
+				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true))
+				.build();
+	}
+
+	private Bill updateBill(Bill bill, org.egov.common.contract.models.Workflow workflow, RequestInfo requestInfo) {
+		String tenantId = bill.getTenantId();
+
+		BillRequest billRequest = BillRequest.builder()
+				.requestInfo(requestInfo)
+				.bill(bill)
+				.workflow(workflow)
+				.build();
+
+		List<Bill> billsFromSearch = validator.validateUpdateRequest(billRequest);
+		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
+
+		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
+			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
+			bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+		}
+
+		try {
+			if (bill.getBusinessService() != null && bill.getBusinessService().equalsIgnoreCase("EXPENSE.PURCHASE")) {
+				notificationService.sendNotificationForPurchaseBill(billRequest);
+			}
+		} catch (Exception e) {
+			log.error("Exception while sending notification: " + e);
+		}
+
+		if (config.isBillBreakdownEnabled() && bill.getBillDetails().size() > config.getBillBreakdownSize()) {
+			produceBillsBatchWise(billRequest, config.getBillUpdateTopic());
+		} else {
+			expenseProducer.push(tenantId, config.getBillUpdateTopic(), billRequest);
+		}
+
+		return bill;
+	}
+
+	public BulkBillStatusUpdateResponse bulkUpdateStatus(BulkBillStatusUpdateRequest bulkRequest) {
+		RequestInfo requestInfo = bulkRequest.getRequestInfo();
+		List<String> billIds = bulkRequest.getBillIds();
+		String newStatus = bulkRequest.getStatus();
+		org.egov.common.contract.models.Workflow workflow = bulkRequest.getWorkflow();
+
+		List<Bill> successfulBills = new ArrayList<>();
+		List<BulkUpdateError> errors = new ArrayList<>();
+
+		List<BulkUpdateError> validationErrors = validator.validateBulkStatusUpdateRequest(bulkRequest);
+		if (!validationErrors.isEmpty()) {
+			return BulkBillStatusUpdateResponse.builder()
+					.bills(new ArrayList<>())
+					.errors(validationErrors)
+					.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true))
+					.build();
+		}
+
+		String tenantId = null;
+		if (!billIds.isEmpty() && billIds.get(0).contains(".")) {
+			tenantId = billIds.get(0).substring(0, billIds.get(0).lastIndexOf('.'));
+		}
+
+		List<Bill> billsFromSearch = validator.getBillsByIds(billIds, tenantId, requestInfo);
+		Map<String, Bill> billMap = billsFromSearch.stream()
+				.collect(Collectors.toMap(Bill::getId, Function.identity()));
+
+		for (String billId : billIds) {
+			try {
+				Bill billFromSearch = billMap.get(billId);
+				if (billFromSearch == null) {
+					errors.add(BulkUpdateError.builder()
+							.billId(billId)
+							.code("EG_EXPENSE_INVALID_BILL")
+							.message("Bill not found for id: " + billId)
+							.build());
+					continue;
+				}
+
+				Bill billToUpdate = Bill.builder()
+						.id(billId)
+						.tenantId(billFromSearch.getTenantId())
+						.status(Status.fromValue(newStatus))
+						.businessService(billFromSearch.getBusinessService())
+						.billDetails(billFromSearch.getBillDetails())
+						.build();
+
+				updateBillStatus(billToUpdate, workflow, requestInfo);
+
+				successfulBills.add(billToUpdate);
+
+			} catch (Exception e) {
+				log.error("Error updating status for bill {}: {}", billId, e.getMessage());
+				errors.add(BulkUpdateError.builder()
+						.billId(billId)
+						.code("EG_EXPENSE_BILL_STATUS_UPDATE_FAILED")
+						.message(e.getMessage())
+						.build());
+			}
+		}
+
+		return BulkBillStatusUpdateResponse.builder()
+				.bills(successfulBills)
+				.errors(errors)
+				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true))
+				.build();
+	}
+
+	private void updateBillStatus(Bill bill, org.egov.common.contract.models.Workflow workflow, RequestInfo requestInfo) {
+		String tenantId = bill.getTenantId();
+
+		BillRequest billRequest = BillRequest.builder()
+				.requestInfo(requestInfo)
+				.bill(bill)
+				.workflow(workflow)
+				.build();
+
+		List<Bill> billsFromSearch = validator.validateUpdateRequest(billRequest);
+		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
+
+		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
+			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
+			bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+		}
+
+		expenseProducer.push(tenantId, config.getBillUpdateTopic(), billRequest);
 	}
 }
