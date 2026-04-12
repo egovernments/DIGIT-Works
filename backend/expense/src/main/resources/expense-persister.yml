@@ -139,7 +139,7 @@ serviceMaps:
             - jsonPath: $.bill.payer.auditDetails.lastModifiedTime
 
 
-        - query: INSERT into statea.eg_expense_billdetail (id, tenantid, billid, referenceId, totalAmount, totalPaidAmount, status, paymentStatus, fromperiod, toperiod, createdby, createdTime, lastModifiedby, lastModifiedTime, additionalDetails) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+        - query: INSERT into statea.eg_expense_billdetail (id, tenantid, billid, referenceId, totalAmount, totalPaidAmount, status, paymentStatus, fromperiod, toperiod, workerid, paymentprovider, payeename, payeephonenumber, bankaccount, bankcode, beneficiarycode, createdby, createdTime, lastModifiedby, lastModifiedTime, additionalDetails) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: $.bill.billDetails.*
           jsonMaps:
             - jsonPath: $.bill.billDetails.*.id
@@ -161,6 +161,20 @@ serviceMaps:
             - jsonPath: $.bill.billDetails.*.fromPeriod
 
             - jsonPath: $.bill.billDetails.*.toPeriod
+
+            - jsonPath: $.bill.billDetails.*.workerId
+
+            - jsonPath: $.bill.billDetails.*.paymentProvider
+
+            - jsonPath: $.bill.billDetails.*.payeeName
+
+            - jsonPath: $.bill.billDetails.*.payeePhoneNumber
+
+            - jsonPath: $.bill.billDetails.*.bankAccount
+
+            - jsonPath: $.bill.billDetails.*.bankCode
+
+            - jsonPath: $.bill.billDetails.*.beneficiaryCode
 
             - jsonPath: $.bill.billDetails.*.auditDetails.createdBy
 
@@ -337,7 +351,7 @@ serviceMaps:
 
             - jsonPath: $.bill.tenantId
 
-        - query: INSERT into statea.eg_expense_billdetail (id, tenantid, billid, totalamount, totalpaidamount, status, referenceId, paymentStatus, fromperiod, toperiod, createdby, createdTime, lastModifiedby, lastModifiedTime, additionalDetails) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id, tenantid)  DO UPDATE SET referenceid=EXCLUDED.referenceid, paymentstatus=EXCLUDED.paymentstatus, status=EXCLUDED.status, totalamount=EXCLUDED.totalamount, totalpaidamount=EXCLUDED.totalpaidamount, fromperiod=EXCLUDED.fromperiod, toperiod=EXCLUDED.toperiod, lastmodifiedby=EXCLUDED.lastmodifiedby, lastmodifiedtime=EXCLUDED.lastmodifiedtime, additionaldetails=EXCLUDED.additionaldetails;
+        - query: INSERT into statea.eg_expense_billdetail (id, tenantid, billid, totalamount, totalpaidamount, status, referenceId, paymentStatus, fromperiod, toperiod, workerid, paymentprovider, payeename, payeephonenumber, bankaccount, bankcode, beneficiarycode, createdby, createdTime, lastModifiedby, lastModifiedTime, additionalDetails) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id, tenantid)  DO UPDATE SET referenceid=EXCLUDED.referenceid, paymentstatus=EXCLUDED.paymentstatus, status=EXCLUDED.status, totalamount=EXCLUDED.totalamount, totalpaidamount=EXCLUDED.totalpaidamount, fromperiod=EXCLUDED.fromperiod, toperiod=EXCLUDED.toperiod, workerid=EXCLUDED.workerid, paymentprovider=EXCLUDED.paymentprovider, payeename=EXCLUDED.payeename, payeephonenumber=EXCLUDED.payeephonenumber, bankaccount=EXCLUDED.bankaccount, bankcode=EXCLUDED.bankcode, beneficiarycode=EXCLUDED.beneficiarycode, lastmodifiedby=EXCLUDED.lastmodifiedby, lastmodifiedtime=EXCLUDED.lastmodifiedtime, additionaldetails=EXCLUDED.additionaldetails;
           basePath: $.bill.billDetails.*
           jsonMaps:
             - jsonPath: $.bill.billDetails.*.id
@@ -359,6 +373,20 @@ serviceMaps:
             - jsonPath: $.bill.billDetails.*.fromPeriod
 
             - jsonPath: $.bill.billDetails.*.toPeriod
+
+            - jsonPath: $.bill.billDetails.*.workerId
+
+            - jsonPath: $.bill.billDetails.*.paymentProvider
+
+            - jsonPath: $.bill.billDetails.*.payeeName
+
+            - jsonPath: $.bill.billDetails.*.payeePhoneNumber
+
+            - jsonPath: $.bill.billDetails.*.bankAccount
+
+            - jsonPath: $.bill.billDetails.*.bankCode
+
+            - jsonPath: $.bill.billDetails.*.beneficiaryCode
 
             - jsonPath: $.bill.billDetails.*.auditDetails.createdBy
 
@@ -731,7 +759,7 @@ serviceMaps:
             - jsonPath: $.bill.payer.auditDetails.lastModifiedTime
 
 
-        - query: INSERT into stateb.eg_expense_billdetail (id, tenantid, billid, referenceId, totalAmount, totalPaidAmount, status, paymentStatus, fromperiod, toperiod, createdby, createdTime, lastModifiedby, lastModifiedTime, additionalDetails) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+        - query: INSERT into stateb.eg_expense_billdetail (id, tenantid, billid, referenceId, totalAmount, totalPaidAmount, status, paymentStatus, fromperiod, toperiod, workerid, paymentprovider, payeename, payeephonenumber, bankaccount, bankcode, beneficiarycode, createdby, createdTime, lastModifiedby, lastModifiedTime, additionalDetails) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: $.bill.billDetails.*
           jsonMaps:
             - jsonPath: $.bill.billDetails.*.id
@@ -753,6 +781,20 @@ serviceMaps:
             - jsonPath: $.bill.billDetails.*.fromPeriod
 
             - jsonPath: $.bill.billDetails.*.toPeriod
+
+            - jsonPath: $.bill.billDetails.*.workerId
+
+            - jsonPath: $.bill.billDetails.*.paymentProvider
+
+            - jsonPath: $.bill.billDetails.*.payeeName
+
+            - jsonPath: $.bill.billDetails.*.payeePhoneNumber
+
+            - jsonPath: $.bill.billDetails.*.bankAccount
+
+            - jsonPath: $.bill.billDetails.*.bankCode
+
+            - jsonPath: $.bill.billDetails.*.beneficiaryCode
 
             - jsonPath: $.bill.billDetails.*.auditDetails.createdBy
 
@@ -929,7 +971,7 @@ serviceMaps:
 
             - jsonPath: $.bill.tenantId
 
-        - query: INSERT into stateb.eg_expense_billdetail (id, tenantid, billid, totalamount, totalpaidamount, status, referenceId, paymentStatus, fromperiod, toperiod, createdby, createdTime, lastModifiedby, lastModifiedTime, additionalDetails) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id, tenantid)  DO UPDATE SET referenceid=EXCLUDED.referenceid, paymentstatus=EXCLUDED.paymentstatus, status=EXCLUDED.status, totalamount=EXCLUDED.totalamount, totalpaidamount=EXCLUDED.totalpaidamount, fromperiod=EXCLUDED.fromperiod, toperiod=EXCLUDED.toperiod, lastmodifiedby=EXCLUDED.lastmodifiedby, lastmodifiedtime=EXCLUDED.lastmodifiedtime, additionaldetails=EXCLUDED.additionaldetails;
+        - query: INSERT into stateb.eg_expense_billdetail (id, tenantid, billid, totalamount, totalpaidamount, status, referenceId, paymentStatus, fromperiod, toperiod, workerid, paymentprovider, payeename, payeephonenumber, bankaccount, bankcode, beneficiarycode, createdby, createdTime, lastModifiedby, lastModifiedTime, additionalDetails) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id, tenantid)  DO UPDATE SET referenceid=EXCLUDED.referenceid, paymentstatus=EXCLUDED.paymentstatus, status=EXCLUDED.status, totalamount=EXCLUDED.totalamount, totalpaidamount=EXCLUDED.totalpaidamount, fromperiod=EXCLUDED.fromperiod, toperiod=EXCLUDED.toperiod, workerid=EXCLUDED.workerid, paymentprovider=EXCLUDED.paymentprovider, payeename=EXCLUDED.payeename, payeephonenumber=EXCLUDED.payeephonenumber, bankaccount=EXCLUDED.bankaccount, bankcode=EXCLUDED.bankcode, beneficiarycode=EXCLUDED.beneficiarycode, lastmodifiedby=EXCLUDED.lastmodifiedby, lastmodifiedtime=EXCLUDED.lastmodifiedtime, additionaldetails=EXCLUDED.additionaldetails;
           basePath: $.bill.billDetails.*
           jsonMaps:
             - jsonPath: $.bill.billDetails.*.id
@@ -951,6 +993,20 @@ serviceMaps:
             - jsonPath: $.bill.billDetails.*.fromPeriod
 
             - jsonPath: $.bill.billDetails.*.toPeriod
+
+            - jsonPath: $.bill.billDetails.*.workerId
+
+            - jsonPath: $.bill.billDetails.*.paymentProvider
+
+            - jsonPath: $.bill.billDetails.*.payeeName
+
+            - jsonPath: $.bill.billDetails.*.payeePhoneNumber
+
+            - jsonPath: $.bill.billDetails.*.bankAccount
+
+            - jsonPath: $.bill.billDetails.*.bankCode
+
+            - jsonPath: $.bill.billDetails.*.beneficiaryCode
 
             - jsonPath: $.bill.billDetails.*.auditDetails.createdBy
 
@@ -1323,7 +1379,7 @@ serviceMaps:
             - jsonPath: $.bill.payer.auditDetails.lastModifiedTime
 
 
-        - query: INSERT into eg_expense_billdetail (id, tenantid, billid, referenceId, totalAmount, totalPaidAmount, status, paymentStatus, fromperiod, toperiod, createdby, createdTime, lastModifiedby, lastModifiedTime, additionalDetails) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+        - query: INSERT into eg_expense_billdetail (id, tenantid, billid, referenceId, totalAmount, totalPaidAmount, status, paymentStatus, fromperiod, toperiod, workerid, paymentprovider, payeename, payeephonenumber, bankaccount, bankcode, beneficiarycode, createdby, createdTime, lastModifiedby, lastModifiedTime, additionalDetails) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: $.bill.billDetails.*
           jsonMaps:
             - jsonPath: $.bill.billDetails.*.id
@@ -1345,6 +1401,20 @@ serviceMaps:
             - jsonPath: $.bill.billDetails.*.fromPeriod
 
             - jsonPath: $.bill.billDetails.*.toPeriod
+
+            - jsonPath: $.bill.billDetails.*.workerId
+
+            - jsonPath: $.bill.billDetails.*.paymentProvider
+
+            - jsonPath: $.bill.billDetails.*.payeeName
+
+            - jsonPath: $.bill.billDetails.*.payeePhoneNumber
+
+            - jsonPath: $.bill.billDetails.*.bankAccount
+
+            - jsonPath: $.bill.billDetails.*.bankCode
+
+            - jsonPath: $.bill.billDetails.*.beneficiaryCode
 
             - jsonPath: $.bill.billDetails.*.auditDetails.createdBy
 
@@ -1521,7 +1591,7 @@ serviceMaps:
 
             - jsonPath: $.bill.tenantId
 
-        - query: INSERT into eg_expense_billdetail (id, tenantid, billid, totalamount, totalpaidamount, status, referenceId, paymentStatus, fromperiod, toperiod, createdby, createdTime, lastModifiedby, lastModifiedTime, additionalDetails) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id, tenantid)  DO UPDATE SET referenceid=EXCLUDED.referenceid, paymentstatus=EXCLUDED.paymentstatus, status=EXCLUDED.status, totalamount=EXCLUDED.totalamount, totalpaidamount=EXCLUDED.totalpaidamount, fromperiod=EXCLUDED.fromperiod, toperiod=EXCLUDED.toperiod, lastmodifiedby=EXCLUDED.lastmodifiedby, lastmodifiedtime=EXCLUDED.lastmodifiedtime, additionaldetails=EXCLUDED.additionaldetails;
+        - query: INSERT into eg_expense_billdetail (id, tenantid, billid, totalamount, totalpaidamount, status, referenceId, paymentStatus, fromperiod, toperiod, workerid, paymentprovider, payeename, payeephonenumber, bankaccount, bankcode, beneficiarycode, createdby, createdTime, lastModifiedby, lastModifiedTime, additionalDetails) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id, tenantid)  DO UPDATE SET referenceid=EXCLUDED.referenceid, paymentstatus=EXCLUDED.paymentstatus, status=EXCLUDED.status, totalamount=EXCLUDED.totalamount, totalpaidamount=EXCLUDED.totalpaidamount, fromperiod=EXCLUDED.fromperiod, toperiod=EXCLUDED.toperiod, workerid=EXCLUDED.workerid, paymentprovider=EXCLUDED.paymentprovider, payeename=EXCLUDED.payeename, payeephonenumber=EXCLUDED.payeephonenumber, bankaccount=EXCLUDED.bankaccount, bankcode=EXCLUDED.bankcode, beneficiarycode=EXCLUDED.beneficiarycode, lastmodifiedby=EXCLUDED.lastmodifiedby, lastmodifiedtime=EXCLUDED.lastmodifiedtime, additionaldetails=EXCLUDED.additionaldetails;
           basePath: $.bill.billDetails.*
           jsonMaps:
             - jsonPath: $.bill.billDetails.*.id
@@ -1543,6 +1613,20 @@ serviceMaps:
             - jsonPath: $.bill.billDetails.*.fromPeriod
 
             - jsonPath: $.bill.billDetails.*.toPeriod
+
+            - jsonPath: $.bill.billDetails.*.workerId
+
+            - jsonPath: $.bill.billDetails.*.paymentProvider
+
+            - jsonPath: $.bill.billDetails.*.payeeName
+
+            - jsonPath: $.bill.billDetails.*.payeePhoneNumber
+
+            - jsonPath: $.bill.billDetails.*.bankAccount
+
+            - jsonPath: $.bill.billDetails.*.bankCode
+
+            - jsonPath: $.bill.billDetails.*.beneficiaryCode
 
             - jsonPath: $.bill.billDetails.*.auditDetails.createdBy
 

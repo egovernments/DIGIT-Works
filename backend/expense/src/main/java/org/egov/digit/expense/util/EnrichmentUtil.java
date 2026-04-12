@@ -25,6 +25,7 @@ import org.egov.digit.expense.web.models.PaymentLineItem;
 import org.egov.digit.expense.web.models.PaymentRequest;
 import org.egov.digit.expense.web.models.enums.PaymentStatus;
 import org.egov.digit.expense.web.models.enums.ReferenceStatus;
+import org.egov.digit.expense.web.models.WorkerDetails;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,13 +42,16 @@ public class EnrichmentUtil {
 
     private final GenderUtil genderUtil;
     private final ObjectMapper objectMapper;
+    private final WorkerRegistryUtil workerRegistryUtil;
 
     @Autowired
-    public EnrichmentUtil(Configuration config, IdgenUtil idgenUtil, GenderUtil genderUtil, ObjectMapper objectMapper) {
+    public EnrichmentUtil(Configuration config, IdgenUtil idgenUtil, GenderUtil genderUtil,
+                          ObjectMapper objectMapper, WorkerRegistryUtil workerRegistryUtil) {
         this.config = config;
         this.idgenUtil = idgenUtil;
         this.genderUtil = genderUtil;
         this.objectMapper = objectMapper;
+        this.workerRegistryUtil = workerRegistryUtil;
     }
 
     public void encrichBillForCreate(BillRequest billRequest) {
@@ -67,18 +71,46 @@ public class EnrichmentUtil {
         bill.getPayer().setAuditDetails(audit);
         bill.getPayer().setParentId(bill.getId());
         bill.getPayer().setStatus(Status.ACTIVE);
-        
+
+        // ── Worker Registry enrichment (health context only) ──
+        // Batch-fetch worker payment details for all individual payees before the loop.
+        Map<String, WorkerDetails> workersByIndividualId = Collections.emptyMap();
+        if (config.isHealthContextEnabled()) {
+            List<String> individualIds = bill.getBillDetails().stream()
+                    .filter(bd -> bd.getPayee() != null && bd.getPayee().getIdentifier() != null)
+                    .map(bd -> bd.getPayee().getIdentifier())
+                    .distinct()
+                    .collect(Collectors.toList());
+            workersByIndividualId = workerRegistryUtil.fetchWorkersByIndividualIds(
+                    billRequest.getRequestInfo(), bill.getTenantId(), individualIds);
+        }
+
         for (BillDetail billDetail : bill.getBillDetails()) {
 
             billDetail.setId(UUID.randomUUID().toString());
             billDetail.setBillId(bill.getId());
             billDetail.setAuditDetails(audit);
             billDetail.setStatus(Status.ACTIVE);
-            
+
             billDetail.getPayee().setId(UUID.randomUUID().toString());
             billDetail.getPayee().setParentId(billDetail.getBillId());
             billDetail.getPayee().setAuditDetails(audit);
             billDetail.getPayee().setStatus(Status.ACTIVE);
+
+            // ── Enrich payment fields from Worker Registry ──
+            if (config.isHealthContextEnabled() && billDetail.getPayee() != null) {
+                String individualId = billDetail.getPayee().getIdentifier();
+                WorkerDetails worker = workersByIndividualId.get(individualId);
+                if (worker != null) {
+                    billDetail.setWorkerId(worker.getWorkerId());
+                    billDetail.setPaymentProvider(worker.getPaymentProvider());
+                    billDetail.setPayeeName(worker.getPayeeName());
+                    billDetail.setPayeePhoneNumber(worker.getPayeePhoneNumber());
+                    billDetail.setBankAccount(worker.getBankAccount());
+                    billDetail.setBankCode(worker.getBankCode());
+                    billDetail.setBeneficiaryCode(worker.getBeneficiaryCode());
+                }
+            }
 
             if (!config.isHealthContextEnabled()) {
                 String gender = genderUtil.getGenderDetails(billRequest.getRequestInfo(), billDetail.getPayee().getTenantId(), billDetail.getPayee().getIdentifier());
@@ -169,6 +201,24 @@ public class EnrichmentUtil {
         billDetail.setAuditDetails(createAudit);
         billDetail.getPayee().setId(detailFromSearch.getPayee().getId());
         billDetail.getPayee().setAuditDetails(createAudit);
+
+        // ── Preserve payment fields from DB if not supplied in update request (partial update) ──
+        if (detailFromSearch != null) {
+            if (billDetail.getWorkerId() == null)
+                billDetail.setWorkerId(detailFromSearch.getWorkerId());
+            if (billDetail.getPaymentProvider() == null)
+                billDetail.setPaymentProvider(detailFromSearch.getPaymentProvider());
+            if (billDetail.getPayeeName() == null)
+                billDetail.setPayeeName(detailFromSearch.getPayeeName());
+            if (billDetail.getPayeePhoneNumber() == null)
+                billDetail.setPayeePhoneNumber(detailFromSearch.getPayeePhoneNumber());
+            if (billDetail.getBankAccount() == null)
+                billDetail.setBankAccount(detailFromSearch.getBankAccount());
+            if (billDetail.getBankCode() == null)
+                billDetail.setBankCode(detailFromSearch.getBankCode());
+            if (billDetail.getBeneficiaryCode() == null)
+                billDetail.setBeneficiaryCode(detailFromSearch.getBeneficiaryCode());
+        }
 
         for (LineItem lineItem : billDetail.getLineItems()) {
             enrichLineItem(lineItem, createAudit);

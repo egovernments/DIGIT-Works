@@ -10,6 +10,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.common.contract.workflow.State;
 import org.egov.digit.expense.config.Configuration;
+import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.kafka.ExpenseProducer;
 import org.egov.digit.expense.repository.BillRepository;
 import org.egov.digit.expense.repository.SchedulerJobRepository;
@@ -55,8 +56,6 @@ public class MTNService {
 
     private final ResponseInfoFactory responseInfoFactory;
 
-    private final IndividualUtil individualUtil;
-
     private final TaskRepository taskRepository;
 
     private final MTNUtil mtnUtil;
@@ -70,7 +69,7 @@ public class MTNService {
     @Autowired
     public MTNService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator,
                       WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil,
-                      ResponseInfoFactory responseInfoFactory, IndividualUtil individualUtil,
+                      ResponseInfoFactory responseInfoFactory,
                       TaskRepository taskRepository, MTNUtil mtnUtil,
                       SchedulerJobRepository schedulerJobRepository, SchedulerJobRegistry schedulerJobRegistry,
                       ObjectMapper objectMapper) {
@@ -81,7 +80,6 @@ public class MTNService {
         this.billRepository = billRepository;
         this.enrichmentUtil = enrichmentUtil;
         this.responseInfoFactory = responseInfoFactory;
-        this.individualUtil = individualUtil;
         this.taskRepository = taskRepository;
         this.mtnUtil = mtnUtil;
         this.schedulerJobRepository = schedulerJobRepository;
@@ -173,9 +171,18 @@ public class MTNService {
                 log.error("BillDetail from search is null for one of the requested IDs in bill number: {}. Skipping.", billFromSearch.getBillNumber());
                 continue;
             }
+            if (!Constants.PAYMENT_PROVIDER_MTN.equalsIgnoreCase(billDetail.getPaymentProvider())) {
+                log.info("Skipping non-MTN billDetail {} (provider={}) in verify()", billDetail.getId(), billDetail.getPaymentProvider());
+                continue;
+            }
             if (billDetail.getStatus() == Status.PENDING_VERIFICATION ||
                     billDetail.getStatus() == Status.VERIFICATION_FAILED) {
-                IndividualDetails individualDetails = individualUtil.getIndividualDetails(taskRequest.getRequestInfo(), billFromSearch.getTenantId(), billDetail.getPayee().getIdentifier());
+                String payeePhoneNumber = billDetail.getPayeePhoneNumber();
+                if (payeePhoneNumber == null || payeePhoneNumber.isBlank()) {
+                    log.error("payeePhoneNumber is null/blank for MTN billDetail {}, bill {}. Skipping verification.",
+                            billDetail.getId(), billFromSearch.getBillNumber());
+                    continue;
+                }
                 TaskDetails taskDetails = TaskDetails.builder()
                         .id(UUID.randomUUID().toString())
                         .taskId(task.getId())
@@ -185,7 +192,7 @@ public class MTNService {
                         .status(Status.IN_PROGRESS)
                         .tenantId(billFromSearch.getTenantId())
                         .auditDetails(billFromSearch.getAuditDetails())
-                        .referenceId(individualDetails.getPhoneNumber())
+                        .referenceId(payeePhoneNumber)
                         .build();
                 boolean updateBillDetailWorkflow = true;
 
@@ -207,7 +214,7 @@ public class MTNService {
                 // ── Account check — sets failure reason on taskDetails BEFORE Kafka push ──
                 boolean verificationSucceeded = false;
                 try {
-                    boolean isActive = mtnUtil.isMsisdnActive(individualDetails.getPhoneNumber());
+                    boolean isActive = mtnUtil.isMsisdnActive(payeePhoneNumber);
                     if (isActive) {
                         verificationSucceeded = true;
                     } else {
@@ -215,7 +222,7 @@ public class MTNService {
                         taskDetails.setResponseMessage("Account is not active");
                     }
                 } catch (CustomException e) {
-                    log.error("Exception while verifying MSISDN : {}", individualDetails.getPhoneNumber(), e);
+                    log.error("Exception while verifying MSISDN : {}", payeePhoneNumber, e);
                     taskDetails.setResponseMessage(e.getMessage());
                     taskDetails.setReasonForFailure(e.getCode());
                 }
@@ -422,12 +429,21 @@ public class MTNService {
                 log.error("BillDetail from search is null for one of the requested IDs in bill number: {}. Skipping.", billFromSearch.getBillNumber());
                 continue;
             }
+            if (!Constants.PAYMENT_PROVIDER_MTN.equalsIgnoreCase(billDetail.getPaymentProvider())) {
+                log.info("Skipping non-MTN billDetail {} (provider={}) in transfer()", billDetail.getId(), billDetail.getPaymentProvider());
+                continue;
+            }
             if (billDetail.getStatus() == Status.PAYMENT_IN_PROGRESS) {
-                IndividualDetails individualDetails = individualUtil.getIndividualDetails(taskRequest.getRequestInfo(), billFromSearch.getTenantId(), billDetail.getPayee().getIdentifier());
+                String payeePhoneNumber = billDetail.getPayeePhoneNumber();
+                if (payeePhoneNumber == null || payeePhoneNumber.isBlank()) {
+                    log.error("payeePhoneNumber is null/blank for MTN billDetail {}, bill {}. Skipping transfer.",
+                            billDetail.getId(), billFromSearch.getBillNumber());
+                    continue;
+                }
                 TaskDetails taskDetails = TaskDetails.builder()
                         .id(UUID.randomUUID().toString())
                         .taskId(task.getId())
-                        .referenceId(individualDetails.getPhoneNumber())
+                        .referenceId(payeePhoneNumber)
                         .billId(billFromSearch.getId())
                         .billDetailsId(billDetail.getId())
                         .payeeId(billDetail.getPayee().getId())
@@ -443,7 +459,7 @@ public class MTNService {
                     expenseProducer.push(billFromSearch.getTenantId(), config.getBillTaskDetailsTopic(), taskDetails);
                     log.info("payment couldn't be processed for bill detail id {} as total amount is 0", billDetail.getId());
                 } else {
-                    PaymentTransferRequest paymentTransferRequest = createPaymentTransferRequest(billDetail, individualDetails.getPhoneNumber());
+                    PaymentTransferRequest paymentTransferRequest = createPaymentTransferRequest(billDetail, payeePhoneNumber);
                     try {
                         mtnUtil.transferIfAccountIsActive(paymentTransferRequest, taskDetails.getId());
                     } catch (CustomException e) {
@@ -655,6 +671,10 @@ public class MTNService {
             if (billDetail == null) {
                 log.error("BillDetail not found for taskDetail id: {}, billDetailsId: {}. Skipping.",
                         taskDetail.getId(), taskDetail.getBillDetailsId());
+                continue;
+            }
+            if (!Constants.PAYMENT_PROVIDER_MTN.equalsIgnoreCase(billDetail.getPaymentProvider())) {
+                log.info("Skipping non-MTN billDetail {} (provider={}) in updatePaymentTaskStatus()", billDetail.getId(), billDetail.getPaymentProvider());
                 continue;
             }
             if (taskDetail.getStatus() == Status.IN_PROGRESS && billDetail.getStatus() == Status.PAYMENT_IN_PROGRESS) {

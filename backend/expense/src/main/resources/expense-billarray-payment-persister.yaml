@@ -73,22 +73,36 @@ serviceMaps:
        - jsonPath: $.bills.*.payer.auditDetails.lastModifiedTime
 
 
-    - query: INSERT into eg_expense_billdetail (id, tenantid, billid, referenceId, paymentStatus, fromperiod, toperiod, createdby, createdTime, lastModifiedby, lastModifiedTime, additionalDetails) values(?,?,?,?,?,?,?,?,?,?,?,?);
+    - query: INSERT into eg_expense_billdetail (id, tenantid, billid, referenceId, paymentStatus, fromperiod, toperiod, workerid, paymentprovider, payeename, payeephonenumber, bankaccount, bankcode, beneficiarycode, createdby, createdTime, lastModifiedby, lastModifiedTime, additionalDetails) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
       basePath: $.bills.*.billDetails.*
       jsonMaps:
        - jsonPath: $.bills.*.billDetails.*.id
 
        - jsonPath: $.bills.*.billDetails.*.tenantId
-         
+
        - jsonPath: $.bills[?({id} in @.billDetails[*].id)].id
-         
+
        - jsonPath: $.bills.*.billDetails.*.referenceId
 
        - jsonPath: $.bills.*.billDetails.*.paymentStatus
-         
+
        - jsonPath: $.bills.*.billDetails.*.fromPeriod
-         
+
        - jsonPath: $.bills.*.billDetails.*.toPeriod
+
+       - jsonPath: $.bills.*.billDetails.*.workerId
+
+       - jsonPath: $.bills.*.billDetails.*.paymentProvider
+
+       - jsonPath: $.bills.*.billDetails.*.payeeName
+
+       - jsonPath: $.bills.*.billDetails.*.payeePhoneNumber
+
+       - jsonPath: $.bills.*.billDetails.*.bankAccount
+
+       - jsonPath: $.bills.*.billDetails.*.bankCode
+
+       - jsonPath: $.bills.*.billDetails.*.beneficiaryCode
 
        - jsonPath: $.bills.*.billDetails.*.auditDetails.createdBy
 
@@ -261,22 +275,36 @@ serviceMaps:
 
        - jsonPath: $.bills.*.tenantId
 
-    - query: INSERT into eg_expense_billdetail (id, tenantid, billid, referenceId, paymentStatus, fromperiod, toperiod, createdby, createdTime, lastModifiedby, lastModifiedTime, additionalDetails) values(?,?,?,?,?,?,?,?,?,?,?,?) DO UPDATE SET referenceid=EXCLUDED.referenceid, paymentstatus=EXCLUDED.paymentstatus, fromperiod=EXCLUDED.fromperiod, toperiod=EXCLUDED.toperiod, lastmodifiedby=EXCLUDED.lastmodifiedby, lastmodifiedtime=EXCLUDED.lastmodifiedtime, additionaldetails=EXCLUDED.additionaldetails WHERE  id=EXCLUDED.id AND tenantid=EXCLUDED.tenantid;
+    - query: INSERT into eg_expense_billdetail (id, tenantid, billid, referenceId, paymentStatus, fromperiod, toperiod, workerid, paymentprovider, payeename, payeephonenumber, bankaccount, bankcode, beneficiarycode, createdby, createdTime, lastModifiedby, lastModifiedTime, additionalDetails) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT (id, tenantid) DO UPDATE SET referenceid=EXCLUDED.referenceid, paymentstatus=EXCLUDED.paymentstatus, fromperiod=EXCLUDED.fromperiod, toperiod=EXCLUDED.toperiod, workerid=EXCLUDED.workerid, paymentprovider=EXCLUDED.paymentprovider, payeename=EXCLUDED.payeename, payeephonenumber=EXCLUDED.payeephonenumber, bankaccount=EXCLUDED.bankaccount, bankcode=EXCLUDED.bankcode, beneficiarycode=EXCLUDED.beneficiarycode, lastmodifiedby=EXCLUDED.lastmodifiedby, lastmodifiedtime=EXCLUDED.lastmodifiedtime, additionaldetails=EXCLUDED.additionaldetails WHERE  id=EXCLUDED.id AND tenantid=EXCLUDED.tenantid;
       basePath: $.bills.*.billDetails.*
       jsonMaps:
        - jsonPath: $.bills.*.billDetails.*.id
 
        - jsonPath: $.bills.*.billDetails.*.tenantId
-         
+
        - jsonPath: $.bills[?({id} in @.billDetails[*].id)].id
-         
+
        - jsonPath: $.bills.*.billDetails.*.referenceId
 
        - jsonPath: $.bills.*.billDetails.*.paymentStatus
-         
+
        - jsonPath: $.bills.*.billDetails.*.fromPeriod
-         
+
        - jsonPath: $.bills.*.billDetails.*.toPeriod
+
+       - jsonPath: $.bills.*.billDetails.*.workerId
+
+       - jsonPath: $.bills.*.billDetails.*.paymentProvider
+
+       - jsonPath: $.bills.*.billDetails.*.payeeName
+
+       - jsonPath: $.bills.*.billDetails.*.payeePhoneNumber
+
+       - jsonPath: $.bills.*.billDetails.*.bankAccount
+
+       - jsonPath: $.bills.*.billDetails.*.bankCode
+
+       - jsonPath: $.bills.*.billDetails.*.beneficiaryCode
 
        - jsonPath: $.bills.*.billDetails.*.auditDetails.createdBy
 

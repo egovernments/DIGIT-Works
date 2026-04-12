@@ -27,6 +27,20 @@ public class Constants {
 	public static final String INDIVIDUAL_NAME_PATH = "$.Individual.*.name.givenName";
 	public static final String INDIVIDUAL_PHONE_NUMBER_PATH = "$.Individual.*.mobileNumber";
 
+	// Worker Registry
+	public static final String WORKER_SEARCH = "workerSearch";
+	public static final String WORKERS_RESPONSE_PATH = "$.workers";
+	public static final String INDIVIDUAL_ID = "individualId";
+	public static final String PAYMENT_PROVIDER_MTN = "MTN";
+	public static final String PAYMENT_PROVIDER_BANK = "BANK";
+	public static final Set<String> VALID_PAYMENT_PROVIDERS = Set.of(PAYMENT_PROVIDER_MTN, PAYMENT_PROVIDER_BANK);
+
+	// BankPaymentService error codes
+	public static final String BILL_NOT_FOUND_ERR_CODE = "BILL_NOT_FOUND";
+	public static final String MISSING_BANK_ACCOUNT_ERR_CODE = "MISSING_BANK_ACCOUNT";
+	public static final String MISSING_BENEFICIARY_CODE_ERR_CODE = "MISSING_BENEFICIARY_CODE";
+	public static final String BANK_TRANSFER_NOT_IMPLEMENTED_ERR_CODE = "BANK_TRANSFER_NOT_IMPLEMENTED";
+
 	public static final String CONTACT_NAME_PATH = "$.organisations.*.contactDetails.*.contactName";
 	public static final String CONTACT_MOBILE_NUMBER_PATH = "$.organisations.*.contactDetails.*.contactMobileNumber";
 	public static final String ORG_NAME = "orgName";
@@ -147,7 +161,10 @@ public class Constants {
 			
 			+ " bd.id as bd_id, bd.tenantid as bd_tenantid, bd.totalamount as bd_totalamount, bd.totalpaidamount as bd_totalpaidamount, "
 			+ " bd.referenceid as bd_referenceid, billid, bd.paymentstatus as bd_paymentstatus, bd.status as bd_status, bd.fromperiod as bd_fromperiod, "
-			+ " bd.toperiod as bd_toperiod, bd.createdby as bd_createdby, bd.createdtime as bd_createdtime, bd.lastmodifiedby as bd_lastmodifiedby,"
+			+ " bd.toperiod as bd_toperiod, bd.workerid as bd_workerid, bd.paymentprovider as bd_paymentprovider, "
+			+ " bd.payeename as bd_payeename, bd.payeephonenumber as bd_payeephonenumber, "
+			+ " bd.bankaccount as bd_bankaccount, bd.bankcode as bd_bankcode, bd.beneficiarycode as bd_beneficiarycode, "
+			+ " bd.createdby as bd_createdby, bd.createdtime as bd_createdtime, bd.lastmodifiedby as bd_lastmodifiedby,"
 			+ " bd.lastmodifiedtime as bd_lastmodifiedtime, bd.additionaldetails as bd_additionaldetails,"
 			
 			+ " li.id as line_id, li.billdetailid as line_billdetailid, li.tenantid as line_tenantid, li.paymentstatus as li_paymentstatus,"

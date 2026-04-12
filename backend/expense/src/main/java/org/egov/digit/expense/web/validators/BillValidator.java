@@ -113,6 +113,8 @@ public class BillValidator {
 		if (!configs.isHealthContextEnabled())
 			validateFieldsForUpdate(bill, billsFromSearch.get(0), errorMap);
 
+		validatePaymentFieldUpdate(bill, billsFromSearch.get(0));
+
 		Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForValidation(billRequest, bill);
 		validateTenantId(billRequest,mdmsData);
 
@@ -225,6 +227,90 @@ public class BillValidator {
 						BILL_DETAIL_ID_IS_INVALID_FOR_THE_GIVEN_IDS_OF_UPDATE_REQUEST + invalidPayableLineItemIds);
 		}
 
+	}
+
+	/**
+	 * Validates that payment detail fields on BillDetail can only be updated when:
+	 * - Bill status is PENDING_VERIFICATION or PARTIALLY_VERIFIED
+	 * - BillDetail status is PENDING_VERIFICATION or VERIFICATION_FAILED
+	 *
+	 * Uses bill/detail `status` (stored in DB, set from workflow state) rather than
+	 * `wfStatus` (transient, only enriched during external search — always null here).
+	 */
+	public void validatePaymentFieldUpdate(Bill bill, Bill billFromSearch) {
+		Set<String> allowedBillStatuses = Set.of("PENDING_VERIFICATION", "PARTIALLY_VERIFIED");
+		Set<String> allowedBillDetailStatuses = Set.of("PENDING_VERIFICATION", "VERIFICATION_FAILED");
+
+		// Use status (stored in DB) as the reliable proxy for workflow state
+		String billStatus = billFromSearch.getStatus() != null ? billFromSearch.getStatus().toString() : null;
+		if (billStatus != null && !allowedBillStatuses.contains(billStatus)) {
+			if (hasPaymentFieldChanges(bill, billFromSearch)) {
+				throw new CustomException("EG_EXPENSE_PAYMENT_FIELD_UPDATE_NOT_ALLOWED",
+						"Payment details can only be updated when bill status is PENDING_VERIFICATION or PARTIALLY_VERIFIED. Current status: " + billStatus);
+			}
+		}
+
+		if (bill.getBillDetails() != null) {
+			Map<String, BillDetail> searchDetailsMap = billFromSearch.getBillDetails().stream()
+					.collect(Collectors.toMap(BillDetail::getId, Function.identity()));
+
+			for (BillDetail detail : bill.getBillDetails()) {
+				if (detail.getId() == null) continue;
+				BillDetail detailFromSearch = searchDetailsMap.get(detail.getId());
+				if (detailFromSearch == null) continue;
+
+				if (hasPaymentFieldChangesOnDetail(detail, detailFromSearch)) {
+					String detailStatus = detailFromSearch.getStatus() != null
+							? detailFromSearch.getStatus().toString() : null;
+					if (detailStatus != null && !allowedBillDetailStatuses.contains(detailStatus)) {
+						throw new CustomException("EG_EXPENSE_PAYMENT_FIELD_UPDATE_NOT_ALLOWED",
+								"Payment details on bill detail " + detail.getId()
+								+ " can only be updated when bill detail status is PENDING_VERIFICATION or VERIFICATION_FAILED. Current status: " + detailStatus);
+					}
+				}
+			}
+		}
+
+		validatePaymentProviderValues(bill);
+		// TODO: Propagate payment detail changes back to Worker Registry
+	}
+
+	/**
+	 * Detects if any payment field on any existing detail has actually changed from the stored value.
+	 * Delegates to per-detail comparison to avoid false positives from non-null unchanged fields.
+	 */
+	private boolean hasPaymentFieldChanges(Bill bill, Bill billFromSearch) {
+		if (bill.getBillDetails() == null) return false;
+		Map<String, BillDetail> searchDetailsMap = billFromSearch.getBillDetails().stream()
+				.collect(Collectors.toMap(BillDetail::getId, Function.identity()));
+		return bill.getBillDetails().stream().anyMatch(detail -> {
+			if (detail.getId() == null) return false;
+			BillDetail detailFromSearch = searchDetailsMap.get(detail.getId());
+			if (detailFromSearch == null) return false;
+			return hasPaymentFieldChangesOnDetail(detail, detailFromSearch);
+		});
+	}
+
+	private boolean hasPaymentFieldChangesOnDetail(BillDetail detail, BillDetail detailFromSearch) {
+		return (detail.getPaymentProvider() != null && !detail.getPaymentProvider().equals(detailFromSearch.getPaymentProvider()))
+				|| (detail.getPayeeName() != null && !detail.getPayeeName().equals(detailFromSearch.getPayeeName()))
+				|| (detail.getPayeePhoneNumber() != null && !detail.getPayeePhoneNumber().equals(detailFromSearch.getPayeePhoneNumber()))
+				|| (detail.getBankAccount() != null && !detail.getBankAccount().equals(detailFromSearch.getBankAccount()))
+				|| (detail.getBankCode() != null && !detail.getBankCode().equals(detailFromSearch.getBankCode()))
+				|| (detail.getBeneficiaryCode() != null && !detail.getBeneficiaryCode().equals(detailFromSearch.getBeneficiaryCode()));
+	}
+
+	private void validatePaymentProviderValues(Bill bill) {
+		if (bill.getBillDetails() == null) return;
+		for (BillDetail detail : bill.getBillDetails()) {
+			if (detail.getPaymentProvider() != null
+					&& !Constants.VALID_PAYMENT_PROVIDERS.contains(detail.getPaymentProvider().toUpperCase())) {
+				throw new CustomException("EG_EXPENSE_INVALID_PAYMENT_PROVIDER",
+						"Invalid paymentProvider '" + detail.getPaymentProvider()
+						+ "' on bill detail " + detail.getId()
+						+ ". Allowed values: " + Constants.VALID_PAYMENT_PROVIDERS);
+			}
+		}
 	}
 
 	public void validateSearchRequest(BillSearchRequest billSearchRequest) {

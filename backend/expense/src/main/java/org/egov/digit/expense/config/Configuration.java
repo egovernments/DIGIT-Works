@@ -181,6 +181,16 @@ public class Configuration {
 	@Value("${is.health.context.enabled}")
 	private boolean isHealthContextEnabled;
 
+	//Worker Registry Service
+	@Value("${works.worker.registry.host}")
+	private String workerRegistryHost;
+
+	@Value("${works.worker.registry.endpoint}")
+	private String workerRegistryEndpoint;
+
+	@Value("${works.worker.registry.search.page.size:100}")
+	private int workerRegistrySearchPageSize;
+
 	@Value("${expense.v2.periodic.billing.enabled:true}")
 	private boolean isV2PeriodicBillingEnabled;
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.repository.TaskRepository;
+import org.egov.digit.expense.service.BankPaymentService;
 import org.egov.digit.expense.service.MTNService;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.SchedulerJob;
@@ -33,14 +34,17 @@ import org.springframework.stereotype.Component;
 public class TaskStatusCheckHandler implements SchedulerJobHandler {
 
     private final MTNService mtnService;
+    private final BankPaymentService bankPaymentService;
     private final TaskRepository taskRepository;
     private final ObjectMapper objectMapper;
 
     @Autowired
     public TaskStatusCheckHandler(MTNService mtnService,
+                                   BankPaymentService bankPaymentService,
                                    TaskRepository taskRepository,
                                    ObjectMapper objectMapper) {
         this.mtnService = mtnService;
+        this.bankPaymentService = bankPaymentService;
         this.taskRepository = taskRepository;
         this.objectMapper = objectMapper;
     }
@@ -77,8 +81,10 @@ public class TaskStatusCheckHandler implements SchedulerJobHandler {
                     .requestInfo(requestInfo)
                     .build();
 
-            // Polls MTN, updates bill-detail workflow, and pushes task.status=DONE to Kafka when resolved.
-            boolean anyInProgress = mtnService.updatePaymentTaskStatusAndFinalize(taskRequest);
+            // Polls MTN and bank status; task is resolved only when both agree no details are in-progress.
+            boolean mtnInProgress = mtnService.updatePaymentTaskStatusAndFinalize(taskRequest);
+            boolean bankInProgress = bankPaymentService.updatePaymentTaskStatusAndFinalize(taskRequest);
+            boolean anyInProgress = mtnInProgress || bankInProgress;
 
             if (!anyInProgress) {
                 log.info("Task {} fully resolved — marking scheduler job DONE", taskId);
