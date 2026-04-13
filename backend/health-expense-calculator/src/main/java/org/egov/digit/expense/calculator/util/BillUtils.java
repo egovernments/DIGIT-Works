@@ -262,24 +262,48 @@ public class BillUtils {
         try {
             log.info("Fetching completed period numbers for project: {}", projectId);
 
-            // Call Expense service to get all ACTIVE wage bills for this project
-            BillCriteria billCriteria = BillCriteria.builder()
+            List<Bill> allBills = new ArrayList<>();
+
+            // Search EXPENSE.WAGES bills (pre-PAYMENTS transition: status=ACTIVE with completed report)
+            BillCriteria wageCriteria = BillCriteria.builder()
                     .tenantId(tenantId)
                     .referenceIds(Stream.of(projectId).collect(Collectors.toSet()))
                     .businessService(EXPENSE_WAGES_BUSINESS_SERVICE)
                     .status(BILL_STATUS_ACTIVE)
                     .build();
 
-            BillSearchRequest billSearchRequest = BillSearchRequest.builder()
+            BillSearchRequest wageSearchRequest = BillSearchRequest.builder()
                     .requestInfo(requestInfo)
-                    .billCriteria(billCriteria)
+                    .billCriteria(wageCriteria)
                     .pagination(Pagination.builder().limit(configs.getBillSearchMaxLimit()).offSet(0).build())
                     .build();
 
-            Object responseObj = restRepo.fetchResult(getBillSearchURI(), billSearchRequest);
-            BillResponse billResponse = mapper.convertValue(responseObj, BillResponse.class);
+            Object wageResponseObj = restRepo.fetchResult(getBillSearchURI(), wageSearchRequest);
+            BillResponse wageResponse = mapper.convertValue(wageResponseObj, BillResponse.class);
+            if (wageResponse != null && wageResponse.getBills() != null) {
+                allBills.addAll(wageResponse.getBills());
+            }
 
-            if (billResponse == null || billResponse.getBills() == null || billResponse.getBills().isEmpty()) {
+            // Search PAYMENTS.BILL bills (post-PAYMENTS transition: any status means report was already completed)
+            BillCriteria paymentsCriteria = BillCriteria.builder()
+                    .tenantId(tenantId)
+                    .referenceIds(Stream.of(projectId).collect(Collectors.toSet()))
+                    .businessService(PAYMENTS_BILL_BUSINESS_SERVICE)
+                    .build();
+
+            BillSearchRequest paymentsSearchRequest = BillSearchRequest.builder()
+                    .requestInfo(requestInfo)
+                    .billCriteria(paymentsCriteria)
+                    .pagination(Pagination.builder().limit(configs.getBillSearchMaxLimit()).offSet(0).build())
+                    .build();
+
+            Object paymentsResponseObj = restRepo.fetchResult(getBillSearchURI(), paymentsSearchRequest);
+            BillResponse paymentsResponse = mapper.convertValue(paymentsResponseObj, BillResponse.class);
+            if (paymentsResponse != null && paymentsResponse.getBills() != null) {
+                allBills.addAll(paymentsResponse.getBills());
+            }
+
+            if (allBills.isEmpty()) {
                 log.info("No bills found for project: {}", projectId);
                 return new ArrayList<>();
             }
@@ -287,7 +311,7 @@ public class BillUtils {
             // Extract period numbers from bills with completed reports
             List<Integer> completedPeriods = new ArrayList<>();
 
-            for (Bill bill : billResponse.getBills()) {
+            for (Bill bill : allBills) {
                 Integer periodNumber = extractCompletedPeriodNumber(bill);
                 if (periodNumber != null && !completedPeriods.contains(periodNumber)) {
                     completedPeriods.add(periodNumber);

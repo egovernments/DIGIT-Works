@@ -192,7 +192,7 @@ public class HealthBillReportGenerator {
             updateReportStatus(billRequest, REPORT_STATUS_COMPLETED, excelFileStoreId, pdfFileStoreId, null, eventName);
             Map<String, Object> additionalDetails = (Map<String, Object>) billRequest.getBill().getAdditionalDetails();
             Map<String, Object> reportDetails = (Map<String, Object>) additionalDetails.get("reportDetails");
-            if (reportDetails.get("status") == REPORT_STATUS_COMPLETED) {
+            if (REPORT_STATUS_COMPLETED.equals(reportDetails.get("status"))) {
                 updateBillBusinessService(billRequest);
             }
 

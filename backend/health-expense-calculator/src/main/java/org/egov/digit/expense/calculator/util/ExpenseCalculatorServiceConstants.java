@@ -99,4 +99,5 @@ public class ExpenseCalculatorServiceConstants {
     public static final String LOCALIZATION_MSGS_JSONPATH = "$.messages.*.message";
     public static final String WF_CREATE_ACTION_CONSTANT = "CREATE";
     public static final String PAYMENTS_BILL_BUSINESS_SERVICE = "PAYMENTS.BILL";
+    public static final String PAYMENTS_BILLDETAILS_BUSINESS_SERVICE = "PAYMENTS.BILLDETAILS";
 }
