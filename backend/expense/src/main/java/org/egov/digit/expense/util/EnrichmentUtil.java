@@ -384,4 +384,137 @@ public class EnrichmentUtil {
                     .lastModifiedTime(time)
                     .build();
     }
+
+    /**
+     * Merges each {@link org.egov.digit.expense.web.models.PartialBillDetail} in the request
+     * with its corresponding DB snapshot, applying full null protection.
+     * Immutable fields (id, tenantId, billId, referenceId) are always taken from DB.
+     *
+     * @return list of fully populated {@link BillDetail} objects ready for persistence
+     */
+    public List<BillDetail> enrichPartialBillDetails(
+            org.egov.digit.expense.web.models.BillDetailUpdateRequest request,
+            Bill billFromSearch,
+            String updatedBy) {
+
+        Map<String, BillDetail> dbDetailMap = billFromSearch.getBillDetails().stream()
+                .collect(Collectors.toMap(BillDetail::getId, Function.identity()));
+
+        List<BillDetail> mergedDetails = new ArrayList<>();
+        long now = System.currentTimeMillis();
+
+        for (org.egov.digit.expense.web.models.PartialBillDetail pd : request.getBillDetails()) {
+            BillDetail db = dbDetailMap.get(pd.getId());
+
+            AuditDetails updateAudit = AuditDetails.builder()
+                    .createdBy(db.getAuditDetails().getCreatedBy())
+                    .createdTime(db.getAuditDetails().getCreatedTime())
+                    .lastModifiedBy(updatedBy)
+                    .lastModifiedTime(now)
+                    .build();
+
+            BillDetail merged = BillDetail.builder()
+                    // Immutable fields — always from DB
+                    .id(db.getId())
+                    .tenantId(db.getTenantId())
+                    .billId(db.getBillId())
+                    .referenceId(db.getReferenceId())
+                    // Mutable fields — request value if non-null, else DB value
+                    .totalAmount(pd.getTotalAmount()         != null ? pd.getTotalAmount()         : db.getTotalAmount())
+                    .totalPaidAmount(pd.getTotalPaidAmount() != null ? pd.getTotalPaidAmount()     : db.getTotalPaidAmount())
+                    .paymentStatus(pd.getPaymentStatus()     != null ? pd.getPaymentStatus()       : db.getPaymentStatus())
+                    .status(pd.getStatus()                   != null ? pd.getStatus()              : db.getStatus())
+                    .fromPeriod(pd.getFromPeriod()           != null ? pd.getFromPeriod()          : db.getFromPeriod())
+                    .toPeriod(pd.getToPeriod()               != null ? pd.getToPeriod()            : db.getToPeriod())
+                    .workerId(pd.getWorkerId()               != null ? pd.getWorkerId()            : db.getWorkerId())
+                    .paymentProvider(pd.getPaymentProvider() != null ? pd.getPaymentProvider()     : db.getPaymentProvider())
+                    .payeeName(pd.getPayeeName()             != null ? pd.getPayeeName()           : db.getPayeeName())
+                    .payeePhoneNumber(pd.getPayeePhoneNumber() != null ? pd.getPayeePhoneNumber()  : db.getPayeePhoneNumber())
+                    .bankAccount(pd.getBankAccount()         != null ? pd.getBankAccount()         : db.getBankAccount())
+                    .bankCode(pd.getBankCode()               != null ? pd.getBankCode()            : db.getBankCode())
+                    .beneficiaryCode(pd.getBeneficiaryCode() != null ? pd.getBeneficiaryCode()     : db.getBeneficiaryCode())
+                    .additionalDetails(pd.getAdditionalDetails() != null ? pd.getAdditionalDetails() : db.getAdditionalDetails())
+                    .payee(mergePayee(pd.getPayee(), db.getPayee(), updatedBy, now))
+                    .lineItems(mergeLineItems(pd.getLineItems(), db.getLineItems(), updatedBy, now))
+                    .payableLineItems(mergeLineItems(pd.getPayableLineItems(), db.getPayableLineItems(), updatedBy, now))
+                    .auditDetails(updateAudit)
+                    .build();
+
+            mergedDetails.add(merged);
+        }
+        return mergedDetails;
+    }
+
+    /**
+     * Merges the request payee with the DB payee field-by-field.
+     * null request payee → DB payee used wholesale.
+     */
+    private Party mergePayee(Party pdPayee, Party dbPayee, String updatedBy, long now) {
+        if (pdPayee == null) return dbPayee;
+
+        AuditDetails payeeAudit = AuditDetails.builder()
+                .createdBy(dbPayee.getAuditDetails().getCreatedBy())
+                .createdTime(dbPayee.getAuditDetails().getCreatedTime())
+                .lastModifiedBy(updatedBy)
+                .lastModifiedTime(now)
+                .build();
+
+        return Party.builder()
+                .id(dbPayee.getId())          // always DB id
+                .parentId(dbPayee.getParentId()) // always DB parentId — linked to billDetail row
+                .tenantId(pdPayee.getTenantId()           != null ? pdPayee.getTenantId()           : dbPayee.getTenantId())
+                .type(pdPayee.getType()                   != null ? pdPayee.getType()               : dbPayee.getType())
+                .identifier(pdPayee.getIdentifier()       != null ? pdPayee.getIdentifier()         : dbPayee.getIdentifier())
+                .status(pdPayee.getStatus()               != null ? pdPayee.getStatus()             : dbPayee.getStatus())
+                .additionalDetails(pdPayee.getAdditionalDetails() != null
+                        ? pdPayee.getAdditionalDetails() : dbPayee.getAdditionalDetails())
+                .auditDetails(payeeAudit)
+                .build();
+    }
+
+    /**
+     * Merges request line items with DB line items.
+     * null list → preserve all DB items.
+     * empty list → no writes (persister skips empty arrays, DB rows untouched).
+     * non-empty list → field-by-field merge per item ID; null ID = new item.
+     */
+    private List<LineItem> mergeLineItems(List<LineItem> pdItems, List<LineItem> dbItems,
+                                          String updatedBy, long now) {
+        if (pdItems == null) return dbItems;
+        if (pdItems.isEmpty()) return pdItems;
+
+        Map<String, LineItem> dbMap = dbItems.stream()
+                .filter(li -> li.getId() != null)
+                .collect(Collectors.toMap(LineItem::getId, Function.identity()));
+
+        List<LineItem> merged = new ArrayList<>();
+        for (LineItem li : pdItems) {
+            if (li.getId() == null) {
+                // New line item
+                li.setId(UUID.randomUUID().toString());
+                li.setAuditDetails(getAuditDetails(updatedBy, true));
+            } else {
+                LineItem db = dbMap.get(li.getId());
+                if (db != null) {
+                    if (li.getHeadCode()          == null) li.setHeadCode(db.getHeadCode());
+                    if (li.getAmount()            == null) li.setAmount(db.getAmount());
+                    if (li.getPaidAmount()        == null) li.setPaidAmount(db.getPaidAmount());
+                    if (li.getType()              == null) li.setType(db.getType());
+                    if (li.getStatus()            == null) li.setStatus(db.getStatus());
+                    if (li.getPaymentStatus()     == null) li.setPaymentStatus(db.getPaymentStatus());
+                    if (li.getTenantId()          == null) li.setTenantId(db.getTenantId());
+                    if (li.getBillDetailId()      == null) li.setBillDetailId(db.getBillDetailId());
+                    if (li.getAdditionalDetails() == null) li.setAdditionalDetails(db.getAdditionalDetails());
+                    li.setAuditDetails(AuditDetails.builder()
+                            .createdBy(db.getAuditDetails().getCreatedBy())
+                            .createdTime(db.getAuditDetails().getCreatedTime())
+                            .lastModifiedBy(updatedBy)
+                            .lastModifiedTime(now)
+                            .build());
+                }
+            }
+            merged.add(li);
+        }
+        return merged;
+    }
 }

@@ -61,4 +61,11 @@ public class BillController {
 		BulkBillStatusUpdateResponse response = service.bulkUpdateStatus(bulkRequest);
 		return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 	}
+
+	@PostMapping(value = "billdetails/_update")
+	public ResponseEntity<BillDetailUpdateResponse> partialUpdateBillDetails(
+			@Valid @RequestBody BillDetailUpdateRequest request) {
+		BillDetailUpdateResponse response = service.partialUpdateBillDetails(request);
+		return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+	}
 }

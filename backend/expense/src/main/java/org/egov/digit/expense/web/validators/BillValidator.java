@@ -857,4 +857,76 @@ public class BillValidator {
 
 		return billRepository.search(searchRequest, true);
 	}
+
+	/**
+	 * Validates a partial bill detail update request.
+	 * Checks: bill existence, all detail IDs belong to the bill, payment field guards.
+	 *
+	 * @return the bill fetched from DB (used downstream for enrichment)
+	 */
+	public Bill validateBillDetailUpdateRequest(org.egov.digit.expense.web.models.BillDetailUpdateRequest request) {
+
+		// 1. Fetch bill from DB
+		Bill billFromSearch = getBillById(request.getBillId(), request.getTenantId(), request.getRequestInfo());
+		if (billFromSearch == null)
+			throw new CustomException("EG_EXPENSE_INVALID_BILL",
+					"Bill not found: id=" + request.getBillId() + " tenantId=" + request.getTenantId());
+
+		// 2. Validate all requested detail IDs exist under this bill
+		Map<String, BillDetail> searchDetailMap = billFromSearch.getBillDetails().stream()
+				.collect(Collectors.toMap(BillDetail::getId, Function.identity()));
+
+		List<String> invalidIds = request.getBillDetails().stream()
+				.map(org.egov.digit.expense.web.models.PartialBillDetail::getId)
+				.filter(id -> !searchDetailMap.containsKey(id))
+				.collect(Collectors.toList());
+
+		if (!invalidIds.isEmpty())
+			throw new CustomException("EG_EXPENSE_INVALID_BILL_DETAIL_IDS",
+					"BillDetail ids not found under bill " + request.getBillId() + ": " + invalidIds);
+
+		// 3. Payment field guard — construct synthetic bill and reuse existing method
+		List<BillDetail> syntheticDetails = request.getBillDetails().stream()
+				.map(pd -> {
+					BillDetail db = searchDetailMap.get(pd.getId());
+					Status effectiveStatus = pd.getStatus() != null ? pd.getStatus() : db.getStatus();
+					return BillDetail.builder()
+							.id(pd.getId())
+							.status(effectiveStatus)
+							.workerId(pd.getWorkerId())
+							.paymentProvider(pd.getPaymentProvider())
+							.payeeName(pd.getPayeeName())
+							.payeePhoneNumber(pd.getPayeePhoneNumber())
+							.bankAccount(pd.getBankAccount())
+							.bankCode(pd.getBankCode())
+							.beneficiaryCode(pd.getBeneficiaryCode())
+							.payee(db.getPayee())
+							.payableLineItems(db.getPayableLineItems())
+							.build();
+				})
+				.collect(Collectors.toList());
+
+		Bill syntheticBill = Bill.builder()
+				.id(billFromSearch.getId())
+				.tenantId(billFromSearch.getTenantId())
+				.status(billFromSearch.getStatus())
+				.billDetails(syntheticDetails)
+				.build();
+
+		validatePaymentFieldUpdate(syntheticBill, billFromSearch);
+
+		return billFromSearch;
+	}
+
+	private Bill getBillById(String billId, String tenantId, org.egov.common.contract.request.RequestInfo requestInfo) {
+		BillSearchRequest searchRequest = BillSearchRequest.builder()
+				.requestInfo(requestInfo)
+				.billCriteria(BillCriteria.builder()
+						.ids(new HashSet<>(List.of(billId)))
+						.tenantId(tenantId)
+						.build())
+				.build();
+		List<Bill> results = billRepository.search(searchRequest, true);
+		return results.isEmpty() ? null : results.get(0);
+	}
 }

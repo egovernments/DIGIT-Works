@@ -433,4 +433,51 @@ public class BillService {
 
 		expenseProducer.push(tenantId, config.getBillUpdateTopic(), billRequest);
 	}
+
+	/**
+	 * Partially updates one or more bill details under a single bill.
+	 * Only the fields provided in each {@link PartialBillDetail} are updated;
+	 * null fields are preserved from the database.
+	 * Immutable fields (id, tenantId, billId, referenceId) are always taken from DB.
+	 */
+	public BillDetailUpdateResponse partialUpdateBillDetails(BillDetailUpdateRequest request) {
+		RequestInfo requestInfo = request.getRequestInfo();
+		String tenantId = request.getTenantId();
+		String updatedBy = requestInfo.getUserInfo().getUuid();
+
+		// 1. Validate — fails fast on invalid bill ID or detail IDs
+		Bill billFromSearch = validator.validateBillDetailUpdateRequest(request);
+
+		// 2. Enrich — applies full null protection, returns only the requested details (merged)
+		List<BillDetail> mergedDetails = enrichmentUtil.enrichPartialBillDetails(request, billFromSearch, updatedBy);
+
+		// 3. Rebuild full bill for Kafka: replace only the updated details in the DB snapshot;
+		//    non-requested details are passed through unchanged to avoid clobbering the bill header.
+		Map<String, BillDetail> mergedMap = mergedDetails.stream()
+				.collect(Collectors.toMap(BillDetail::getId, Function.identity()));
+
+		List<BillDetail> allDetails = billFromSearch.getBillDetails().stream()
+				.map(db -> mergedMap.getOrDefault(db.getId(), db))
+				.collect(Collectors.toList());
+
+		billFromSearch.setBillDetails(allDetails);
+
+		// 4. Push to the existing bill update topic — no persister changes required
+		BillRequest billRequest = BillRequest.builder()
+				.requestInfo(requestInfo)
+				.bill(billFromSearch)
+				.build();
+
+		if (config.isBillBreakdownEnabled() && allDetails.size() > config.getBillBreakdownSize()) {
+			produceBillsBatchWise(billRequest, config.getBillUpdateTopic());
+		} else {
+			expenseProducer.push(tenantId, config.getBillUpdateTopic(), billRequest);
+		}
+
+		return BillDetailUpdateResponse.builder()
+				.billDetails(mergedDetails)
+				.errors(Collections.emptyList())
+				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true))
+				.build();
+	}
 }
