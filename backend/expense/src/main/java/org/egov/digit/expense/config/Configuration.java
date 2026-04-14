@@ -277,6 +277,10 @@ public class Configuration {
 	@Value("${expense.bill.transaction.report.update}")
 	private String billTransactionReportUpdateTopic;
 
+	// Report Regeneration Trigger — published on bill updates for health-expense-calculator
+	@Value("${report.generation.trigger.topic}")
+	private String reportRegenerationTriggerTopic;
+
 	// Generic Scheduler Configuration
 	@Value("${task.scheduler.batch.size:100}")
 	private int schedulerBatchSize;

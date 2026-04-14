@@ -1,5 +1,6 @@
 package org.egov.digit.expense.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
@@ -49,8 +50,10 @@ public class BillService {
 
 	private final PaymentWorkflowService paymentWorkflowService;
 
+	private final ObjectMapper objectMapper;
+
 	@Autowired
-	public BillService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator, WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, NotificationService notificationService, CalculatorUtil calculatorUtil, PaymentWorkflowService paymentWorkflowService) {
+	public BillService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator, WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, NotificationService notificationService, CalculatorUtil calculatorUtil, PaymentWorkflowService paymentWorkflowService, ObjectMapper objectMapper) {
 		this.expenseProducer = expenseProducer;
 		this.config = config;
 		this.validator = validator;
@@ -61,6 +64,7 @@ public class BillService {
 		this.notificationService = notificationService;
 		this.calculatorUtil = calculatorUtil;
 		this.paymentWorkflowService = paymentWorkflowService;
+		this.objectMapper = objectMapper;
     }
 
 	/**
@@ -130,6 +134,15 @@ public class BillService {
 
 		List<Bill> billsFromSearch = validator.validateUpdateRequest(billRequest);
 		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
+
+		// Detect system update flag set by health-expense-calculator after report generation.
+		// If present, remove it before persistence and skip the report regeneration trigger (cycle prevention).
+		boolean isSystemUpdate = isSystemUpdate(bill);
+		if (isSystemUpdate) {
+			removeSystemUpdateFlag(bill);
+			log.info("System update detected for billId: {} — skipping report regeneration trigger", bill.getId());
+		}
+
 		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
 
 			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
@@ -150,11 +163,15 @@ public class BillService {
 			expenseProducer.push(tenantId, config.getBillUpdateTopic(), billRequest);
 		}
 
+		if (!isSystemUpdate) {
+			pushReportRegenerationTrigger(bill, requestInfo);
+		}
+
 		response = BillResponse.builder()
 				.bills(Arrays.asList(billRequest.getBill()))
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo,true))
 				.build();
-		
+
 		return response;
 	}
 	
@@ -226,6 +243,56 @@ public class BillService {
 		}
 		bill.setBillDetails(allBillDetails);
 		log.info("All bill details pushed to kafka");
+	}
+
+	/**
+	 * Returns true if this bill update was made by the health-expense-calculator
+	 * after report generation. The calculator sets _systemUpdate=true to signal
+	 * that report regeneration must NOT be re-triggered (cycle prevention).
+	 */
+	private boolean isSystemUpdate(Bill bill) {
+		if (bill.getAdditionalDetails() == null) return false;
+		try {
+			Map<?, ?> ad = objectMapper.convertValue(bill.getAdditionalDetails(), Map.class);
+			return Boolean.TRUE.equals(ad.get("_systemUpdate"));
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Removes the _systemUpdate flag from additionalDetails so it is never persisted to DB.
+	 */
+	private void removeSystemUpdateFlag(Bill bill) {
+		if (bill.getAdditionalDetails() == null) return;
+		try {
+			Map<String, Object> ad = objectMapper.convertValue(
+					bill.getAdditionalDetails(),
+					objectMapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class));
+			ad.remove("_systemUpdate");
+			bill.setAdditionalDetails(ad);
+		} catch (Exception e) {
+			log.warn("Failed to remove _systemUpdate flag from bill {}: {}", bill.getId(), e.getMessage());
+		}
+	}
+
+	/**
+	 * Publishes a report regeneration trigger to health-expense-calculator.
+	 * forceRegenerate=true bypasses the calculator's Redis dedup cache so the report is refreshed.
+	 */
+	private void pushReportRegenerationTrigger(Bill bill, RequestInfo requestInfo) {
+		int detailCount = (bill.getBillDetails() != null) ? bill.getBillDetails().size() : 0;
+		ReportRegenerationTrigger trigger = ReportRegenerationTrigger.builder()
+				.requestInfo(requestInfo)
+				.billId(bill.getId())
+				.tenantId(bill.getTenantId())
+				.createdTime(System.currentTimeMillis())
+				.numberOfBillDetails(detailCount)
+				.forceRegenerate(true)
+				.build();
+		expenseProducer.push(bill.getTenantId(), config.getReportRegenerationTriggerTopic(), trigger);
+		log.info("Pushed report regeneration trigger for billId: {}, billDetails: {}",
+				bill.getId(), detailCount);
 	}
 
 	public BillResponse searchCalculatedBills(BillSearchRequest billSearchRequest, boolean isWfEncrichRequired) {
@@ -324,6 +391,13 @@ public class BillService {
 		List<Bill> billsFromSearch = validator.validateUpdateRequest(billRequest);
 		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
 
+		// Detect and remove system update flag before persistence (cycle prevention)
+		boolean isSystemUpdate = isSystemUpdate(bill);
+		if (isSystemUpdate) {
+			removeSystemUpdateFlag(bill);
+			log.info("System update detected for billId: {} — skipping report regeneration trigger", bill.getId());
+		}
+
 		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
 			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
 			bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
@@ -341,6 +415,10 @@ public class BillService {
 			produceBillsBatchWise(billRequest, config.getBillUpdateTopic());
 		} else {
 			expenseProducer.push(tenantId, config.getBillUpdateTopic(), billRequest);
+		}
+
+		if (!isSystemUpdate) {
+			pushReportRegenerationTrigger(bill, requestInfo);
 		}
 
 		return bill;
@@ -473,6 +551,9 @@ public class BillService {
 		} else {
 			expenseProducer.push(tenantId, config.getBillUpdateTopic(), billRequest);
 		}
+
+		// Always trigger report regeneration — health-expense-calculator never calls this endpoint
+		pushReportRegenerationTrigger(billFromSearch, requestInfo);
 
 		return BillDetailUpdateResponse.builder()
 				.billDetails(mergedDetails)
