@@ -118,6 +118,7 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 					.bankAccount(rs.getString("bd_bankaccount"))
 					.bankCode(rs.getString("bd_bankcode"))
 					.beneficiaryCode(rs.getString("bd_beneficiarycode"))
+					.totalAttendance(rs.getBigDecimal("bd_totalattendance"))
 					.billId(rs.getString("billid"))
 					.auditDetails(bDAuditDetails)
 					.payableLineItems(new ArrayList<>())

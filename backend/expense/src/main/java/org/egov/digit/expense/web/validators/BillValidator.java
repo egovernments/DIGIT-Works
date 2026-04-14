@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.egov.common.contract.models.Workflow;
+import org.egov.common.contract.request.Role;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.repository.BillRepository;
@@ -885,37 +886,142 @@ public class BillValidator {
 			throw new CustomException("EG_EXPENSE_INVALID_BILL_DETAIL_IDS",
 					"BillDetail ids not found under bill " + request.getBillId() + ": " + invalidIds);
 
-		// 3. Payment field guard — construct synthetic bill and reuse existing method
-		List<BillDetail> syntheticDetails = request.getBillDetails().stream()
-				.map(pd -> {
-					BillDetail db = searchDetailMap.get(pd.getId());
-					Status effectiveStatus = pd.getStatus() != null ? pd.getStatus() : db.getStatus();
-					return BillDetail.builder()
-							.id(pd.getId())
-							.status(effectiveStatus)
-							.workerId(pd.getWorkerId())
-							.paymentProvider(pd.getPaymentProvider())
-							.payeeName(pd.getPayeeName())
-							.payeePhoneNumber(pd.getPayeePhoneNumber())
-							.bankAccount(pd.getBankAccount())
-							.bankCode(pd.getBankCode())
-							.beneficiaryCode(pd.getBeneficiaryCode())
-							.payee(db.getPayee())
-							.payableLineItems(db.getPayableLineItems())
-							.build();
-				})
-				.collect(Collectors.toList());
-
-		Bill syntheticBill = Bill.builder()
-				.id(billFromSearch.getId())
-				.tenantId(billFromSearch.getTenantId())
-				.status(billFromSearch.getStatus())
-				.billDetails(syntheticDetails)
-				.build();
-
-		validatePaymentFieldUpdate(syntheticBill, billFromSearch);
+		// 3. Role-based field access control
+		validateRoleAndFieldAccess(request, billFromSearch, searchDetailMap);
 
 		return billFromSearch;
+	}
+
+	/**
+	 * Enforces role-based access control for billdetails/_update.
+	 *
+	 * PAYMENT_EDITOR: bill must be PENDING_VERIFICATION or PARTIALLY_VERIFIED;
+	 *   all requested detail statuses must be PENDING_VERIFICATION or VERIFICATION_FAILED.
+	 *   May update user/payment fields only — amount, lineItems and totalAttendance are blocked.
+	 *
+	 * PAYMENT_REVIEWER: bill must be UNDER_REVIEW;
+	 *   all requested detail statuses must be UNDER_REVIEW.
+	 *   May update amount, lineItems and totalAttendance only — user/payment fields are blocked.
+	 */
+	private void validateRoleAndFieldAccess(
+			org.egov.digit.expense.web.models.BillDetailUpdateRequest request,
+			Bill billFromSearch,
+			Map<String, BillDetail> searchDetailMap) {
+
+		List<org.egov.common.contract.request.Role> rawRoles = request.getRequestInfo().getUserInfo().getRoles();
+		Set<String> userRoles = (rawRoles != null ? rawRoles.stream() : java.util.stream.Stream.<org.egov.common.contract.request.Role>empty())
+				.filter(r -> r != null && r.getCode() != null)
+				.map(Role::getCode)
+				.collect(Collectors.toSet());
+
+		boolean hasPaymentEditor   = userRoles.contains("PAYMENT_EDITOR");
+		boolean hasPaymentReviewer = userRoles.contains("PAYMENT_REVIEWER");
+
+		if (!hasPaymentEditor && !hasPaymentReviewer)
+			throw new CustomException("EG_EXPENSE_UNAUTHORIZED",
+					"User does not have PAYMENT_EDITOR or PAYMENT_REVIEWER role to update bill details");
+
+		String billStatus = billFromSearch.getStatus() != null ? billFromSearch.getStatus().toString() : "";
+
+		boolean editorStatusMatch   = "PENDING_VERIFICATION".equals(billStatus) || "PARTIALLY_VERIFIED".equals(billStatus);
+		boolean reviewerStatusMatch = "UNDER_REVIEW".equals(billStatus);
+
+		if (hasPaymentEditor && editorStatusMatch) {
+			// Validate all requested detail statuses
+			Set<String> allowedDetailStatuses = Set.of("PENDING_VERIFICATION", "VERIFICATION_FAILED");
+			for (org.egov.digit.expense.web.models.PartialBillDetail pd : request.getBillDetails()) {
+				BillDetail db = searchDetailMap.get(pd.getId());
+				String detailStatus = db.getStatus() != null ? db.getStatus().toString() : null;
+				if (detailStatus != null && !allowedDetailStatuses.contains(detailStatus))
+					throw new CustomException("EG_EXPENSE_ROLE_STATUS_MISMATCH",
+							"PAYMENT_EDITOR cannot update bill detail " + pd.getId()
+							+ " — detail status must be PENDING_VERIFICATION or VERIFICATION_FAILED. Current: " + detailStatus);
+			}
+			// Validate blocked fields — amount, lineItems, totalAttendance must not change
+			for (org.egov.digit.expense.web.models.PartialBillDetail pd : request.getBillDetails()) {
+				BillDetail db = searchDetailMap.get(pd.getId());
+				if (hasAmountOrAttendanceFieldChanges(pd, db))
+					throw new CustomException("EG_EXPENSE_FIELD_UPDATE_NOT_ALLOWED",
+							"PAYMENT_EDITOR cannot update amount, lineItems or totalAttendance on bill detail " + pd.getId());
+			}
+			return;
+		}
+
+		if (hasPaymentReviewer && reviewerStatusMatch) {
+			// Validate all requested detail statuses
+			for (org.egov.digit.expense.web.models.PartialBillDetail pd : request.getBillDetails()) {
+				BillDetail db = searchDetailMap.get(pd.getId());
+				String detailStatus = db.getStatus() != null ? db.getStatus().toString() : null;
+				if (!"UNDER_REVIEW".equals(detailStatus))
+					throw new CustomException("EG_EXPENSE_ROLE_STATUS_MISMATCH",
+							"PAYMENT_REVIEWER cannot update bill detail " + pd.getId()
+							+ " — detail status must be UNDER_REVIEW. Current: " + detailStatus);
+			}
+			// Validate blocked fields — user/payment fields must not change
+			for (org.egov.digit.expense.web.models.PartialBillDetail pd : request.getBillDetails()) {
+				BillDetail db = searchDetailMap.get(pd.getId());
+				if (hasUserOrPaymentFieldChanges(pd, db))
+					throw new CustomException("EG_EXPENSE_FIELD_UPDATE_NOT_ALLOWED",
+							"PAYMENT_REVIEWER cannot update user or payment fields on bill detail " + pd.getId());
+			}
+			return;
+		}
+
+		// Role present but bill status does not match any allowed path
+		String displayStatus = billFromSearch.getStatus() != null ? billFromSearch.getStatus().toString() : "null";
+		throw new CustomException("EG_EXPENSE_ROLE_STATUS_MISMATCH",
+				"Bill status '" + displayStatus + "' does not permit update by the current user's role(s). "
+				+ "PAYMENT_EDITOR requires PENDING_VERIFICATION or PARTIALLY_VERIFIED; "
+				+ "PAYMENT_REVIEWER requires UNDER_REVIEW.");
+	}
+
+	/**
+	 * Returns true if the partial update attempts to change amount, lineItems or totalAttendance
+	 * (fields blocked for PAYMENT_EDITOR).
+	 */
+	private boolean hasAmountOrAttendanceFieldChanges(
+			org.egov.digit.expense.web.models.PartialBillDetail pd, BillDetail db) {
+		if (pd.getTotalAmount() != null) {
+			BigDecimal dbAmount = db.getTotalAmount() != null ? db.getTotalAmount() : BigDecimal.ZERO;
+			if (pd.getTotalAmount().compareTo(dbAmount) != 0) return true;
+		}
+		if (pd.getTotalPaidAmount() != null) {
+			BigDecimal dbPaid = db.getTotalPaidAmount() != null ? db.getTotalPaidAmount() : BigDecimal.ZERO;
+			if (pd.getTotalPaidAmount().compareTo(dbPaid) != 0) return true;
+		}
+		if (pd.getTotalAttendance() != null
+				&& (db.getTotalAttendance() == null || pd.getTotalAttendance().compareTo(db.getTotalAttendance()) != 0))
+			return true;
+		if (pd.getLineItems() != null && !pd.getLineItems().isEmpty())
+			return true;
+		if (pd.getPayableLineItems() != null && !pd.getPayableLineItems().isEmpty())
+			return true;
+		return false;
+	}
+
+	/**
+	 * Returns true if the partial update attempts to change user identity or payment routing fields
+	 * (fields blocked for PAYMENT_REVIEWER).
+	 */
+	private boolean hasUserOrPaymentFieldChanges(
+			org.egov.digit.expense.web.models.PartialBillDetail pd, BillDetail db) {
+		if (pd.getWorkerId() != null && !pd.getWorkerId().equals(db.getWorkerId()))
+			return true;
+		if (pd.getPaymentProvider() != null && !pd.getPaymentProvider().equals(db.getPaymentProvider()))
+			return true;
+		if (pd.getPayeeName() != null && !pd.getPayeeName().equals(db.getPayeeName()))
+			return true;
+		if (pd.getPayeePhoneNumber() != null && !pd.getPayeePhoneNumber().equals(db.getPayeePhoneNumber()))
+			return true;
+		if (pd.getBankAccount() != null && !pd.getBankAccount().equals(db.getBankAccount()))
+			return true;
+		if (pd.getBankCode() != null && !pd.getBankCode().equals(db.getBankCode()))
+			return true;
+		if (pd.getBeneficiaryCode() != null && !pd.getBeneficiaryCode().equals(db.getBeneficiaryCode()))
+			return true;
+		if (pd.getPayee() != null)
+			return true;
+		return false;
 	}
 
 	private Bill getBillById(String billId, String tenantId, org.egov.common.contract.request.RequestInfo requestInfo) {

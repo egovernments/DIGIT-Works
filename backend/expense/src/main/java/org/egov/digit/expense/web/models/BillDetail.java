@@ -127,6 +127,10 @@ public class BillDetail {
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails;
 
+	@JsonProperty("totalAttendance")
+	@Valid
+	private BigDecimal totalAttendance;
+
 	@JsonProperty("wfStatus")
 	@Size(min = 2, max = 64)
 	private String wfStatus;

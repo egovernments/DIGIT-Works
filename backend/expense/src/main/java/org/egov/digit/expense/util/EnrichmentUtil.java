@@ -433,6 +433,7 @@ public class EnrichmentUtil {
                     .bankAccount(pd.getBankAccount()         != null ? pd.getBankAccount()         : db.getBankAccount())
                     .bankCode(pd.getBankCode()               != null ? pd.getBankCode()            : db.getBankCode())
                     .beneficiaryCode(pd.getBeneficiaryCode() != null ? pd.getBeneficiaryCode()     : db.getBeneficiaryCode())
+                    .totalAttendance(pd.getTotalAttendance()  != null ? pd.getTotalAttendance()     : db.getTotalAttendance())
                     .additionalDetails(pd.getAdditionalDetails() != null ? pd.getAdditionalDetails() : db.getAdditionalDetails())
                     .payee(mergePayee(pd.getPayee(), db.getPayee(), updatedBy, now))
                     .lineItems(mergeLineItems(pd.getLineItems(), db.getLineItems(), updatedBy, now))

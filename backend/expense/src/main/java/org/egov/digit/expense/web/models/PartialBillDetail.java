@@ -99,6 +99,10 @@ public class PartialBillDetail {
     @Valid
     private List<LineItem> payableLineItems;
 
+    @JsonProperty("totalAttendance")
+    @Valid
+    private BigDecimal totalAttendance;
+
     @JsonProperty("additionalDetails")
     private Object additionalDetails;
 }

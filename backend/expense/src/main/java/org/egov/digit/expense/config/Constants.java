@@ -164,6 +164,7 @@ public class Constants {
 			+ " bd.toperiod as bd_toperiod, bd.workerid as bd_workerid, bd.paymentprovider as bd_paymentprovider, "
 			+ " bd.payeename as bd_payeename, bd.payeephonenumber as bd_payeephonenumber, "
 			+ " bd.bankaccount as bd_bankaccount, bd.bankcode as bd_bankcode, bd.beneficiarycode as bd_beneficiarycode, "
+			+ " bd.totalattendance as bd_totalattendance, "
 			+ " bd.createdby as bd_createdby, bd.createdtime as bd_createdtime, bd.lastmodifiedby as bd_lastmodifiedby,"
 			+ " bd.lastmodifiedtime as bd_lastmodifiedtime, bd.additionaldetails as bd_additionaldetails,"
 			
