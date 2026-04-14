@@ -882,6 +882,10 @@ public class HealthBillReportGenerator {
             additionalDetailsMap = new HashMap<>();
         }
 
+        // Mark as system update so expense service does not re-trigger report generation (cycle prevention).
+        // The expense service removes this flag before persisting — it is never stored in DB.
+        additionalDetailsMap.put("_systemUpdate", true);
+
         // Create reportDetails object
         Map<String, Object> reportDetails = new HashMap<>();
         reportDetails.put(REPORT_STATUS_KEY, status);

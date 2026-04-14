@@ -149,6 +149,12 @@ public class ExpenseCalculatorConsumer {
 				BillRequest request = BillRequest.builder().requestInfo(trigger.getRequestInfo()).bill(bill).build();
 				log.info("Bill exists and validated for bill id: {} (V2: {}), tenantId: {}", bill.getId(), isV2Bill, bill.getTenantId());
 
+				// If force regeneration requested (bill was updated), evict cache to allow re-processing
+				if (Boolean.TRUE.equals(trigger.getForceRegenerate())) {
+					log.info("Force regeneration requested for billId: {} — evicting Redis cache", bill.getId());
+					redisService.evict(bill.getId());
+				}
+
 				// Atomic operation to prevent concurrent duplicate processing
 				if (!redisService.setCacheIfAbsent(bill.getId())) {
 					log.info("Bill {} already in cache, skipping report generation to prevent duplicate", bill.getId());

@@ -50,6 +50,19 @@ public class RedisService {
         }
     }
 
+    /**
+     * Evicts the cache for a bill report, allowing it to be regenerated.
+     * Non-fatal: if eviction fails, the worst case is a duplicate report generation.
+     */
+    public void evict(String id) {
+        try {
+            redisTemplate.delete(getReportRedisKey(id));
+            log.info("Evicted Redis cache for bill id: {}", id);
+        } catch (Exception e) {
+            log.warn("Failed to evict Redis cache for bill id: {}. Error: {}", id, e.getMessage());
+        }
+    }
+
     private String getReportRedisKey(String id) {
         return REPORT_BILL_GEN_REDIS_KEY.replace("{billId}", id);
     }

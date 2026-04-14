@@ -47,4 +47,9 @@ public class ReportGenerationTrigger {
     /** Count of bill details associated with this report */
     private Integer numberOfBillDetails;
 
+    @JsonProperty("forceRegenerate")
+    @Builder.Default
+    /** When true, bypasses Redis cache to force report regeneration (used on bill updates) */
+    private Boolean forceRegenerate = false;
+
 }
