@@ -5,6 +5,7 @@ import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.workflow.State;
 import org.egov.digit.expense.config.Configuration;
+import org.egov.digit.expense.kafka.ExpenseProducer;
 import org.egov.digit.expense.repository.BillRepository;
 import org.egov.digit.expense.repository.SchedulerJobRepository;
 import org.egov.digit.expense.service.scheduler.SchedulerJobRegistry;
@@ -45,18 +46,21 @@ public class PaymentWorkflowService {
     private final SchedulerJobRepository schedulerJobRepository;
     private final SchedulerJobRegistry schedulerJobRegistry;
     private final Configuration config;
+    private final ExpenseProducer expenseProducer;
 
     @Autowired
     public PaymentWorkflowService(WorkflowUtil workflowUtil,
                                    BillRepository billRepository,
                                    SchedulerJobRepository schedulerJobRepository,
                                    SchedulerJobRegistry schedulerJobRegistry,
-                                   Configuration config) {
+                                   Configuration config,
+                                   ExpenseProducer expenseProducer) {
         this.workflowUtil = workflowUtil;
         this.billRepository = billRepository;
         this.schedulerJobRepository = schedulerJobRepository;
         this.schedulerJobRegistry = schedulerJobRegistry;
         this.config = config;
+        this.expenseProducer = expenseProducer;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -118,6 +122,9 @@ public class PaymentWorkflowService {
             }
         }
 
+        // Persist updated bill + detail statuses to DB via Kafka
+        pushBillUpdate(bill, requestInfo);
+
         insertBillStatusPollJob(bill, "VERIFICATION", requestInfo);
     }
 
@@ -154,6 +161,9 @@ public class PaymentWorkflowService {
             }
         }
 
+        // Persist updated bill + detail statuses to DB via Kafka
+        pushBillUpdate(bill, requestInfo);
+
         insertBillStatusPollJob(bill, "IGNORE_ERRORS", requestInfo);
     }
 
@@ -183,6 +193,9 @@ public class PaymentWorkflowService {
             }
         }
 
+        // Persist updated bill + detail statuses to DB via Kafka
+        pushBillUpdate(bill, requestInfo);
+
         insertBillStatusPollJob(bill, "SEND_FOR_REVIEW", requestInfo);
     }
 
@@ -211,6 +224,9 @@ public class PaymentWorkflowService {
                 transitionBillDetail(detail, Actions.SEND_FOR_APPROVAL, requestInfo);
             }
         }
+
+        // Persist updated bill + detail statuses to DB via Kafka
+        pushBillUpdate(bill, requestInfo);
 
         // Store reviewer's RequestInfo so the poll job uses the correct auth context
         insertBillStatusPollJob(bill, "REVIEW", requestInfo);
@@ -242,6 +258,9 @@ public class PaymentWorkflowService {
                 transitionBillDetail(detail, Actions.PAYMENT_INITIATION, requestInfo);
             }
         }
+
+        // Persist updated bill + detail statuses to DB via Kafka
+        pushBillUpdate(bill, requestInfo);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -268,6 +287,9 @@ public class PaymentWorkflowService {
                 transitionBillDetail(detail, Actions.PAYMENT_INITIATION, requestInfo);
             }
         }
+
+        // Persist updated bill + detail statuses to DB via Kafka
+        pushBillUpdate(bill, requestInfo);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -337,6 +359,19 @@ public class PaymentWorkflowService {
         throw new CustomException("INVALID_BILL_STATE",
                 "Bill " + bill.getId() + " is in state " + bill.getStatus()
                         + " — expected one of: " + java.util.Arrays.toString(allowedStates));
+    }
+
+    /**
+     * Pushes the full bill (with updated in-memory statuses) to the Kafka bill-update topic
+     * so the persister writes the new status values to eg_expense_bill / eg_expense_billdetail.
+     */
+    public void pushBillUpdate(Bill bill, RequestInfo requestInfo) {
+        BillRequest billRequest = BillRequest.builder()
+                .requestInfo(requestInfo)
+                .bill(bill)
+                .build();
+        expenseProducer.push(bill.getTenantId(), config.getBillUpdateTopic(), billRequest);
+        log.info("Pushed bill update to Kafka for bill id={} status={}", bill.getId(), bill.getStatus());
     }
 
     /** Inserts a BILL_STATUS_POLL scheduler job for the given bill and phase. */

@@ -16,6 +16,7 @@ import org.egov.digit.expense.util.EnrichmentUtil;
 import org.egov.digit.expense.util.ResponseInfoFactory;
 import org.egov.digit.expense.util.WorkflowUtil;
 import org.egov.digit.expense.web.models.*;
+import org.egov.digit.expense.web.models.enums.Actions;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.digit.expense.web.validators.BillValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -380,6 +381,45 @@ public class BillService {
 	}
 
 	private Bill updateBill(Bill bill, org.egov.common.contract.models.Workflow workflow, RequestInfo requestInfo) {
+		// --- Payment workflow phase dispatch ---
+		String action = workflow != null ? workflow.getAction() : null;
+		if (action != null) {
+			BillRequest br = BillRequest.builder()
+					.requestInfo(requestInfo).bill(bill).workflow(workflow).build();
+			if (Actions.VERIFY.toString().equals(action)) {
+				Bill freshBill = paymentWorkflowService.fetchBillWithDetails(bill.getId(), bill.getTenantId(), requestInfo);
+				br.setBill(freshBill);
+				paymentWorkflowService.verifyBill(br);
+				return freshBill;
+			} else if (Actions.IGNORE_ERRORS_AND_VERIFY.toString().equals(action)) {
+				Bill freshBill = paymentWorkflowService.fetchBillWithDetails(bill.getId(), bill.getTenantId(), requestInfo);
+				br.setBill(freshBill);
+				paymentWorkflowService.ignoreErrorsAndVerify(br);
+				return freshBill;
+			} else if (Actions.SEND_FOR_REVIEW.toString().equals(action)) {
+				Bill freshBill = paymentWorkflowService.fetchBillWithDetails(bill.getId(), bill.getTenantId(), requestInfo);
+				br.setBill(freshBill);
+				paymentWorkflowService.sendForReview(br);
+				return freshBill;
+			} else if (Actions.SEND_FOR_APPROVAL.toString().equals(action)) {
+				Bill freshBill = paymentWorkflowService.fetchBillWithDetails(bill.getId(), bill.getTenantId(), requestInfo);
+				br.setBill(freshBill);
+				paymentWorkflowService.sendForApproval(br);
+				return freshBill;
+			} else if (Actions.PAYMENT_INITIATION.toString().equals(action)) {
+				Bill freshBill = paymentWorkflowService.fetchBillWithDetails(bill.getId(), bill.getTenantId(), requestInfo);
+				br.setBill(freshBill);
+				paymentWorkflowService.initiatePayment(br);
+				return freshBill;
+			} else if (Actions.RETRY_PAYMENT.toString().equals(action)) {
+				Bill freshBill = paymentWorkflowService.fetchBillWithDetails(bill.getId(), bill.getTenantId(), requestInfo);
+				br.setBill(freshBill);
+				paymentWorkflowService.retryPayment(br);
+				return freshBill;
+			}
+		}
+		// Non-payment actions fall through to generic WF + Kafka path below
+
 		String tenantId = bill.getTenantId();
 
 		BillRequest billRequest = BillRequest.builder()

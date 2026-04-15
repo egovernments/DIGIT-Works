@@ -104,6 +104,8 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
         } else {
             paymentWorkflowService.transitionBill(bill, Actions.FAILED, requestInfo);
         }
+        // Persist updated bill status to DB via Kafka
+        paymentWorkflowService.pushBillUpdate(bill, requestInfo);
         return SchedulerJobResult.DONE;
     }
 
@@ -121,6 +123,8 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
 
         if (allVerified) {
             paymentWorkflowService.transitionBill(bill, Actions.COMPLETE, requestInfo);
+            // Persist updated bill status to DB via Kafka
+            paymentWorkflowService.pushBillUpdate(bill, requestInfo);
             return SchedulerJobResult.DONE;
         }
         log.debug("Bill {} IGNORE_ERRORS: not all details VERIFIED yet — retrying", bill.getId());
@@ -148,6 +152,8 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
 
         if (allUnderReview) {
             paymentWorkflowService.transitionBill(bill, Actions.COMPLETE, requestInfo);
+            // Persist updated bill status to DB via Kafka
+            paymentWorkflowService.pushBillUpdate(bill, requestInfo);
             return SchedulerJobResult.DONE;
         }
         log.debug("Bill {} SEND_FOR_REVIEW: not all details UNDER_REVIEW yet — retrying", bill.getId());
@@ -172,6 +178,8 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
 
         if (allReviewed) {
             paymentWorkflowService.transitionBill(bill, Actions.COMPLETE, requestInfo);
+            // Persist updated bill status to DB via Kafka
+            paymentWorkflowService.pushBillUpdate(bill, requestInfo);
             return SchedulerJobResult.DONE;
         }
         log.debug("Bill {} REVIEW: not all details REVIEWED yet — retrying", bill.getId());
