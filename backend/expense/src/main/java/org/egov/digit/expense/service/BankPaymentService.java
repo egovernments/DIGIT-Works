@@ -51,15 +51,16 @@ public class BankPaymentService {
                 continue;
             }
 
-            if (!Constants.PAYMENT_PROVIDER_BANK.equalsIgnoreCase(billDetail.getPaymentProvider())) {
+            Party payee = billDetail.getPayee();
+            if (payee == null || !Constants.PAYMENT_PROVIDER_BANK.equalsIgnoreCase(payee.getPaymentProvider())) {
                 continue;
             }
 
-            validateBankFields(billDetail);
+            validateBankFields(billDetail, payee);
 
             // TODO: Call bank verification API to validate account details
             log.info("Bank verification placeholder for billDetail: {}, bankAccount: {}, bankCode: {}",
-                    billDetail.getId(), billDetail.getBankAccount(), billDetail.getBankCode());
+                    billDetail.getId(), payee.getBankAccount(), payee.getBankCode());
         }
     }
 
@@ -77,7 +78,8 @@ public class BankPaymentService {
                 continue;
             }
 
-            if (!Constants.PAYMENT_PROVIDER_BANK.equalsIgnoreCase(billDetail.getPaymentProvider())) {
+            Party payee = billDetail.getPayee();
+            if (payee == null || !Constants.PAYMENT_PROVIDER_BANK.equalsIgnoreCase(payee.getPaymentProvider())) {
                 continue;
             }
 
@@ -145,12 +147,12 @@ public class BankPaymentService {
         return bills.get(0);
     }
 
-    private void validateBankFields(BillDetail billDetail) {
-        if (!StringUtils.hasText(billDetail.getBankAccount())) {
+    private void validateBankFields(BillDetail billDetail, Party payee) {
+        if (!StringUtils.hasText(payee.getBankAccount())) {
             throw new CustomException(Constants.MISSING_BANK_ACCOUNT_ERR_CODE,
                     "Bank account is required for BANK payment on billDetail: " + billDetail.getId());
         }
-        if (!StringUtils.hasText(billDetail.getBeneficiaryCode())) {
+        if (!StringUtils.hasText(payee.getBeneficiaryCode())) {
             throw new CustomException(Constants.MISSING_BENEFICIARY_CODE_ERR_CODE,
                     "Beneficiary code is required for BANK payment on billDetail: " + billDetail.getId());
         }

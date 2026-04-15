@@ -171,8 +171,9 @@ public class MTNService {
                 log.error("BillDetail from search is null for one of the requested IDs in bill number: {}. Skipping.", billFromSearch.getBillNumber());
                 continue;
             }
-            if (!Constants.PAYMENT_PROVIDER_MTN.equalsIgnoreCase(billDetail.getPaymentProvider())) {
-                log.info("Skipping non-MTN billDetail {} (provider={}) in verify()", billDetail.getId(), billDetail.getPaymentProvider());
+            Party payee = billDetail.getPayee();
+            if (payee == null || !Constants.PAYMENT_PROVIDER_MTN.equalsIgnoreCase(payee.getPaymentProvider())) {
+                log.info("Skipping non-MTN billDetail {} (provider={}) in verify()", billDetail.getId(), payee != null ? payee.getPaymentProvider() : "null");
                 continue;
             }
             boolean alreadyInProgress = (billDetail.getStatus() == Status.VERIFICATION_IN_PROGRESS);
@@ -200,7 +201,7 @@ public class MTNService {
             // Both paths reach here: detail is now in VERIFICATION_IN_PROGRESS.
             // (alreadyInProgress=true → pre-transitioned by PaymentWorkflowService.verifyBill(); Step 1 skipped)
 
-            String payeePhoneNumber = billDetail.getPayeePhoneNumber();
+            String payeePhoneNumber = payee.getPayeePhoneNumber();
             if (payeePhoneNumber == null || payeePhoneNumber.isBlank()) {
                 log.error("payeePhoneNumber is null/blank for MTN billDetail {}, bill {}. Skipping verification.",
                         billDetail.getId(), billFromSearch.getBillNumber());
@@ -446,12 +447,13 @@ public class MTNService {
                 log.error("BillDetail from search is null for one of the requested IDs in bill number: {}. Skipping.", billFromSearch.getBillNumber());
                 continue;
             }
-            if (!Constants.PAYMENT_PROVIDER_MTN.equalsIgnoreCase(billDetail.getPaymentProvider())) {
-                log.info("Skipping non-MTN billDetail {} (provider={}) in transfer()", billDetail.getId(), billDetail.getPaymentProvider());
+            Party payee = billDetail.getPayee();
+            if (payee == null || !Constants.PAYMENT_PROVIDER_MTN.equalsIgnoreCase(payee.getPaymentProvider())) {
+                log.info("Skipping non-MTN billDetail {} (provider={}) in transfer()", billDetail.getId(), payee != null ? payee.getPaymentProvider() : "null");
                 continue;
             }
             if (billDetail.getStatus() == Status.PAYMENT_IN_PROGRESS) {
-                String payeePhoneNumber = billDetail.getPayeePhoneNumber();
+                String payeePhoneNumber = payee.getPayeePhoneNumber();
                 if (payeePhoneNumber == null || payeePhoneNumber.isBlank()) {
                     log.error("payeePhoneNumber is null/blank for MTN billDetail {}, bill {}. Skipping transfer.",
                             billDetail.getId(), billFromSearch.getBillNumber());
@@ -692,8 +694,9 @@ public class MTNService {
                         taskDetail.getId(), taskDetail.getBillDetailsId());
                 continue;
             }
-            if (!Constants.PAYMENT_PROVIDER_MTN.equalsIgnoreCase(billDetail.getPaymentProvider())) {
-                log.info("Skipping non-MTN billDetail {} (provider={}) in updatePaymentTaskStatus()", billDetail.getId(), billDetail.getPaymentProvider());
+            Party payee = billDetail.getPayee();
+            if (payee == null || !Constants.PAYMENT_PROVIDER_MTN.equalsIgnoreCase(payee.getPaymentProvider())) {
+                log.info("Skipping non-MTN billDetail {} (provider={}) in updatePaymentTaskStatus()", billDetail.getId(), payee != null ? payee.getPaymentProvider() : "null");
                 continue;
             }
             if (taskDetail.getStatus() == Status.IN_PROGRESS && billDetail.getStatus() == Status.PAYMENT_IN_PROGRESS) {

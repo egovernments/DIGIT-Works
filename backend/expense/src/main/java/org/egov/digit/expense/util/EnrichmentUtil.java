@@ -103,12 +103,12 @@ public class EnrichmentUtil {
                 WorkerDetails worker = workersByIndividualId.get(individualId);
                 if (worker != null) {
                     billDetail.setWorkerId(worker.getWorkerId());
-                    billDetail.setPaymentProvider(worker.getPaymentProvider());
-                    billDetail.setPayeeName(worker.getPayeeName());
-                    billDetail.setPayeePhoneNumber(worker.getPayeePhoneNumber());
-                    billDetail.setBankAccount(worker.getBankAccount());
-                    billDetail.setBankCode(worker.getBankCode());
-                    billDetail.setBeneficiaryCode(worker.getBeneficiaryCode());
+                    billDetail.getPayee().setPaymentProvider(worker.getPaymentProvider());
+                    billDetail.getPayee().setPayeeName(worker.getPayeeName());
+                    billDetail.getPayee().setPayeePhoneNumber(worker.getPayeePhoneNumber());
+                    billDetail.getPayee().setBankAccount(worker.getBankAccount());
+                    billDetail.getPayee().setBankCode(worker.getBankCode());
+                    billDetail.getPayee().setBeneficiaryCode(worker.getBeneficiaryCode());
                 }
             }
 
@@ -206,18 +206,22 @@ public class EnrichmentUtil {
         if (detailFromSearch != null) {
             if (billDetail.getWorkerId() == null)
                 billDetail.setWorkerId(detailFromSearch.getWorkerId());
-            if (billDetail.getPaymentProvider() == null)
-                billDetail.setPaymentProvider(detailFromSearch.getPaymentProvider());
-            if (billDetail.getPayeeName() == null)
-                billDetail.setPayeeName(detailFromSearch.getPayeeName());
-            if (billDetail.getPayeePhoneNumber() == null)
-                billDetail.setPayeePhoneNumber(detailFromSearch.getPayeePhoneNumber());
-            if (billDetail.getBankAccount() == null)
-                billDetail.setBankAccount(detailFromSearch.getBankAccount());
-            if (billDetail.getBankCode() == null)
-                billDetail.setBankCode(detailFromSearch.getBankCode());
-            if (billDetail.getBeneficiaryCode() == null)
-                billDetail.setBeneficiaryCode(detailFromSearch.getBeneficiaryCode());
+            if (billDetail.getPayee() != null && detailFromSearch.getPayee() != null) {
+                Party payeeFromSearch = detailFromSearch.getPayee();
+                Party payee = billDetail.getPayee();
+                if (payee.getPaymentProvider() == null)
+                    payee.setPaymentProvider(payeeFromSearch.getPaymentProvider());
+                if (payee.getPayeeName() == null)
+                    payee.setPayeeName(payeeFromSearch.getPayeeName());
+                if (payee.getPayeePhoneNumber() == null)
+                    payee.setPayeePhoneNumber(payeeFromSearch.getPayeePhoneNumber());
+                if (payee.getBankAccount() == null)
+                    payee.setBankAccount(payeeFromSearch.getBankAccount());
+                if (payee.getBankCode() == null)
+                    payee.setBankCode(payeeFromSearch.getBankCode());
+                if (payee.getBeneficiaryCode() == null)
+                    payee.setBeneficiaryCode(payeeFromSearch.getBeneficiaryCode());
+            }
         }
 
         for (LineItem lineItem : billDetail.getLineItems()) {
@@ -427,15 +431,9 @@ public class EnrichmentUtil {
                     .fromPeriod(pd.getFromPeriod()           != null ? pd.getFromPeriod()          : db.getFromPeriod())
                     .toPeriod(pd.getToPeriod()               != null ? pd.getToPeriod()            : db.getToPeriod())
                     .workerId(pd.getWorkerId()               != null ? pd.getWorkerId()            : db.getWorkerId())
-                    .paymentProvider(pd.getPaymentProvider() != null ? pd.getPaymentProvider()     : db.getPaymentProvider())
-                    .payeeName(pd.getPayeeName()             != null ? pd.getPayeeName()           : db.getPayeeName())
-                    .payeePhoneNumber(pd.getPayeePhoneNumber() != null ? pd.getPayeePhoneNumber()  : db.getPayeePhoneNumber())
-                    .bankAccount(pd.getBankAccount()         != null ? pd.getBankAccount()         : db.getBankAccount())
-                    .bankCode(pd.getBankCode()               != null ? pd.getBankCode()            : db.getBankCode())
-                    .beneficiaryCode(pd.getBeneficiaryCode() != null ? pd.getBeneficiaryCode()     : db.getBeneficiaryCode())
                     .totalAttendance(pd.getTotalAttendance()  != null ? pd.getTotalAttendance()     : db.getTotalAttendance())
                     .additionalDetails(pd.getAdditionalDetails() != null ? pd.getAdditionalDetails() : db.getAdditionalDetails())
-                    .payee(mergePayee(pd.getPayee(), db.getPayee(), updatedBy, now))
+                    .payee(mergePayee(pd.getPayee(), pd.getPaymentProvider(), db.getPayee(), updatedBy, now))
                     .lineItems(mergeLineItems(pd.getLineItems(), db.getLineItems(), updatedBy, now))
                     .payableLineItems(mergeLineItems(pd.getPayableLineItems(), db.getPayableLineItems(), updatedBy, now))
                     .auditDetails(updateAudit)
@@ -449,9 +447,10 @@ public class EnrichmentUtil {
     /**
      * Merges the request payee with the DB payee field-by-field.
      * null request payee → DB payee used wholesale.
+     * paymentProvider from PartialBillDetail is passed separately as it's used as a selector field.
      */
-    private Party mergePayee(Party pdPayee, Party dbPayee, String updatedBy, long now) {
-        if (pdPayee == null) return dbPayee;
+    private Party mergePayee(Party pdPayee, String pdPaymentProvider, Party dbPayee, String updatedBy, long now) {
+        if (pdPayee == null && pdPaymentProvider == null) return dbPayee;
 
         AuditDetails payeeAudit = AuditDetails.builder()
                 .createdBy(dbPayee.getAuditDetails().getCreatedBy())
@@ -463,11 +462,17 @@ public class EnrichmentUtil {
         return Party.builder()
                 .id(dbPayee.getId())          // always DB id
                 .parentId(dbPayee.getParentId()) // always DB parentId — linked to billDetail row
-                .tenantId(pdPayee.getTenantId()           != null ? pdPayee.getTenantId()           : dbPayee.getTenantId())
-                .type(pdPayee.getType()                   != null ? pdPayee.getType()               : dbPayee.getType())
-                .identifier(pdPayee.getIdentifier()       != null ? pdPayee.getIdentifier()         : dbPayee.getIdentifier())
-                .status(pdPayee.getStatus()               != null ? pdPayee.getStatus()             : dbPayee.getStatus())
-                .additionalDetails(pdPayee.getAdditionalDetails() != null
+                .tenantId(pdPayee != null && pdPayee.getTenantId() != null ? pdPayee.getTenantId() : dbPayee.getTenantId())
+                .type(pdPayee != null && pdPayee.getType() != null ? pdPayee.getType() : dbPayee.getType())
+                .identifier(pdPayee != null && pdPayee.getIdentifier() != null ? pdPayee.getIdentifier() : dbPayee.getIdentifier())
+                .status(pdPayee != null && pdPayee.getStatus() != null ? pdPayee.getStatus() : dbPayee.getStatus())
+                .paymentProvider(pdPaymentProvider != null ? pdPaymentProvider : dbPayee.getPaymentProvider())
+                .payeeName(pdPayee != null && pdPayee.getPayeeName() != null ? pdPayee.getPayeeName() : dbPayee.getPayeeName())
+                .payeePhoneNumber(pdPayee != null && pdPayee.getPayeePhoneNumber() != null ? pdPayee.getPayeePhoneNumber() : dbPayee.getPayeePhoneNumber())
+                .bankAccount(pdPayee != null && pdPayee.getBankAccount() != null ? pdPayee.getBankAccount() : dbPayee.getBankAccount())
+                .bankCode(pdPayee != null && pdPayee.getBankCode() != null ? pdPayee.getBankCode() : dbPayee.getBankCode())
+                .beneficiaryCode(pdPayee != null && pdPayee.getBeneficiaryCode() != null ? pdPayee.getBeneficiaryCode() : dbPayee.getBeneficiaryCode())
+                .additionalDetails(pdPayee != null && pdPayee.getAdditionalDetails() != null
                         ? pdPayee.getAdditionalDetails() : dbPayee.getAdditionalDetails())
                 .auditDetails(payeeAudit)
                 .build();

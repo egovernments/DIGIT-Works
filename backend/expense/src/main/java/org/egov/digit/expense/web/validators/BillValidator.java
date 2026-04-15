@@ -293,21 +293,25 @@ public class BillValidator {
 	}
 
 	private boolean hasPaymentFieldChangesOnDetail(BillDetail detail, BillDetail detailFromSearch) {
-		return (detail.getPaymentProvider() != null && !detail.getPaymentProvider().equals(detailFromSearch.getPaymentProvider()))
-				|| (detail.getPayeeName() != null && !detail.getPayeeName().equals(detailFromSearch.getPayeeName()))
-				|| (detail.getPayeePhoneNumber() != null && !detail.getPayeePhoneNumber().equals(detailFromSearch.getPayeePhoneNumber()))
-				|| (detail.getBankAccount() != null && !detail.getBankAccount().equals(detailFromSearch.getBankAccount()))
-				|| (detail.getBankCode() != null && !detail.getBankCode().equals(detailFromSearch.getBankCode()))
-				|| (detail.getBeneficiaryCode() != null && !detail.getBeneficiaryCode().equals(detailFromSearch.getBeneficiaryCode()));
+		Party payee = detail.getPayee();
+		Party payeeFromSearch = detailFromSearch.getPayee();
+		if (payee == null || payeeFromSearch == null) return false;
+		return (payee.getPaymentProvider() != null && !payee.getPaymentProvider().equals(payeeFromSearch.getPaymentProvider()))
+				|| (payee.getPayeeName() != null && !payee.getPayeeName().equals(payeeFromSearch.getPayeeName()))
+				|| (payee.getPayeePhoneNumber() != null && !payee.getPayeePhoneNumber().equals(payeeFromSearch.getPayeePhoneNumber()))
+				|| (payee.getBankAccount() != null && !payee.getBankAccount().equals(payeeFromSearch.getBankAccount()))
+				|| (payee.getBankCode() != null && !payee.getBankCode().equals(payeeFromSearch.getBankCode()))
+				|| (payee.getBeneficiaryCode() != null && !payee.getBeneficiaryCode().equals(payeeFromSearch.getBeneficiaryCode()));
 	}
 
 	private void validatePaymentProviderValues(Bill bill) {
 		if (bill.getBillDetails() == null) return;
 		for (BillDetail detail : bill.getBillDetails()) {
-			if (detail.getPaymentProvider() != null
-					&& !Constants.VALID_PAYMENT_PROVIDERS.contains(detail.getPaymentProvider().toUpperCase())) {
+			Party payee = detail.getPayee();
+			if (payee != null && payee.getPaymentProvider() != null
+					&& !Constants.VALID_PAYMENT_PROVIDERS.contains(payee.getPaymentProvider().toUpperCase())) {
 				throw new CustomException("EG_EXPENSE_INVALID_PAYMENT_PROVIDER",
-						"Invalid paymentProvider '" + detail.getPaymentProvider()
+						"Invalid paymentProvider '" + payee.getPaymentProvider()
 						+ "' on bill detail " + detail.getId()
 						+ ". Allowed values: " + Constants.VALID_PAYMENT_PROVIDERS);
 			}
@@ -1007,20 +1011,23 @@ public class BillValidator {
 			org.egov.digit.expense.web.models.PartialBillDetail pd, BillDetail db) {
 		if (pd.getWorkerId() != null && !pd.getWorkerId().equals(db.getWorkerId()))
 			return true;
-		if (pd.getPaymentProvider() != null && !pd.getPaymentProvider().equals(db.getPaymentProvider()))
+		Party pdPayee = pd.getPayee();
+		Party dbPayee = db.getPayee();
+		if (pd.getPaymentProvider() != null && dbPayee != null
+				&& !pd.getPaymentProvider().equals(dbPayee.getPaymentProvider()))
 			return true;
-		if (pd.getPayeeName() != null && !pd.getPayeeName().equals(db.getPayeeName()))
-			return true;
-		if (pd.getPayeePhoneNumber() != null && !pd.getPayeePhoneNumber().equals(db.getPayeePhoneNumber()))
-			return true;
-		if (pd.getBankAccount() != null && !pd.getBankAccount().equals(db.getBankAccount()))
-			return true;
-		if (pd.getBankCode() != null && !pd.getBankCode().equals(db.getBankCode()))
-			return true;
-		if (pd.getBeneficiaryCode() != null && !pd.getBeneficiaryCode().equals(db.getBeneficiaryCode()))
-			return true;
-		if (pd.getPayee() != null)
-			return true;
+		if (pdPayee != null && dbPayee != null) {
+			if (pdPayee.getPayeeName() != null && !pdPayee.getPayeeName().equals(dbPayee.getPayeeName()))
+				return true;
+			if (pdPayee.getPayeePhoneNumber() != null && !pdPayee.getPayeePhoneNumber().equals(dbPayee.getPayeePhoneNumber()))
+				return true;
+			if (pdPayee.getBankAccount() != null && !pdPayee.getBankAccount().equals(dbPayee.getBankAccount()))
+				return true;
+			if (pdPayee.getBankCode() != null && !pdPayee.getBankCode().equals(dbPayee.getBankCode()))
+				return true;
+			if (pdPayee.getBeneficiaryCode() != null && !pdPayee.getBeneficiaryCode().equals(dbPayee.getBeneficiaryCode()))
+				return true;
+		}
 		return false;
 	}
 

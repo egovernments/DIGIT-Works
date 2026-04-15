@@ -161,9 +161,7 @@ public class Constants {
 			
 			+ " bd.id as bd_id, bd.tenantid as bd_tenantid, bd.totalamount as bd_totalamount, bd.totalpaidamount as bd_totalpaidamount, "
 			+ " bd.referenceid as bd_referenceid, billid, bd.paymentstatus as bd_paymentstatus, bd.status as bd_status, bd.fromperiod as bd_fromperiod, "
-			+ " bd.toperiod as bd_toperiod, bd.workerid as bd_workerid, bd.paymentprovider as bd_paymentprovider, "
-			+ " bd.payeename as bd_payeename, bd.payeephonenumber as bd_payeephonenumber, "
-			+ " bd.bankaccount as bd_bankaccount, bd.bankcode as bd_bankcode, bd.beneficiarycode as bd_beneficiarycode, "
+			+ " bd.toperiod as bd_toperiod, bd.workerid as bd_workerid, "
 			+ " bd.totalattendance as bd_totalattendance, "
 			+ " bd.createdby as bd_createdby, bd.createdtime as bd_createdtime, bd.lastmodifiedby as bd_lastmodifiedby,"
 			+ " bd.lastmodifiedtime as bd_lastmodifiedtime, bd.additionaldetails as bd_additionaldetails,"
@@ -173,6 +171,8 @@ public class Constants {
 			+ " li.lastmodifiedby as line_lastmodifiedby, li.lastmodifiedtime as line_lastmodifiedtime, li.additionaldetails as line_additionaldetails, "
 			
 			+ " payee.id as payee_id, payee.tenantid as payee_tenantid, payee.type as payee_type, payee.identifier as payee_identifier, payee.parentid as payee_parentid, "
+			+ " payee.paymentprovider as payee_paymentprovider, payee.payeename as payee_payeename, payee.payeephonenumber as payee_payeephonenumber, "
+			+ " payee.bankaccount as payee_bankaccount, payee.bankcode as payee_bankcode, payee.beneficiarycode as payee_beneficiarycode, "
 			+ " payee.createdby as payee_createdby, payee.createdtime as payee_createdtime, payee.lastmodifiedby as payee_lastmodifiedby,"
 			+ " payee.lastmodifiedtime as payee_lastmodifiedtime, payee.additionaldetails as payee_additionaldetails, payee.status as payee_status, "
 			
