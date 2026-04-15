@@ -1013,8 +1013,8 @@ public class BillValidator {
 			return true;
 		Party pdPayee = pd.getPayee();
 		Party dbPayee = db.getPayee();
-		if (pd.getPaymentProvider() != null && dbPayee != null
-				&& !pd.getPaymentProvider().equals(dbPayee.getPaymentProvider()))
+		if (pdPayee.getPaymentProvider() != null && dbPayee != null
+				&& !pdPayee.getPaymentProvider().equals(dbPayee.getPaymentProvider()))
 			return true;
 		if (pdPayee != null && dbPayee != null) {
 			if (pdPayee.getPayeeName() != null && !pdPayee.getPayeeName().equals(dbPayee.getPayeeName()))

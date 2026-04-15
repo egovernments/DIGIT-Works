@@ -433,7 +433,7 @@ public class EnrichmentUtil {
                     .workerId(pd.getWorkerId()               != null ? pd.getWorkerId()            : db.getWorkerId())
                     .totalAttendance(pd.getTotalAttendance()  != null ? pd.getTotalAttendance()     : db.getTotalAttendance())
                     .additionalDetails(pd.getAdditionalDetails() != null ? pd.getAdditionalDetails() : db.getAdditionalDetails())
-                    .payee(mergePayee(pd.getPayee(), pd.getPaymentProvider(), db.getPayee(), updatedBy, now))
+                    .payee(mergePayee(pd.getPayee(), db.getPayee(), updatedBy, now))
                     .lineItems(mergeLineItems(pd.getLineItems(), db.getLineItems(), updatedBy, now))
                     .payableLineItems(mergeLineItems(pd.getPayableLineItems(), db.getPayableLineItems(), updatedBy, now))
                     .auditDetails(updateAudit)
@@ -449,8 +449,7 @@ public class EnrichmentUtil {
      * null request payee → DB payee used wholesale.
      * paymentProvider from PartialBillDetail is passed separately as it's used as a selector field.
      */
-    private Party mergePayee(Party pdPayee, String pdPaymentProvider, Party dbPayee, String updatedBy, long now) {
-        if (pdPayee == null && pdPaymentProvider == null) return dbPayee;
+    private Party mergePayee(Party pdPayee, Party dbPayee, String updatedBy, long now) {
 
         AuditDetails payeeAudit = AuditDetails.builder()
                 .createdBy(dbPayee.getAuditDetails().getCreatedBy())
@@ -466,7 +465,7 @@ public class EnrichmentUtil {
                 .type(pdPayee != null && pdPayee.getType() != null ? pdPayee.getType() : dbPayee.getType())
                 .identifier(pdPayee != null && pdPayee.getIdentifier() != null ? pdPayee.getIdentifier() : dbPayee.getIdentifier())
                 .status(pdPayee != null && pdPayee.getStatus() != null ? pdPayee.getStatus() : dbPayee.getStatus())
-                .paymentProvider(pdPaymentProvider != null ? pdPaymentProvider : dbPayee.getPaymentProvider())
+                .paymentProvider(pdPayee.getPaymentProvider() != null ? pdPayee.getPaymentProvider() : dbPayee.getPaymentProvider())
                 .payeeName(pdPayee != null && pdPayee.getPayeeName() != null ? pdPayee.getPayeeName() : dbPayee.getPayeeName())
                 .payeePhoneNumber(pdPayee != null && pdPayee.getPayeePhoneNumber() != null ? pdPayee.getPayeePhoneNumber() : dbPayee.getPayeePhoneNumber())
                 .bankAccount(pdPayee != null && pdPayee.getBankAccount() != null ? pdPayee.getBankAccount() : dbPayee.getBankAccount())
