@@ -814,6 +814,13 @@ public class BillValidator {
 					.build());
 		}
 
+		if (bulkRequest.getTenantId() == null || bulkRequest.getTenantId().isBlank()) {
+			errors.add(BulkUpdateError.builder()
+					.code("EG_EXPENSE_BULK_STATUS_TENANT_REQUIRED")
+					.message("tenantId is required for bulk status update")
+					.build());
+		}
+
 		if (!errors.isEmpty()) {
 			return errors;
 		}
@@ -824,8 +831,7 @@ public class BillValidator {
 						.requestInfo(bulkRequest.getRequestInfo())
 						.billCriteria(BillCriteria.builder()
 								.ids(Set.of(billId))
-								.tenantId(bulkRequest.getBillIds().get(0).contains(".") ? 
-										bulkRequest.getBillIds().get(0).substring(0, bulkRequest.getBillIds().get(0).lastIndexOf('.')) : null)
+								.tenantId(bulkRequest.getTenantId())
 								.statusNot(Status.INACTIVE.toString())
 								.build())
 						.build();

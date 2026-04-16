@@ -482,12 +482,7 @@ public class BillService {
 					.build();
 		}
 
-		String tenantId = null;
-		if (!billIds.isEmpty() && billIds.get(0).contains(".")) {
-			tenantId = billIds.get(0).substring(0, billIds.get(0).lastIndexOf('.'));
-		}
-
-		List<Bill> billsFromSearch = validator.getBillsByIds(billIds, tenantId, requestInfo);
+		List<Bill> billsFromSearch = validator.getBillsByIds(billIds, bulkRequest.getTenantId(), requestInfo);
 		Map<String, Bill> billMap = billsFromSearch.stream()
 				.collect(Collectors.toMap(Bill::getId, Function.identity()));
 

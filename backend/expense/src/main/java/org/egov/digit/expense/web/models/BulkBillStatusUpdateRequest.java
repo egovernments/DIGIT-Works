@@ -3,6 +3,8 @@ package org.egov.digit.expense.web.models;
 import java.util.List;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
@@ -28,6 +30,11 @@ public class BulkBillStatusUpdateRequest {
 	@JsonProperty("RequestInfo")
 	@Valid
 	private RequestInfo requestInfo;
+
+	@JsonProperty("tenantId")
+	@NotNull
+	@Size(min = 2, max = 64)
+	private String tenantId;
 
 	@JsonProperty("billIds")
 	@Valid
