@@ -558,8 +558,10 @@ public class BillService {
 		String tenantId = request.getTenantId();
 		String updatedBy = requestInfo.getUserInfo().getUuid();
 
-		// 1. Validate — fails fast on invalid bill ID or detail IDs
-		Bill billFromSearch = validator.validateBillDetailUpdateRequest(request);
+		// 1. Validate — strips blocked fields in-place, collects warnings
+		BillValidator.BillDetailValidationResult validationResult = validator.validateBillDetailUpdateRequest(request);
+		Bill billFromSearch = validationResult.bill;
+		List<BillDetailUpdateError> warnings = validationResult.warnings;
 
 		// 2. Enrich — applies full null protection, returns only the requested details (merged)
 		List<BillDetail> mergedDetails = enrichmentUtil.enrichPartialBillDetails(request, billFromSearch, updatedBy);
@@ -593,6 +595,7 @@ public class BillService {
 		return BillDetailUpdateResponse.builder()
 				.billDetails(mergedDetails)
 				.errors(Collections.emptyList())
+				.warnings(warnings)
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true))
 				.build();
 	}

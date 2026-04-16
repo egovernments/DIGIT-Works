@@ -35,4 +35,7 @@ public class BillDetailUpdateResponse {
 
     @JsonProperty("errors")
     private List<BillDetailUpdateError> errors;
+
+    @JsonProperty("warnings")
+    private List<BillDetailUpdateError> warnings;
 }

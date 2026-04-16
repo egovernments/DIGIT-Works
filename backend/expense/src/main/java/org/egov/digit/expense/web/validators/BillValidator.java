@@ -875,7 +875,16 @@ public class BillValidator {
 	 *
 	 * @return the bill fetched from DB (used downstream for enrichment)
 	 */
-	public Bill validateBillDetailUpdateRequest(org.egov.digit.expense.web.models.BillDetailUpdateRequest request) {
+	public static class BillDetailValidationResult {
+		public final Bill bill;
+		public final List<org.egov.digit.expense.web.models.BillDetailUpdateError> warnings;
+		public BillDetailValidationResult(Bill bill, List<org.egov.digit.expense.web.models.BillDetailUpdateError> warnings) {
+			this.bill = bill;
+			this.warnings = warnings;
+		}
+	}
+
+	public BillDetailValidationResult validateBillDetailUpdateRequest(org.egov.digit.expense.web.models.BillDetailUpdateRequest request) {
 
 		// 1. Fetch bill from DB
 		Bill billFromSearch = getBillById(request.getBillId(), request.getTenantId(), request.getRequestInfo());
@@ -896,24 +905,25 @@ public class BillValidator {
 			throw new CustomException("EG_EXPENSE_INVALID_BILL_DETAIL_IDS",
 					"BillDetail ids not found under bill " + request.getBillId() + ": " + invalidIds);
 
-		// 3. Role-based field access control
-		validateRoleAndFieldAccess(request, billFromSearch, searchDetailMap);
+		// 3. Role-based field access — strips blocked fields in-place, returns warnings
+		List<org.egov.digit.expense.web.models.BillDetailUpdateError> warnings =
+				stripAndWarnBlockedFields(request, billFromSearch, searchDetailMap);
 
-		return billFromSearch;
+		return new BillDetailValidationResult(billFromSearch, warnings);
 	}
 
 	/**
-	 * Enforces role-based access control for billdetails/_update.
+	 * Enforces role-based access for billdetails/_update by stripping blocked fields
+	 * from each PartialBillDetail in-place and collecting warnings. Hard validations
+	 * (role presence, bill/detail status) still throw.
 	 *
-	 * PAYMENT_EDITOR: bill must be PENDING_VERIFICATION or PARTIALLY_VERIFIED;
-	 *   all requested detail statuses must be PENDING_VERIFICATION or VERIFICATION_FAILED.
-	 *   May update user/payment fields only — amount, lineItems and totalAttendance are blocked.
+	 * PAYMENT_EDITOR: may update payee fields only (payeeName, payeePhoneNumber, bankAccount,
+	 *   bankCode, beneficiaryCode, paymentProvider). Strips amount/attendance/lineItem fields.
 	 *
-	 * PAYMENT_REVIEWER: bill must be UNDER_REVIEW;
-	 *   all requested detail statuses must be UNDER_REVIEW.
-	 *   May update amount, lineItems and totalAttendance only — user/payment fields are blocked.
+	 * PAYMENT_REVIEWER: may update amount/calculation fields only (totalAmount, totalPaidAmount,
+	 *   totalAttendance, lineItems, payableLineItems). Strips payee and workerId fields.
 	 */
-	private void validateRoleAndFieldAccess(
+	private List<org.egov.digit.expense.web.models.BillDetailUpdateError> stripAndWarnBlockedFields(
 			org.egov.digit.expense.web.models.BillDetailUpdateRequest request,
 			Bill billFromSearch,
 			Map<String, BillDetail> searchDetailMap) {
@@ -936,8 +946,9 @@ public class BillValidator {
 		boolean editorStatusMatch   = "PENDING_VERIFICATION".equals(billStatus) || "PARTIALLY_VERIFIED".equals(billStatus);
 		boolean reviewerStatusMatch = "UNDER_REVIEW".equals(billStatus);
 
+		List<org.egov.digit.expense.web.models.BillDetailUpdateError> warnings = new ArrayList<>();
+
 		if (hasPaymentEditor && editorStatusMatch) {
-			// Validate all requested detail statuses
 			Set<String> allowedDetailStatuses = Set.of("PENDING_VERIFICATION", "VERIFICATION_FAILED");
 			for (org.egov.digit.expense.web.models.PartialBillDetail pd : request.getBillDetails()) {
 				BillDetail db = searchDetailMap.get(pd.getId());
@@ -946,19 +957,12 @@ public class BillValidator {
 					throw new CustomException("EG_EXPENSE_ROLE_STATUS_MISMATCH",
 							"PAYMENT_EDITOR cannot update bill detail " + pd.getId()
 							+ " — detail status must be PENDING_VERIFICATION or VERIFICATION_FAILED. Current: " + detailStatus);
+				stripAmountFields(pd, db, warnings);
 			}
-			// Validate blocked fields — amount, lineItems, totalAttendance must not change
-			for (org.egov.digit.expense.web.models.PartialBillDetail pd : request.getBillDetails()) {
-				BillDetail db = searchDetailMap.get(pd.getId());
-				if (hasAmountOrAttendanceFieldChanges(pd, db))
-					throw new CustomException("EG_EXPENSE_FIELD_UPDATE_NOT_ALLOWED",
-							"PAYMENT_EDITOR cannot update amount, lineItems or totalAttendance on bill detail " + pd.getId());
-			}
-			return;
+			return warnings;
 		}
 
 		if (hasPaymentReviewer && reviewerStatusMatch) {
-			// Validate all requested detail statuses
 			for (org.egov.digit.expense.web.models.PartialBillDetail pd : request.getBillDetails()) {
 				BillDetail db = searchDetailMap.get(pd.getId());
 				String detailStatus = db.getStatus() != null ? db.getStatus().toString() : null;
@@ -966,18 +970,11 @@ public class BillValidator {
 					throw new CustomException("EG_EXPENSE_ROLE_STATUS_MISMATCH",
 							"PAYMENT_REVIEWER cannot update bill detail " + pd.getId()
 							+ " — detail status must be UNDER_REVIEW. Current: " + detailStatus);
+				stripPayeeFields(pd, db, warnings);
 			}
-			// Validate blocked fields — user/payment fields must not change
-			for (org.egov.digit.expense.web.models.PartialBillDetail pd : request.getBillDetails()) {
-				BillDetail db = searchDetailMap.get(pd.getId());
-				if (hasUserOrPaymentFieldChanges(pd, db))
-					throw new CustomException("EG_EXPENSE_FIELD_UPDATE_NOT_ALLOWED",
-							"PAYMENT_REVIEWER cannot update user or payment fields on bill detail " + pd.getId());
-			}
-			return;
+			return warnings;
 		}
 
-		// Role present but bill status does not match any allowed path
 		String displayStatus = billFromSearch.getStatus() != null ? billFromSearch.getStatus().toString() : "null";
 		throw new CustomException("EG_EXPENSE_ROLE_STATUS_MISMATCH",
 				"Bill status '" + displayStatus + "' does not permit update by the current user's role(s). "
@@ -985,56 +982,85 @@ public class BillValidator {
 				+ "PAYMENT_REVIEWER requires UNDER_REVIEW.");
 	}
 
-	/**
-	 * Returns true if the partial update attempts to change amount, lineItems or totalAttendance
-	 * (fields blocked for PAYMENT_EDITOR).
-	 */
-	private boolean hasAmountOrAttendanceFieldChanges(
-			org.egov.digit.expense.web.models.PartialBillDetail pd, BillDetail db) {
+	/** Strips amount/attendance/lineItem fields blocked for PAYMENT_EDITOR. */
+	private void stripAmountFields(
+			org.egov.digit.expense.web.models.PartialBillDetail pd,
+			BillDetail db,
+			List<org.egov.digit.expense.web.models.BillDetailUpdateError> warnings) {
+
+		List<String> stripped = new ArrayList<>();
+
 		if (pd.getTotalAmount() != null) {
 			BigDecimal dbAmount = db.getTotalAmount() != null ? db.getTotalAmount() : BigDecimal.ZERO;
-			if (pd.getTotalAmount().compareTo(dbAmount) != 0) return true;
+			if (pd.getTotalAmount().compareTo(dbAmount) != 0) { pd.setTotalAmount(null); stripped.add("totalAmount"); }
 		}
 		if (pd.getTotalPaidAmount() != null) {
 			BigDecimal dbPaid = db.getTotalPaidAmount() != null ? db.getTotalPaidAmount() : BigDecimal.ZERO;
-			if (pd.getTotalPaidAmount().compareTo(dbPaid) != 0) return true;
+			if (pd.getTotalPaidAmount().compareTo(dbPaid) != 0) { pd.setTotalPaidAmount(null); stripped.add("totalPaidAmount"); }
 		}
 		if (pd.getTotalAttendance() != null
-				&& (db.getTotalAttendance() == null || pd.getTotalAttendance().compareTo(db.getTotalAttendance()) != 0))
-			return true;
-		if (pd.getLineItems() != null && !pd.getLineItems().isEmpty())
-			return true;
-		if (pd.getPayableLineItems() != null && !pd.getPayableLineItems().isEmpty())
-			return true;
-		return false;
+				&& (db.getTotalAttendance() == null || pd.getTotalAttendance().compareTo(db.getTotalAttendance()) != 0)) {
+			pd.setTotalAttendance(null); stripped.add("totalAttendance");
+		}
+		if (pd.getLineItems() != null && !pd.getLineItems().isEmpty()) {
+			pd.setLineItems(null); stripped.add("lineItems");
+		}
+		if (pd.getPayableLineItems() != null && !pd.getPayableLineItems().isEmpty()) {
+			pd.setPayableLineItems(null); stripped.add("payableLineItems");
+		}
+		if (pd.getWorkerId() != null && !pd.getWorkerId().equals(db.getWorkerId())) {
+			pd.setWorkerId(null); stripped.add("workerId");
+		}
+
+		if (!stripped.isEmpty())
+			warnings.add(org.egov.digit.expense.web.models.BillDetailUpdateError.builder()
+					.billDetailId(pd.getId())
+					.code("EG_EXPENSE_FIELD_STRIPPED_PAYMENT_EDITOR")
+					.message("PAYMENT_EDITOR cannot update " + stripped + " on bill detail " + pd.getId() + "; ignored.")
+					.build());
 	}
 
-	/**
-	 * Returns true if the partial update attempts to change user identity or payment routing fields
-	 * (fields blocked for PAYMENT_REVIEWER).
-	 */
-	private boolean hasUserOrPaymentFieldChanges(
-			org.egov.digit.expense.web.models.PartialBillDetail pd, BillDetail db) {
-		if (pd.getWorkerId() != null && !pd.getWorkerId().equals(db.getWorkerId()))
-			return true;
+	/** Strips payee/workerId fields blocked for PAYMENT_REVIEWER. */
+	private void stripPayeeFields(
+			org.egov.digit.expense.web.models.PartialBillDetail pd,
+			BillDetail db,
+			List<org.egov.digit.expense.web.models.BillDetailUpdateError> warnings) {
+
+		List<String> stripped = new ArrayList<>();
+
+		if (pd.getWorkerId() != null && !pd.getWorkerId().equals(db.getWorkerId())) {
+			pd.setWorkerId(null); stripped.add("workerId");
+		}
+
 		Party pdPayee = pd.getPayee();
 		Party dbPayee = db.getPayee();
-		if (pdPayee.getPaymentProvider() != null && dbPayee != null
-				&& !pdPayee.getPaymentProvider().equals(dbPayee.getPaymentProvider()))
-			return true;
 		if (pdPayee != null && dbPayee != null) {
-			if (pdPayee.getPayeeName() != null && !pdPayee.getPayeeName().equals(dbPayee.getPayeeName()))
-				return true;
-			if (pdPayee.getPayeePhoneNumber() != null && !pdPayee.getPayeePhoneNumber().equals(dbPayee.getPayeePhoneNumber()))
-				return true;
-			if (pdPayee.getBankAccount() != null && !pdPayee.getBankAccount().equals(dbPayee.getBankAccount()))
-				return true;
-			if (pdPayee.getBankCode() != null && !pdPayee.getBankCode().equals(dbPayee.getBankCode()))
-				return true;
-			if (pdPayee.getBeneficiaryCode() != null && !pdPayee.getBeneficiaryCode().equals(dbPayee.getBeneficiaryCode()))
-				return true;
+			if (pdPayee.getPayeeName() != null && !pdPayee.getPayeeName().equals(dbPayee.getPayeeName())) {
+				pdPayee.setPayeeName(null); stripped.add("payee.payeeName");
+			}
+			if (pdPayee.getPayeePhoneNumber() != null && !pdPayee.getPayeePhoneNumber().equals(dbPayee.getPayeePhoneNumber())) {
+				pdPayee.setPayeePhoneNumber(null); stripped.add("payee.payeePhoneNumber");
+			}
+			if (pdPayee.getBankAccount() != null && !pdPayee.getBankAccount().equals(dbPayee.getBankAccount())) {
+				pdPayee.setBankAccount(null); stripped.add("payee.bankAccount");
+			}
+			if (pdPayee.getBankCode() != null && !pdPayee.getBankCode().equals(dbPayee.getBankCode())) {
+				pdPayee.setBankCode(null); stripped.add("payee.bankCode");
+			}
+			if (pdPayee.getBeneficiaryCode() != null && !pdPayee.getBeneficiaryCode().equals(dbPayee.getBeneficiaryCode())) {
+				pdPayee.setBeneficiaryCode(null); stripped.add("payee.beneficiaryCode");
+			}
+			if (pdPayee.getPaymentProvider() != null && !pdPayee.getPaymentProvider().equals(dbPayee.getPaymentProvider())) {
+				pdPayee.setPaymentProvider(null); stripped.add("payee.paymentProvider");
+			}
 		}
-		return false;
+
+		if (!stripped.isEmpty())
+			warnings.add(org.egov.digit.expense.web.models.BillDetailUpdateError.builder()
+					.billDetailId(pd.getId())
+					.code("EG_EXPENSE_FIELD_STRIPPED_PAYMENT_REVIEWER")
+					.message("PAYMENT_REVIEWER cannot update " + stripped + " on bill detail " + pd.getId() + "; ignored.")
+					.build());
 	}
 
 	private Bill getBillById(String billId, String tenantId, org.egov.common.contract.request.RequestInfo requestInfo) {
