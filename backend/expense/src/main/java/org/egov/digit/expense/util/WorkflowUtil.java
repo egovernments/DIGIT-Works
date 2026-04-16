@@ -1,6 +1,7 @@
 package org.egov.digit.expense.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
@@ -22,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
+@Slf4j
 public class WorkflowUtil {
 
     private final ServiceRequestRepository repository;
@@ -82,27 +84,60 @@ public class WorkflowUtil {
 
     /**
     * Method to take the ProcessInstanceRequest as parameter and set resultant status
-    * @param workflowReq
+    * @param workflowRequest
+    * @param billRequest
     * @return
     */
     public State callWorkFlow(ProcessInstanceRequest workflowRequest, BillRequest billRequest) {
-    	
-        ProcessInstanceResponse response;
-        StringBuilder url = new StringBuilder(configs.getWfHost().concat(configs.getWfTransitionPath()));
-        Object optional = repository.fetchResult(url, workflowRequest);
-        response = mapper.convertValue(optional, ProcessInstanceResponse.class);
-        billRequest.getBill().setProcessInstance(response.getProcessInstances().get(0));
-        return response.getProcessInstances().get(0).getState();
+        Bill bill = billRequest.getBill();
+        ProcessInstance pi = workflowRequest.getProcessInstances().get(0);
+
+        log.info("WF_TRANSITION | BEFORE | entity=BILL | billId={} | businessId={} | businessService={} | tenantId={} | action={} | currentStatus={}",
+                bill.getId(), pi.getBusinessId(), pi.getBusinessService(), pi.getTenantId(), pi.getAction(), bill.getStatus());
+
+        try {
+            ProcessInstanceResponse response;
+            StringBuilder url = new StringBuilder(configs.getWfHost().concat(configs.getWfTransitionPath()));
+            Object optional = repository.fetchResult(url, workflowRequest);
+            response = mapper.convertValue(optional, ProcessInstanceResponse.class);
+            billRequest.getBill().setProcessInstance(response.getProcessInstances().get(0));
+            State newState = response.getProcessInstances().get(0).getState();
+
+            log.info("WF_TRANSITION | AFTER | entity=BILL | billId={} | businessId={} | action={} | newStatus={}",
+                    bill.getId(), pi.getBusinessId(), pi.getAction(), newState.getApplicationStatus());
+
+            return newState;
+        } catch (Exception e) {
+            log.error("WF_TRANSITION | FAILED | entity=BILL | billId={} | businessId={} | businessService={} | tenantId={} | action={} | currentStatus={} | error={}",
+                    bill.getId(), pi.getBusinessId(), pi.getBusinessService(), pi.getTenantId(), pi.getAction(), bill.getStatus(), e.getMessage());
+            throw e;
+        }
     }
 
     public State callWorkFlow(ProcessInstanceRequest workflowRequest, BillDetailRequest billDetailRequest) {
+        BillDetail detail = billDetailRequest.getBillDetail();
+        ProcessInstance pi = workflowRequest.getProcessInstances().get(0);
 
-        ProcessInstanceResponse response;
-        StringBuilder url = new StringBuilder(configs.getWfHost().concat(configs.getWfTransitionPath()));
-        Object optional = repository.fetchResult(url, workflowRequest);
-        response = mapper.convertValue(optional, ProcessInstanceResponse.class);
-        billDetailRequest.getBillDetail().setProcessInstance(response.getProcessInstances().get(0));
-        return response.getProcessInstances().get(0).getState();
+        log.info("WF_TRANSITION | BEFORE | entity=BILL_DETAIL | detailId={} | businessId={} | businessService={} | tenantId={} | action={} | currentStatus={}",
+                detail.getId(), pi.getBusinessId(), pi.getBusinessService(), pi.getTenantId(), pi.getAction(), detail.getStatus());
+
+        try {
+            ProcessInstanceResponse response;
+            StringBuilder url = new StringBuilder(configs.getWfHost().concat(configs.getWfTransitionPath()));
+            Object optional = repository.fetchResult(url, workflowRequest);
+            response = mapper.convertValue(optional, ProcessInstanceResponse.class);
+            billDetailRequest.getBillDetail().setProcessInstance(response.getProcessInstances().get(0));
+            State newState = response.getProcessInstances().get(0).getState();
+
+            log.info("WF_TRANSITION | AFTER | entity=BILL_DETAIL | detailId={} | businessId={} | action={} | newStatus={}",
+                    detail.getId(), pi.getBusinessId(), pi.getAction(), newState.getApplicationStatus());
+
+            return newState;
+        } catch (Exception e) {
+            log.error("WF_TRANSITION | FAILED | entity=BILL_DETAIL | detailId={} | businessId={} | businessService={} | tenantId={} | action={} | currentStatus={} | error={}",
+                    detail.getId(), pi.getBusinessId(), pi.getBusinessService(), pi.getTenantId(), pi.getAction(), detail.getStatus(), e.getMessage());
+            throw e;
+        }
     }
     
 	public ProcessInstanceResponse searchWorkflowForBusinessIds(List<String> businessIds, String tenantId, RequestInfo requestInfo) {
