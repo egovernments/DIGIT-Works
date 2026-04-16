@@ -50,12 +50,6 @@ public class BillController {
 		return new ResponseEntity<>(billResponse, HttpStatus.ACCEPTED);
 	}
 
-	@PostMapping(value = "_bulkupdate")
-	public ResponseEntity<BulkBillUpdateResponse> bulkUpdate(@Valid @RequestBody BulkBillUpdateRequest bulkBillUpdateRequest) {
-		BulkBillUpdateResponse response = service.bulkUpdate(bulkBillUpdateRequest);
-		return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
-	}
-
 	@PostMapping(value = "_bulkupdatestatus")
 	public ResponseEntity<BulkBillStatusUpdateResponse> bulkUpdateStatus(@Valid @RequestBody BulkBillStatusUpdateRequest bulkRequest) {
 		BulkBillStatusUpdateResponse response = service.bulkUpdateStatus(bulkRequest);
