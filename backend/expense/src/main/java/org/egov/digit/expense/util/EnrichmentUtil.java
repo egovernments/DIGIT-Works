@@ -154,8 +154,12 @@ public class EnrichmentUtil {
         bill.setAuditDetails(updateAudit);
 
         Party payer = bill.getPayer();
-        if (null == payer.getId())
+        if (payer == null) {
+            payer = billFromSearch.getPayer();
+            bill.setPayer(payer);
+        } else if (null == payer.getId()) {
             payer.setId(billFromSearch.getPayer().getId());
+        }
         payer.setAuditDetails(updateAudit);
 
         Map<String, BillDetail> billDetailMap = billsFromSearch.stream()
