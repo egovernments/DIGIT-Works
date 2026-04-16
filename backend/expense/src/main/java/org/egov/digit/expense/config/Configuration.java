@@ -130,6 +130,10 @@ public class Configuration {
 	// SMSNotification
 	@Value("${egov.sms.notification.topic}")
 	private String smsNotificationTopic;
+
+	// Email Notification
+	@Value("${expense.email.notification.topic:egov.core.notification.email}")
+	private String emailNotificationTopic;
 	
 	// bill search configs
     @Value("${expense.billing.default.limit}")

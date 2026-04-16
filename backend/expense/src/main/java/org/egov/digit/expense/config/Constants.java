@@ -26,6 +26,7 @@ public class Constants {
 
 	public static final String INDIVIDUAL_NAME_PATH = "$.Individual.*.name.givenName";
 	public static final String INDIVIDUAL_PHONE_NUMBER_PATH = "$.Individual.*.mobileNumber";
+	public static final String INDIVIDUAL_EMAIL_PATH = "$.Individual.*.email";
 
 	// Worker Registry
 	public static final String WORKER_SEARCH = "workerSearch";
@@ -52,6 +53,8 @@ public class Constants {
 	public static final String HRMS_USER_MOBILE_NO = "$.Employees.*.user.mobileNumber";
 	public static final String CONTACT_MOBILE_NUMBER = "contactMobileNumber";
 	public static final String EXPENSE_CALCULATOR_MODULE_CODE = "rainmaker-common-masters";
+	public static final String EXPENSE_NOTIFICATION_LOCALIZATION_MODULE = "expense-notification";
+	public static final String WORKFLOW_EMAIL_NOTIFICATION_MDMS_SCHEMA = "EXPENSE.billEmailNotification";
 	public static final String APPROVE_CODE = "APPROVE";
 	public static final String REJECT_CODE = "REJECT";
 	public static final String MOBILE_NUMBER_CODE = "mobileNumber";

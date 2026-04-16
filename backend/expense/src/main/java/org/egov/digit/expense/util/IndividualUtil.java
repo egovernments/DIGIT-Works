@@ -43,6 +43,7 @@ public class IndividualUtil {
         return IndividualDetails.builder()
                 .name(getIndividualField(individualResponse,INDIVIDUAL_NAME_PATH,identifier))
                 .phoneNumber(getIndividualField(individualResponse,INDIVIDUAL_PHONE_NUMBER_PATH,identifier))
+                .email(getIndividualField(individualResponse,INDIVIDUAL_EMAIL_PATH,identifier))
                 .build();
 
     }

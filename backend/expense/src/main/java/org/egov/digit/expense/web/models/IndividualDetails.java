@@ -26,4 +26,8 @@ public class IndividualDetails {
 	@Valid
 	private String phoneNumber;
 
+	@JsonProperty("email")
+	@Valid
+	private String email;
+
 }

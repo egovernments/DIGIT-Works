@@ -11,6 +11,7 @@ import org.egov.digit.expense.repository.SchedulerJobRepository;
 import org.egov.digit.expense.service.scheduler.SchedulerJobRegistry;
 import org.egov.digit.expense.util.WorkflowUtil;
 import org.egov.digit.expense.web.models.*;
+import org.egov.digit.expense.web.models.enums.WorkflowNotificationType;
 import org.egov.digit.expense.web.models.enums.Actions;
 import org.egov.digit.expense.web.models.enums.SchedulerJobStatus;
 import org.egov.digit.expense.web.models.enums.SchedulerJobType;
@@ -47,6 +48,7 @@ public class PaymentWorkflowService {
     private final SchedulerJobRegistry schedulerJobRegistry;
     private final Configuration config;
     private final ExpenseProducer expenseProducer;
+    private final WorkflowEmailNotificationService workflowEmailNotificationService;
 
     @Autowired
     public PaymentWorkflowService(WorkflowUtil workflowUtil,
@@ -54,13 +56,15 @@ public class PaymentWorkflowService {
                                    SchedulerJobRepository schedulerJobRepository,
                                    SchedulerJobRegistry schedulerJobRegistry,
                                    Configuration config,
-                                   ExpenseProducer expenseProducer) {
+                                   ExpenseProducer expenseProducer,
+                                   WorkflowEmailNotificationService workflowEmailNotificationService) {
         this.workflowUtil = workflowUtil;
         this.billRepository = billRepository;
         this.schedulerJobRepository = schedulerJobRepository;
         this.schedulerJobRegistry = schedulerJobRegistry;
         this.config = config;
         this.expenseProducer = expenseProducer;
+        this.workflowEmailNotificationService = workflowEmailNotificationService;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -196,6 +200,9 @@ public class PaymentWorkflowService {
         // Persist updated bill + detail statuses to DB via Kafka
         pushBillUpdate(bill, requestInfo);
 
+        // Notify payment reviewers by email (fire-and-forget)
+        workflowEmailNotificationService.notify(billRequest, WorkflowNotificationType.REVIEW);
+
         insertBillStatusPollJob(bill, "SEND_FOR_REVIEW", requestInfo);
     }
 
@@ -227,6 +234,9 @@ public class PaymentWorkflowService {
 
         // Persist updated bill + detail statuses to DB via Kafka
         pushBillUpdate(bill, requestInfo);
+
+        // Notify payment approvers by email (fire-and-forget)
+        workflowEmailNotificationService.notify(billRequest, WorkflowNotificationType.APPROVAL);
 
         // Store reviewer's RequestInfo so the poll job uses the correct auth context
         insertBillStatusPollJob(bill, "REVIEW", requestInfo);
