@@ -53,7 +53,10 @@ public class BillController {
 	@PostMapping(value = "_bulkupdatestatus")
 	public ResponseEntity<BulkBillStatusUpdateResponse> bulkUpdateStatus(@Valid @RequestBody BulkBillStatusUpdateRequest bulkRequest) {
 		BulkBillStatusUpdateResponse response = service.bulkUpdateStatus(bulkRequest);
-		return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+		boolean hasErrors = response.getErrors() != null && !response.getErrors().isEmpty();
+		boolean hasSuccess = response.getBills() != null && !response.getBills().isEmpty();
+		HttpStatus status = hasErrors ? (hasSuccess ? HttpStatus.MULTI_STATUS : HttpStatus.UNPROCESSABLE_ENTITY) : HttpStatus.ACCEPTED;
+		return new ResponseEntity<>(response, status);
 	}
 
 	@PostMapping(value = "billdetails/_update")

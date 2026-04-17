@@ -358,7 +358,7 @@ public class PaymentWorkflowService {
      */
     public void createTransferTask(Bill bill, RequestInfo requestInfo) {
         Task existing = taskRepository.searchTask(
-                Task.builder().billId(bill.getId()).type(Task.Type.Transfer).status(Status.IN_PROGRESS).build());
+                Task.builder().billId(bill.getId()).tenantId(bill.getTenantId()).type(Task.Type.Transfer).status(Status.IN_PROGRESS).build());
         if (existing != null) {
             log.info("Transfer task already exists for bill={} — skipping creation", bill.getId());
             return;
@@ -390,7 +390,7 @@ public class PaymentWorkflowService {
      */
     private void createVerifyTask(Bill bill, RequestInfo requestInfo) {
         Task existing = taskRepository.searchTask(
-                Task.builder().billId(bill.getId()).type(Task.Type.Verify).status(Status.IN_PROGRESS).build());
+                Task.builder().billId(bill.getId()).tenantId(bill.getTenantId()).type(Task.Type.Verify).status(Status.IN_PROGRESS).build());
         if (existing != null) {
             log.info("Verify task already exists for bill={} — skipping creation", bill.getId());
             return;

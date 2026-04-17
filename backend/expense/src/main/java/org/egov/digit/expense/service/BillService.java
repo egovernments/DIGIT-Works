@@ -358,7 +358,7 @@ public class BillService {
 			return BulkBillStatusUpdateResponse.builder()
 					.bills(new ArrayList<>())
 					.errors(validationErrors)
-					.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true))
+					.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, false))
 					.build();
 		}
 
@@ -412,10 +412,11 @@ public class BillService {
 			}
 		}
 
+		boolean allFailed = !errors.isEmpty() && successfulBills.isEmpty();
 		return BulkBillStatusUpdateResponse.builder()
 				.bills(successfulBills)
 				.errors(errors)
-				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true))
+				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, !allFailed))
 				.build();
 	}
 
