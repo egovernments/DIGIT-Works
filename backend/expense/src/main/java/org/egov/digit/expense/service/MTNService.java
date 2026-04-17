@@ -25,6 +25,7 @@ import org.egov.digit.expense.web.models.enums.SchedulerJobType;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.digit.expense.web.validators.BillValidator;
 import org.egov.tracer.model.CustomException;
+import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -585,11 +586,16 @@ public class MTNService implements PaymentProviderService {
                 State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBillDetail(billDetailRequest), billDetailRequest);
                 billDetail.setStatus(Status.fromValue(wfState.getApplicationStatus()));
                 return;
-            } catch (HttpClientErrorException e) {
+            } catch (Exception e) {
                 // egov-workflow-v2 persists state asynchronously via Kafka. A rapid successive transition
                 // can arrive before the DB write commits, causing INVALID ACTION on the previous state.
+                // ServiceRequestRepository wraps HttpClientErrorException into ServiceCallException (body as message),
+                // so we must check both to reliably detect the retryable case.
                 // Retry with backoff to allow the persister to catch up.
-                boolean isInvalidAction = e.getResponseBodyAsString().contains("INVALID ACTION");
+                String responseBody = (e instanceof HttpClientErrorException hce)
+                        ? hce.getResponseBodyAsString()
+                        : e.getMessage();
+                boolean isInvalidAction = responseBody != null && responseBody.contains("INVALID ACTION");
                 if (!isInvalidAction || attempt == maxRetries) {
                     log.error("Error in updating workflow state change for billDetail Id: {}, from status: {} to action: {}"
                             , billDetail.getId(), billDetail.getStatus(), workflow.getAction(), e);
