@@ -337,6 +337,12 @@ public class Configuration {
 	@Value("${task.scheduler.bootstrap.tenants:}")
 	private String schedulerBootstrapTenantsRaw;
 
+	@Value("${wf.transition.retry.max.attempts:3}")
+	private int wfTransitionRetryMaxAttempts;
+
+	@Value("${wf.transition.retry.initial.delay.ms:200}")
+	private long wfTransitionRetryInitialDelayMs;
+
 	public List<String> getSchedulerBootstrapTenants() {
 		if (schedulerBootstrapTenantsRaw == null || schedulerBootstrapTenantsRaw.isBlank()) {
 			return Collections.emptyList();

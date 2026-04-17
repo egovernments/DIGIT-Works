@@ -569,19 +569,41 @@ public class MTNService implements PaymentProviderService {
     }
 
     private void setBillDetailStatus(BillDetail billDetail, Workflow workflow, RequestInfo requestInfo, boolean isWorkflowUpdate) {
-        if (validator.isWorkflowActiveForBusinessService(config.getBillDetailBusinessService()) && isWorkflowUpdate) {
-            BillDetailRequest billDetailRequest = BillDetailRequest.builder()
-                    .billDetail(billDetail)
-                    .businessService(config.getBillDetailBusinessService())
-                    .workflow(workflow)
-                    .requestInfo(requestInfo)
-                    .build();
+        if (!validator.isWorkflowActiveForBusinessService(config.getBillDetailBusinessService()) || !isWorkflowUpdate) {
+            return;
+        }
+        BillDetailRequest billDetailRequest = BillDetailRequest.builder()
+                .billDetail(billDetail)
+                .businessService(config.getBillDetailBusinessService())
+                .workflow(workflow)
+                .requestInfo(requestInfo)
+                .build();
+        int maxRetries = config.getWfTransitionRetryMaxAttempts();
+        long delayMs = config.getWfTransitionRetryInitialDelayMs();
+        for (int attempt = 1; attempt <= maxRetries; attempt++) {
             try {
                 State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBillDetail(billDetailRequest), billDetailRequest);
                 billDetail.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+                return;
             } catch (HttpClientErrorException e) {
-                log.error("Error in updating workflow state change for billDetail Id: {}, from status: {} to action: {}"
-                        , billDetail.getId(), billDetail.getStatus(), workflow.getAction(), e);
+                // egov-workflow-v2 persists state asynchronously via Kafka. A rapid successive transition
+                // can arrive before the DB write commits, causing INVALID ACTION on the previous state.
+                // Retry with backoff to allow the persister to catch up.
+                boolean isInvalidAction = e.getResponseBodyAsString().contains("INVALID ACTION");
+                if (!isInvalidAction || attempt == maxRetries) {
+                    log.error("Error in updating workflow state change for billDetail Id: {}, from status: {} to action: {}"
+                            , billDetail.getId(), billDetail.getStatus(), workflow.getAction(), e);
+                    return;
+                }
+                log.warn("WF async-persist race for billDetail {}, action={}, retrying in {}ms (attempt {}/{})",
+                        billDetail.getId(), workflow.getAction(), delayMs, attempt, maxRetries);
+                try {
+                    Thread.sleep(delayMs);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+                delayMs *= 2;
             }
         }
     }
