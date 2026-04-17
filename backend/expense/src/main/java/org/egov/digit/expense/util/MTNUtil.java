@@ -8,6 +8,7 @@ import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.web.models.MtnBalance;
 import org.egov.digit.expense.web.models.PaymentTransferRequest;
 import org.egov.digit.expense.web.models.PaymentTransferResponse;
+import org.egov.digit.expense.web.models.enums.ResponseStatus;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -124,6 +125,10 @@ public class MTNUtil {
     }
 
     public boolean isMsisdnActive(String msisdn) {
+        if (config.isMtnApiMockEnabled()) {
+            log.info("[MTN MOCK] isMsisdnActive({}) → true", msisdn);
+            return true;
+        }
         String accessToken;
         try {
             accessToken = getAccessToken();
@@ -271,6 +276,10 @@ public class MTNUtil {
     }
 
     public void transferIfAccountIsActive(PaymentTransferRequest paymentTransferRequest, String referenceId) {
+        if (config.isMtnApiMockEnabled()) {
+            log.info("[MTN MOCK] transferIfAccountIsActive referenceId={} → success (no-op)", referenceId);
+            return;
+        }
         String accessToken;
         try {
             accessToken = getAccessToken();
@@ -305,7 +314,13 @@ public class MTNUtil {
     }
 
     public PaymentTransferResponse getTransferStatus(String referenceId) {
-
+        if (config.isMtnApiMockEnabled()) {
+            log.info("[MTN MOCK] getTransferStatus referenceId={} → SUCCESSFUL", referenceId);
+            return PaymentTransferResponse.builder()
+                    .status(ResponseStatus.SUCCESSFUL.toString())
+                    .reason("MOCK_MODE")
+                    .build();
+        }
         String accessToken = getAccessToken();
         String url = UriComponentsBuilder
                 .fromHttpUrl(config.getBaseUrlMTN() + config.getTransferStatusEndpointMTN().replace("{referenceId}", referenceId))
@@ -345,7 +360,13 @@ public class MTNUtil {
     }
 
     public MtnBalance getTotalAmountBalance() {
-
+        if (config.isMtnApiMockEnabled()) {
+            log.info("[MTN MOCK] getTotalAmountBalance → mock balance");
+            return MtnBalance.builder()
+                    .amount("999999")
+                    .currency(config.getPaymentCurrency())
+                    .build();
+        }
         String accessToken = getAccessToken();
         String url = UriComponentsBuilder
                 .fromHttpUrl(config.getBaseUrlMTN() + config.getAmountBalanceEndpointMTN())

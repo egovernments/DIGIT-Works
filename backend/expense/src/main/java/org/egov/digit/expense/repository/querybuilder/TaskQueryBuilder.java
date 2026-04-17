@@ -29,6 +29,11 @@ public class TaskQueryBuilder {
             preparedStmtList.add(task.getBillId());
             preparedStmtList.add(task.getType().toString());
 
+            if (task.getBillDetailId() != null) {
+                query.append(" AND bill_detail_id = ?");
+                preparedStmtList.add(task.getBillDetailId());
+            }
+
             query.append(TASK_ORDER_BY_QUERY);
         }
 

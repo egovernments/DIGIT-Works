@@ -258,6 +258,9 @@ public class Configuration {
 	@Value("${mtn.payment.phone.code.prefix}")
 	private String phoneCodePrefix;
 
+	@Value("${mtn.api.mock.enabled:false}")
+	private boolean mtnApiMockEnabled;
+
 	@Value("${bill.business.service}")
 	private String billBusinessService;
 
@@ -315,6 +318,15 @@ public class Configuration {
 
 	@Value("${task.scheduler.cleanup.interval.ms:3600000}")
 	private long schedulerCleanupIntervalMs;
+
+	@Value("${task.scheduler.backoff.base.ms:30000}")
+	private long schedulerBackoffBaseMs;
+
+	@Value("${task.scheduler.backoff.multiplier:1.5}")
+	private double schedulerBackoffMultiplier;
+
+	@Value("${task.scheduler.backoff.max.ms:300000}")
+	private long schedulerBackoffMaxMs;
 
 	/**
 	 * Comma-separated list of tenant IDs to pre-register in the scheduler registry at startup.

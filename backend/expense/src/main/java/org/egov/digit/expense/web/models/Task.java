@@ -33,7 +33,10 @@ public class Task {
 
 	@JsonProperty("billId")
 	private String billId;
-	
+
+	@JsonProperty("billDetailId")
+	private String billDetailId;
+
 	@JsonProperty("status")
 	private Status status;
 

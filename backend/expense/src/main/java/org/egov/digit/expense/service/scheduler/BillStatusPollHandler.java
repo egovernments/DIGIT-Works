@@ -3,6 +3,7 @@ package org.egov.digit.expense.service.scheduler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.digit.expense.service.PaymentWorkflowService;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillDetail;
@@ -13,6 +14,8 @@ import org.egov.digit.expense.web.models.enums.SchedulerJobType;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import static org.egov.digit.expense.config.Constants.*;
 
 /**
  * Handles {@link SchedulerJobType#BILL_STATUS_POLL} jobs.
@@ -61,10 +64,11 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
             }
 
             return switch (phase) {
-                case "VERIFICATION"    -> handleVerificationPoll(bill, requestInfo);
-                case "IGNORE_ERRORS"   -> handleIgnoreErrorsPoll(bill, requestInfo);
-                case "SEND_FOR_REVIEW" -> handleSendForReviewPoll(bill, requestInfo);
-                case "REVIEW"          -> handleReviewPoll(bill, requestInfo);
+                case POLL_PHASE_VERIFICATION    -> handleVerificationPoll(bill, requestInfo);
+                case POLL_PHASE_IGNORE_ERRORS   -> handleIgnoreErrorsPoll(bill, requestInfo);
+                case POLL_PHASE_SEND_FOR_REVIEW -> handleSendForReviewPoll(bill, requestInfo);
+                case POLL_PHASE_REVIEW          -> handleReviewPoll(bill, requestInfo);
+                case POLL_PHASE_PAYMENT         -> handlePaymentPoll(bill, requestInfo);
                 default -> {
                     log.error("Unknown poll phase '{}' for bill {} — marking FAILED", phase, billId);
                     yield SchedulerJobResult.FAILED;
@@ -100,15 +104,17 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
             if (bill == null) return;
 
             Actions failAction = switch (phase) {
-                case "VERIFICATION"    -> Actions.FAILED;  // VERIFICATION_IN_PROGRESS → PENDING_VERIFICATION (re-try allowed)
-                case "IGNORE_ERRORS"   -> Actions.FAIL;    // IGNORING_ERRORS_IN_PROGRESS → PARTIALLY_VERIFIED
-                case "SEND_FOR_REVIEW" -> Actions.FAIL;    // SENDING_FOR_REVIEW → FULLY_VERIFIED
-                case "REVIEW"          -> Actions.FAIL;    // REVIEW_IN_PROGRESS → UNDER_REVIEW
-                default                -> null;
+                case POLL_PHASE_VERIFICATION    -> Actions.FAILED;  // VERIFICATION_IN_PROGRESS → PENDING_VERIFICATION (re-try allowed)
+                case POLL_PHASE_IGNORE_ERRORS   -> Actions.FAIL;    // IGNORING_ERRORS_IN_PROGRESS → PARTIALLY_VERIFIED
+                case POLL_PHASE_SEND_FOR_REVIEW -> Actions.FAIL;    // SENDING_FOR_REVIEW → FULLY_VERIFIED
+                case POLL_PHASE_REVIEW          -> Actions.FAIL;    // REVIEW_IN_PROGRESS → UNDER_REVIEW
+                case POLL_PHASE_PAYMENT         -> Actions.FAILED;  // PAYMENT_IN_PROGRESS → timed out, mark FAILED
+                default                         -> null;
             };
 
             if (failAction != null) {
                 paymentWorkflowService.transitionBill(bill, failAction, requestInfo);
+                enrichAuditForSystemUpdate(bill, requestInfo);
                 paymentWorkflowService.pushBillUpdate(bill, requestInfo);
                 log.warn("BILL_STATUS_POLL max attempts exceeded — applied FAIL action for bill={} phase={}", billId, phase);
             }
@@ -250,9 +256,62 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
                 || s == Status.PAYMENT_FAILED || s == Status.PAID || s == Status.FULLY_PAID;
     }
 
+    /**
+     * PAYMENT: waits for all PAYMENT_IN_PROGRESS details to settle (via per-detail Transfer tasks).
+     * Acts as a guaranteed aggregator — the per-detail TaskStatusCheckHandler may miss the final
+     * bill-level transition if the DB persister hasn't committed earlier tasks' updates in time.
+     *
+     * <pre>
+     * All PAID/FULLY_PAID      → FULLY_PAY   → FULLY_PAID
+     * Some PAID, some FAILED   → PARTIALLY_PAY → PARTIALLY_PAID
+     * All PAYMENT_FAILED       → FAILED      → (terminal)
+     * </pre>
+     */
+    private SchedulerJobResult handlePaymentPoll(Bill bill, RequestInfo requestInfo) {
+        // If bill already exited PAYMENT_IN_PROGRESS (TaskStatusCheckHandler beat us), nothing to do
+        if (bill.getStatus() != Status.PAYMENT_IN_PROGRESS) {
+            log.info("Bill {} already exited PAYMENT_IN_PROGRESS (status={}) — PAYMENT poll done",
+                    bill.getId(), bill.getStatus());
+            return SchedulerJobResult.DONE;
+        }
+
+        long inProgress = countDetailsInState(bill, Status.PAYMENT_IN_PROGRESS);
+        if (inProgress > 0) {
+            log.debug("Bill {} PAYMENT: {} detail(s) still PAYMENT_IN_PROGRESS — retrying", bill.getId(), inProgress);
+            return SchedulerJobResult.RETRY;
+        }
+
+        long paid  = countDetailsInState(bill, Status.PAID) + countDetailsInState(bill, Status.FULLY_PAID);
+        long total = bill.getBillDetails().size();
+
+        if (paid == total) {
+            paymentWorkflowService.transitionBill(bill, Actions.FULLY_PAY, requestInfo);
+        } else if (paid > 0) {
+            paymentWorkflowService.transitionBill(bill, Actions.PARTIALLY_PAY, requestInfo);
+        } else {
+            paymentWorkflowService.transitionBill(bill, Actions.FAILED, requestInfo);
+        }
+        paymentWorkflowService.pushBillUpdate(bill, requestInfo);
+        return SchedulerJobResult.DONE;
+    }
+
     private long countDetailsInState(Bill bill, Status status) {
         return bill.getBillDetails().stream()
                 .filter(d -> d.getStatus() == status)
                 .count();
+    }
+
+    private void enrichAuditForSystemUpdate(Bill bill, RequestInfo requestInfo) {
+        long now = System.currentTimeMillis();
+        String actor = (requestInfo != null && requestInfo.getUserInfo() != null)
+                ? requestInfo.getUserInfo().getUuid()
+                : SYSTEM_SCHEDULER_ACTOR;
+        if (bill.getAuditDetails() == null) {
+            bill.setAuditDetails(AuditDetails.builder()
+                    .lastModifiedBy(actor).lastModifiedTime(now).build());
+        } else {
+            bill.getAuditDetails().setLastModifiedBy(actor);
+            bill.getAuditDetails().setLastModifiedTime(now);
+        }
     }
 }

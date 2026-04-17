@@ -34,6 +34,7 @@ public class TaskRowMapper implements RowMapper<Task> {
                 .id(rs.getString("id"))
                 .tenantId(rs.getString("tenant_id"))
                 .billId(rs.getString("bill_id"))
+                .billDetailId(rs.getString("bill_detail_id"))
                 .status(Status.valueOf(rs.getString("status")))
                 .type(Task.Type.valueOf(rs.getString("type")));
 

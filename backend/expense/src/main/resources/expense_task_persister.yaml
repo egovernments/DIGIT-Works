@@ -6,12 +6,15 @@ serviceMaps:
       description: create bill verification task in eg_expense_task
       fromTopic: expense-bill-task
       queryMaps:
-        - query: INSERT INTO eg_expense_task (id, status, type, created_by, created_time, last_modified_by, last_modified_time, additional_details) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        - query: INSERT INTO eg_expense_task (id, status, type, bill_id, bill_detail_id, tenant_id, created_by, created_time, last_modified_by, last_modified_time, additional_details) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           basePath: $.task
           jsonMaps:
             - jsonPath: $.task.id
             - jsonPath: $.task.status
             - jsonPath: $.task.type
+            - jsonPath: $.task.billId
+            - jsonPath: $.task.billDetailId
+            - jsonPath: $.task.tenantId
             - jsonPath: $.task.auditDetails.createdBy
             - jsonPath: $.task.auditDetails.createdTime
             - jsonPath: $.task.auditDetails.lastModifiedBy

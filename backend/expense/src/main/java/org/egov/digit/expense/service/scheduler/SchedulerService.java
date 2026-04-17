@@ -179,11 +179,11 @@ public class SchedulerService {
         };
     }
 
-    /** Exponential backoff: 10 s × 2^(attempt-1), capped at 10 min. */
     private long computeBackoffMs(int attempt) {
-        long base = 10_000L;
-        long cap = 600_000L;
-        return Math.min(base << Math.min(attempt - 1, 6), cap);
+        long base = config.getSchedulerBackoffBaseMs();
+        double multiplier = config.getSchedulerBackoffMultiplier();
+        long cap = config.getSchedulerBackoffMaxMs();
+        return Math.min((long) (base * Math.pow(multiplier, attempt - 1)), cap);
     }
 
     private SchedulerJob finalized(SchedulerJob job, SchedulerJobStatus status,
