@@ -421,6 +421,7 @@ public class BillService {
 
 	private void updateBillStatus(Bill bill, org.egov.common.contract.models.Workflow workflow, RequestInfo requestInfo) {
 		String tenantId = bill.getTenantId();
+		String action = workflow.getAction();
 
 		BillRequest billRequest = BillRequest.builder()
 				.requestInfo(requestInfo)
@@ -431,12 +432,33 @@ public class BillService {
 		List<Bill> billsFromSearch = validator.validateUpdateRequest(billRequest);
 		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
 
-		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
-			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
-			bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
-		}
+		// Reset status to current DB state so PaymentWorkflowService state validation passes.
+		// (bulkUpdateStatus sets bill.status = target newStatus from request, but PW service
+		//  validates the *current* state before transitioning.)
+		bill.setStatus(billsFromSearch.get(0).getStatus());
 
-		expenseProducer.push(tenantId, config.getBillUpdateTopic(), billRequest);
+		if (Actions.VERIFY.toString().equals(action)) {
+			paymentWorkflowService.verifyBill(billRequest);
+		} else if (Actions.IGNORE_ERRORS_AND_VERIFY.toString().equals(action)) {
+			paymentWorkflowService.ignoreErrorsAndVerify(billRequest);
+		} else if (Actions.SEND_FOR_REVIEW.toString().equals(action)) {
+			paymentWorkflowService.sendForReview(billRequest);
+		} else if (Actions.SEND_FOR_APPROVAL.toString().equals(action)) {
+			paymentWorkflowService.sendForApproval(billRequest);
+		} else if (Actions.PAYMENT_INITIATION.toString().equals(action)) {
+			Status currentStatus = billsFromSearch.get(0).getStatus();
+			if (currentStatus == Status.PAYMENT_FAILED || currentStatus == Status.PARTIALLY_PAID) {
+				paymentWorkflowService.retryPayment(billRequest);
+			} else {
+				paymentWorkflowService.initiatePayment(billRequest);
+			}
+		} else {
+			if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
+				State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
+				bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+			}
+			expenseProducer.push(tenantId, config.getBillUpdateTopic(), billRequest);
+		}
 	}
 
 	/**

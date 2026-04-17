@@ -8,6 +8,7 @@ import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.kafka.ExpenseProducer;
 import org.egov.digit.expense.repository.BillRepository;
 import org.egov.digit.expense.repository.SchedulerJobRepository;
+import org.egov.digit.expense.repository.TaskRepository;
 import org.egov.digit.expense.service.scheduler.SchedulerJobRegistry;
 import org.egov.digit.expense.util.WorkflowUtil;
 import org.egov.digit.expense.web.models.*;
@@ -44,6 +45,7 @@ public class PaymentWorkflowService {
 
     private final WorkflowUtil workflowUtil;
     private final BillRepository billRepository;
+    private final TaskRepository taskRepository;
     private final SchedulerJobRepository schedulerJobRepository;
     private final SchedulerJobRegistry schedulerJobRegistry;
     private final Configuration config;
@@ -53,6 +55,7 @@ public class PaymentWorkflowService {
     @Autowired
     public PaymentWorkflowService(WorkflowUtil workflowUtil,
                                    BillRepository billRepository,
+                                   TaskRepository taskRepository,
                                    SchedulerJobRepository schedulerJobRepository,
                                    SchedulerJobRegistry schedulerJobRegistry,
                                    Configuration config,
@@ -60,6 +63,7 @@ public class PaymentWorkflowService {
                                    WorkflowEmailNotificationService workflowEmailNotificationService) {
         this.workflowUtil = workflowUtil;
         this.billRepository = billRepository;
+        this.taskRepository = taskRepository;
         this.schedulerJobRepository = schedulerJobRepository;
         this.schedulerJobRegistry = schedulerJobRegistry;
         this.config = config;
@@ -115,20 +119,14 @@ public class PaymentWorkflowService {
 
         validateBillInStates(bill, Status.PENDING_VERIFICATION, Status.PARTIALLY_VERIFIED);
 
-        // Bill → VERIFICATION_IN_PROGRESS (locked)
+        // Bill → VERIFICATION_IN_PROGRESS (1 synchronous WF call)
         transitionBill(bill, Actions.VERIFY, billRequest);
-
-        // Eligible details → VERIFICATION_IN_PROGRESS
-        for (BillDetail detail : bill.getBillDetails()) {
-            if (detail.getStatus() == Status.PENDING_VERIFICATION
-                    || detail.getStatus() == Status.VERIFICATION_FAILED) {
-                transitionBillDetail(detail, Actions.VERIFY, requestInfo);
-            }
-        }
-
-        // Persist updated bill + detail statuses to DB via Kafka
         pushBillUpdate(bill, requestInfo);
 
+        // Detail WF + MTN processing handled asynchronously by TaskConsumer
+        createVerifyTask(bill, requestInfo);
+
+        // Aggregation handled asynchronously by BILL_STATUS_POLL
         insertBillStatusPollJob(bill, "VERIFICATION", requestInfo);
     }
 
@@ -155,19 +153,12 @@ public class PaymentWorkflowService {
                     "Cannot ignore errors when bill details are still in PENDING_VERIFICATION");
         }
 
-        // Bill → IGNORING_ERRORS_IN_PROGRESS (locked)
+        // Bill → IGNORING_ERRORS_IN_PROGRESS (1 synchronous WF call)
         transitionBill(bill, Actions.IGNORE_ERRORS_AND_VERIFY, billRequest);
-
-        // VERIFICATION_FAILED details → VERIFIED (direct, no external call)
-        for (BillDetail detail : bill.getBillDetails()) {
-            if (detail.getStatus() == Status.VERIFICATION_FAILED) {
-                transitionBillDetail(detail, Actions.IGNORE_ERRORS_AND_VERIFY, requestInfo);
-            }
-        }
-
-        // Persist updated bill + detail statuses to DB via Kafka
         pushBillUpdate(bill, requestInfo);
 
+        // Detail WF transitions (VERIFICATION_FAILED → VERIFIED) handled asynchronously
+        insertBillDetailWfUpdateJob(bill, "IGNORE_ERRORS", requestInfo);
         insertBillStatusPollJob(bill, "IGNORE_ERRORS", requestInfo);
     }
 
@@ -189,20 +180,13 @@ public class PaymentWorkflowService {
 
         // Bill → SENDING_FOR_REVIEW (locked)
         transitionBill(bill, Actions.SEND_FOR_REVIEW, billRequest);
-
-        // VERIFIED details → UNDER_REVIEW
-        for (BillDetail detail : bill.getBillDetails()) {
-            if (detail.getStatus() == Status.VERIFIED) {
-                transitionBillDetail(detail, Actions.SEND_FOR_REVIEW, requestInfo);
-            }
-        }
-
-        // Persist updated bill + detail statuses to DB via Kafka
         pushBillUpdate(bill, requestInfo);
 
         // Notify payment reviewers by email (fire-and-forget)
         workflowEmailNotificationService.notify(billRequest, WorkflowNotificationType.REVIEW);
 
+        // VERIFIED details → UNDER_REVIEW handled asynchronously
+        insertBillDetailWfUpdateJob(bill, "SEND_FOR_REVIEW", requestInfo);
         insertBillStatusPollJob(bill, "SEND_FOR_REVIEW", requestInfo);
     }
 
@@ -224,20 +208,13 @@ public class PaymentWorkflowService {
 
         // Bill → REVIEW_IN_PROGRESS (locked)
         transitionBill(bill, Actions.SEND_FOR_APPROVAL, billRequest);
-
-        // UNDER_REVIEW details → REVIEWED
-        for (BillDetail detail : bill.getBillDetails()) {
-            if (detail.getStatus() == Status.UNDER_REVIEW) {
-                transitionBillDetail(detail, Actions.SEND_FOR_APPROVAL, requestInfo);
-            }
-        }
-
-        // Persist updated bill + detail statuses to DB via Kafka
         pushBillUpdate(bill, requestInfo);
 
         // Notify payment approvers by email (fire-and-forget)
         workflowEmailNotificationService.notify(billRequest, WorkflowNotificationType.APPROVAL);
 
+        // UNDER_REVIEW details → REVIEWED handled asynchronously
+        insertBillDetailWfUpdateJob(bill, "SEND_FOR_APPROVAL", requestInfo);
         // Store reviewer's RequestInfo so the poll job uses the correct auth context
         insertBillStatusPollJob(bill, "REVIEW", requestInfo);
     }
@@ -261,16 +238,11 @@ public class PaymentWorkflowService {
 
         // Bill → PAYMENT_IN_PROGRESS (locked)
         transitionBill(bill, Actions.PAYMENT_INITIATION, billRequest);
-
-        // REVIEWED details → PAYMENT_IN_PROGRESS
-        for (BillDetail detail : bill.getBillDetails()) {
-            if (detail.getStatus() == Status.REVIEWED) {
-                transitionBillDetail(detail, Actions.PAYMENT_INITIATION, requestInfo);
-            }
-        }
-
-        // Persist updated bill + detail statuses to DB via Kafka
         pushBillUpdate(bill, requestInfo);
+
+        // REVIEWED details → PAYMENT_IN_PROGRESS handled asynchronously by BillDetailWfUpdateHandler,
+        // then MTN transfer task + TASK_STATUS_CHECK drives the payment outcome aggregation
+        insertBillDetailWfUpdateJob(bill, "PAYMENT_INITIATION", requestInfo);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -290,16 +262,10 @@ public class PaymentWorkflowService {
 
         // Bill → PAYMENT_IN_PROGRESS (locked)
         transitionBill(bill, Actions.PAYMENT_INITIATION, billRequest);
-
-        // Only PAYMENT_FAILED details — do NOT re-process already-PAID ones
-        for (BillDetail detail : bill.getBillDetails()) {
-            if (detail.getStatus() == Status.PAYMENT_FAILED) {
-                transitionBillDetail(detail, Actions.PAYMENT_INITIATION, requestInfo);
-            }
-        }
-
-        // Persist updated bill + detail statuses to DB via Kafka
         pushBillUpdate(bill, requestInfo);
+
+        // Only PAYMENT_FAILED details retried asynchronously — PAID ones are skipped by the handler's predicate
+        insertBillDetailWfUpdateJob(bill, "PAYMENT_INITIATION", requestInfo);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -382,6 +348,98 @@ public class PaymentWorkflowService {
                 .build();
         expenseProducer.push(bill.getTenantId(), config.getBillUpdateTopic(), billRequest);
         log.info("Pushed bill update to Kafka for bill id={} status={}", bill.getId(), bill.getStatus());
+    }
+
+    /**
+     * Pushes a Transfer task to the expense-bill-task Kafka topic so that TaskConsumer
+     * triggers MTN disbursement for all PAYMENT_IN_PROGRESS details. Called by
+     * BillDetailWfUpdateHandler after all PAYMENT_INITIATION transitions succeed.
+     * Idempotent — deduplicates against any existing IN_PROGRESS Transfer task.
+     */
+    public void createTransferTask(Bill bill, RequestInfo requestInfo) {
+        Task existing = taskRepository.searchTask(
+                Task.builder().billId(bill.getId()).type(Task.Type.Transfer).status(Status.IN_PROGRESS).build());
+        if (existing != null) {
+            log.info("Transfer task already exists for bill={} — skipping creation", bill.getId());
+            return;
+        }
+
+        Task task = Task.builder()
+                .id(UUID.randomUUID().toString())
+                .tenantId(bill.getTenantId())
+                .billId(bill.getId())
+                .type(Task.Type.Transfer)
+                .status(Status.IN_PROGRESS)
+                .auditDetails(bill.getAuditDetails())
+                .build();
+
+        TaskRequest taskRequest = TaskRequest.builder()
+                .task(task)
+                .bill(bill)
+                .requestInfo(requestInfo)
+                .build();
+
+        expenseProducer.push(bill.getTenantId(), config.getBillTaskTopic(), taskRequest);
+        log.info("Pushed Transfer task to Kafka for bill={}", bill.getId());
+    }
+
+    /**
+     * Pushes a Verify task to the expense-bill-task Kafka topic so that TaskConsumer
+     * triggers MTN verification asynchronously. Idempotent — deduplicates against any
+     * existing IN_PROGRESS Verify task for the same bill.
+     */
+    private void createVerifyTask(Bill bill, RequestInfo requestInfo) {
+        Task existing = taskRepository.searchTask(
+                Task.builder().billId(bill.getId()).type(Task.Type.Verify).status(Status.IN_PROGRESS).build());
+        if (existing != null) {
+            log.info("Verify task already exists for bill={} — skipping creation", bill.getId());
+            return;
+        }
+
+        Task task = Task.builder()
+                .id(UUID.randomUUID().toString())
+                .tenantId(bill.getTenantId())
+                .billId(bill.getId())
+                .type(Task.Type.Verify)
+                .status(Status.IN_PROGRESS)
+                .auditDetails(bill.getAuditDetails())
+                .build();
+
+        TaskRequest taskRequest = TaskRequest.builder()
+                .task(task)
+                .bill(bill)
+                .requestInfo(requestInfo)
+                .build();
+
+        expenseProducer.push(bill.getTenantId(), config.getBillTaskTopic(), taskRequest);
+        log.info("Pushed Verify task to Kafka for bill={}", bill.getId());
+    }
+
+    /** Inserts a BILL_DETAIL_WF_UPDATE scheduler job for the given bill and phase. */
+    private void insertBillDetailWfUpdateJob(Bill bill, String phase, RequestInfo requestInfo) {
+        long now = System.currentTimeMillis();
+        BillDetailWfUpdateContext context = BillDetailWfUpdateContext.builder()
+                .phase(phase)
+                .requestInfo(requestInfo)
+                .build();
+
+        SchedulerJob job = SchedulerJob.builder()
+                .id(UUID.randomUUID().toString())
+                .tenantId(bill.getTenantId())
+                .jobType(SchedulerJobType.BILL_DETAIL_WF_UPDATE)
+                .referenceId(bill.getId())
+                .schedulerStatus(SchedulerJobStatus.PENDING)
+                .nextCheckAt(null)
+                .attemptCount(0)
+                .maxAttempts(config.getSchedulerMaxAttempts())
+                .context(context)
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
+
+        schedulerJobRepository.insert(job);
+        schedulerJobRegistry.register(bill.getTenantId());
+        log.info("Inserted BILL_DETAIL_WF_UPDATE job for bill={} phase={}", bill.getId(), phase);
     }
 
     /** Inserts a BILL_STATUS_POLL scheduler job for the given bill and phase. */

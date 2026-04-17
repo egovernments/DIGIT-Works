@@ -142,6 +142,13 @@ public class SchedulerService {
         if (nextAttempt > job.getMaxAttempts()) {
             log.warn("Job {} (type={}) exceeded max attempts {} — marking FAILED",
                     job.getId(), job.getJobType(), job.getMaxAttempts());
+            SchedulerJobHandler exhaustedHandler = handlers.get(job.getJobType());
+            if (exhaustedHandler != null) {
+                try { exhaustedHandler.onMaxAttemptsExceeded(job); }
+                catch (Exception e) {
+                    log.error("Error in onMaxAttemptsExceeded for job {} type={}", job.getId(), job.getJobType(), e);
+                }
+            }
             return finalized(job, SchedulerJobStatus.FAILED, nextAttempt, null);
         }
 

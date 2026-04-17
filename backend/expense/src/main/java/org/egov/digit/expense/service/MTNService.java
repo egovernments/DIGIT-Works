@@ -128,7 +128,7 @@ public class MTNService {
         if (null == billFromRequest.getPayer()) {
             billFromRequest.setPayer(billFromSearch.getPayer());
         }
-        if (null == billFromRequest.getBillDetails()) {
+        if (billFromRequest.getBillDetails() == null || billFromRequest.getBillDetails().isEmpty()) {
             billFromRequest.setBillDetails(billFromSearch.getBillDetails());
         }
         enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
@@ -173,7 +173,20 @@ public class MTNService {
             }
             Party payee = billDetail.getPayee();
             if (payee == null || !Constants.PAYMENT_PROVIDER_MTN.equalsIgnoreCase(payee.getPaymentProvider())) {
-                log.info("Skipping non-MTN billDetail {} (provider={}) in verify()", billDetail.getId(), payee != null ? payee.getPaymentProvider() : "null");
+                // Non-MTN details have no MSISDN to check — auto-verify them so they don't block the poll.
+                if (billDetail.getStatus() == Status.PENDING_VERIFICATION
+                        || billDetail.getStatus() == Status.VERIFICATION_FAILED) {
+                    log.info("Auto-verifying non-MTN billDetail {} (provider={})", billDetail.getId(),
+                            payee != null ? payee.getPaymentProvider() : "null");
+                    Workflow verifyWf = Workflow.builder().action(Actions.VERIFY.toString()).build();
+                    setBillDetailStatus(billDetail, verifyWf, taskRequest.getRequestInfo(), true);
+                    if (billDetail.getStatus() == Status.VERIFICATION_IN_PROGRESS) {
+                        Workflow successWf = Workflow.builder().action(Actions.VERIFICATION_SUCCESS.toString()).build();
+                        setBillDetailStatus(billDetail, successWf, taskRequest.getRequestInfo(), true);
+                    }
+                } else {
+                    log.info("Skipping non-MTN billDetail {} (status={}) in verify()", billDetail.getId(), billDetail.getStatus());
+                }
                 continue;
             }
             boolean alreadyInProgress = (billDetail.getStatus() == Status.VERIFICATION_IN_PROGRESS);
@@ -284,66 +297,20 @@ public class MTNService {
                 }
             }
         }
-        if (billFromSearch.getStatus() == Status.PENDING_VERIFICATION
-                || billFromSearch.getStatus() == Status.PARTIALLY_VERIFIED) {
-
-            // Count verified BillDetails (unchanged filter logic)
-            List<BillDetail> verifiedBillDetails = billFromSearch.getBillDetails()
-                    .stream()
-                    .filter(billDetail -> billDetail.getStatus() == Status.VERIFIED
-                            || billDetail.getStatus() == Status.PAID)
-                    .collect(Collectors.toList());
-
-            if (!verifiedBillDetails.isEmpty()) {
-                // Step 1: VERIFY → VERIFICATION_IN_PROGRESS
-                // updateBillWfStatus catches HttpClientErrorException internally; check status to detect failure.
-                Workflow verifyWorkflow = Workflow.builder()
-                        .action(Actions.VERIFY.toString())
-                        .build();
-                BillRequest verifyBillRequest = BillRequest.builder()
-                        .bill(billFromSearch)
-                        .requestInfo(taskRequest.getRequestInfo())
-                        .workflow(verifyWorkflow)
-                        .build();
-                updateBillWfStatus(verifyBillRequest, true);
-
-                // Guard: Step 2 is only valid from VERIFICATION_IN_PROGRESS.
-                // If Step 1 failed (exception swallowed internally), status is unchanged — skip Step 2.
-                if (billFromSearch.getStatus() != Status.VERIFICATION_IN_PROGRESS) {
-                    log.error("Bill WF Step 1 (VERIFY) did not reach VERIFICATION_IN_PROGRESS for bill number: {}, task id: {}. Current status: {}. Skipping Step 2.",
-                            billFromSearch.getBillNumber(), task.getId(), billFromSearch.getStatus());
-                } else {
-                    // Step 2: FULLY_VERIFY or PARTIALLY_VERIFY from VERIFICATION_IN_PROGRESS
-                    // verifiedBillDetails was computed post-BillDetail-loop — reflects current BillDetail statuses.
-                    // billFromSearch.getStatus() is VERIFICATION_IN_PROGRESS — do NOT use it for branching.
-                    Workflow aggregateWorkflow = Workflow.builder().build();
-                    if (verifiedBillDetails.size() == billFromSearch.getBillDetails().size()) {
-                        aggregateWorkflow.setAction(Actions.FULLY_VERIFY.toString());
-                    } else {
-                        aggregateWorkflow.setAction(Actions.PARTIALLY_VERIFY.toString());
-                    }
-                    BillRequest aggregateBillRequest = BillRequest.builder()
-                            .bill(billFromSearch)
-                            .requestInfo(taskRequest.getRequestInfo())
-                            .workflow(aggregateWorkflow)
-                            .build();
-                    updateBillWfStatus(aggregateBillRequest, true);
-                }
-            } else {
-                log.info("No verified BillDetails — skipping bill workflow change for bill number: {}, task id: {}",
-                        billFromSearch.getBillNumber(), task.getId());
-            }
-        } else if (billFromSearch.getStatus() == Status.VERIFICATION_IN_PROGRESS) {
-            // Bill was pre-transitioned to VERIFICATION_IN_PROGRESS by PaymentWorkflowService.verifyBill().
-            // The BillStatusPollHandler will aggregate detail results and perform the bill-level WF transition.
-            // Push the bill with updated in-memory detail statuses to Kafka so the persister writes them to DB.
+        // Bill is always pre-transitioned to VERIFICATION_IN_PROGRESS by PaymentWorkflowService.verifyBill()
+        // before this task is created. BILL_STATUS_POLL aggregates detail outcomes and drives bill-level WF.
+        // Push updated in-memory detail statuses to Kafka so the persister writes them to DB.
+        if (billFromSearch.getStatus() == Status.VERIFICATION_IN_PROGRESS) {
             BillRequest billUpdateRequest = BillRequest.builder()
                     .bill(billFromSearch)
                     .requestInfo(taskRequest.getRequestInfo())
                     .build();
             updateBillWfStatus(billUpdateRequest, false);
-            log.info("Bill {} in VERIFICATION_IN_PROGRESS — pushed updated detail statuses to Kafka for bill number: {}",
+            log.info("Bill {} — pushed updated detail statuses to Kafka, bill number: {}",
                     billFromSearch.getId(), billFromSearch.getBillNumber());
+        } else {
+            log.warn("Bill {} has unexpected status {} during verify task execution — detail statuses still updated",
+                    billFromSearch.getId(), billFromSearch.getStatus());
         }
         task.setStatus(Status.DONE);
         expenseProducer.push(billFromSearch.getTenantId(), config.getTaskUpdateTopic(), task);

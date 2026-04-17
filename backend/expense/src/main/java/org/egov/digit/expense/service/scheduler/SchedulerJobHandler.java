@@ -22,4 +22,11 @@ public interface SchedulerJobHandler {
      *         {@link SchedulerJobResult#FAILED} on permanent failure
      */
     SchedulerJobResult handle(SchedulerJob job);
+
+    /**
+     * Called when the job is about to be marked FAILED due to maxAttempts being exceeded.
+     * Handlers can override this to apply compensating WF actions (e.g., FAIL transition on the bill).
+     * Default is a no-op.
+     */
+    default void onMaxAttemptsExceeded(SchedulerJob job) {}
 }

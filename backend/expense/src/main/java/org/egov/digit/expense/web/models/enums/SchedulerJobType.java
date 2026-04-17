@@ -9,5 +9,8 @@ public enum SchedulerJobType {
     TASK_STATUS_CHECK,
 
     /** Polls bill-detail states to drive bill-level transitions (phases 1–4). */
-    BILL_STATUS_POLL
+    BILL_STATUS_POLL,
+
+    /** Transitions bill detail WFs asynchronously (IGNORE_ERRORS / SEND_FOR_REVIEW / SEND_FOR_APPROVAL). */
+    BILL_DETAIL_WF_UPDATE
 }
