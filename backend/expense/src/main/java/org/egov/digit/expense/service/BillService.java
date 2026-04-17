@@ -384,6 +384,7 @@ public class BillService {
 						.status(Status.fromValue(newStatus))
 						.businessService(billFromSearch.getBusinessService())
 						.billDetails(billFromSearch.getBillDetails())
+						.billNumber(billFromSearch.getBillNumber())
 						.build();
 
 				updateBillStatus(billToUpdate, workflow, requestInfo);
