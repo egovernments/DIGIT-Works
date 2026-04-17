@@ -369,8 +369,16 @@ public class PaymentWorkflowService {
                     .status(Status.IN_PROGRESS)
                     .build());
             if (existing != null) {
-                log.info("Transfer task already exists for bill={} detail={} — skipping", bill.getId(), detail.getId());
-                continue;
+                long ageMs = System.currentTimeMillis() -
+                        (existing.getAuditDetails() != null ? existing.getAuditDetails().getLastModifiedTime() : 0L);
+                if (ageMs < config.getSchedulerStuckThresholdMs()) {
+                    log.info("Transfer task already exists for bill={} detail={} — skipping", bill.getId(), detail.getId());
+                    continue;
+                }
+                log.warn("Stale IN_PROGRESS transfer task {} for bill={} detail={} (age={}ms) — marking DONE and re-creating",
+                        existing.getId(), bill.getId(), detail.getId(), ageMs);
+                existing.setStatus(Status.DONE);
+                expenseProducer.push(bill.getTenantId(), config.getTaskUpdateTopic(), existing);
             }
             Task task = Task.builder()
                     .id(UUID.randomUUID().toString())
@@ -412,8 +420,16 @@ public class PaymentWorkflowService {
                     .status(Status.IN_PROGRESS)
                     .build());
             if (existing != null) {
-                log.info("Verify task already exists for bill={} detail={} — skipping", bill.getId(), detail.getId());
-                continue;
+                long ageMs = System.currentTimeMillis() -
+                        (existing.getAuditDetails() != null ? existing.getAuditDetails().getLastModifiedTime() : 0L);
+                if (ageMs < config.getSchedulerStuckThresholdMs()) {
+                    log.info("Verify task already exists for bill={} detail={} — skipping", bill.getId(), detail.getId());
+                    continue;
+                }
+                log.warn("Stale IN_PROGRESS verify task {} for bill={} detail={} (age={}ms) — marking DONE and re-creating",
+                        existing.getId(), bill.getId(), detail.getId(), ageMs);
+                existing.setStatus(Status.DONE);
+                expenseProducer.push(bill.getTenantId(), config.getTaskUpdateTopic(), existing);
             }
             Task task = Task.builder()
                     .id(UUID.randomUUID().toString())
