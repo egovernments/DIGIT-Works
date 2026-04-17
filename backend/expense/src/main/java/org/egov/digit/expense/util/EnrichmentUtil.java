@@ -1,5 +1,6 @@
 package org.egov.digit.expense.util;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -152,6 +153,19 @@ public class EnrichmentUtil {
         updateAudit.setCreatedTime(billFromSearch.getAuditDetails().getCreatedTime());
 
         bill.setAuditDetails(updateAudit);
+
+        // Preserve mandatory DB fields that callers may omit (e.g. WF-only updates with minimal bill)
+        if (bill.getBillDate() == null)        bill.setBillDate(billFromSearch.getBillDate());
+        if (bill.getReferenceId() == null)     bill.setReferenceId(billFromSearch.getReferenceId());
+        if (bill.getFromPeriod() == null)      bill.setFromPeriod(billFromSearch.getFromPeriod());
+        if (bill.getToPeriod() == null)        bill.setToPeriod(billFromSearch.getToPeriod());
+        if (bill.getTotalAmount() == null || bill.getTotalAmount().compareTo(BigDecimal.ZERO) == 0)
+            bill.setTotalAmount(billFromSearch.getTotalAmount());
+        if (bill.getTotalPaidAmount() == null || bill.getTotalPaidAmount().compareTo(BigDecimal.ZERO) == 0)
+            bill.setTotalPaidAmount(billFromSearch.getTotalPaidAmount());
+        if (bill.getBusinessService() == null) bill.setBusinessService(billFromSearch.getBusinessService());
+        if (bill.getLocalityCode() == null)    bill.setLocalityCode(billFromSearch.getLocalityCode());
+        if (bill.getPaymentStatus() == null)   bill.setPaymentStatus(billFromSearch.getPaymentStatus());
 
         Party payer = bill.getPayer();
         if (payer == null) {

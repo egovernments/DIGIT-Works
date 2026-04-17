@@ -385,6 +385,17 @@ public class BillService {
 						.businessService(billFromSearch.getBusinessService())
 						.billDetails(billFromSearch.getBillDetails())
 						.billNumber(billFromSearch.getBillNumber())
+						.billDate(billFromSearch.getBillDate())
+						.dueDate(billFromSearch.getDueDate())
+						.referenceId(billFromSearch.getReferenceId())
+						.fromPeriod(billFromSearch.getFromPeriod())
+						.toPeriod(billFromSearch.getToPeriod())
+						.totalAmount(billFromSearch.getTotalAmount())
+						.totalPaidAmount(billFromSearch.getTotalPaidAmount())
+						.payer(billFromSearch.getPayer())
+						.localityCode(billFromSearch.getLocalityCode())
+						.paymentStatus(billFromSearch.getPaymentStatus())
+						.additionalDetails(billFromSearch.getAdditionalDetails())
 						.build();
 
 				updateBillStatus(billToUpdate, workflow, requestInfo);
