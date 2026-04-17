@@ -40,7 +40,7 @@ import static org.egov.digit.expense.config.Constants.EXCEPTION;
 
 @Service
 @Slf4j
-public class MTNService {
+public class MTNService implements PaymentProviderService {
 
     private final ExpenseProducer expenseProducer;
 
@@ -135,6 +135,15 @@ public class MTNService {
         return billFromSearch;
     }
 
+    @Override
+    public boolean supports(String paymentProvider) {
+        // Handles MTN, null (no provider), and unrecognized providers — all result in FAILED or MTN verification.
+        return paymentProvider == null
+                || Constants.PAYMENT_PROVIDER_MTN.equalsIgnoreCase(paymentProvider)
+                || !Constants.VALID_PAYMENT_PROVIDERS.contains(paymentProvider.toUpperCase());
+    }
+
+    @Override
     public void executeTask(TaskRequest taskRequest) {
         Task task = taskRequest.getTask();
         if (task.getType() == Task.Type.Verify) {
@@ -172,20 +181,29 @@ public class MTNService {
                 continue;
             }
             Party payee = billDetail.getPayee();
-            if (payee == null || !Constants.PAYMENT_PROVIDER_MTN.equalsIgnoreCase(payee.getPaymentProvider())) {
-                // Non-MTN details have no MSISDN to check — auto-verify them so they don't block the poll.
+            String provider = payee != null ? payee.getPaymentProvider() : null;
+            if (!Constants.PAYMENT_PROVIDER_MTN.equalsIgnoreCase(provider)) {
+                if (org.springframework.util.StringUtils.hasText(provider)
+                        && Constants.VALID_PAYMENT_PROVIDERS.contains(provider.toUpperCase())) {
+                    // Known non-MTN provider (e.g. BANK) — handled by its own service, skip here.
+                    log.info("Skipping billDetail {} (provider={}) — handled by another service", billDetail.getId(), provider);
+                    continue;
+                }
+                // Null or unrecognized provider — fail the detail via WF so it surfaces as an error.
+                String reason = org.springframework.util.StringUtils.hasText(provider)
+                        ? "Invalid payment provider configured: " + provider
+                        : "No payment provider configured";
                 if (billDetail.getStatus() == Status.PENDING_VERIFICATION
                         || billDetail.getStatus() == Status.VERIFICATION_FAILED) {
-                    log.info("Auto-verifying non-MTN billDetail {} (provider={})", billDetail.getId(),
-                            payee != null ? payee.getPaymentProvider() : "null");
+                    log.warn("billDetail {} — {} — marking VERIFICATION_FAILED", billDetail.getId(), reason);
                     Workflow verifyWf = Workflow.builder().action(Actions.VERIFY.toString()).build();
                     setBillDetailStatus(billDetail, verifyWf, taskRequest.getRequestInfo(), true);
                     if (billDetail.getStatus() == Status.VERIFICATION_IN_PROGRESS) {
-                        Workflow successWf = Workflow.builder().action(Actions.VERIFICATION_SUCCESS.toString()).build();
-                        setBillDetailStatus(billDetail, successWf, taskRequest.getRequestInfo(), true);
+                        Workflow failWf = Workflow.builder().action(Actions.FAILED.toString()).build();
+                        setBillDetailStatus(billDetail, failWf, taskRequest.getRequestInfo(), true);
                     }
                 } else {
-                    log.info("Skipping non-MTN billDetail {} (status={}) in verify()", billDetail.getId(), billDetail.getStatus());
+                    log.info("Skipping billDetail {} (provider={}, status={}) — not actionable", billDetail.getId(), provider, billDetail.getStatus());
                 }
                 continue;
             }

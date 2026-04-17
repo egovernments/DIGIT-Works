@@ -24,7 +24,7 @@ import java.util.stream.Stream;
  */
 @Service
 @Slf4j
-public class BankPaymentService {
+public class BankPaymentService implements PaymentProviderService {
 
     private final Configuration config;
     private final BillRepository billRepository;
@@ -88,10 +88,15 @@ public class BankPaymentService {
         }
     }
 
+    @Override
+    public boolean supports(String paymentProvider) {
+        return Constants.PAYMENT_PROVIDER_BANK.equalsIgnoreCase(paymentProvider);
+    }
+
     /**
      * Dispatches a Kafka task to the bank verify or transfer flow.
-     * Mirrors {@code MTNService.executeTask(TaskRequest)}.
      */
+    @Override
     public void executeTask(TaskRequest taskRequest) {
         Task task = taskRequest.getTask();
         if (task.getType() == Task.Type.Verify) {
