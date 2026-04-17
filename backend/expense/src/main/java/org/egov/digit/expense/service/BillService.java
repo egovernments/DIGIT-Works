@@ -220,7 +220,7 @@ public class BillService {
 				requestInfo);
 
 		Map<String, String> busnessIdToWfStatus = response.getProcessInstances().stream().collect(Collectors
-				.toMap(ProcessInstance::getBusinessId, processInstance -> processInstance.getState().getState()));
+				.toMap(ProcessInstance::getBusinessId, processInstance -> processInstance.getState().getApplicationStatus()));
 		for (Bill bill : bills) {
 			bill.setWfStatus(busnessIdToWfStatus.get(bill.getBillNumber()));
 		}
