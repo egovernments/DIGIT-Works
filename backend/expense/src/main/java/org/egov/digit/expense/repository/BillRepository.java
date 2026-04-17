@@ -1,7 +1,9 @@
 package org.egov.digit.expense.repository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.egov.common.exception.InvalidTenantIdException;
 import org.egov.common.utils.MultiStateInstanceUtil;
@@ -46,6 +48,21 @@ public class BillRepository {
 			throw new CustomException(INVALID_TENANT_ID_ERR_CODE, e.getMessage());
 		}
         return jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), searchBillRowMapper);
+	}
+
+	public Map<String, Integer> searchStatusCount(BillSearchRequest billSearchRequest) {
+		List<Object> preparedStatementValues = new ArrayList<>();
+		String queryStr = queryBuilder.getStatusCountQuery(billSearchRequest, preparedStatementValues);
+		try {
+			queryStr = multiStateInstanceUtil.replaceSchemaPlaceholder(queryStr, billSearchRequest.getBillCriteria().getTenantId());
+		} catch (InvalidTenantIdException e) {
+			throw new CustomException(INVALID_TENANT_ID_ERR_CODE, e.getMessage());
+		}
+		Map<String, Integer> statusCount = new HashMap<>();
+		jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), rs -> {
+			statusCount.put(rs.getString("status"), rs.getInt("status_count"));
+		});
+		return statusCount;
 	}
 
 	public Integer searchCount(BillSearchRequest billSearchRequest){

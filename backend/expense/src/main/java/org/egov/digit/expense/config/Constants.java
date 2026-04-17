@@ -93,6 +93,16 @@ public class Constants {
 	
 	public static final String PAYMENT_ID_FORMAT_NAME = "expense.payment.number";
 
+	// Scheduler poll / detail-wf phases
+	public static final String POLL_PHASE_VERIFICATION      = "VERIFICATION";
+	public static final String POLL_PHASE_IGNORE_ERRORS     = "IGNORE_ERRORS";
+	public static final String POLL_PHASE_SEND_FOR_REVIEW   = "SEND_FOR_REVIEW";
+	public static final String POLL_PHASE_SEND_FOR_APPROVAL = "SEND_FOR_APPROVAL";
+	public static final String POLL_PHASE_REVIEW            = "REVIEW";
+	public static final String POLL_PHASE_PAYMENT           = "PAYMENT";
+	public static final String POLL_PHASE_PAYMENT_INITIATION = "PAYMENT_INITIATION";
+	public static final String SYSTEM_SCHEDULER_ACTOR       = "system-scheduler";
+
 	public static final String EFFECTIVE_FROM_FIELD_MDMS = "effectiveFrom";
 	public static final String EFFECTIVE_TO_FIELD_MDMS = "effectiveTo";
 	public static final String ACTIVE_FIELD_MDMS = "active";

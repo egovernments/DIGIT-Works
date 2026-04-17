@@ -234,4 +234,13 @@ public class BillQueryBuilder {
         else
             return query;
     }
+
+    public String getStatusCountQuery(BillSearchRequest billSearchRequest, List<Object> preparedStmtList) {
+        // Reuse the count query WHERE conditions, then pivot to status group-by
+        String countQuery = getBillQuery(billSearchRequest, preparedStmtList, true, false);
+        return countQuery.replace(
+                "SELECT distinct(bill.id)",
+                "SELECT bill.status, count(distinct bill.id) as status_count"
+        ) + " GROUP BY bill.status";
+    }
 }

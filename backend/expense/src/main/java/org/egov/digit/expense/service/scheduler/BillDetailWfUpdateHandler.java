@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.function.Predicate;
 
+import static org.egov.digit.expense.config.Constants.*;
+
 /**
  * Handles {@link SchedulerJobType#BILL_DETAIL_WF_UPDATE} jobs.
  *
@@ -61,16 +63,16 @@ public class BillDetailWfUpdateHandler implements SchedulerJobHandler {
             }
 
             return switch (phase) {
-                case "IGNORE_ERRORS" -> transitionDetails(bill, requestInfo,
+                case POLL_PHASE_IGNORE_ERRORS -> transitionDetails(bill, requestInfo,
                         d -> d.getStatus() == Status.VERIFICATION_FAILED,
                         Actions.IGNORE_ERRORS_AND_VERIFY, phase);
-                case "SEND_FOR_REVIEW" -> transitionDetails(bill, requestInfo,
+                case POLL_PHASE_SEND_FOR_REVIEW -> transitionDetails(bill, requestInfo,
                         d -> d.getStatus() == Status.VERIFIED,
                         Actions.SEND_FOR_REVIEW, phase);
-                case "SEND_FOR_APPROVAL" -> transitionDetails(bill, requestInfo,
+                case POLL_PHASE_SEND_FOR_APPROVAL -> transitionDetails(bill, requestInfo,
                         d -> d.getStatus() == Status.UNDER_REVIEW,
                         Actions.SEND_FOR_APPROVAL, phase);
-                case "PAYMENT_INITIATION" -> transitionDetails(bill, requestInfo,
+                case POLL_PHASE_PAYMENT_INITIATION -> transitionDetails(bill, requestInfo,
                         d -> d.getStatus() == Status.REVIEWED || d.getStatus() == Status.PAYMENT_FAILED,
                         Actions.PAYMENT_INITIATION, phase);
                 default -> {

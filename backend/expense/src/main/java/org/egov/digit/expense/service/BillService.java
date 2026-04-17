@@ -195,6 +195,7 @@ public class BillService {
 		List<Bill> bills = billRepository.search(billSearchRequest, false);
 		Integer totalBills = billRepository.searchCount(billSearchRequest);
 		billSearchRequest.getPagination().setTotalCount(totalBills);
+		Map<String, Integer> statusCount = billRepository.searchStatusCount(billSearchRequest);
 
 		ResponseInfo responseInfo = responseInfoFactory.
 		createResponseInfoFromRequestInfo(billSearchRequest.getRequestInfo(),true);
@@ -209,6 +210,7 @@ public class BillService {
 		return BillResponse.builder()
 				.bills(bills)
 				.pagination(billSearchRequest.getPagination())
+				.statusCount(statusCount)
 				.responseInfo(responseInfo)
 				.build();
 	}
