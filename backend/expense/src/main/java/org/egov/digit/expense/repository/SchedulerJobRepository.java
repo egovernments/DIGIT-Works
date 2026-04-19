@@ -120,6 +120,25 @@ public class SchedulerJobRepository {
     }
 
     /**
+     * Updates scheduler state for a single job after processing.
+     * Called per-job immediately after processJob() to minimise crash recovery window (RC-8).
+     */
+    public void updateStatus(SchedulerJob job, String tenantId) {
+        try {
+            String sql = queryBuilder.updateStatus(tenantId);
+            long now = System.currentTimeMillis();
+            jdbcTemplate.update(sql,
+                    job.getSchedulerStatus().name(),
+                    job.getNextCheckAt(),
+                    job.getAttemptCount(),
+                    now,
+                    job.getId());
+        } catch (InvalidTenantIdException e) {
+            throw new CustomException(INVALID_TENANT_ID_ERR_CODE, e.getMessage());
+        }
+    }
+
+    /**
      * Resets PROCESSING → PENDING for jobs whose {@code updated_at} is older than {@code stuckThresholdMs}.
      * Called by the recovery job to handle pod crashes mid-processing.
      */

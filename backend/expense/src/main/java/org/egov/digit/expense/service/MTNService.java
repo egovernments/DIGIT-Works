@@ -303,16 +303,24 @@ public class MTNService implements PaymentProviderService {
                     }
                 }
             }
+            // Push ONLY the details processed by this task — not the full bill.
+            // Each task handles a single detail; pushing all details with stale DB reads
+            // from the other concurrent tasks would overwrite their VERIFIED statuses (lost-update).
+            List<BillDetail> processedDetails = billDetailsToBeUpdatedById.values().stream()
+                    .filter(java.util.Objects::nonNull)
+                    .collect(java.util.stream.Collectors.toList());
+            billFromSearch.setBillDetails(processedDetails);
+            BillRequest billUpdateRequest = BillRequest.builder()
+                    .bill(billFromSearch)
+                    .requestInfo(taskRequest.getRequestInfo())
+                    .build();
+            updateBillWfStatus(billUpdateRequest, false);
+
             if (billFromSearch.getStatus() == Status.VERIFICATION_IN_PROGRESS) {
-                BillRequest billUpdateRequest = BillRequest.builder()
-                        .bill(billFromSearch)
-                        .requestInfo(taskRequest.getRequestInfo())
-                        .build();
-                updateBillWfStatus(billUpdateRequest, false);
-                log.info("Bill {} — pushed updated detail statuses to Kafka, bill number: {}",
-                        billFromSearch.getId(), billFromSearch.getBillNumber());
+                log.info("Bill {} — pushed {} updated detail(s) to Kafka, bill number: {}",
+                        billFromSearch.getId(), processedDetails.size(), billFromSearch.getBillNumber());
             } else {
-                log.warn("Bill {} has unexpected status {} during verify task execution — detail statuses still updated",
+                log.warn("Bill {} has unexpected status {} during verify task — detail(s) still persisted",
                         billFromSearch.getId(), billFromSearch.getStatus());
             }
         } finally {

@@ -274,17 +274,41 @@ public class PaymentWorkflowService {
     // Helpers
     // ─────────────────────────────────────────────────────────────────────────
 
-    /** Fetches a fresh bill (with details) from the DB by bill ID. */
+    /** Fetches a fresh bill (with details) from the DB by bill ID. Excludes soft-deleted (INACTIVE) bills. */
     public Bill fetchBillWithDetails(String billId, String tenantId, RequestInfo requestInfo) {
         BillSearchRequest searchRequest = BillSearchRequest.builder()
                 .requestInfo(requestInfo)
                 .billCriteria(BillCriteria.builder()
                         .tenantId(tenantId)
                         .ids(Collections.singleton(billId))
+                        .statusNot(Status.INACTIVE.toString())  // RC-13
                         .build())
                 .build();
         List<Bill> bills = billRepository.search(searchRequest, false);
         return bills.isEmpty() ? null : bills.get(0);
+    }
+
+    /**
+     * Inserts a scheduler job with up to 3 retries on transient failures (RC-3).
+     * A failure after all retries is logged as CRITICAL; the reconciliation sweeper recovers.
+     */
+    private void insertWithRetry(SchedulerJob job, String context) {
+        for (int attempt = 1; attempt <= 3; attempt++) {
+            try {
+                schedulerJobRepository.insert(job);
+                schedulerJobRegistry.register(job.getTenantId());
+                return;
+            } catch (Exception e) {
+                if (attempt == 3) {
+                    log.error("CRITICAL: scheduler-job-insert failed after 3 attempts [{}] — reconciliation will recover",
+                            context, e);
+                } else {
+                    log.warn("scheduler-job-insert attempt {}/3 failed [{}]: {}", attempt, context, e.getMessage());
+                    try { Thread.sleep(100L * attempt); }
+                    catch (InterruptedException ie) { Thread.currentThread().interrupt(); return; }
+                }
+            }
+        }
     }
 
     /** Transitions the bill workflow and updates the in-memory status. */
@@ -498,8 +522,7 @@ public class PaymentWorkflowService {
                 .updatedAt(now)
                 .build();
 
-        schedulerJobRepository.insert(job);
-        schedulerJobRegistry.register(bill.getTenantId());
+        insertWithRetry(job, "BILL_DETAIL_WF_UPDATE bill=" + bill.getId() + " phase=" + phase);
         log.info("Inserted BILL_DETAIL_WF_UPDATE job for bill={} phase={}", bill.getId(), phase);
     }
 
@@ -525,8 +548,7 @@ public class PaymentWorkflowService {
                 .updatedAt(now)
                 .build();
 
-        schedulerJobRepository.insert(job);
-        schedulerJobRegistry.register(bill.getTenantId());
+        insertWithRetry(job, "BILL_STATUS_POLL bill=" + bill.getId() + " phase=" + phase);
         log.info("Inserted BILL_STATUS_POLL job for bill={} phase={}", bill.getId(), phase);
     }
 }

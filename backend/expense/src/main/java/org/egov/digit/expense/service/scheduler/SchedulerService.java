@@ -117,13 +117,18 @@ public class SchedulerService {
 
         if (claimed.isEmpty()) return 0;
 
-        List<SchedulerJob> toUpdate = new ArrayList<>(claimed.size());
+        // RC-8: update each job's status immediately after processing so that a pod crash
+        // leaves at most 1 job in PROCESSING state — stuck-recovery resets it within threshold.
         for (SchedulerJob job : claimed) {
             SchedulerJob updated = processJob(job);
-            toUpdate.add(updated);
+            try {
+                jobRepository.updateStatus(updated, tenantId);
+            } catch (Exception e) {
+                log.error("Status persist failed for job={} type={} — stuck-recovery will reset it",
+                        job.getId(), job.getJobType(), e);
+            }
         }
 
-        jobRepository.batchUpdateStatus(toUpdate, tenantId);
         return claimed.size();
     }
 

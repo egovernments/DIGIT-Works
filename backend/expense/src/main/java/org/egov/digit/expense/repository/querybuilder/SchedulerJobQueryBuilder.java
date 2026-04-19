@@ -18,7 +18,9 @@ public class SchedulerJobQueryBuilder {
             " (id, tenant_id, job_type, reference_id, scheduler_status, next_check_at," +
             "  attempt_count, max_attempts, context, created_at, updated_at)" +
             " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" +
-            " ON CONFLICT ON CONSTRAINT uq_scheduler_job_active DO NOTHING";
+            " ON CONFLICT (tenant_id, job_type, reference_id)" +
+            " WHERE scheduler_status IN ('PENDING', 'PROCESSING')" +
+            " DO NOTHING";
 
     /**
      * Atomically claim a batch of PENDING jobs using a CTE.

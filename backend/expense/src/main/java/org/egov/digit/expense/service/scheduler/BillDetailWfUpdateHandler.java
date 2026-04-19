@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.service.PaymentWorkflowService;
+import org.egov.digit.expense.util.WorkflowUtil;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillDetail;
 import org.egov.digit.expense.web.models.BillDetailWfUpdateContext;
@@ -32,12 +33,15 @@ import static org.egov.digit.expense.config.Constants.*;
 public class BillDetailWfUpdateHandler implements SchedulerJobHandler {
 
     private final PaymentWorkflowService paymentWorkflowService;
+    private final WorkflowUtil workflowUtil;
     private final ObjectMapper objectMapper;
 
     @Autowired
     public BillDetailWfUpdateHandler(PaymentWorkflowService paymentWorkflowService,
+                                     WorkflowUtil workflowUtil,
                                      ObjectMapper objectMapper) {
         this.paymentWorkflowService = paymentWorkflowService;
+        this.workflowUtil = workflowUtil;
         this.objectMapper = objectMapper;
     }
 
@@ -99,9 +103,16 @@ public class BillDetailWfUpdateHandler implements SchedulerJobHandler {
                 paymentWorkflowService.transitionBillDetail(detail, action, requestInfo);
                 transitioned++;
             } catch (Exception e) {
-                log.error("BILL_DETAIL_WF_UPDATE phase={} — failed to transition billDetail {} via {}: {}",
-                        phase, detail.getId(), action, e.getMessage());
-                anyFailed = true;
+                // RC-7: INVALID_ACTION means detail already transitioned — treat as idempotent success
+                if (workflowUtil.isRetryableWfError(e)) {
+                    log.info("BILL_DETAIL_WF_UPDATE phase={} — detail {} already in target state (idempotent)",
+                            phase, detail.getId());
+                    transitioned++;
+                } else {
+                    log.error("BILL_DETAIL_WF_UPDATE phase={} — failed to transition billDetail {} via {}: {}",
+                            phase, detail.getId(), action, e.getMessage());
+                    anyFailed = true;
+                }
             }
         }
 

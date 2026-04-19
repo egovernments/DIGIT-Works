@@ -21,6 +21,8 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @Slf4j
@@ -83,6 +85,43 @@ public class WorkflowUtil {
     }
 
     /**
+     * Returns true if the WF error is the async-persistence race (INVALID ACTION / No valid action).
+     * Only this specific error class is retried — network/5xx errors propagate immediately.
+     */
+    public boolean isRetryableWfError(Exception e) {
+        String msg = Optional.ofNullable(e.getMessage()).orElse("");
+        return msg.contains("INVALID ACTION") || msg.contains("No valid action")
+                || msg.contains("INVALID_ACTION");
+    }
+
+    /**
+     * Calls the workflow transition with exponential backoff + jitter on INVALID_ACTION races.
+     * Max attempts and initial delay are driven by {@code wf.transition.retry.max.attempts}
+     * and {@code wf.transition.retry.initial.delay.ms} config properties.
+     */
+    private State callWorkFlowWithRetry(ProcessInstanceRequest workflowRequest,
+                                        java.util.function.Supplier<State> workflowCall) {
+        int max = configs.getWfTransitionRetryMaxAttempts();
+        long base = configs.getWfTransitionRetryInitialDelayMs();
+        Exception last = null;
+        for (int attempt = 1; attempt <= max; attempt++) {
+            try {
+                return workflowCall.get();
+            } catch (Exception e) {
+                last = e;
+                if (!isRetryableWfError(e) || attempt == max) throw e;
+                long delay = (long) (base * Math.pow(2, attempt - 1));
+                long jitter = ThreadLocalRandom.current().nextLong(0, Math.max(1, delay / 4));
+                log.warn("WF_TRANSITION retryable error (attempt {}/{}) — retrying in {}ms: {}",
+                        attempt, max, delay + jitter, e.getMessage());
+                try { Thread.sleep(delay + jitter); }
+                catch (InterruptedException ie) { Thread.currentThread().interrupt(); throw new RuntimeException(ie); }
+            }
+        }
+        throw new IllegalStateException("unreachable", last);
+    }
+
+    /**
     * Method to take the ProcessInstanceRequest as parameter and set resultant status
     * @param workflowRequest
     * @param billRequest
@@ -95,23 +134,22 @@ public class WorkflowUtil {
         log.info("WF_TRANSITION | BEFORE | entity=BILL | billId={} | businessId={} | businessService={} | tenantId={} | action={} | currentStatus={}",
                 bill.getId(), pi.getBusinessId(), pi.getBusinessService(), pi.getTenantId(), pi.getAction(), bill.getStatus());
 
-        try {
-            ProcessInstanceResponse response;
-            StringBuilder url = new StringBuilder(configs.getWfHost().concat(configs.getWfTransitionPath()));
-            Object optional = repository.fetchResult(url, workflowRequest);
-            response = mapper.convertValue(optional, ProcessInstanceResponse.class);
-            billRequest.getBill().setProcessInstance(response.getProcessInstances().get(0));
-            State newState = response.getProcessInstances().get(0).getState();
-
-            log.info("WF_TRANSITION | AFTER | entity=BILL | billId={} | businessId={} | action={} | newStatus={}",
-                    bill.getId(), pi.getBusinessId(), pi.getAction(), newState.getApplicationStatus());
-
-            return newState;
-        } catch (Exception e) {
-            log.error("WF_TRANSITION | FAILED | entity=BILL | billId={} | businessId={} | businessService={} | tenantId={} | action={} | currentStatus={} | error={}",
-                    bill.getId(), pi.getBusinessId(), pi.getBusinessService(), pi.getTenantId(), pi.getAction(), bill.getStatus(), e.getMessage());
-            throw e;
-        }
+        return callWorkFlowWithRetry(workflowRequest, () -> {
+            try {
+                StringBuilder url = new StringBuilder(configs.getWfHost().concat(configs.getWfTransitionPath()));
+                Object optional = repository.fetchResult(url, workflowRequest);
+                ProcessInstanceResponse response = mapper.convertValue(optional, ProcessInstanceResponse.class);
+                billRequest.getBill().setProcessInstance(response.getProcessInstances().get(0));
+                State newState = response.getProcessInstances().get(0).getState();
+                log.info("WF_TRANSITION | AFTER | entity=BILL | billId={} | businessId={} | action={} | newStatus={}",
+                        bill.getId(), pi.getBusinessId(), pi.getAction(), newState.getApplicationStatus());
+                return newState;
+            } catch (Exception e) {
+                log.error("WF_TRANSITION | FAILED | entity=BILL | billId={} | businessId={} | businessService={} | tenantId={} | action={} | currentStatus={} | error={}",
+                        bill.getId(), pi.getBusinessId(), pi.getBusinessService(), pi.getTenantId(), pi.getAction(), bill.getStatus(), e.getMessage());
+                throw e;
+            }
+        });
     }
 
     public State callWorkFlow(ProcessInstanceRequest workflowRequest, BillDetailRequest billDetailRequest) {
@@ -121,23 +159,22 @@ public class WorkflowUtil {
         log.info("WF_TRANSITION | BEFORE | entity=BILL_DETAIL | detailId={} | businessId={} | businessService={} | tenantId={} | action={} | currentStatus={}",
                 detail.getId(), pi.getBusinessId(), pi.getBusinessService(), pi.getTenantId(), pi.getAction(), detail.getStatus());
 
-        try {
-            ProcessInstanceResponse response;
-            StringBuilder url = new StringBuilder(configs.getWfHost().concat(configs.getWfTransitionPath()));
-            Object optional = repository.fetchResult(url, workflowRequest);
-            response = mapper.convertValue(optional, ProcessInstanceResponse.class);
-            billDetailRequest.getBillDetail().setProcessInstance(response.getProcessInstances().get(0));
-            State newState = response.getProcessInstances().get(0).getState();
-
-            log.info("WF_TRANSITION | AFTER | entity=BILL_DETAIL | detailId={} | businessId={} | action={} | newStatus={}",
-                    detail.getId(), pi.getBusinessId(), pi.getAction(), newState.getApplicationStatus());
-
-            return newState;
-        } catch (Exception e) {
-            log.error("WF_TRANSITION | FAILED | entity=BILL_DETAIL | detailId={} | businessId={} | businessService={} | tenantId={} | action={} | currentStatus={} | error={}",
-                    detail.getId(), pi.getBusinessId(), pi.getBusinessService(), pi.getTenantId(), pi.getAction(), detail.getStatus(), e.getMessage());
-            throw e;
-        }
+        return callWorkFlowWithRetry(workflowRequest, () -> {
+            try {
+                StringBuilder url = new StringBuilder(configs.getWfHost().concat(configs.getWfTransitionPath()));
+                Object optional = repository.fetchResult(url, workflowRequest);
+                ProcessInstanceResponse response = mapper.convertValue(optional, ProcessInstanceResponse.class);
+                billDetailRequest.getBillDetail().setProcessInstance(response.getProcessInstances().get(0));
+                State newState = response.getProcessInstances().get(0).getState();
+                log.info("WF_TRANSITION | AFTER | entity=BILL_DETAIL | detailId={} | businessId={} | action={} | newStatus={}",
+                        detail.getId(), pi.getBusinessId(), pi.getAction(), newState.getApplicationStatus());
+                return newState;
+            } catch (Exception e) {
+                log.error("WF_TRANSITION | FAILED | entity=BILL_DETAIL | detailId={} | businessId={} | businessService={} | tenantId={} | action={} | currentStatus={} | error={}",
+                        detail.getId(), pi.getBusinessId(), pi.getBusinessService(), pi.getTenantId(), pi.getAction(), detail.getStatus(), e.getMessage());
+                throw e;
+            }
+        });
     }
     
 	public ProcessInstanceResponse searchWorkflowForBusinessIds(List<String> businessIds, String tenantId, RequestInfo requestInfo) {
