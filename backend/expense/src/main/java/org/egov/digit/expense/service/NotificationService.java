@@ -61,7 +61,7 @@ public class NotificationService {
             }
             String customizedMessage = buildMessageReplaceVariables(message, billNumber, amount);
             SMSRequest smsRequest = SMSRequest.builder().mobileNumber(contactMobileNumber).message(customizedMessage).build();
-            expenseProducer.push(tenantId, config.getSmsNotificationTopic(), smsRequest);
+            expenseProducer.push(config.getSmsNotificationTopic(), smsRequest);
         }
     }
 
@@ -74,7 +74,7 @@ public class NotificationService {
         String contactMobileNumber = cboDetails.get(CONTACT_MOBILE_NUMBER);
         String customizedMessage = buildMessageReplaceVariables(message, billNumber, amount);
         SMSRequest smsRequest = SMSRequest.builder().mobileNumber(contactMobileNumber).message(customizedMessage).build();
-        expenseProducer.push(tenantId, config.getSmsNotificationTopic(), smsRequest);
+        expenseProducer.push(config.getSmsNotificationTopic(), smsRequest);
     }
 
     public String getMessage(RequestInfo requestInfo, String tenantId, String msgCode){

@@ -35,4 +35,9 @@ public class ExpenseProducer {
         this.kafkaTemplate.send(updatedTopic, value);
     }
 
+    public void push(String topic, Object value) {
+        log.info("The Kafka topic for the tenantId : {} is : {}", topic);
+        this.kafkaTemplate.send(topic, value);
+    }
+
 }

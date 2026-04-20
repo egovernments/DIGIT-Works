@@ -136,7 +136,7 @@ public class WorkflowEmailNotificationService {
                         .build())
                 .build();
 
-        expenseProducer.push(tenantId, config.getEmailNotificationTopic(), emailRequest);
+        expenseProducer.push(config.getEmailNotificationTopic(), emailRequest);
         log.info("WorkflowEmailNotificationService: email notification pushed for assignee={} type={}", details.getEmail(), type);
     }
 
