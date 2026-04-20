@@ -2,60 +2,60 @@ serviceMaps:
   serviceName: expense Service
   mappings:
     - version: 1.0
-      name: Bill Transaction Report Save
-      description: create bill transaction report in eg_expense_bill_transaction_report
-      fromTopic: expense-bill-transaction-report-save
+      name: Bill Report Save
+      description: create bill report in eg_expense_bill_report
+      fromTopic: expense-bill-report-save
       queryMaps:
-        - query: INSERT INTO eg_expense_bill_transaction_report (id, bill_id, tenant_id, type, status, file_store_id, error_details, created_by, created_time, last_modified_by, last_modified_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id, tenant_id) DO NOTHING;
-          basePath: $.billTransactionReport
+        - query: INSERT INTO eg_expense_bill_report (id, bill_id, tenant_id, type, status, file_store_id, error_details, created_by, created_time, last_modified_by, last_modified_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id, tenant_id) DO NOTHING;
+          basePath: $.billReport
           jsonMaps:
-            - jsonPath: $.billTransactionReport.id
+            - jsonPath: $.billReport.id
 
-            - jsonPath: $.billTransactionReport.billId
+            - jsonPath: $.billReport.billId
 
-            - jsonPath: $.billTransactionReport.tenantId
+            - jsonPath: $.billReport.tenantId
 
-            - jsonPath: $.billTransactionReport.type
+            - jsonPath: $.billReport.type
 
-            - jsonPath: $.billTransactionReport.status
+            - jsonPath: $.billReport.status
 
-            - jsonPath: $.billTransactionReport.fileStoreId
+            - jsonPath: $.billReport.fileStoreId
 
-            - jsonPath: $.billTransactionReport.errorDetails
+            - jsonPath: $.billReport.errorDetails
               type: JSON
               dbType: JSONB
 
-            - jsonPath: $.billTransactionReport.auditDetails.createdBy
+            - jsonPath: $.billReport.auditDetails.createdBy
 
-            - jsonPath: $.billTransactionReport.auditDetails.createdTime
+            - jsonPath: $.billReport.auditDetails.createdTime
 
-            - jsonPath: $.billTransactionReport.auditDetails.lastModifiedBy
+            - jsonPath: $.billReport.auditDetails.lastModifiedBy
 
-            - jsonPath: $.billTransactionReport.auditDetails.lastModifiedTime
+            - jsonPath: $.billReport.auditDetails.lastModifiedTime
 
     - version: 1.0
-      name: Bill Transaction Report Update
-      description: update bill transaction report in eg_expense_bill_transaction_report
-      fromTopic: expense-bill-transaction-report-update
+      name: Bill Report Update
+      description: update bill report in eg_expense_bill_report
+      fromTopic: expense-bill-report-update
       queryMaps:
-        - query: UPDATE eg_expense_bill_transaction_report SET status=?, file_store_id=?, error_details=?, last_modified_by=?, last_modified_time=? WHERE id=? AND tenant_id=?;
-          basePath: $.billTransactionReport
+        - query: UPDATE eg_expense_bill_report SET status=?, file_store_id=?, error_details=?, last_modified_by=?, last_modified_time=? WHERE id=? AND tenant_id=?;
+          basePath: $.billReport
           jsonMaps:
-            - jsonPath: $.billTransactionReport.status
+            - jsonPath: $.billReport.status
 
-            - jsonPath: $.billTransactionReport.fileStoreId
+            - jsonPath: $.billReport.fileStoreId
 
-            - jsonPath: $.billTransactionReport.errorDetails
+            - jsonPath: $.billReport.errorDetails
               type: JSON
               dbType: JSONB
 
-            - jsonPath: $.billTransactionReport.auditDetails.lastModifiedBy
+            - jsonPath: $.billReport.auditDetails.lastModifiedBy
 
-            - jsonPath: $.billTransactionReport.auditDetails.lastModifiedTime
+            - jsonPath: $.billReport.auditDetails.lastModifiedTime
 
-            - jsonPath: $.billTransactionReport.id
+            - jsonPath: $.billReport.id
 
-            - jsonPath: $.billTransactionReport.tenantId
+            - jsonPath: $.billReport.tenantId
 
     - version: 1.0
       name: bill create

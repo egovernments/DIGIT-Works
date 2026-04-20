@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
-import org.egov.digit.expense.web.models.BillTransactionReport;
+import org.egov.digit.expense.web.models.BillReport;
 import org.egov.digit.expense.web.models.enums.ReportStatus;
 import org.egov.digit.expense.web.models.enums.ReportType;
 import org.egov.tracer.model.CustomException;
@@ -21,18 +21,18 @@ import java.util.List;
 
 @Component
 @Slf4j
-public class BillTransactionReportRowMapper implements ResultSetExtractor<List<BillTransactionReport>> {
+public class BillReportRowMapper implements ResultSetExtractor<List<BillReport>> {
 
     private final ObjectMapper mapper;
 
     @Autowired
-    public BillTransactionReportRowMapper(ObjectMapper mapper) {
+    public BillReportRowMapper(ObjectMapper mapper) {
         this.mapper = mapper;
     }
 
     @Override
-    public List<BillTransactionReport> extractData(ResultSet rs) throws SQLException {
-        List<BillTransactionReport> reports = new ArrayList<>();
+    public List<BillReport> extractData(ResultSet rs) throws SQLException {
+        List<BillReport> reports = new ArrayList<>();
 
         while (rs.next()) {
             AuditDetails auditDetails = AuditDetails.builder()
@@ -42,7 +42,7 @@ public class BillTransactionReportRowMapper implements ResultSetExtractor<List<B
                     .lastModifiedTime(rs.getLong("last_modified_time"))
                     .build();
 
-            BillTransactionReport report = BillTransactionReport.builder()
+            BillReport report = BillReport.builder()
                     .id(rs.getString("id"))
                     .billId(rs.getString("bill_id"))
                     .tenantId(rs.getString("tenant_id"))

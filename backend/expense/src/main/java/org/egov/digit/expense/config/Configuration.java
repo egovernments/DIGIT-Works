@@ -277,12 +277,19 @@ public class Configuration {
 	@Value("${expense.payment.additional.percent}")
 	private BigDecimal additionalAmountPercent;
 
-	// Bill Transaction Report Topics
-	@Value("${expense.bill.transaction.report.save}")
-	private String billTransactionReportSaveTopic;
+	// Bill Report Topics
+	@Value("${expense.bill.report.save}")
+	private String billReportSaveTopic;
 
-	@Value("${expense.bill.transaction.report.update}")
-	private String billTransactionReportUpdateTopic;
+	@Value("${expense.bill.report.update}")
+	private String billReportUpdateTopic;
+
+	// Filestore
+	@Value("${egov.filestore.host}")
+	private String filestoreHost;
+
+	@Value("${egov.filestore.upload.endpoint:/filestore/v1/files}")
+	private String filestoreUploadEndpoint;
 
 	// Report Regeneration Trigger — published on bill updates for health-expense-calculator
 	@Value("${report.generation.trigger.topic}")

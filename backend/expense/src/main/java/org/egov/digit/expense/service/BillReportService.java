@@ -4,11 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.kafka.ExpenseProducer;
-import org.egov.digit.expense.repository.BillTransactionReportRepository;
+import org.egov.digit.expense.repository.BillReportRepository;
 import org.egov.digit.expense.util.ResponseInfoFactory;
-import org.egov.digit.expense.web.models.*;
+import org.egov.digit.expense.web.models.BillReport;
+import org.egov.digit.expense.web.models.BillReportRequest;
+import org.egov.digit.expense.web.models.BillReportResponse;
+import org.egov.digit.expense.web.models.BillReportSearchRequest;
+import org.egov.digit.expense.web.models.BillReportSearchResponse;
 import org.egov.digit.expense.web.models.enums.ReportStatus;
-import org.egov.digit.expense.web.validators.BillTransactionReportValidator;
+import org.egov.digit.expense.web.validators.BillReportValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,20 +22,20 @@ import java.util.UUID;
 
 @Service
 @Slf4j
-public class BillTransactionReportService {
+public class BillReportService {
 
-    private final BillTransactionReportValidator validator;
-    private final BillTransactionReportRepository repository;
+    private final BillReportValidator validator;
+    private final BillReportRepository repository;
     private final ExpenseProducer producer;
     private final Configuration config;
     private final ResponseInfoFactory responseInfoFactory;
 
     @Autowired
-    public BillTransactionReportService(BillTransactionReportValidator validator,
-                                        BillTransactionReportRepository repository,
-                                        ExpenseProducer producer,
-                                        Configuration config,
-                                        ResponseInfoFactory responseInfoFactory) {
+    public BillReportService(BillReportValidator validator,
+                             BillReportRepository repository,
+                             ExpenseProducer producer,
+                             Configuration config,
+                             ResponseInfoFactory responseInfoFactory) {
         this.validator = validator;
         this.repository = repository;
         this.producer = producer;
@@ -39,50 +43,42 @@ public class BillTransactionReportService {
         this.responseInfoFactory = responseInfoFactory;
     }
 
-    public BillTransactionReportResponse generate(BillTransactionReportRequest request) {
-        log.info("BillTransactionReportService::generate");
+    public BillReportResponse generate(BillReportRequest request) {
+        log.info("BillReportService::generate");
 
-        // Validate request
         validator.validateGenerateRequest(request);
-
-        // Enrich request
         enrichGenerateRequest(request);
 
-        // Push to Kafka save topic for async processing
-        producer.push(request.getBillTransactionReport().getTenantId(), config.getBillTransactionReportSaveTopic(), request);
+        producer.push(request.getBillReport().getTenantId(), config.getBillReportSaveTopic(), request);
 
-        // Build response
-        return BillTransactionReportResponse.builder()
+        return BillReportResponse.builder()
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true))
                 .status(ReportStatus.INITIATED)
                 .build();
     }
 
-    public BillTransactionReportSearchResponse search(BillTransactionReportSearchRequest request) {
-        log.info("BillTransactionReportService::search");
+    public BillReportSearchResponse search(BillReportSearchRequest request) {
+        log.info("BillReportService::search");
 
-        // Validate request
         validator.validateSearchRequest(request);
 
-        // Search reports
         Integer count = repository.count(request.getSearchCriteria());
-        List<BillTransactionReport> reports;
+        List<BillReport> reports;
         if (count == 0) {
             reports = Collections.emptyList();
         } else {
             reports = repository.search(request.getSearchCriteria());
         }
 
-        // Build response
-        return BillTransactionReportSearchResponse.builder()
+        return BillReportSearchResponse.builder()
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true))
                 .totalCount(count)
-                .billTransactionReports(reports)
+                .billReports(reports)
                 .build();
     }
 
-    private void enrichGenerateRequest(BillTransactionReportRequest request) {
-        BillTransactionReport report = request.getBillTransactionReport();
+    private void enrichGenerateRequest(BillReportRequest request) {
+        BillReport report = request.getBillReport();
         String createdBy = request.getRequestInfo().getUserInfo().getUuid();
         Long currentTime = System.currentTimeMillis();
 

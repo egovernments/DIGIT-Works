@@ -12,16 +12,13 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
-/**
- * Response object for generate bill transaction report API
- */
-@Schema(description = "Response object for generate bill transaction report API")
+@Schema(description = "Response object for generate bill report API")
 @Validated
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BillTransactionReportResponse {
+public class BillReportResponse {
 
     @JsonProperty("ResponseInfo")
     private ResponseInfo responseInfo;

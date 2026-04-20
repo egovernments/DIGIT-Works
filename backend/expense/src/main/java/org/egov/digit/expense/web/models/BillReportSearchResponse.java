@@ -13,16 +13,13 @@ import org.springframework.validation.annotation.Validated;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Response object for search bill transaction reports API
- */
-@Schema(description = "Response object for search bill transaction reports API")
+@Schema(description = "Response object for search bill reports API")
 @Validated
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BillTransactionReportSearchResponse {
+public class BillReportSearchResponse {
 
     @JsonProperty("ResponseInfo")
     private ResponseInfo responseInfo;
@@ -30,15 +27,15 @@ public class BillTransactionReportSearchResponse {
     @JsonProperty("totalCount")
     private Integer totalCount;
 
-    @JsonProperty("billTransactionReports")
+    @JsonProperty("billReports")
     @Valid
-    private List<BillTransactionReport> billTransactionReports;
+    private List<BillReport> billReports;
 
-    public BillTransactionReportSearchResponse addBillTransactionReportItem(BillTransactionReport item) {
-        if (this.billTransactionReports == null) {
-            this.billTransactionReports = new ArrayList<>();
+    public BillReportSearchResponse addBillReportItem(BillReport item) {
+        if (this.billReports == null) {
+            this.billReports = new ArrayList<>();
         }
-        this.billTransactionReports.add(item);
+        this.billReports.add(item);
         return this;
     }
 }

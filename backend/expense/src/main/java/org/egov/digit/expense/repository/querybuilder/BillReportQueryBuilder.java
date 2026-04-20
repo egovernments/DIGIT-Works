@@ -1,6 +1,6 @@
 package org.egov.digit.expense.repository.querybuilder;
 
-import org.egov.digit.expense.web.models.BillTransactionReportSearchCriteria;
+import org.egov.digit.expense.web.models.BillReportSearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -9,24 +9,24 @@ import java.util.List;
 import static org.egov.common.utils.MultiStateInstanceUtil.SCHEMA_REPLACE_STRING;
 
 @Component
-public class BillTransactionReportQueryBuilder {
+public class BillReportQueryBuilder {
 
     private static final String BASE_QUERY = "SELECT id, bill_id, tenant_id, type, status, file_store_id, " +
             "error_details, created_by, created_time, last_modified_by, last_modified_time " +
-            "FROM " + SCHEMA_REPLACE_STRING + ".eg_expense_bill_transaction_report ";
+            "FROM " + SCHEMA_REPLACE_STRING + ".eg_expense_bill_report ";
 
-    private static final String COUNT_QUERY = "SELECT COUNT(*) FROM " + SCHEMA_REPLACE_STRING + ".eg_expense_bill_transaction_report ";
+    private static final String COUNT_QUERY = "SELECT COUNT(*) FROM " + SCHEMA_REPLACE_STRING + ".eg_expense_bill_report ";
 
     private static final String ORDER_BY_CLAUSE = " ORDER BY last_modified_time DESC ";
 
-    public String getSearchQuery(BillTransactionReportSearchCriteria criteria, List<Object> preparedStatementValues) {
+    public String getSearchQuery(BillReportSearchCriteria criteria, List<Object> preparedStatementValues) {
         StringBuilder query = new StringBuilder(BASE_QUERY);
         addWhereClause(query, criteria, preparedStatementValues);
         query.append(ORDER_BY_CLAUSE);
         return query.toString();
     }
 
-    public String getCountQuery(BillTransactionReportSearchCriteria criteria, List<Object> preparedStatementValues) {
+    public String getCountQuery(BillReportSearchCriteria criteria, List<Object> preparedStatementValues) {
         StringBuilder query = new StringBuilder(COUNT_QUERY);
         addWhereClause(query, criteria, preparedStatementValues);
         return query.toString();
@@ -43,7 +43,7 @@ public class BillTransactionReportQueryBuilder {
         return query.toString();
     }
 
-    private void addWhereClause(StringBuilder query, BillTransactionReportSearchCriteria criteria,
+    private void addWhereClause(StringBuilder query, BillReportSearchCriteria criteria,
                                 List<Object> preparedStatementValues) {
         query.append(" WHERE 1=1 ");
 

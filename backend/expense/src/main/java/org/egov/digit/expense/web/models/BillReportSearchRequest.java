@@ -11,16 +11,13 @@ import lombok.NoArgsConstructor;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
-/**
- * Request object for searching bill transaction reports
- */
-@Schema(description = "Request object for searching bill transaction reports")
+@Schema(description = "Request object for searching bill reports")
 @Validated
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BillTransactionReportSearchRequest {
+public class BillReportSearchRequest {
 
     @JsonProperty("RequestInfo")
     @Valid
@@ -30,5 +27,5 @@ public class BillTransactionReportSearchRequest {
     @JsonProperty("searchCriteria")
     @Valid
     @NotNull
-    private BillTransactionReportSearchCriteria searchCriteria;
+    private BillReportSearchCriteria searchCriteria;
 }

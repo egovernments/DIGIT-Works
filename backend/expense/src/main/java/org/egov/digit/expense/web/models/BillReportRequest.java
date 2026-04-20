@@ -11,24 +11,21 @@ import lombok.NoArgsConstructor;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
-/**
- * Request object for generating bill transaction report
- */
-@Schema(description = "Request object for generating bill transaction report")
+@Schema(description = "Request object for generating a bill report")
 @Validated
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BillTransactionReportRequest {
+public class BillReportRequest {
 
     @JsonProperty("RequestInfo")
     @Valid
     @NotNull
     private RequestInfo requestInfo;
 
-    @JsonProperty("billTransactionReport")
+    @JsonProperty("billReport")
     @Valid
     @NotNull
-    private BillTransactionReport billTransactionReport;
+    private BillReport billReport;
 }

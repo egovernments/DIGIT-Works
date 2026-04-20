@@ -3,10 +3,10 @@ package org.egov.digit.expense.repository;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.exception.InvalidTenantIdException;
 import org.egov.common.utils.MultiStateInstanceUtil;
-import org.egov.digit.expense.repository.querybuilder.BillTransactionReportQueryBuilder;
-import org.egov.digit.expense.repository.rowmapper.BillTransactionReportRowMapper;
-import org.egov.digit.expense.web.models.BillTransactionReport;
-import org.egov.digit.expense.web.models.BillTransactionReportSearchCriteria;
+import org.egov.digit.expense.repository.querybuilder.BillReportQueryBuilder;
+import org.egov.digit.expense.repository.rowmapper.BillReportRowMapper;
+import org.egov.digit.expense.web.models.BillReport;
+import org.egov.digit.expense.web.models.BillReportSearchCriteria;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,26 +20,26 @@ import static org.egov.digit.expense.config.Constants.INVALID_TENANT_ID_ERR_CODE
 
 @Repository
 @Slf4j
-public class BillTransactionReportRepository {
+public class BillReportRepository {
 
     private final JdbcTemplate jdbcTemplate;
-    private final BillTransactionReportQueryBuilder queryBuilder;
-    private final BillTransactionReportRowMapper rowMapper;
+    private final BillReportQueryBuilder queryBuilder;
+    private final BillReportRowMapper rowMapper;
     private final MultiStateInstanceUtil multiStateInstanceUtil;
 
     @Autowired
-    public BillTransactionReportRepository(JdbcTemplate jdbcTemplate,
-                                           BillTransactionReportQueryBuilder queryBuilder,
-                                           BillTransactionReportRowMapper rowMapper,
-                                           MultiStateInstanceUtil multiStateInstanceUtil) {
+    public BillReportRepository(JdbcTemplate jdbcTemplate,
+                                BillReportQueryBuilder queryBuilder,
+                                BillReportRowMapper rowMapper,
+                                MultiStateInstanceUtil multiStateInstanceUtil) {
         this.jdbcTemplate = jdbcTemplate;
         this.queryBuilder = queryBuilder;
         this.rowMapper = rowMapper;
         this.multiStateInstanceUtil = multiStateInstanceUtil;
     }
 
-    public List<BillTransactionReport> search(BillTransactionReportSearchCriteria criteria) {
-        log.info("BillTransactionReportRepository::search");
+    public List<BillReport> search(BillReportSearchCriteria criteria) {
+        log.info("BillReportRepository::search");
         List<Object> preparedStatementValues = new ArrayList<>();
         String query = queryBuilder.getSearchQuery(criteria, preparedStatementValues);
         try {
@@ -51,8 +51,8 @@ public class BillTransactionReportRepository {
         return jdbcTemplate.query(query, preparedStatementValues.toArray(), rowMapper);
     }
 
-    public Integer count(BillTransactionReportSearchCriteria criteria) {
-        log.info("BillTransactionReportRepository::count");
+    public Integer count(BillReportSearchCriteria criteria) {
+        log.info("BillReportRepository::count");
         List<Object> preparedStatementValues = new ArrayList<>();
         String query = queryBuilder.getCountQuery(criteria, preparedStatementValues);
         try {
@@ -64,8 +64,8 @@ public class BillTransactionReportRepository {
         return jdbcTemplate.queryForObject(query, preparedStatementValues.toArray(), Integer.class);
     }
 
-    public BillTransactionReport getLatestReport(String billId, String tenantId, String type) {
-        log.info("BillTransactionReportRepository::getLatestReport");
+    public BillReport getLatestReport(String billId, String tenantId, String type) {
+        log.info("BillReportRepository::getLatestReport");
         List<Object> preparedStatementValues = new ArrayList<>();
         String query = queryBuilder.getLatestReportQuery(billId, tenantId, type, preparedStatementValues);
         try {
@@ -74,7 +74,7 @@ public class BillTransactionReportRepository {
             throw new CustomException(INVALID_TENANT_ID_ERR_CODE, e.getMessage());
         }
         log.debug("Latest report query: {}", query);
-        List<BillTransactionReport> reports = jdbcTemplate.query(query, preparedStatementValues.toArray(), rowMapper);
+        List<BillReport> reports = jdbcTemplate.query(query, preparedStatementValues.toArray(), rowMapper);
         return CollectionUtils.isEmpty(reports) ? null : reports.get(0);
     }
 }

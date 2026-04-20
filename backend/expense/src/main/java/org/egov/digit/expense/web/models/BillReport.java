@@ -13,16 +13,13 @@ import org.egov.digit.expense.web.models.enums.ReportStatus;
 import org.egov.digit.expense.web.models.enums.ReportType;
 import org.springframework.validation.annotation.Validated;
 
-/**
- * Bill Transaction Report domain model
- */
-@Schema(description = "A Object which holds the info about the bill transaction report")
+@Schema(description = "A Object which holds the info about a generated bill report")
 @Validated
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BillTransactionReport {
+public class BillReport {
 
     @JsonProperty("id")
     private String id;

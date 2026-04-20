@@ -9,16 +9,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
-/**
- * Search criteria for bill transaction report
- */
-@Schema(description = "Search criteria for bill transaction report")
+@Schema(description = "Search criteria for bill report")
 @Validated
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BillTransactionReportSearchCriteria {
+public class BillReportSearchCriteria {
 
     @JsonProperty("billId")
     @NotNull

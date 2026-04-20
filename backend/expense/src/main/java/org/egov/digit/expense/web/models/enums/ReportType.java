@@ -4,13 +4,15 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * Enum for bill transaction report type
+ * Enum for bill report type
  */
 public enum ReportType {
 
-    EXCEL("EXCEL"),
+    TRANSACTION_REPORT_EXCEL("TRANSACTION_REPORT_EXCEL"),
 
-    PDF("PDF");
+    TRANSACTION_REPORT_PDF("TRANSACTION_REPORT_PDF"),
+
+    PAYMENT_ADVISORY_EXCEL("PAYMENT_ADVISORY_EXCEL");
 
     private String value;
 
