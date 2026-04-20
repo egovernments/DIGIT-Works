@@ -424,9 +424,11 @@ paths:
         - BillReport
       summary: Generate a bill report (EXCEL, PDF, or PAYMENT_ADVISORY)
       description: |
-        Initiates async report generation for the given bill. For PAYMENT_ADVISORY type,
-        the caller must have the PAYMENT_APPROVER role and the bill must be in REVIEWED status.
-        Returns INITIATED immediately; poll /_search to get the fileStoreId once GENERATED.
+        Initiates async report generation for one or more bills supplied in billIds.
+        A separate report is generated per bill. For PAYMENT_ADVISORY type,
+        the caller must have the PAYMENT_APPROVER role and all bills must be in REVIEWED status.
+        Returns INITIATED immediately with the list of initiated BillReport records;
+        poll /_search with billIds to get fileStoreIds once GENERATED.
       requestBody:
         required: true
         content:
@@ -1689,7 +1691,6 @@ components:
       description: Bill report record (EXCEL, PDF, or PAYMENT_ADVISORY)
       type: object
       required:
-        - billId
         - tenantId
         - type
       properties:
@@ -1698,9 +1699,16 @@ components:
           description: Auto-generated unique identifier
           readOnly: true
           example: "rpt1a2b3-c4d5-6789-efab-cdef12345678"
+        billIds:
+          type: array
+          description: Bill IDs to generate reports for (one report per bill). Used on generate request.
+          items:
+            type: string
+          example: ["8801de85-f123-4e4b-9e4e-adbd04e49965", "9912ef96-g234-5f5c-0f45-cfeeg23456789"]
         billId:
           type: string
-          description: Reference to the bill for which the report is generated
+          description: Bill ID of the individual report record (set per-report after generation is initiated).
+          readOnly: true
           example: "8801de85-f123-4e4b-9e4e-adbd04e49965"
         tenantId:
           type: string
@@ -1740,6 +1748,11 @@ components:
           description: DIGIT ResponseInfo
         status:
           $ref: '#/components/schemas/ReportStatus'
+        billReports:
+          type: array
+          description: List of initiated BillReport records, one per bill in the request
+          items:
+            $ref: '#/components/schemas/BillReport'
         errors:
           type: array
           items:
@@ -1749,13 +1762,14 @@ components:
       description: Search criteria for bill reports
       type: object
       required:
-        - billId
         - tenantId
       properties:
-        billId:
-          type: string
-          description: Bill ID to search reports for
-          example: "8801de85-f123-4e4b-9e4e-adbd04e49965"
+        billIds:
+          type: array
+          description: Bill IDs to search reports for
+          items:
+            type: string
+          example: ["8801de85-f123-4e4b-9e4e-adbd04e49965", "9912ef96-g234-5f5c-0f45-cfeeg23456789"]
         tenantId:
           type: string
           description: Tenant identifier

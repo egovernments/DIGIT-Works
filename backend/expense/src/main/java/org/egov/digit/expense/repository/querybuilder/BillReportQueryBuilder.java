@@ -47,9 +47,11 @@ public class BillReportQueryBuilder {
                                 List<Object> preparedStatementValues) {
         query.append(" WHERE 1=1 ");
 
-        if (StringUtils.hasText(criteria.getBillId())) {
-            query.append(" AND bill_id = ? ");
-            preparedStatementValues.add(criteria.getBillId());
+        if (criteria.getBillIds() != null && !criteria.getBillIds().isEmpty()) {
+            query.append(" AND bill_id IN (")
+                 .append(String.join(",", criteria.getBillIds().stream().map(id -> "?").toArray(String[]::new)))
+                 .append(") ");
+            preparedStatementValues.addAll(criteria.getBillIds());
         }
 
         if (StringUtils.hasText(criteria.getTenantId())) {

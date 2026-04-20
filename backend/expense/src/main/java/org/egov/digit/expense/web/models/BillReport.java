@@ -13,6 +13,8 @@ import org.egov.digit.expense.web.models.enums.ReportStatus;
 import org.egov.digit.expense.web.models.enums.ReportType;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
+
 @Schema(description = "A Object which holds the info about a generated bill report")
 @Validated
 @Data
@@ -25,8 +27,10 @@ public class BillReport {
     private String id;
 
     @JsonProperty("billId")
-    @NotNull
     private String billId;
+
+    @JsonProperty("billIds")
+    private List<String> billIds;
 
     @JsonProperty("tenantId")
     @NotNull

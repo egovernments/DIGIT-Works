@@ -16,6 +16,7 @@ import org.egov.digit.expense.web.validators.BillReportValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -47,13 +48,31 @@ public class BillReportService {
         log.info("BillReportService::generate");
 
         validator.validateGenerateRequest(request);
-        enrichGenerateRequest(request);
 
-        producer.push(request.getBillReport().getTenantId(), config.getBillReportSaveTopic(), request);
+        List<BillReport> initiatedReports = new ArrayList<>();
+        BillReport templateReport = request.getBillReport();
+
+        for (String billId : templateReport.getBillIds()) {
+            BillReport billReport = BillReport.builder()
+                    .billId(billId)
+                    .tenantId(templateReport.getTenantId())
+                    .type(templateReport.getType())
+                    .build();
+
+            BillReportRequest perBillRequest = BillReportRequest.builder()
+                    .requestInfo(request.getRequestInfo())
+                    .billReport(billReport)
+                    .build();
+
+            enrichGenerateRequest(perBillRequest);
+            producer.push(billReport.getTenantId(), config.getBillReportSaveTopic(), perBillRequest);
+            initiatedReports.add(billReport);
+        }
 
         return BillReportResponse.builder()
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true))
                 .status(ReportStatus.INITIATED)
+                .billReports(initiatedReports)
                 .build();
     }
 

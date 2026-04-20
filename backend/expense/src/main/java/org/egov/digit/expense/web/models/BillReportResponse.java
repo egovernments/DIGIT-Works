@@ -26,6 +26,9 @@ public class BillReportResponse {
     @JsonProperty("status")
     private ReportStatus status;
 
+    @JsonProperty("billReports")
+    private List<BillReport> billReports;
+
     @JsonProperty("errors")
     private List<ErrorDetail> errors;
 }

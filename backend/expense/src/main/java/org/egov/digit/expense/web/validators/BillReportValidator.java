@@ -18,8 +18,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -39,8 +41,8 @@ public class BillReportValidator {
         Map<String, String> errorMap = new HashMap<>();
         BillReport report = request.getBillReport();
 
-        if (!StringUtils.hasText(report.getBillId())) {
-            errorMap.put("EG_EXPENSE_REPORT_BILLID_REQUIRED", "Bill ID is mandatory for generating report");
+        if (report.getBillIds() == null || report.getBillIds().isEmpty()) {
+            errorMap.put("EG_EXPENSE_REPORT_BILLID_REQUIRED", "At least one bill ID is required in billIds for generating report");
         }
 
         if (!StringUtils.hasText(report.getTenantId())) {
@@ -59,13 +61,13 @@ public class BillReportValidator {
             validatePaymentAdvisoryAccess(request, report);
         }
 
-        // Idempotency check — reject if an INITIATED report already exists for this bill + type
-        BillReport latestReport = repository.getLatestReport(
-                report.getBillId(), report.getTenantId(), report.getType().toString());
-
-        if (latestReport != null && ReportStatus.INITIATED.equals(latestReport.getStatus())) {
-            throw new CustomException("EG_EXPENSE_REPORT_ALREADY_INITIATED",
-                    "Report generation is already in progress for this bill. Please wait for it to complete.");
+        // Idempotency check per bill — reject if any bill already has an INITIATED report of the same type
+        for (String billId : report.getBillIds()) {
+            BillReport latestReport = repository.getLatestReport(billId, report.getTenantId(), report.getType().toString());
+            if (latestReport != null && ReportStatus.INITIATED.equals(latestReport.getStatus())) {
+                throw new CustomException("EG_EXPENSE_REPORT_ALREADY_INITIATED",
+                        "Report generation is already in progress for bill " + billId + ". Please wait for it to complete.");
+            }
         }
     }
 
@@ -77,8 +79,8 @@ public class BillReportValidator {
             throw new CustomException("EG_EXPENSE_REPORT_SEARCH_CRITERIA_REQUIRED", "Search criteria is mandatory");
         }
 
-        if (!StringUtils.hasText(request.getSearchCriteria().getBillId())) {
-            errorMap.put("EG_EXPENSE_REPORT_BILLID_REQUIRED", "Bill ID is mandatory for searching reports");
+        if (request.getSearchCriteria().getBillIds() == null || request.getSearchCriteria().getBillIds().isEmpty()) {
+            errorMap.put("EG_EXPENSE_REPORT_BILLID_REQUIRED", "At least one bill ID is required in billIds for searching reports");
         }
 
         if (!StringUtils.hasText(request.getSearchCriteria().getTenantId())) {
@@ -101,21 +103,25 @@ public class BillReportValidator {
         BillSearchRequest billSearchRequest = BillSearchRequest.builder()
                 .requestInfo(request.getRequestInfo())
                 .billCriteria(BillCriteria.builder()
-                        .ids(new java.util.HashSet<>(java.util.Collections.singletonList(report.getBillId())))
+                        .ids(new HashSet<>(report.getBillIds()))
                         .tenantId(report.getTenantId())
                         .build())
                 .build();
 
         List<Bill> bills = billRepository.search(billSearchRequest, false);
-        if (bills.isEmpty()) {
-            throw new CustomException("EG_EXPENSE_BILL_NOT_FOUND",
-                    "Bill not found: " + report.getBillId());
-        }
 
-        Bill bill = bills.get(0);
-        if (!Status.REVIEWED.equals(bill.getStatus())) {
-            throw new CustomException("EG_EXPENSE_REPORT_BILL_NOT_REVIEWED",
-                    "Payment Advisory Report can only be generated for bills in REVIEWED status. Current status: " + bill.getStatus());
+        Map<String, Bill> billMap = bills.stream()
+                .collect(Collectors.toMap(Bill::getId, b -> b));
+
+        for (String billId : report.getBillIds()) {
+            Bill bill = billMap.get(billId);
+            if (bill == null) {
+                throw new CustomException("EG_EXPENSE_BILL_NOT_FOUND", "Bill not found: " + billId);
+            }
+            if (!Status.REVIEWED.equals(bill.getStatus())) {
+                throw new CustomException("EG_EXPENSE_REPORT_BILL_NOT_REVIEWED",
+                        "Bill " + billId + " must be in REVIEWED status. Current status: " + bill.getStatus());
+            }
         }
     }
 }

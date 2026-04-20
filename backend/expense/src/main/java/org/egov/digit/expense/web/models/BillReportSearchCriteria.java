@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
+
 @Schema(description = "Search criteria for bill report")
 @Validated
 @Data
@@ -17,9 +19,8 @@ import org.springframework.validation.annotation.Validated;
 @Builder
 public class BillReportSearchCriteria {
 
-    @JsonProperty("billId")
-    @NotNull
-    private String billId;
+    @JsonProperty("billIds")
+    private List<String> billIds;
 
     @JsonProperty("tenantId")
     @NotNull
