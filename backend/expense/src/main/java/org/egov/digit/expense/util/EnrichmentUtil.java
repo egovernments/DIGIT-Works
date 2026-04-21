@@ -483,7 +483,7 @@ public class EnrichmentUtil {
                 .type(pdPayee != null && pdPayee.getType() != null ? pdPayee.getType() : dbPayee.getType())
                 .identifier(pdPayee != null && pdPayee.getIdentifier() != null ? pdPayee.getIdentifier() : dbPayee.getIdentifier())
                 .status(pdPayee != null && pdPayee.getStatus() != null ? pdPayee.getStatus() : dbPayee.getStatus())
-                .paymentProvider(pdPayee.getPaymentProvider() != null ? pdPayee.getPaymentProvider() : dbPayee.getPaymentProvider())
+                .paymentProvider(pdPayee != null && pdPayee.getPaymentProvider() != null ? pdPayee.getPaymentProvider() : dbPayee.getPaymentProvider())
                 .payeeName(pdPayee != null && pdPayee.getPayeeName() != null ? pdPayee.getPayeeName() : dbPayee.getPayeeName())
                 .payeePhoneNumber(pdPayee != null && pdPayee.getPayeePhoneNumber() != null ? pdPayee.getPayeePhoneNumber() : dbPayee.getPayeePhoneNumber())
                 .bankAccount(pdPayee != null && pdPayee.getBankAccount() != null ? pdPayee.getBankAccount() : dbPayee.getBankAccount())
