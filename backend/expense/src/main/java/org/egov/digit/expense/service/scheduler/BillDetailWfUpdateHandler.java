@@ -137,4 +137,99 @@ public class BillDetailWfUpdateHandler implements SchedulerJobHandler {
 
         return SchedulerJobResult.DONE;
     }
+
+    /**
+     * Called when BILL_DETAIL_WF_UPDATE exhausts all scheduler retries.
+     * Unlocks the bill by applying the phase-appropriate compensation action so the
+     * bill is not left permanently in a transitional locked state.
+     *
+     * <pre>
+     * IGNORE_ERRORS      → IGNORING_ERRORS_IN_PROGRESS → FAIL → PARTIALLY_VERIFIED
+     * SEND_FOR_REVIEW    → SENDING_FOR_REVIEW           → FAIL → FULLY_VERIFIED
+     * SEND_FOR_APPROVAL  → REVIEW_IN_PROGRESS           → FAIL → UNDER_REVIEW
+     * PAYMENT_INITIATION → retry remaining REVIEWED details; BILL_STATUS_POLL handles bill-level
+     * </pre>
+     */
+    @Override
+    public void onMaxAttemptsExceeded(SchedulerJob job) {
+        String billId = job.getReferenceId();
+        String tenantId = job.getTenantId();
+        log.error("BILL_DETAIL_WF_UPDATE max attempts exceeded for billId={} tenantId={} — applying compensation",
+                billId, tenantId);
+        try {
+            BillDetailWfUpdateContext ctx = objectMapper.convertValue(job.getContext(), BillDetailWfUpdateContext.class);
+            RequestInfo requestInfo = ctx.getRequestInfo();
+            String phase = ctx.getPhase();
+
+            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+            if (bill == null) {
+                log.error("BILL_DETAIL_WF_UPDATE onMaxAttemptsExceeded — bill {} not found, cannot compensate", billId);
+                return;
+            }
+
+            switch (phase) {
+                case POLL_PHASE_IGNORE_ERRORS:
+                case POLL_PHASE_SEND_FOR_REVIEW:
+                case POLL_PHASE_SEND_FOR_APPROVAL:
+                    applyBillFailCompensation(bill, requestInfo, phase);
+                    break;
+
+                case POLL_PHASE_PAYMENT_INITIATION:
+                    // Force-transition any remaining REVIEWED/PAYMENT_FAILED details to PAYMENT_IN_PROGRESS.
+                    // BILL_STATUS_POLL (PAYMENT phase) is already running and will drive bill-level outcome.
+                    forcePaymentInitiationOnRemainingDetails(bill, requestInfo);
+                    break;
+
+                default:
+                    log.error("BILL_DETAIL_WF_UPDATE onMaxAttemptsExceeded — unknown phase '{}' for bill={}", phase, billId);
+            }
+        } catch (Exception e) {
+            log.error("CRITICAL: BILL_DETAIL_WF_UPDATE onMaxAttemptsExceeded compensation failed for bill={} — manual intervention required",
+                    billId, e);
+        }
+    }
+
+    private void applyBillFailCompensation(Bill bill, RequestInfo requestInfo, String phase) {
+        for (int attempt = 1; attempt <= 3; attempt++) {
+            try {
+                paymentWorkflowService.transitionBill(bill, Actions.FAIL, requestInfo);
+                paymentWorkflowService.pushBillUpdate(bill, requestInfo);
+                log.warn("BILL_DETAIL_WF_UPDATE compensation applied FAIL for bill={} phase={}", bill.getId(), phase);
+                return;
+            } catch (Exception ex) {
+                if (attempt == 3) {
+                    log.error("CRITICAL: compensation FAIL action failed after 3 attempts for bill={} phase={} — manual intervention required",
+                            bill.getId(), phase, ex);
+                } else {
+                    log.warn("Compensation FAIL attempt {}/3 failed for bill={} phase={}: {}",
+                            attempt, bill.getId(), phase, ex.getMessage());
+                    try { Thread.sleep(500L * attempt); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); return; }
+                }
+            }
+        }
+    }
+
+    private void forcePaymentInitiationOnRemainingDetails(Bill bill, RequestInfo requestInfo) {
+        boolean anyForced = false;
+        for (BillDetail detail : bill.getBillDetails()) {
+            if (detail.getStatus() == Status.REVIEWED || detail.getStatus() == Status.PAYMENT_FAILED) {
+                try {
+                    paymentWorkflowService.transitionBillDetail(detail, Actions.PAYMENT_INITIATION, requestInfo);
+                    anyForced = true;
+                    log.info("Forced PAYMENT_INITIATION on detail {} for bill={}", detail.getId(), bill.getId());
+                } catch (Exception e) {
+                    if (workflowUtil.isRetryableWfError(e)) {
+                        log.info("Detail {} already at PAYMENT_IN_PROGRESS (idempotent)", detail.getId());
+                        anyForced = true;
+                    } else {
+                        log.error("CRITICAL: forced PAYMENT_INITIATION failed for detail {} bill={} — manual intervention required",
+                                detail.getId(), bill.getId(), e);
+                    }
+                }
+            }
+        }
+        if (anyForced) {
+            paymentWorkflowService.pushBillUpdate(bill, requestInfo);
+        }
+    }
 }

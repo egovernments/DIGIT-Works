@@ -11,6 +11,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,11 +40,18 @@ public class TaskConsumer {
 
         // Call each service at most once — only if at least one provider in this bill is supported.
         // Each service then handles all its matching details internally in a single pass.
+        // Wrapped per-service so one service throwing does not block offset commit or other services.
         paymentProviderServices.stream()
                 .filter(s -> providers.stream().anyMatch(s::supports))
                 .forEach(s -> {
-                    log.info("Dispatching task to {}", s.getClass().getSimpleName());
-                    s.executeTask(taskRequest);
+                    try {
+                        log.info("Dispatching task to {}", s.getClass().getSimpleName());
+                        s.executeTask(taskRequest);
+                    } catch (Exception e) {
+                        log.error("executeTask failed for service={} taskId={} billId={} — skipping to prevent partition block",
+                                s.getClass().getSimpleName(), taskRequest.getTask().getId(),
+                                taskRequest.getTask().getBillId(), e);
+                    }
                 });
     }
 
@@ -54,7 +62,7 @@ public class TaskConsumer {
      */
     private Set<String> extractProviders(Bill bill) {
         if (bill == null || CollectionUtils.isEmpty(bill.getBillDetails())) {
-            return Set.of((String) null);
+            return Collections.singleton(null);
         }
         return bill.getBillDetails().stream()
                 .map(d -> {

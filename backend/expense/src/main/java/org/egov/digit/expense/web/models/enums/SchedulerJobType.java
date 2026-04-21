@@ -12,5 +12,8 @@ public enum SchedulerJobType {
     BILL_STATUS_POLL,
 
     /** Transitions bill detail WFs asynchronously (IGNORE_ERRORS / SEND_FOR_REVIEW / SEND_FOR_APPROVAL). */
-    BILL_DETAIL_WF_UPDATE
+    BILL_DETAIL_WF_UPDATE,
+
+    /** Crash/restart recovery for a Verify task — re-runs verification for any stuck bill details. */
+    TASK_VERIFY_CHECK
 }

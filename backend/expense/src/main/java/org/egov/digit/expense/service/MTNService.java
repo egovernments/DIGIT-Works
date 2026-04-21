@@ -160,6 +160,7 @@ public class MTNService implements PaymentProviderService {
     public BillTaskResponse verify(BillTaskRequest billTaskRequest) {
 
         Task task = fetchOrCreateTask(billTaskRequest, Task.Type.Verify);
+        insertVerifySchedulerJob(task, billTaskRequest.getBill().getTenantId(), billTaskRequest.getRequestInfo());
 
         ResponseInfo responseInfo = responseInfoFactory.
                 createResponseInfoFromRequestInfo(billTaskRequest.getRequestInfo(), true);
@@ -418,6 +419,10 @@ public class MTNService implements PaymentProviderService {
         Task task = taskRequest.getTask();
         Bill billFromRequest = taskRequest.getBill();
 
+        // Set before try so scheduler can recover RequestInfo even if getBillfromSearch throws
+        task.setAdditionalDetails(taskRequest.getRequestInfo());
+        if (task.getAuditDetails() != null) task.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+
         try {
             Bill billFromSearch = getBillfromSearch(billFromRequest, taskRequest.getRequestInfo());
             Map<String, BillDetail> billDetailsToBeupdatedById = getBillDetailsToBeUpdated(billFromRequest, billFromSearch);
@@ -468,9 +473,6 @@ public class MTNService implements PaymentProviderService {
                     }
                 }
             }
-            task.setAdditionalDetails(taskRequest.getRequestInfo());
-            AuditDetails auditDetails = task.getAuditDetails();
-            auditDetails.setLastModifiedTime(System.currentTimeMillis());
             expenseProducer.push(billFromSearch.getTenantId(), config.getTaskUpdateTopic(), task);
         } finally {
             // Always register scheduler job — even if bill search or loop fails, the task exists in DB
@@ -479,11 +481,49 @@ public class MTNService implements PaymentProviderService {
         }
     }
 
-    /**
-     * Creates a {@code TASK_STATUS_CHECK} scheduler job for the given transfer task.
-     * The generic scheduler will poll MTN transfer status using exponential backoff
-     * until the task is resolved or max attempts are exceeded.
-     */
+    private void forceBillDetailFailed(BillDetail billDetail, RequestInfo requestInfo) {
+        try {
+            Workflow failedWf = Workflow.builder().action(Actions.FAILED.toString()).build();
+            BillDetailRequest billDetailRequest = BillDetailRequest.builder()
+                    .billDetail(billDetail)
+                    .businessService(config.getBillDetailBusinessService())
+                    .workflow(failedWf)
+                    .requestInfo(requestInfo)
+                    .build();
+            State wfState = workflowUtil.callWorkFlow(
+                    workflowUtil.prepareWorkflowRequestForBillDetail(billDetailRequest), billDetailRequest);
+            billDetail.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+            log.info("Forced billDetail {} to FAILED status via WF", billDetail.getId());
+        } catch (Exception ex) {
+            log.error("CRITICAL: failed to force billDetail {} to FAILED — manual intervention required",
+                    billDetail.getId(), ex);
+        }
+    }
+
+    private void insertVerifySchedulerJob(Task task, String tenantId, RequestInfo requestInfo) {
+        try {
+            long now = System.currentTimeMillis();
+            SchedulerJob schedulerJob = SchedulerJob.builder()
+                    .id(UUID.randomUUID().toString())
+                    .tenantId(tenantId)
+                    .jobType(SchedulerJobType.TASK_VERIFY_CHECK)
+                    .referenceId(task.getId())
+                    .schedulerStatus(SchedulerJobStatus.PENDING)
+                    .nextCheckAt(now + 5000L)
+                    .attemptCount(0)
+                    .maxAttempts(config.getSchedulerMaxAttempts())
+                    .context(requestInfo)
+                    .createdAt(now)
+                    .updatedAt(now)
+                    .build();
+            schedulerJobRepository.insert(schedulerJob);
+            schedulerJobRegistry.register(tenantId);
+            log.info("Verify scheduler job created for task {} tenant {}", task.getId(), tenantId);
+        } catch (Exception e) {
+            log.error("Failed to insert verify scheduler job for task {} — crash recovery will not run", task.getId(), e);
+        }
+    }
+
     private void insertSchedulerJob(Task task, String tenantId, RequestInfo requestInfo) {
         try {
             long now = System.currentTimeMillis();
@@ -533,6 +573,35 @@ public class MTNService implements PaymentProviderService {
 
     }
 
+    public void forceFailStuckVerifyDetails(TaskRequest taskRequest) {
+        Task task = taskRequest.getTask();
+        Bill billFromSearch = getBillfromSearch(taskRequest.getBill(), taskRequest.getRequestInfo());
+
+        List<BillDetail> details = billFromSearch.getBillDetails();
+        if (details == null || details.isEmpty()) {
+            log.warn("No bill details found for bill {} in forceFailStuckVerifyDetails — skipping detail force-fail",
+                    billFromSearch.getId());
+            task.setStatus(Status.DONE);
+            if (task.getAuditDetails() != null) task.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+            expenseProducer.push(billFromSearch.getTenantId(), config.getTaskUpdateTopic(), task);
+            return;
+        }
+
+        for (BillDetail billDetail : details) {
+            if (billDetail.getStatus() == Status.VERIFICATION_IN_PROGRESS
+                    || billDetail.getStatus() == Status.PENDING_VERIFICATION) {
+                log.warn("Force-failing stuck verify billDetail {} (status={})", billDetail.getId(), billDetail.getStatus());
+                forceBillDetailFailed(billDetail, taskRequest.getRequestInfo());
+            }
+        }
+
+        task.setStatus(Status.DONE);
+        if (task.getAuditDetails() != null) {
+            task.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+        }
+        expenseProducer.push(billFromSearch.getTenantId(), config.getTaskUpdateTopic(), task);
+    }
+
     public TaskDetailsResponse getTaskDetails(TaskDetailsRequest taskDetailsRequest) {
         String tenantId = taskDetailsRequest.getRequestInfo().getUserInfo().getTenantId();
         List<TaskDetails> taskDetails = new ArrayList<>();
@@ -552,16 +621,20 @@ public class MTNService implements PaymentProviderService {
 
     private void updateBillWfStatus(BillRequest billRequest, boolean isWorkflowChange) {
         Bill bill = billRequest.getBill();
-        try {
-            if (isWorkflowChange &&
-                    validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
+        boolean wfSucceeded = false;
+        if (isWorkflowChange && validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
+            try {
                 State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
                 bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+                wfSucceeded = true;
+            } catch (Exception e) {
+                log.error("Bill WF transition failed for bill {} (status={}) — skipping bill push; BILL_STATUS_POLL will recover",
+                        bill.getBillNumber(), bill.getStatus(), e);
             }
-        } catch (Exception e) {
-            log.error("Error in updating workflow state change for bill number : {} from status: {}", bill.getBillNumber(), bill.getStatus(), e);
         }
-        expenseProducer.push(bill.getTenantId(), config.getBillUpdateTopic(), billRequest);
+        if (!isWorkflowChange || wfSucceeded) {
+            expenseProducer.push(bill.getTenantId(), config.getBillUpdateTopic(), billRequest);
+        }
     }
 
     private void setBillDetailStatus(BillDetail billDetail, Workflow workflow, RequestInfo requestInfo, boolean isWorkflowUpdate) {
@@ -582,22 +655,17 @@ public class MTNService implements PaymentProviderService {
                 billDetail.setStatus(Status.fromValue(wfState.getApplicationStatus()));
                 return;
             } catch (Exception e) {
-                // egov-workflow-v2 persists state asynchronously via Kafka. A rapid successive transition
-                // can arrive before the DB write commits, causing INVALID ACTION on the previous state.
-                // ServiceRequestRepository wraps HttpClientErrorException into ServiceCallException (body as message),
-                // so we must check both to reliably detect the retryable case.
-                // Retry with backoff to allow the persister to catch up.
-                String responseBody = (e instanceof HttpClientErrorException hce)
-                        ? hce.getResponseBodyAsString()
-                        : e.getMessage();
-                boolean isInvalidAction = responseBody != null && responseBody.contains("INVALID ACTION");
-                if (!isInvalidAction || attempt == maxRetries) {
-                    log.error("Error in updating workflow state change for billDetail Id: {}, from status: {} to action: {}"
-                            , billDetail.getId(), billDetail.getStatus(), workflow.getAction(), e);
+                // Retry all errors (INVALID_ACTION race AND transient 5xx/network) up to maxRetries.
+                // Previously only INVALID_ACTION was retried — transient WF outages immediately
+                // force-failed workers. Now we exhaust all attempts before forcing FAILED.
+                if (attempt == maxRetries) {
+                    log.error("WF retries exhausted ({}/{}) for billDetail {}, status={}, action={} — forcing FAILED",
+                            attempt, maxRetries, billDetail.getId(), billDetail.getStatus(), workflow.getAction(), e);
+                    forceBillDetailFailed(billDetail, requestInfo);
                     return;
                 }
-                log.warn("WF async-persist race for billDetail {}, action={}, retrying in {}ms (attempt {}/{})",
-                        billDetail.getId(), workflow.getAction(), delayMs, attempt, maxRetries);
+                log.warn("WF retry {}/{} for billDetail {}, action={}, retrying in {}ms: {}",
+                        attempt, maxRetries, billDetail.getId(), workflow.getAction(), delayMs, e.getMessage());
                 try {
                     Thread.sleep(delayMs);
                 } catch (InterruptedException ie) {
@@ -779,7 +847,11 @@ public class MTNService implements PaymentProviderService {
                 setBillDetailStatus(billDetail, billDetailWorkflow, taskRequest.getRequestInfo(), isUpdateWorkflow);
             }
         }
-        if (billFromSearch.getStatus() == Status.PAYMENT_IN_PROGRESS) {
+        // Also check PARTIALLY_PAID: when concurrent task completions race past each other,
+        // the bill may already be PARTIALLY_PAID by the time we evaluate. We must still drive
+        // it to FULLY_PAY once all details settle.
+        Status billStatus = billFromSearch.getStatus();
+        if (billStatus == Status.PAYMENT_IN_PROGRESS || billStatus == Status.PARTIALLY_PAID) {
 
             List<BillDetail> paidBillDetails = new ArrayList<>();
             List<BillDetail> declinedBillDetails = new ArrayList<>();
@@ -792,14 +864,16 @@ public class MTNService implements PaymentProviderService {
                         }
                     });
 
-            Workflow workflow = Workflow.builder()
-                    .build();
+            Workflow workflow = Workflow.builder().build();
             boolean isWorkflowChange = true;
-            if (paidBillDetails.size() == billFromSearch.getBillDetails().size()) {
+            int totalDetails = billFromSearch.getBillDetails().size();
+
+            if (paidBillDetails.size() == totalDetails) {
                 workflow.setAction(Actions.FULLY_PAY.toString());
-            } else if (!paidBillDetails.isEmpty()) {
+            } else if (!paidBillDetails.isEmpty() && billStatus == Status.PAYMENT_IN_PROGRESS) {
+                // PARTIALLY_PAY is only valid from PAYMENT_IN_PROGRESS; skip if already PARTIALLY_PAID
                 workflow.setAction(Actions.PARTIALLY_PAY.toString());
-            } else if (declinedBillDetails.size() == billFromSearch.getBillDetails().size()) {
+            } else if (declinedBillDetails.size() == totalDetails && billStatus == Status.PAYMENT_IN_PROGRESS) {
                 workflow.setAction(Actions.FAILED.toString());
             } else {
                 log.info("no workflow state change for bill number : {}, task id: {}", billFromSearch.getBillNumber(), task.getId());
@@ -833,6 +907,14 @@ public class MTNService implements PaymentProviderService {
         // Use in-memory updated taskDetails — avoids a stale DB re-read before the persister
         // has committed the Kafka events pushed by updatePaymentTaskStatus.
         List<TaskDetails> updatedTaskDetails = updatePaymentTaskStatus(taskRequest);
+
+        // Empty list means TaskDetails haven't been persisted yet (Kafka/persister lag after transfer fired).
+        // Treat as still in-progress so the scheduler retries rather than prematurely marking task DONE.
+        if (updatedTaskDetails.isEmpty()) {
+            log.warn("Task {} has no task details in DB yet (persister lag?) — will retry on next scheduler run", task.getId());
+            return true;
+        }
+
         boolean anyInProgress = updatedTaskDetails.stream()
                 .anyMatch(td -> td.getStatus() == Status.IN_PROGRESS);
 

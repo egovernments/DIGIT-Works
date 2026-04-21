@@ -1,13 +1,17 @@
 package org.egov.digit.expense.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.workflow.State;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.config.Constants;
+import org.egov.digit.expense.kafka.ExpenseProducer;
 import org.egov.digit.expense.repository.BillRepository;
+import org.egov.digit.expense.util.WorkflowUtil;
 import org.egov.digit.expense.web.models.*;
+import org.egov.digit.expense.web.models.enums.Actions;
 import org.egov.digit.expense.web.models.enums.Status;
-import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -17,8 +21,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Skeleton service for bank-based payment verification and transfer.
- * Mirrors the structure of {@link MTNService} but targets BANK payment provider.
+ * Handles bank-based payment verification and transfer.
+ * Mirrors the lifecycle management of {@link MTNService} for BANK payment provider.
  *
  * TODO: Integrate with actual bank transfer API when available.
  */
@@ -28,64 +32,18 @@ public class BankPaymentService implements PaymentProviderService {
 
     private final Configuration config;
     private final BillRepository billRepository;
+    private final WorkflowUtil workflowUtil;
+    private final ExpenseProducer expenseProducer;
 
     @Autowired
-    public BankPaymentService(Configuration config, BillRepository billRepository) {
+    public BankPaymentService(Configuration config,
+                               BillRepository billRepository,
+                               WorkflowUtil workflowUtil,
+                               ExpenseProducer expenseProducer) {
         this.config = config;
         this.billRepository = billRepository;
-    }
-
-    /**
-     * Verifies bank payment details on bill details.
-     * Validates that required bank fields (bankAccount, bankCode, beneficiaryCode) are present.
-     *
-     * @param billRequest the bill request containing bill details to verify
-     */
-    public void verify(BillRequest billRequest) {
-        Bill bill = billRequest.getBill();
-        log.info("Starting bank payment verification for bill: {}", bill.getId());
-
-        for (BillDetail billDetail : bill.getBillDetails()) {
-            if (billDetail.getStatus() != Status.PENDING_VERIFICATION
-                    && billDetail.getStatus() != Status.VERIFICATION_FAILED) {
-                continue;
-            }
-
-            Party payee = billDetail.getPayee();
-            if (payee == null || !Constants.PAYMENT_PROVIDER_BANK.equalsIgnoreCase(payee.getPaymentProvider())) {
-                continue;
-            }
-
-            validateBankFields(billDetail, payee);
-
-            // TODO: Call bank verification API to validate account details
-            log.info("Bank verification placeholder for billDetail: {}, bankAccount: {}, bankCode: {}",
-                    billDetail.getId(), payee.getBankAccount(), payee.getBankCode());
-        }
-    }
-
-    /**
-     * Initiates bank transfer for verified bill details.
-     *
-     * @param billRequest the bill request containing bill details to transfer
-     */
-    public void transfer(BillRequest billRequest) {
-        Bill bill = billRequest.getBill();
-        log.info("Starting bank payment transfer for bill: {}", bill.getId());
-
-        for (BillDetail billDetail : bill.getBillDetails()) {
-            if (billDetail.getStatus() != Status.PAYMENT_IN_PROGRESS) {
-                continue;
-            }
-
-            Party payee = billDetail.getPayee();
-            if (payee == null || !Constants.PAYMENT_PROVIDER_BANK.equalsIgnoreCase(payee.getPaymentProvider())) {
-                continue;
-            }
-
-            throw new CustomException(Constants.BANK_TRANSFER_NOT_IMPLEMENTED_ERR_CODE,
-                    "Bank transfer is not yet implemented. billDetail: " + billDetail.getId());
-        }
+        this.workflowUtil = workflowUtil;
+        this.expenseProducer = expenseProducer;
     }
 
     @Override
@@ -93,9 +51,6 @@ public class BankPaymentService implements PaymentProviderService {
         return Constants.PAYMENT_PROVIDER_BANK.equalsIgnoreCase(paymentProvider);
     }
 
-    /**
-     * Dispatches a Kafka task to the bank verify or transfer flow.
-     */
     @Override
     public void executeTask(TaskRequest taskRequest) {
         Task task = taskRequest.getTask();
@@ -107,7 +62,7 @@ public class BankPaymentService implements PaymentProviderService {
     }
 
     /**
-     * Placeholder for bank task-status polling. Since bank does not yet use async status checks,
+     * Placeholder for bank task-status polling. Bank does not use async status checks;
      * all tasks are considered resolved immediately — returns false (no details in-progress).
      */
     public boolean updatePaymentTaskStatusAndFinalize(TaskRequest taskRequest) {
@@ -116,22 +71,173 @@ public class BankPaymentService implements PaymentProviderService {
         return false;
     }
 
+    // ─────────────────────────────────────────────────────────────────────────
+    // Verify
+    // ─────────────────────────────────────────────────────────────────────────
+
     private void verifyFromTask(TaskRequest taskRequest) {
+        Task task = taskRequest.getTask();
         Bill billFromSearch = getBillFromSearch(taskRequest.getBill(), taskRequest.getRequestInfo());
         BillRequest billRequest = BillRequest.builder()
                 .requestInfo(taskRequest.getRequestInfo())
                 .bill(billFromSearch)
                 .build();
-        verify(billRequest);
+        try {
+            verify(billRequest);
+        } finally {
+            task.setStatus(Status.DONE);
+            expenseProducer.push(billFromSearch.getTenantId(), config.getTaskUpdateTopic(), task);
+        }
     }
 
+    /**
+     * Verifies bank payment details: validates required fields, then transitions each eligible
+     * BANK bill detail through VERIFY → VERIFICATION_IN_PROGRESS → VERIFIED / VERIFICATION_FAILED.
+     */
+    public void verify(BillRequest billRequest) {
+        Bill bill = billRequest.getBill();
+        RequestInfo requestInfo = billRequest.getRequestInfo();
+        log.info("Starting bank payment verification for bill: {}", bill.getId());
+
+        for (BillDetail billDetail : bill.getBillDetails()) {
+            if (billDetail.getStatus() != Status.PENDING_VERIFICATION
+                    && billDetail.getStatus() != Status.VERIFICATION_FAILED) {
+                continue;
+            }
+            Party payee = billDetail.getPayee();
+            if (payee == null || !Constants.PAYMENT_PROVIDER_BANK.equalsIgnoreCase(payee.getPaymentProvider())) {
+                continue;
+            }
+
+            // Step 1: VERIFY → VERIFICATION_IN_PROGRESS
+            setBillDetailStatus(billDetail, Workflow.builder().action(Actions.VERIFY.toString()).build(), requestInfo);
+            if (billDetail.getStatus() != Status.VERIFICATION_IN_PROGRESS) {
+                log.error("Bank WF Step 1 (VERIFY) failed for billDetail {} — skipping field validation", billDetail.getId());
+                continue;
+            }
+
+            // Step 2: validate required bank fields
+            boolean validationPassed = validateBankFields(billDetail, payee);
+
+            // Step 3: finalize based on validation
+            if (validationPassed) {
+                setBillDetailStatus(billDetail,
+                        Workflow.builder().action(Actions.VERIFICATION_SUCCESS.toString()).build(), requestInfo);
+                log.info("Bank verification succeeded for billDetail {}", billDetail.getId());
+            } else {
+                setBillDetailStatus(billDetail,
+                        Workflow.builder().action(Actions.FAILED.toString()).build(), requestInfo);
+                log.info("Bank verification failed for billDetail {}", billDetail.getId());
+            }
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Transfer
+    // ─────────────────────────────────────────────────────────────────────────
+
     private void transferFromTask(TaskRequest taskRequest) {
+        Task task = taskRequest.getTask();
         Bill billFromSearch = getBillFromSearch(taskRequest.getBill(), taskRequest.getRequestInfo());
         BillRequest billRequest = BillRequest.builder()
                 .requestInfo(taskRequest.getRequestInfo())
                 .bill(billFromSearch)
                 .build();
-        transfer(billRequest);
+        try {
+            transfer(billRequest);
+        } finally {
+            task.setStatus(Status.DONE);
+            expenseProducer.push(billFromSearch.getTenantId(), config.getTaskUpdateTopic(), task);
+        }
+    }
+
+    /**
+     * Bank transfer is not yet implemented. Each PAYMENT_IN_PROGRESS BANK detail is
+     * marked PAYMENT_FAILED via WF so the bill can settle and is not permanently stuck.
+     *
+     * TODO: Replace with actual bank transfer API call when available.
+     */
+    public void transfer(BillRequest billRequest) {
+        Bill bill = billRequest.getBill();
+        RequestInfo requestInfo = billRequest.getRequestInfo();
+        log.error("CRITICAL: Bank transfer is not yet implemented for bill {}. Forcing PAYMENT_FAILED on BANK details.",
+                bill.getId());
+
+        for (BillDetail billDetail : bill.getBillDetails()) {
+            if (billDetail.getStatus() != Status.PAYMENT_IN_PROGRESS) {
+                continue;
+            }
+            Party payee = billDetail.getPayee();
+            if (payee == null || !Constants.PAYMENT_PROVIDER_BANK.equalsIgnoreCase(payee.getPaymentProvider())) {
+                continue;
+            }
+            log.warn("Forcing FAILED on BANK PAYMENT_IN_PROGRESS billDetail {}", billDetail.getId());
+            forceBillDetailFailed(billDetail, requestInfo);
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Helpers
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private void setBillDetailStatus(BillDetail billDetail, Workflow workflow, RequestInfo requestInfo) {
+        BillDetailRequest billDetailRequest = BillDetailRequest.builder()
+                .billDetail(billDetail)
+                .businessService(config.getBillDetailBusinessService())
+                .workflow(workflow)
+                .requestInfo(requestInfo)
+                .build();
+        int maxRetries = config.getWfTransitionRetryMaxAttempts();
+        long delayMs = config.getWfTransitionRetryInitialDelayMs();
+        for (int attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                State wfState = workflowUtil.callWorkFlow(
+                        workflowUtil.prepareWorkflowRequestForBillDetail(billDetailRequest), billDetailRequest);
+                billDetail.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+                return;
+            } catch (Exception e) {
+                if (attempt == maxRetries) {
+                    log.error("Bank WF retries exhausted for billDetail {}, action={} — forcing FAILED",
+                            billDetail.getId(), workflow.getAction(), e);
+                    forceBillDetailFailed(billDetail, requestInfo);
+                    return;
+                }
+                log.warn("Bank WF retry {}/{} for billDetail {}, action={}: {}",
+                        attempt, maxRetries, billDetail.getId(), workflow.getAction(), e.getMessage());
+                try { Thread.sleep(delayMs); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); return; }
+                delayMs *= 2;
+            }
+        }
+    }
+
+    private void forceBillDetailFailed(BillDetail billDetail, RequestInfo requestInfo) {
+        try {
+            BillDetailRequest billDetailRequest = BillDetailRequest.builder()
+                    .billDetail(billDetail)
+                    .businessService(config.getBillDetailBusinessService())
+                    .workflow(Workflow.builder().action(Actions.FAILED.toString()).build())
+                    .requestInfo(requestInfo)
+                    .build();
+            State wfState = workflowUtil.callWorkFlow(
+                    workflowUtil.prepareWorkflowRequestForBillDetail(billDetailRequest), billDetailRequest);
+            billDetail.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+            log.info("Forced BANK billDetail {} to FAILED status via WF", billDetail.getId());
+        } catch (Exception ex) {
+            log.error("CRITICAL: failed to force BANK billDetail {} to FAILED — manual intervention required",
+                    billDetail.getId(), ex);
+        }
+    }
+
+    private boolean validateBankFields(BillDetail billDetail, Party payee) {
+        if (!StringUtils.hasText(payee.getBankAccount())) {
+            log.warn("Bank account missing for billDetail {}", billDetail.getId());
+            return false;
+        }
+        if (!StringUtils.hasText(payee.getBeneficiaryCode())) {
+            log.warn("Beneficiary code missing for billDetail {}", billDetail.getId());
+            return false;
+        }
+        return true;
     }
 
     private Bill getBillFromSearch(Bill billFromRequest, RequestInfo requestInfo) {
@@ -146,20 +252,9 @@ public class BankPaymentService implements PaymentProviderService {
                 .build();
         List<Bill> bills = billRepository.search(billSearchRequest, false);
         if (bills == null || bills.isEmpty()) {
-            throw new CustomException(Constants.BILL_NOT_FOUND_ERR_CODE,
+            throw new org.egov.tracer.model.CustomException(Constants.BILL_NOT_FOUND_ERR_CODE,
                     "Bill not found for id: " + billFromRequest.getId());
         }
         return bills.get(0);
-    }
-
-    private void validateBankFields(BillDetail billDetail, Party payee) {
-        if (!StringUtils.hasText(payee.getBankAccount())) {
-            throw new CustomException(Constants.MISSING_BANK_ACCOUNT_ERR_CODE,
-                    "Bank account is required for BANK payment on billDetail: " + billDetail.getId());
-        }
-        if (!StringUtils.hasText(payee.getBeneficiaryCode())) {
-            throw new CustomException(Constants.MISSING_BENEFICIARY_CODE_ERR_CODE,
-                    "Beneficiary code is required for BANK payment on billDetail: " + billDetail.getId());
-        }
     }
 }
