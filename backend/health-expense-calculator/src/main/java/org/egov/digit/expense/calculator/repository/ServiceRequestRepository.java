@@ -31,6 +31,7 @@ public class ServiceRequestRepository {
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		Object response = null;
 		try {
+			try { log.info("Request body to {}: {}", uri, mapper.writeValueAsString(request)); } catch (Exception ignored) {}
 			response = restTemplate.postForObject(uri.toString(), request, Map.class);
 		} catch (HttpClientErrorException e) {
 			log.error("External Service threw an Exception: ", e);

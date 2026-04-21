@@ -2,7 +2,9 @@ package org.egov.digit.expense.calculator.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.models.project.ProjectRequest;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
+import org.egov.digit.expense.calculator.service.BillingConfigurationService;
 import org.egov.digit.expense.calculator.service.ExpenseCalculatorService;
 import org.egov.digit.expense.calculator.service.HealthBillReportGenerator;
 import org.egov.digit.expense.calculator.service.RedisService;
@@ -35,11 +37,13 @@ public class ExpenseCalculatorConsumer {
 	private final HealthBillReportGenerator healthBillReportGenerator;
 	private final RedisService redisService;
 	private final ExpenseCalculatorUtil expenseCalculatorUtil;
+	private final BillingConfigurationService billingConfigurationService;
 
 	@Autowired
 	public ExpenseCalculatorConsumer(ExpenseCalculatorConfiguration configs, ExpenseCalculatorService expenseCalculatorService,
 									 ObjectMapper objectMapper, ExpenseCalculatorProducer producer, HealthBillReportGenerator healthBillReportGenerator,
-									 RedisService redisService, ExpenseCalculatorUtil expenseCalculatorUtil) {
+									 RedisService redisService, ExpenseCalculatorUtil expenseCalculatorUtil,
+									 BillingConfigurationService billingConfigurationService) {
 		this.configs = configs;
 		this.expenseCalculatorService = expenseCalculatorService;
 		this.objectMapper = objectMapper;
@@ -47,6 +51,7 @@ public class ExpenseCalculatorConsumer {
         this.healthBillReportGenerator = healthBillReportGenerator;
         this.redisService = redisService;
         this.expenseCalculatorUtil = expenseCalculatorUtil;
+        this.billingConfigurationService = billingConfigurationService;
     }
 
 	// Commenting existing consumer
@@ -208,5 +213,53 @@ public class ExpenseCalculatorConsumer {
 			log.error("Error occurred while processing the report from topic : " + topic, exception);
 			producer.push(configs.getCalculatorErrorTopic(), exception.getMessage() + " : " + consumerRecord);
 		}
+	}
+
+	/**
+	 * Listens to the project update topic (same as attendance service) to sync
+	 * BillingConfig and BillingPeriod records when campaign dates change.
+	 *
+	 * Only root projects (parent == null) carry campaign-level date changes.
+	 * Child projects (per locality) are handled by the attendance service.
+	 */
+	@KafkaListener(topicPattern = "${attendance.kafka.tenant.id.pattern}${project.management.system.kafka.update.topic}")
+	public void listenProjectUpdate(final Map<String, Object> consumerRecord,
+									@Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+		log.info("ExpenseCalculatorConsumer:listenProjectUpdate from topic: {}", topic);
+		try {
+			ProjectRequest projectRequest = objectMapper.convertValue(consumerRecord, ProjectRequest.class);
+			if (projectRequest.getProjects() == null || projectRequest.getProjects().isEmpty()) {
+				log.warn("Received empty project list on topic: {}", topic);
+				return;
+			}
+			String userId = extractUserId(projectRequest);
+			projectRequest.getProjects().stream()
+				.filter(p -> p.getParent() == null)
+				.forEach(rootProject -> {
+					try {
+						billingConfigurationService.handleCampaignDateUpdate(rootProject, userId);
+					} catch (CustomException e) {
+						log.error("Campaign date update blocked for project {}: {} — {}",
+							rootProject.getId(), e.getCode(), e.getMessage());
+					} catch (Exception e) {
+						log.error("Error handling campaign date update for project {}", rootProject.getId(), e);
+					}
+				});
+		} catch (Exception exception) {
+			log.error("Error processing project update event from topic: {}", topic, exception);
+		}
+	}
+
+	private String extractUserId(ProjectRequest projectRequest) {
+		try {
+			if (projectRequest.getRequestInfo() != null
+					&& projectRequest.getRequestInfo().getUserInfo() != null
+					&& projectRequest.getRequestInfo().getUserInfo().getUuid() != null) {
+				return projectRequest.getRequestInfo().getUserInfo().getUuid();
+			}
+		} catch (Exception e) {
+			log.warn("Could not extract userId from ProjectRequest, falling back to SYSTEM", e);
+		}
+		return "SYSTEM";
 	}
 }
