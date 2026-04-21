@@ -330,10 +330,6 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${report.generation.auto.enabled}")
 	private boolean reportGenerationAuto;
 
-	// Campaign / project date update (same pattern as attendance service)
-	@Value("${attendance.kafka.tenant.id.pattern}")
-	private String kafkaTenantIdPattern;
-
 	@Value("${project.management.system.kafka.update.topic}")
 	private String projectUpdateTopic;
 
