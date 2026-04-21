@@ -203,6 +203,15 @@ public class AttendanceServiceValidator {
                 log.error("Attendance Register having register Id " + registerFromRequest.getId() + " that you are trying to update has review status APPROVED");
                 throw new CustomException("ATTENDANCE_REGISTER_REVIEW_STATUS_APPROVED", "Attendance Register with register Id " + registerFromRequest.getId() + " that you are trying to update is already approved");
             }
+
+            BigDecimal dbStartDate = registerFromDB.getStartDate();
+            BigDecimal reqStartDate = registerFromRequest.getStartDate();
+            if (reqStartDate != null && dbStartDate != null && reqStartDate.compareTo(dbStartDate) != 0) {
+                if (dbStartDate.compareTo(BigDecimal.valueOf(System.currentTimeMillis())) <= 0) {
+                    log.error("startDate cannot be updated for register " + registerFromRequest.getId() + " as it has already started");
+                    throw new CustomException("INVALID_START_DATE_UPDATE", "Start date cannot be updated after the register has started");
+                }
+            }
         }
     }
 
