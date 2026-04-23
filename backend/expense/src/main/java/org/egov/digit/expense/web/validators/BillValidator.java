@@ -8,6 +8,7 @@ import static org.egov.digit.expense.config.Constants.TENANT_MASTERNAME;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -464,7 +465,7 @@ public class BillValidator {
 
 		Bill bill = billRequest.getBill();
 		BillCriteria billCriteria = BillCriteria.builder()
-				.statusNot(Status.INACTIVE.toString())
+				.statusesNot(Collections.singletonList(Status.INACTIVE.toString()))
 				.tenantId(bill.getTenantId())
 				.build();
 
@@ -737,7 +738,7 @@ public class BillValidator {
 						.billCriteria(BillCriteria.builder()
 								.ids(Set.of(billId))
 								.tenantId(bulkRequest.getTenantId())
-								.statusNot(Status.INACTIVE.toString())
+								.statusesNot(Collections.singletonList(Status.INACTIVE.toString()))
 								.build())
 						.build();
 
@@ -767,7 +768,7 @@ public class BillValidator {
 				.billCriteria(BillCriteria.builder()
 						.ids(new HashSet<>(billIds))
 						.tenantId(tenantId)
-						.statusNot(Status.INACTIVE.toString())
+						.statusesNot(Collections.singletonList(Status.INACTIVE.toString()))
 						.build())
 				.build();
 

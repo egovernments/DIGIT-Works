@@ -334,7 +334,7 @@ public class MTNService implements PaymentProviderService {
 
         Bill bill = billRequest.getBill();
         BillCriteria billCriteria = BillCriteria.builder()
-                .statusNot(Status.INACTIVE.toString())
+                .statusesNot(Collections.singletonList(Status.INACTIVE.toString()))
                 .tenantId(bill.getTenantId())
                 .build();
 

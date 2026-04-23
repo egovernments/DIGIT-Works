@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -242,7 +243,7 @@ public class BankPaymentService implements PaymentProviderService {
 
     private Bill getBillFromSearch(Bill billFromRequest, RequestInfo requestInfo) {
         BillCriteria billCriteria = BillCriteria.builder()
-                .statusNot(Status.INACTIVE.toString())
+                .statusesNot(Collections.singletonList(Status.INACTIVE.toString()))
                 .tenantId(billFromRequest.getTenantId())
                 .ids(Stream.of(billFromRequest.getId()).collect(Collectors.toSet()))
                 .build();

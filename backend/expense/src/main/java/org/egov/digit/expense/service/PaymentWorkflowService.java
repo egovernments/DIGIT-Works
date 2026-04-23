@@ -281,7 +281,7 @@ public class PaymentWorkflowService {
                 .billCriteria(BillCriteria.builder()
                         .tenantId(tenantId)
                         .ids(Collections.singleton(billId))
-                        .statusNot(Status.INACTIVE.toString())  // RC-13
+                        .statusesNot(Collections.singletonList(Status.INACTIVE.toString()))  // RC-13
                         .build())
                 .build();
         List<Bill> bills = billRepository.search(searchRequest, false);
