@@ -1,0 +1,100 @@
+{
+  "messages": [
+    {
+      "locale": "en_MZ",
+      "module": "expense",
+      "code": "EXPENSE_PAYMENT_ADVISORY_COL_TRANSACTION_REF_NO_TITLE",
+      "message": "TRANSACTION REFERENCE NUMBER"
+    },
+    {
+      "locale": "en_MZ",
+      "module": "expense",
+      "code": "EXPENSE_PAYMENT_ADVISORY_COL_BENEFICIARY_NAME_TITLE",
+      "message": "BENEFICIARY NAME"
+    },
+    {
+      "locale": "en_MZ",
+      "module": "expense",
+      "code": "EXPENSE_PAYMENT_ADVISORY_COL_PAYMENT_AMOUNT_TITLE",
+      "message": "PAYMENT AMOUNT"
+    },
+    {
+      "locale": "en_MZ",
+      "module": "expense",
+      "code": "EXPENSE_PAYMENT_ADVISORY_COL_PAYMENT_DUE_DATE_TITLE",
+      "message": "PAYMENT DUE DATE"
+    },
+    {
+      "locale": "en_MZ",
+      "module": "expense",
+      "code": "EXPENSE_PAYMENT_ADVISORY_COL_BENEFICIARY_CODE_TITLE",
+      "message": "BENEFICIARY CODE"
+    },
+    {
+      "locale": "en_MZ",
+      "module": "expense",
+      "code": "EXPENSE_PAYMENT_ADVISORY_COL_BENEFICIARY_ACCOUNT_NO_TITLE",
+      "message": "BENEFICIARY ACCOUNT NUMBER"
+    },
+    {
+      "locale": "en_MZ",
+      "module": "expense",
+      "code": "EXPENSE_PAYMENT_ADVISORY_COL_BANK_SORT_CODE_TITLE",
+      "message": "BENEFICIARY BANK SORT CODE"
+    },
+    {
+      "locale": "en_MZ",
+      "module": "expense",
+      "code": "EXPENSE_PAYMENT_ADVISORY_COL_DEBIT_ACCOUNT_NO_TITLE",
+      "message": "DEBIT ACCOUNT NUMBER"
+    },
+    {
+      "locale": "en_MZ",
+      "module": "expense",
+      "code": "EXPENSE_PAYMENT_ADVISORY_COL_TRANSACTION_REF_NO_TITLE",
+      "message": "TRANSACTION REFERENCE NUMBER"
+    },
+    {
+      "locale": "en_MZ",
+      "module": "expense",
+      "code": "EXPENSE_PAYMENT_ADVISORY_COL_BENEFICIARY_NAME_TITLE",
+      "message": "BENEFICIARY NAME"
+    },
+    {
+      "locale": "en_MZ",
+      "module": "expense",
+      "code": "EXPENSE_PAYMENT_ADVISORY_COL_PAYMENT_AMOUNT_TITLE",
+      "message": "PAYMENT AMOUNT"
+    },
+    {
+      "locale": "en_MZ",
+      "module": "expense",
+      "code": "EXPENSE_PAYMENT_ADVISORY_COL_PAYMENT_DUE_DATE_TITLE",
+      "message": "PAYMENT DUE DATE"
+    },
+    {
+      "locale": "en_MZ",
+      "module": "expense",
+      "code": "EXPENSE_PAYMENT_ADVISORY_COL_BENEFICIARY_CODE_TITLE",
+      "message": "BENEFICIARY CODE"
+    },
+    {
+      "locale": "en_MZ",
+      "module": "expense",
+      "code": "EXPENSE_PAYMENT_ADVISORY_COL_BENEFICIARY_ACCOUNT_NO_TITLE",
+      "message": "BENEFICIARY ACCOUNT NUMBER"
+    },
+    {
+      "locale": "en_MZ",
+      "module": "expense",
+      "code": "EXPENSE_PAYMENT_ADVISORY_COL_BANK_SORT_CODE_TITLE",
+      "message": "BENEFICIARY BANK SORT CODE"
+    },
+    {
+      "locale": "en_MZ",
+      "module": "expense",
+      "code": "EXPENSE_PAYMENT_ADVISORY_COL_DEBIT_ACCOUNT_NO_TITLE",
+      "message": "DEBIT ACCOUNT NUMBER"
+    }
+  ]
+}

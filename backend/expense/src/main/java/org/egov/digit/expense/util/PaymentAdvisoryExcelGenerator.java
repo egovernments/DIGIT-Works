@@ -27,48 +27,16 @@ public class PaymentAdvisoryExcelGenerator {
     private final LocalizationUtil localizationUtil;
     private final Configuration config;
 
-    // [title_key, title_default, mandatory_key, mandatory_default, desc_key, desc_default]
+    // [title_key, title_default]
     private static final String[][] COLUMN_DEFS = {
-        {
-            "EXPENSE_PAYMENT_ADVISORY_COL_TRANSACTION_REF_NO_TITLE",        "TRANSACTION REFERENCE NUMBER",
-            "EXPENSE_PAYMENT_ADVISORY_COL_TRANSACTION_REF_NO_MANDATORY",    "(MANDATORY FIELD)",
-            "EXPENSE_PAYMENT_ADVISORY_COL_TRANSACTION_REF_NO_DESC",         "This is a unique reference created by the payer and used to identify a payment. Must not contain commas semi-colon apostrophe or space. Text format. Alpha-numeric(max. 30 characters)"
-        },
-        {
-            "EXPENSE_PAYMENT_ADVISORY_COL_BENEFICIARY_NAME_TITLE",          "BENEFICIARY NAME",
-            "EXPENSE_PAYMENT_ADVISORY_COL_BENEFICIARY_NAME_MANDATORY",      "(MANDATORY FIELD)",
-            "EXPENSE_PAYMENT_ADVISORY_COL_BENEFICIARY_NAME_DESC",           "Text format. Alpha-numeric(max. 100 characters)"
-        },
-        {
-            "EXPENSE_PAYMENT_ADVISORY_COL_PAYMENT_AMOUNT_TITLE",            "PAYMENT AMOUNT",
-            "EXPENSE_PAYMENT_ADVISORY_COL_PAYMENT_AMOUNT_MANDATORY",        "(MANDATORY FIELD)",
-            "EXPENSE_PAYMENT_ADVISORY_COL_PAYMENT_AMOUNT_DESC",             "Number format with 2 decimal digits. Must not contain commas semi-colon apostrophe or spaces"
-        },
-        {
-            "EXPENSE_PAYMENT_ADVISORY_COL_PAYMENT_DUE_DATE_TITLE",          "PAYMENT DUE DATE",
-            "EXPENSE_PAYMENT_ADVISORY_COL_PAYMENT_DUE_DATE_MANDATORY",      "(MANDATORY FIELD)",
-            "EXPENSE_PAYMENT_ADVISORY_COL_PAYMENT_DUE_DATE_DESC",           "This is the effective date of payment. Format is DD/MM/YYYY (max. 10 characters)"
-        },
-        {
-            "EXPENSE_PAYMENT_ADVISORY_COL_BENEFICIARY_CODE_TITLE",          "BENEFICIARY CODE",
-            "EXPENSE_PAYMENT_ADVISORY_COL_BENEFICIARY_CODE_MANDATORY",      "(MANDATORY FIELD)",
-            "EXPENSE_PAYMENT_ADVISORY_COL_BENEFICIARY_CODE_DESC",           "Unique code assigned by Payer to the beneficiary. Alphanumeric e.g. staff number. RC no. or name (max. 35 characters)"
-        },
-        {
-            "EXPENSE_PAYMENT_ADVISORY_COL_BENEFICIARY_ACCOUNT_NO_TITLE",    "BENEFICIARY ACCOUNT NUMBER",
-            "EXPENSE_PAYMENT_ADVISORY_COL_BENEFICIARY_ACCOUNT_NO_MANDATORY","(MANDATORY FIELD)",
-            "EXPENSE_PAYMENT_ADVISORY_COL_BENEFICIARY_ACCOUNT_NO_DESC",     "Numeric (10 digits)"
-        },
-        {
-            "EXPENSE_PAYMENT_ADVISORY_COL_BANK_SORT_CODE_TITLE",            "BENEFICIARY BANK SORT CODE",
-            "EXPENSE_PAYMENT_ADVISORY_COL_BANK_SORT_CODE_MANDATORY",        "(MANDATORY FIELD)",
-            "EXPENSE_PAYMENT_ADVISORY_COL_BANK_SORT_CODE_DESC",             "This is used to represent Beneficiary Bank Name and Payment routing method. Leave blank for Zenith beneficiaries. Use first 3-digits for Instant transfer via InterSwitch. Use 9-digits for non-instant transfer via NEFT"
-        },
-        {
-            "EXPENSE_PAYMENT_ADVISORY_COL_DEBIT_ACCOUNT_NO_TITLE",          "DEBIT ACCOUNT NUMBER",
-            "EXPENSE_PAYMENT_ADVISORY_COL_DEBIT_ACCOUNT_NO_MANDATORY",      "(MANDATORY FIELD)",
-            "EXPENSE_PAYMENT_ADVISORY_COL_DEBIT_ACCOUNT_NO_DESC",           "This is the account number to debit. Number format (max. 10 digits)"
-        }
+        { "EXPENSE_PAYMENT_ADVISORY_COL_TRANSACTION_REF_NO_TITLE",   "TRANSACTION REFERENCE NUMBER" },
+        { "EXPENSE_PAYMENT_ADVISORY_COL_BENEFICIARY_NAME_TITLE",     "BENEFICIARY NAME" },
+        { "EXPENSE_PAYMENT_ADVISORY_COL_PAYMENT_AMOUNT_TITLE",       "PAYMENT AMOUNT" },
+        { "EXPENSE_PAYMENT_ADVISORY_COL_PAYMENT_DUE_DATE_TITLE",     "PAYMENT DUE DATE" },
+        { "EXPENSE_PAYMENT_ADVISORY_COL_BENEFICIARY_CODE_TITLE",     "BENEFICIARY CODE" },
+        { "EXPENSE_PAYMENT_ADVISORY_COL_BENEFICIARY_ACCOUNT_NO_TITLE","BENEFICIARY ACCOUNT NUMBER" },
+        { "EXPENSE_PAYMENT_ADVISORY_COL_BANK_SORT_CODE_TITLE",       "BENEFICIARY BANK SORT CODE" },
+        { "EXPENSE_PAYMENT_ADVISORY_COL_DEBIT_ACCOUNT_NO_TITLE",     "DEBIT ACCOUNT NUMBER" }
     };
 
     @Autowired
@@ -89,15 +57,13 @@ public class PaymentAdvisoryExcelGenerator {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Payment Advisory");
 
-            XSSFFont titleFont     = buildFont(workbook, true,  IndexedColors.BLACK, (short) 11, false);
-            XSSFFont mandatoryFont = buildFont(workbook, false, IndexedColors.RED,   (short) 11, false);
-            XSSFFont descFont      = buildFont(workbook, false, IndexedColors.BLACK,  (short) 10, true);
+            XSSFFont titleFont    = buildFont(workbook, true, IndexedColors.BLACK, (short) 11, false);
 
             XSSFCellStyle headerStyle = buildHeaderStyle(workbook, titleFont);
             XSSFCellStyle dataStyle   = buildDataStyle(workbook);
             XSSFCellStyle amountStyle = buildAmountStyle(workbook, dataStyle);
 
-            writeHeader(sheet, headerStyle, titleFont, mandatoryFont, descFont, msgMap);
+            writeHeader(sheet, headerStyle, titleFont, msgMap);
             writeRows(sheet, bill.getBillDetails(), dataStyle, amountStyle);
             setColumnWidths(sheet);
 
@@ -134,32 +100,16 @@ public class PaymentAdvisoryExcelGenerator {
     }
 
     private void writeHeader(Sheet sheet, XSSFCellStyle headerStyle,
-                             XSSFFont titleFont, XSSFFont mandatoryFont, XSSFFont descFont,
-                             Map<String, String> msgMap) {
+                             XSSFFont titleFont, Map<String, String> msgMap) {
         Row header = sheet.createRow(0);
-        header.setHeight((short) -1); // let wrap text determine row height
         for (int i = 0; i < COLUMN_DEFS.length; i++) {
             Cell cell = header.createCell(i);
-            cell.setCellValue(buildHeaderRichText(COLUMN_DEFS[i], msgMap, titleFont, mandatoryFont, descFont));
+            String title = msgMap.getOrDefault(COLUMN_DEFS[i][0], COLUMN_DEFS[i][1]);
+            XSSFRichTextString rich = new XSSFRichTextString();
+            rich.append(title, titleFont);
+            cell.setCellValue(rich);
             cell.setCellStyle(headerStyle);
         }
-    }
-
-    private XSSFRichTextString buildHeaderRichText(String[] colDef, Map<String, String> msgMap,
-                                                    XSSFFont titleFont, XSSFFont mandatoryFont, XSSFFont descFont) {
-        String title     = msgMap.getOrDefault(colDef[0], colDef[1]);
-        String mandatory = msgMap.getOrDefault(colDef[2], colDef[3]);
-        String desc      = msgMap.getOrDefault(colDef[4], colDef[5]);
-
-        XSSFRichTextString rich = new XSSFRichTextString();
-        rich.append(title, titleFont);
-        if (mandatory != null && !mandatory.isEmpty()) {
-            rich.append("\n" + mandatory, mandatoryFont);
-        }
-        if (desc != null && !desc.isEmpty()) {
-            rich.append("\n" + desc, descFont);
-        }
-        return rich;
     }
 
     private void writeRows(Sheet sheet, List<BillDetail> billDetails,
