@@ -183,6 +183,9 @@ public class Configuration {
 	@Value("${localization.module.payment.advisory:expense}")
 	private String paymentAdvisoryLocalizationModule;
 
+	@Value("${excel.sheet.protect.password:readonly}")
+	private String excelSheetProtectPassword;
+
 	@Value("${filestore.module:expense}")
 	private String filestoreModule;
 

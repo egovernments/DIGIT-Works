@@ -94,7 +94,7 @@ public class BillDetailExcelGenerator {
                     lockedDataStyle, editableDataStyle, lockedNumStyle, editableNumStyle);
 
             setColumnWidths(sheet, payableHeadCodes.size());
-            sheet.protectSheet("readonly");
+            sheet.protectSheet(config.getExcelSheetProtectPassword());
             workbook.setForceFormulaRecalculation(true);
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
