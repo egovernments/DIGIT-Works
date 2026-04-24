@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.enums.LineItemType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,11 +61,14 @@ public class BillDetailExcelGenerator {
 
     private final LocalizationUtil localizationUtil;
     private final IndividualUtil individualUtil;
+    private final Configuration config;
 
     @Autowired
-    public BillDetailExcelGenerator(LocalizationUtil localizationUtil, IndividualUtil individualUtil) {
+    public BillDetailExcelGenerator(LocalizationUtil localizationUtil, IndividualUtil individualUtil,
+                                     Configuration config) {
         this.localizationUtil = localizationUtil;
         this.individualUtil = individualUtil;
+        this.config = config;
     }
 
     public byte[] generateTemplate(Bill bill, Set<String> userRoles, RequestInfo requestInfo) {
@@ -235,7 +239,7 @@ public class BillDetailExcelGenerator {
     }
 
     private Map<String, String> resolveLocalization(Bill bill, RequestInfo requestInfo) {
-        String locale = "en_IN";
+        String locale = config.getLocalizationDefaultLocale();
         try {
             String msgId = requestInfo.getMsgId();
             if (msgId != null && msgId.contains("|")) locale = msgId.split("\\|")[1];
@@ -245,7 +249,7 @@ public class BillDetailExcelGenerator {
                 ? bill.getTenantId().split("\\.")[0] : bill.getTenantId();
         try {
             Map<String, Map<String, String>> locMsgs = localizationUtil.getLocalisedMessages(
-                    requestInfo, rootTenantId, locale, "expense");
+                    requestInfo, rootTenantId, locale, config.getTemplateLocalizationModule());
             Map<String, String> msgMap = locMsgs.get(locale + "|" + rootTenantId);
             if (msgMap != null) return msgMap;
         } catch (Exception e) {
@@ -332,7 +336,10 @@ public class BillDetailExcelGenerator {
     private void setColumnWidths(Sheet sheet, int headCodeCount) {
         int totalCols = STATIC_COL_COUNT + headCodeCount + 2;
         for (int i = 0; i < totalCols; i++) {
-            sheet.setColumnWidth(i, 22 * 256);
+            sheet.autoSizeColumn(i);
+            // Add a small padding so text isn't clipped at the edge
+            int paddedWidth = sheet.getColumnWidth(i) + 1024;
+            sheet.setColumnWidth(i, paddedWidth);
         }
     }
 

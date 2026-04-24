@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.egov.digit.expense.config.Constants.EXPENSE_NOTIFICATION_LOCALIZATION_MODULE;
 
 /**
  * Orchestrates email notifications for PAYMENTS.BILL workflow transitions.
@@ -166,7 +165,7 @@ public class WorkflowEmailNotificationService {
         return Collections.emptyList();
     }
 
-    /** Extracts locale from RequestInfo msgId (format: "msgId|locale"), defaults to en_IN. */
+    /** Extracts locale from RequestInfo msgId (format: "msgId|locale"), defaults to configured locale. */
     private String resolveLocale(RequestInfo requestInfo) {
         try {
             String msgId = requestInfo.getMsgId();
@@ -177,19 +176,19 @@ public class WorkflowEmailNotificationService {
         } catch (Exception ignored) {
             // fall through to default
         }
-        return "en_IN";
+        return config.getLocalizationDefaultLocale();
     }
 
-    /** Fetches and flattens the localization map for the expense-notification module. */
+    /** Fetches and flattens the localization map for the email notification module. */
     private Map<String, String> resolveLocalizationMap(RequestInfo requestInfo, String tenantId, String locale) {
         try {
             Map<String, Map<String, String>> locData = localizationUtil.getLocalisedMessages(
-                    requestInfo, tenantId, locale, EXPENSE_NOTIFICATION_LOCALIZATION_MODULE);
+                    requestInfo, tenantId, locale, config.getEmailNotificationLocalizationModule());
             Map<String, String> locMap = locData.get(locale + "|" + tenantId);
             return locMap != null ? locMap : Collections.emptyMap();
         } catch (Exception e) {
             log.warn("WorkflowEmailNotificationService: failed to fetch localization for module={} tenantId={}: {}",
-                    EXPENSE_NOTIFICATION_LOCALIZATION_MODULE, tenantId, e.getMessage());
+                    config.getEmailNotificationLocalizationModule(), tenantId, e.getMessage());
             return Collections.emptyMap();
         }
     }

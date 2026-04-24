@@ -52,7 +52,7 @@ public class FilestoreUtil {
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("tenantId", tenantId);
-        body.add("module", "expense");
+        body.add("module", config.getFilestoreModule());
         body.add("file", fileResource);
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);

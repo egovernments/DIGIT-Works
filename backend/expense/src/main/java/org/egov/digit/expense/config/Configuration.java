@@ -168,6 +168,24 @@ public class Configuration {
 	@Value("${egov.localization.search.endpoint}")
 	private String localizationServiceEndpoint;
 
+	@Value("${localization.default.locale:en_MZ}")
+	private String localizationDefaultLocale;
+
+	@Value("${localization.module.expense.template:expense}")
+	private String templateLocalizationModule;
+
+	@Value("${localization.module.notification:rainmaker-common-masters}")
+	private String notificationLocalizationModule;
+
+	@Value("${localization.module.email.notification:expense-notification}")
+	private String emailNotificationLocalizationModule;
+
+	@Value("${localization.module.payment.advisory:expense}")
+	private String paymentAdvisoryLocalizationModule;
+
+	@Value("${filestore.module:expense}")
+	private String filestoreModule;
+
 	//Contract Service
 	@Value("${works.contract.host}")
 	private String contractServiceHost;

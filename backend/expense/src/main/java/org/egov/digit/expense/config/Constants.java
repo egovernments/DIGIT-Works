@@ -53,8 +53,6 @@ public class Constants {
 	public static final String HRMS_USER_USERNAME_CODE = "$.Employees.*.user.userName";
 	public static final String HRMS_USER_MOBILE_NO = "$.Employees.*.user.mobileNumber";
 	public static final String CONTACT_MOBILE_NUMBER = "contactMobileNumber";
-	public static final String EXPENSE_CALCULATOR_MODULE_CODE = "rainmaker-common-masters";
-	public static final String EXPENSE_NOTIFICATION_LOCALIZATION_MODULE = "expense-notification";
 	public static final String WORKFLOW_EMAIL_NOTIFICATION_MDMS_SCHEMA = "EXPENSE.billEmailNotification";
 	public static final String APPROVE_CODE = "APPROVE";
 	public static final String REJECT_CODE = "REJECT";

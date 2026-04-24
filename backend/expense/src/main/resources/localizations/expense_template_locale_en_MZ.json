@@ -1,0 +1,134 @@
+[
+  {
+    "code": "EXPENSE_TEMPLATE_COL_WORKER_ID",
+    "message": "Worker ID",
+    "locale": "en_MZ",
+    "module": "expense"
+  },
+  {
+    "code": "EXPENSE_TEMPLATE_COL_USERNAME",
+    "message": "Username",
+    "locale": "en_MZ",
+    "module": "expense"
+  },
+  {
+    "code": "EXPENSE_TEMPLATE_COL_NAME",
+    "message": "Name",
+    "locale": "en_MZ",
+    "module": "expense"
+  },
+  {
+    "code": "EXPENSE_TEMPLATE_COL_PAYEE_NAME",
+    "message": "Payee Name",
+    "locale": "en_MZ",
+    "module": "expense"
+  },
+  {
+    "code": "EXPENSE_TEMPLATE_COL_MOBILE_NUMBER",
+    "message": "Mobile Number",
+    "locale": "en_MZ",
+    "module": "expense"
+  },
+  {
+    "code": "EXPENSE_TEMPLATE_COL_PAYEE_PHONE",
+    "message": "Payee Phone Number",
+    "locale": "en_MZ",
+    "module": "expense"
+  },
+  {
+    "code": "EXPENSE_TEMPLATE_COL_BANK_ACCOUNT",
+    "message": "Bank Account",
+    "locale": "en_MZ",
+    "module": "expense"
+  },
+  {
+    "code": "EXPENSE_TEMPLATE_COL_BANK_CODE",
+    "message": "Bank Code",
+    "locale": "en_MZ",
+    "module": "expense"
+  },
+  {
+    "code": "EXPENSE_TEMPLATE_COL_BENEFICIARY_CODE",
+    "message": "Beneficiary Code",
+    "locale": "en_MZ",
+    "module": "expense"
+  },
+  {
+    "code": "EXPENSE_TEMPLATE_COL_ROLE",
+    "message": "Role",
+    "locale": "en_MZ",
+    "module": "expense"
+  },
+  {
+    "code": "EXPENSE_TEMPLATE_COL_TOTAL_ATTENDANCE",
+    "message": "Total Attendance",
+    "locale": "en_MZ",
+    "module": "expense"
+  },
+  {
+    "code": "EXPENSE_TEMPLATE_COL_TOTAL_AMOUNT",
+    "message": "Total Amount",
+    "locale": "en_MZ",
+    "module": "expense"
+  },
+  {
+    "code": "EXPENSE_TEMPLATE_COL_WAGE_BASIC",
+    "message": "Basic Per Day Wage",
+    "locale": "en_MZ",
+    "module": "expense"
+  },
+  {
+    "code": "EXPENSE_TEMPLATE_COL_WAGE_SKILLED",
+    "message": "Skilled Per Day Wage",
+    "locale": "en_MZ",
+    "module": "expense"
+  },
+  {
+    "code": "EXPENSE_TEMPLATE_COL_WAGE_UNSKILLED",
+    "message": "Unskilled Per Day Wage",
+    "locale": "en_MZ",
+    "module": "expense"
+  },
+  {
+    "code": "EXPENSE_TEMPLATE_COL_WAGE_SEMI_SKILLED",
+    "message": "Semi-Skilled Per Day Wage",
+    "locale": "en_MZ",
+    "module": "expense"
+  },
+  {
+    "code": "EXPENSE_TEMPLATE_ROLE_UNSKILLED_WORKER",
+    "message": "Unskilled Worker",
+    "locale": "en_MZ",
+    "module": "expense"
+  },
+  {
+    "code": "EXPENSE_TEMPLATE_ROLE_SKILLED_WORKER",
+    "message": "Skilled Worker",
+    "locale": "en_MZ",
+    "module": "expense"
+  },
+  {
+    "code": "EXPENSE_TEMPLATE_ROLE_SEMI_SKILLED_WORKER",
+    "message": "Semi-Skilled Worker",
+    "locale": "en_MZ",
+    "module": "expense"
+  },
+  {
+    "code": "EXPENSE_TEMPLATE_ROLE_DISTRIBUTOR",
+    "message": "Distributor",
+    "locale": "en_MZ",
+    "module": "expense"
+  },
+  {
+    "code": "EXPENSE_TEMPLATE_ROLE_HEALTH_FACILITY_WORKER",
+    "message": "Health Facility Worker",
+    "locale": "en_MZ",
+    "module": "expense"
+  },
+  {
+    "code": "EXPENSE_TEMPLATE_ROLE_REGISTRAR",
+    "message": "Registrar",
+    "locale": "en_MZ",
+    "module": "expense"
+  }
+]

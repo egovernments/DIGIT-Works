@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillDetail;
 import org.egov.digit.expense.web.models.LineItem;
@@ -24,6 +25,7 @@ import java.util.Map;
 public class PaymentAdvisoryExcelGenerator {
 
     private final LocalizationUtil localizationUtil;
+    private final Configuration config;
 
     // [title_key, title_default, mandatory_key, mandatory_default, desc_key, desc_default]
     private static final String[][] COLUMN_DEFS = {
@@ -70,8 +72,9 @@ public class PaymentAdvisoryExcelGenerator {
     };
 
     @Autowired
-    public PaymentAdvisoryExcelGenerator(LocalizationUtil localizationUtil) {
+    public PaymentAdvisoryExcelGenerator(LocalizationUtil localizationUtil, Configuration config) {
         this.localizationUtil = localizationUtil;
+        this.config = config;
     }
 
     public byte[] generate(Bill bill, RequestInfo requestInfo) {
@@ -107,7 +110,7 @@ public class PaymentAdvisoryExcelGenerator {
     }
 
     private Map<String, String> resolveLocalization(Bill bill, RequestInfo requestInfo) {
-        String locale = "en_IN";
+        String locale = config.getLocalizationDefaultLocale();
         try {
             String msgId = requestInfo.getMsgId();
             if (msgId != null && msgId.contains("|")) {
@@ -121,7 +124,7 @@ public class PaymentAdvisoryExcelGenerator {
 
         try {
             Map<String, Map<String, String>> locMsgs = localizationUtil.getLocalisedMessages(
-                    requestInfo, rootTenantId, locale, "expense");
+                    requestInfo, rootTenantId, locale, config.getPaymentAdvisoryLocalizationModule());
             Map<String, String> msgMap = locMsgs.get(locale + "|" + rootTenantId);
             if (msgMap != null) return msgMap;
         } catch (Exception e) {
