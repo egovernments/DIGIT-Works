@@ -30,6 +30,8 @@ import java.util.Map;
 @Slf4j
 public class ExpenseCalculatorConsumer {
 
+	private static final int MAX_REPORT_GENERATION_RETRIES = 3;
+
 	private final ExpenseCalculatorConfiguration configs;
 	private final ExpenseCalculatorService expenseCalculatorService;
 	private final ObjectMapper objectMapper;
@@ -96,8 +98,10 @@ public class ExpenseCalculatorConsumer {
 	public void listenBillForReport(final String consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 		log.info("ExpenseCalculatorConsumer:listenBillForReport - consuming from topic: {}", topic);
 
+		String processingBillId = null;
+		ReportGenerationTrigger trigger = null;
 		try {
-			ReportGenerationTrigger trigger = objectMapper.readValue(consumerRecord, ReportGenerationTrigger.class);
+			trigger = objectMapper.readValue(consumerRecord, ReportGenerationTrigger.class);
 			long triggerAge = System.currentTimeMillis() - trigger.getCreatedTime();
 			log.info("Processing report trigger for billId: {}, tenantId: {}, numberOfBillDetails: {}, triggerCreatedTime: {}, triggerAge: {} seconds",
 				trigger.getBillId(), trigger.getTenantId(), trigger.getNumberOfBillDetails(),
@@ -110,6 +114,16 @@ public class ExpenseCalculatorConsumer {
 			// Validate that bill exists in the system, because of async possible that it's not persisted while consuming the record.
 			if (!CollectionUtils.isEmpty(bills) && bills.get(0).getBillDetails().size() == trigger.getNumberOfBillDetails()) {
 				Bill bill = bills.get(0);
+
+				// Check if report generation is already in progress for a previous update
+				// If INITIATED and forceRegenerate=true, wait for the prior run to finish before retrying
+				String currentReportStatus = extractReportStatus(bill);
+				if ("INITIATED".equals(currentReportStatus) && !Boolean.TRUE.equals(trigger.getForceRegenerate())) {
+					log.info("Report generation already INITIATED for bill {}. Waiting for prior run to complete.", bill.getId());
+					Thread.sleep(15 * 1000);
+					producer.push(configs.getReportGenerationRetryTriggerTopic(), trigger);
+					return;
+				}
 
 				log.info("Bill found with matching details count. BillId: {}, billNumber: {}, actualBillDetails: {}, expectedBillDetails: {}",
 						bill.getId(), bill.getBillNumber(),
@@ -166,6 +180,7 @@ public class ExpenseCalculatorConsumer {
 					return;
 				}
 
+				processingBillId = bill.getId();
 				log.info("Starting report generation for bill: {} (V2: {})", bill.getId(), isV2Bill);
 				healthBillReportGenerator.generateHealthBillReportRequest(request);
 			}
@@ -194,10 +209,33 @@ public class ExpenseCalculatorConsumer {
 		} catch (Exception exception) {
 			log.error("Error occurred while processing the report from topic: {} for record: {}",
 				topic, consumerRecord, exception);
-			String errorDetail = exception instanceof CustomException
-				? ((CustomException) exception).getCode() + ": " + exception.getMessage()
-				: exception.getMessage();
-			producer.push(configs.getReportErrorQueueTopic(), errorDetail + " : " + consumerRecord);
+			// Evict Redis cache so the trigger can be reprocessed on retry
+			if (processingBillId != null) {
+				redisService.evict(processingBillId);
+				log.info("Evicted Redis cache for bill {} to allow retry", processingBillId);
+			}
+			// Retry the trigger up to MAX_REPORT_GENERATION_RETRIES times
+			if (trigger != null && trigger.getRetryCount() < MAX_REPORT_GENERATION_RETRIES) {
+				ReportGenerationTrigger retryTrigger = ReportGenerationTrigger.builder()
+						.requestInfo(trigger.getRequestInfo())
+						.tenantId(trigger.getTenantId())
+						.billId(trigger.getBillId())
+						.createdTime(trigger.getCreatedTime())
+						.numberOfBillDetails(trigger.getNumberOfBillDetails())
+						.forceRegenerate(trigger.getForceRegenerate())
+						.retryCount(trigger.getRetryCount() + 1)
+						.build();
+				log.info("Scheduling report generation retry {}/{} for billId: {}",
+						retryTrigger.getRetryCount(), MAX_REPORT_GENERATION_RETRIES, trigger.getBillId());
+				producer.push(configs.getReportGenerationRetryTriggerTopic(), retryTrigger);
+			} else {
+				String errorDetail = exception instanceof CustomException
+					? ((CustomException) exception).getCode() + ": " + exception.getMessage()
+					: exception.getMessage();
+				log.error("Report generation exhausted {} retries for billId: {}. Sending to error queue.",
+						MAX_REPORT_GENERATION_RETRIES, trigger != null ? trigger.getBillId() : "unknown");
+				producer.push(configs.getReportErrorQueueTopic(), errorDetail + " : " + consumerRecord);
+			}
 		}
 	}
 
@@ -247,6 +285,26 @@ public class ExpenseCalculatorConsumer {
 				});
 		} catch (Exception exception) {
 			log.error("Error processing project update event from topic: {}", topic, exception);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private String extractReportStatus(Bill bill) {
+		try {
+			if (bill.getAdditionalDetails() == null) return null;
+			Map<String, Object> details = objectMapper.convertValue(
+					bill.getAdditionalDetails(),
+					objectMapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class));
+			Object reportDetailsObj = details.get("reportDetails");
+			if (reportDetailsObj == null) return null;
+			Map<String, Object> reportDetails = objectMapper.convertValue(
+					reportDetailsObj,
+					objectMapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class));
+			Object status = reportDetails.get("status");
+			return status != null ? status.toString() : null;
+		} catch (Exception e) {
+			log.warn("Could not extract report status from bill {}", bill.getId());
+			return null;
 		}
 	}
 

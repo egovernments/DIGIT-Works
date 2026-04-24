@@ -190,11 +190,8 @@ public class HealthBillReportGenerator {
             log.info("Excel FileStoreId: " + excelFileStoreId);
             // Update the report status to completed
             updateReportStatus(billRequest, REPORT_STATUS_COMPLETED, excelFileStoreId, pdfFileStoreId, null, eventName);
-            Map<String, Object> additionalDetails = (Map<String, Object>) billRequest.getBill().getAdditionalDetails();
-            Map<String, Object> reportDetails = (Map<String, Object>) additionalDetails.get("reportDetails");
-            if (REPORT_STATUS_COMPLETED.equals(reportDetails.get("status"))) {
-                updateBillBusinessService(billRequest);
-            }
+            // Business service migration is only relevant for V1 bills reaching COMPLETED status
+            updateBillBusinessService(billRequest);
 
             return billRequest.getBill();
         } catch (Exception e) {
@@ -855,60 +852,43 @@ public class HealthBillReportGenerator {
     private void updateReportStatus(BillRequest billRequest, String status, String excelReportId, String pdfReportId, String errorMessage, String eventName) {
         Bill bill = billRequest.getBill();
 
-        // Safely convert additionalDetails to Map (handles both Map and JsonNode types)
-        Map<String, Object> additionalDetailsMap;
-        try {
-            if (bill.getAdditionalDetails() == null) {
-                additionalDetailsMap = new HashMap<>();
-                log.info("Bill {} has null additionalDetails, creating new map", bill.getId());
-            } else {
-                // Use ObjectMapper to safely convert (handles Map, LinkedHashMap, JsonNode, etc.)
-                additionalDetailsMap = objectMapper.convertValue(
-                    bill.getAdditionalDetails(),
-                    objectMapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class)
-                );
-
-                // Log V2 metadata if present (for debugging)
-                if (additionalDetailsMap.containsKey("billingPeriodId")) {
-                    log.info("Bill {} is V2 bill with billingPeriodId: {}, periodNumber: {}, preserving V2 metadata",
-                        bill.getId(),
-                        additionalDetailsMap.get("billingPeriodId"),
-                        additionalDetailsMap.get("periodNumber"));
-                }
-            }
-        } catch (Exception e) {
-            log.error("Error converting additionalDetails for bill {}, creating new map. Error: {}",
-                bill.getId(), e.getMessage());
-            additionalDetailsMap = new HashMap<>();
-        }
-
-        // Mark as system update so expense service does not re-trigger report generation (cycle prevention).
-        // The expense service removes this flag before persisting — it is never stored in DB.
-        additionalDetailsMap.put("_systemUpdate", true);
-
-        // Create reportDetails object
         Map<String, Object> reportDetails = new HashMap<>();
         reportDetails.put(REPORT_STATUS_KEY, status);
         reportDetails.put(PDF_REPORT_ID_KEY, pdfReportId);
         reportDetails.put(EXCEL_REPORT_ID_KEY, excelReportId);
         reportDetails.put(ERROR_ERROR_MESSAGE_KEY, errorMessage);
-        reportDetails.put(EVENT_NAME,eventName);
+        reportDetails.put(EVENT_NAME, eventName);
 
-        // Add or update reportDetails while preserving all other keys (V2 metadata, etc.)
-        additionalDetailsMap.put(REPORT_KEY, reportDetails);
+        // Always update in-memory bill state so downstream reads within this flow work correctly
+        // (e.g. the post-COMPLETED check in generateHealthBillReportRequest uses in-memory additionalDetails)
+        Map<String, Object> inMemoryDetails;
+        try {
+            inMemoryDetails = bill.getAdditionalDetails() != null
+                    ? objectMapper.convertValue(bill.getAdditionalDetails(),
+                        objectMapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class))
+                    : new HashMap<>();
+        } catch (Exception e) {
+            inMemoryDetails = new HashMap<>();
+        }
+        inMemoryDetails.put(REPORT_KEY, reportDetails);
+        bill.setAdditionalDetails(inMemoryDetails);
 
-        // Log final state for verification
-        log.info("Updating bill {} with report status: {}. Final additionalDetails keys: {}",
-            bill.getId(), status, additionalDetailsMap.keySet());
+        log.info("Updating bill {} with report status: {}", bill.getId(), status);
 
-        bill.setAdditionalDetails(additionalDetailsMap);
-
-        Workflow workflow = Workflow.builder()
-                .action(WF_SUBMIT_ACTION_CONSTANT)
-                .build();
-        billUtils.postUpdateBill(billRequest.getRequestInfo(), bill, workflow);
-
-        log.info("Successfully updated bill {} with report details", bill.getId());
+        // Persist via dedicated metadata endpoint — no workflow transition, no status change,
+        // no report-regen re-trigger. Safe for all bill states including terminal ones.
+        // Wrapped in try-catch so a transient expense service error does not abort file generation.
+        try {
+            billUtils.postUpdateReportMeta(
+                    billRequest.getRequestInfo(),
+                    bill.getId(),
+                    bill.getTenantId(),
+                    reportDetails);
+            log.info("Successfully persisted report status {} for bill {}", status, bill.getId());
+        } catch (Exception e) {
+            log.error("Failed to persist report status {} for bill {} — in-memory state updated but DB may be stale. Error: {}",
+                    status, bill.getId(), e.getMessage());
+        }
     }
 
     // The reference id is concatenated as parent.child.child

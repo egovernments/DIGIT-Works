@@ -42,6 +42,20 @@ public class BillUtils {
         return postBill(requestInfo,bill,workflow,url);
     }
 
+    public void postUpdateReportMeta(RequestInfo requestInfo, String billId, String tenantId,
+                                     Map<String, Object> reportDetails) {
+        StringBuilder url = new StringBuilder(configs.getBillHost())
+                .append(configs.getBillReportMetaUpdateEndPoint());
+        ReportMetaUpdateRequest request = ReportMetaUpdateRequest.builder()
+                .requestInfo(requestInfo)
+                .billId(billId)
+                .tenantId(tenantId)
+                .reportDetails(reportDetails)
+                .build();
+        log.info("Posting report metadata update for billId: {}, status: {}", billId, reportDetails.get("status"));
+        restRepo.fetchResult(url, request);
+    }
+
     public void postUpdateBillDetailStatus(RequestInfo requestInfo, Bill bill, Workflow workflow) {
         StringBuilder url = getBillDetailStatusUpdateURI();
         postBill(requestInfo, bill, workflow, url);

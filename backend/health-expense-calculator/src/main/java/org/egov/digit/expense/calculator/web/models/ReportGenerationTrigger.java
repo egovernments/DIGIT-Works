@@ -52,4 +52,9 @@ public class ReportGenerationTrigger {
     /** When true, bypasses Redis cache to force report regeneration (used on bill updates) */
     private Boolean forceRegenerate = false;
 
+    @JsonProperty("retryCount")
+    @Builder.Default
+    /** Number of retry attempts made so far for this trigger */
+    private Integer retryCount = 0;
+
 }
