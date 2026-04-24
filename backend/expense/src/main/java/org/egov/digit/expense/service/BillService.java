@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -493,6 +494,12 @@ public class BillService {
 				.collect(Collectors.toList());
 
 		billFromSearch.setBillDetails(allDetails);
+
+		// Recalculate bill-level totalAmount as sum of all BillDetail totals
+		BigDecimal recalculatedTotal = allDetails.stream()
+				.map(d -> d.getTotalAmount() != null ? d.getTotalAmount() : BigDecimal.ZERO)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		billFromSearch.setTotalAmount(recalculatedTotal);
 
 		// 4. Push to the existing bill update topic — no persister changes required
 		BillRequest billRequest = BillRequest.builder()

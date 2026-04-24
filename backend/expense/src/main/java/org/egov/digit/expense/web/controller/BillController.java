@@ -1,7 +1,9 @@
 package org.egov.digit.expense.web.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
+import org.egov.digit.expense.service.BillDetailTemplateService;
 import org.egov.digit.expense.service.BillService;
 import org.egov.digit.expense.util.ResponseInfoFactory;
 import org.egov.digit.expense.web.models.*;
@@ -13,17 +15,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 @Controller
 @RequestMapping("/bill/v1/")
 public class BillController {
-	
+
 	private final BillService service;
 	private final ResponseInfoFactory responseInfoFactory;
+	private final BillDetailTemplateService templateService;
 
 	@Autowired
-	public BillController(BillService service, ResponseInfoFactory responseInfoFactory) {
-		this.service = service;
+	public BillController(BillService service, ResponseInfoFactory responseInfoFactory,
+						  BillDetailTemplateService templateService) {
+		this.service         = service;
 		this.responseInfoFactory = responseInfoFactory;
+		this.templateService = templateService;
 	}
 
 	@PostMapping(value = "_create")
@@ -63,6 +71,27 @@ public class BillController {
 	public ResponseEntity<BillDetailUpdateResponse> partialUpdateBillDetails(
 			@Valid @RequestBody BillDetailUpdateRequest request) {
 		BillDetailUpdateResponse response = service.partialUpdateBillDetails(request);
+		return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+	}
+
+	@PostMapping(value = "billdetails/_generateTemplate")
+	public void generateBillDetailTemplate(
+			@Valid @RequestBody BillTemplateRequest request,
+			HttpServletResponse response) throws IOException {
+		byte[] bytes = templateService.generateTemplateBytes(request);
+		String filename = "bill-details-template-" + request.getBillId() + ".xlsx";
+		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+		response.setContentLength(bytes.length);
+		try (OutputStream out = response.getOutputStream()) {
+			out.write(bytes);
+		}
+	}
+
+	@PostMapping(value = "billdetails/_uploadTemplate")
+	public ResponseEntity<BillDetailUpdateResponse> uploadBillDetailTemplate(
+			@Valid @RequestBody BillTemplateUploadRequest request) {
+		BillDetailUpdateResponse response = templateService.processUpload(request);
 		return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 	}
 }

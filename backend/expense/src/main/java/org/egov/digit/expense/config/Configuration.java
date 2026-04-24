@@ -291,6 +291,9 @@ public class Configuration {
 	@Value("${egov.filestore.upload.endpoint:/filestore/v1/files}")
 	private String filestoreUploadEndpoint;
 
+	@Value("${egov.filestore.download.endpoint:/filestore/v1/files/id}")
+	private String filestoreDownloadEndpoint;
+
 	// Report Regeneration Trigger — published on bill updates for health-expense-calculator
 	@Value("${report.generation.trigger.topic}")
 	private String reportRegenerationTriggerTopic;

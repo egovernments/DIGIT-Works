@@ -27,6 +27,7 @@ public class Constants {
 	public static final String INDIVIDUAL_NAME_PATH = "$.Individual.*.name.givenName";
 	public static final String INDIVIDUAL_PHONE_NUMBER_PATH = "$.Individual.*.mobileNumber";
 	public static final String INDIVIDUAL_EMAIL_PATH = "$.Individual.*.email";
+	public static final String INDIVIDUAL_ROLE_PATH = "$.Individual.*.skills[0].type";
 
 	// Worker Registry
 	public static final String WORKER_SEARCH = "workerSearch";

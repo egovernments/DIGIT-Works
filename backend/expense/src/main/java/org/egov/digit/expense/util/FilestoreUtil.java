@@ -8,11 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.Map;
@@ -61,6 +64,26 @@ public class FilestoreUtil {
             throw e;
         } catch (Exception e) {
             throw new CustomException("FILESTORE_UPLOAD_FAILED", "Failed to upload file to filestore: " + e.getMessage());
+        }
+    }
+
+    public byte[] downloadFile(String filestoreId, String tenantId) {
+        log.info("FilestoreUtil::downloadFile filestoreId={} tenantId={}", filestoreId, tenantId);
+        String url = UriComponentsBuilder
+                .fromHttpUrl(config.getFilestoreHost() + config.getFilestoreDownloadEndpoint())
+                .queryParam("tenantId", tenantId)
+                .queryParam("fileStoreId", filestoreId)
+                .toUriString();
+        try {
+            ResponseEntity<byte[]> response = restTemplate.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, byte[].class);
+            byte[] body = response.getBody();
+            if (body == null || body.length == 0)
+                throw new CustomException("FILESTORE_DOWNLOAD_FAILED", "Empty response for filestoreId=" + filestoreId);
+            return body;
+        } catch (CustomException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new CustomException("FILESTORE_DOWNLOAD_FAILED", "Failed to download file from filestore: " + e.getMessage());
         }
     }
 

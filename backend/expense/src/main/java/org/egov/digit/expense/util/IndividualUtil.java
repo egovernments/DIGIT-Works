@@ -41,9 +41,10 @@ public class IndividualUtil {
         Object individualResponse =  serviceRequestRepository.fetchResult(new StringBuilder(uri), individualSearchRequest);
 
         return IndividualDetails.builder()
-                .name(getIndividualField(individualResponse,INDIVIDUAL_NAME_PATH,identifier))
-                .phoneNumber(getIndividualField(individualResponse,INDIVIDUAL_PHONE_NUMBER_PATH,identifier))
-                .email(getIndividualField(individualResponse,INDIVIDUAL_EMAIL_PATH,identifier))
+                .name(getIndividualField(individualResponse, INDIVIDUAL_NAME_PATH, identifier))
+                .phoneNumber(getIndividualField(individualResponse, INDIVIDUAL_PHONE_NUMBER_PATH, identifier))
+                .email(getIndividualField(individualResponse, INDIVIDUAL_EMAIL_PATH, identifier))
+                .role(getIndividualField(individualResponse, INDIVIDUAL_ROLE_PATH, identifier))
                 .build();
 
     }

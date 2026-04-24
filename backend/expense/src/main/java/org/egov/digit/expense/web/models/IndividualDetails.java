@@ -30,4 +30,8 @@ public class IndividualDetails {
 	@Valid
 	private String email;
 
+	@JsonProperty("role")
+	@Valid
+	private String role;
+
 }
