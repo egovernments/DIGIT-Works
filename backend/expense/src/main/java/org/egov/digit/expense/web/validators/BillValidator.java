@@ -980,4 +980,15 @@ public class BillValidator {
 		List<Bill> results = billRepository.search(searchRequest, true);
 		return results.isEmpty() ? null : results.get(0);
 	}
+
+	public void validateReportMetaUpdateRequest(org.egov.digit.expense.web.models.ReportMetaUpdateRequest request) {
+		if (request == null)
+			throw new CustomException("EG_BILL_META_UPDATE_ERROR", "Request is mandatory");
+		if (!StringUtils.hasText(request.getBillId()))
+			throw new CustomException("EG_BILL_META_UPDATE_ERROR", "billId is mandatory");
+		if (!StringUtils.hasText(request.getTenantId()))
+			throw new CustomException("EG_BILL_META_UPDATE_ERROR", "tenantId is mandatory");
+		if (request.getReportDetails() == null || request.getReportDetails().isEmpty())
+			throw new CustomException("EG_BILL_META_UPDATE_ERROR", "reportDetails is mandatory and must not be empty");
+	}
 }

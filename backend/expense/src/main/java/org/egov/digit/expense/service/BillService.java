@@ -524,4 +524,68 @@ public class BillService {
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true))
 				.build();
 	}
+
+	/**
+	 * Persists report metadata (file IDs, status) into bill.additionalDetails.reportDetails.
+	 * Does NOT call the workflow engine and does NOT trigger report regeneration — safe for
+	 * all bill states including terminal ones (FULLY_PAID, PAID).
+	 * Called exclusively by health-expense-calculator after async Excel/PDF generation.
+	 */
+	public BillResponse updateReportMeta(ReportMetaUpdateRequest request) {
+		RequestInfo requestInfo = request.getRequestInfo();
+
+		validator.validateReportMetaUpdateRequest(request);
+
+		BillSearchRequest searchRequest = BillSearchRequest.builder()
+				.requestInfo(requestInfo)
+				.billCriteria(BillCriteria.builder()
+						.ids(new HashSet<>(Collections.singletonList(request.getBillId())))
+						.tenantId(request.getTenantId())
+						.build())
+				.pagination(Pagination.builder().build())
+				.build();
+
+		List<Bill> bills = billRepository.search(searchRequest, false);
+		if (bills == null || bills.isEmpty())
+			throw new org.egov.tracer.model.CustomException("EG_BILL_NOT_FOUND",
+					"Bill not found for id: " + request.getBillId());
+
+		Bill bill = bills.get(0);
+
+		Map<String, Object> additionalDetailsMap;
+		try {
+			additionalDetailsMap = bill.getAdditionalDetails() != null
+					? objectMapper.convertValue(bill.getAdditionalDetails(),
+						objectMapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class))
+					: new HashMap<>();
+		} catch (Exception e) {
+			log.warn("Could not parse additionalDetails for bill {}, using empty map: {}", bill.getId(), e.getMessage());
+			additionalDetailsMap = new HashMap<>();
+		}
+
+		additionalDetailsMap.put("reportDetails", request.getReportDetails());
+		bill.setAdditionalDetails(additionalDetailsMap);
+
+		long now = System.currentTimeMillis();
+		if (bill.getAuditDetails() != null) {
+			bill.getAuditDetails().setLastModifiedBy(
+					requestInfo.getUserInfo() != null ? requestInfo.getUserInfo().getUuid() : "system");
+			bill.getAuditDetails().setLastModifiedTime(now);
+		}
+
+		BillRequest billRequest = BillRequest.builder()
+				.requestInfo(requestInfo)
+				.bill(bill)
+				.build();
+
+		expenseProducer.push(bill.getTenantId(), config.getBillUpdateTopic(), billRequest);
+
+		log.info("Report metadata updated for billId: {}, status: {}",
+				bill.getId(), request.getReportDetails().get("status"));
+
+		return BillResponse.builder()
+				.bills(Collections.singletonList(bill))
+				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true))
+				.build();
+	}
 }

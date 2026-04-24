@@ -52,6 +52,12 @@ public class BillController {
 		return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 	}
 
+	@PostMapping(value = "_updatereportmeta")
+	public ResponseEntity<BillResponse> updateReportMeta(@Valid @RequestBody ReportMetaUpdateRequest request) {
+		BillResponse response = service.updateReportMeta(request);
+		return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+	}
+
 	@PostMapping(value = "search/_calculated")
 	public ResponseEntity<BillResponse> searchCalculatedBills(@Valid @RequestBody BillSearchRequest billSearchRequest) {
 		BillResponse billResponse = service.searchCalculatedBills(billSearchRequest, true);
