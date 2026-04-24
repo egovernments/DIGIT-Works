@@ -8,6 +8,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.enums.LineItemType;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -104,7 +105,7 @@ public class BillDetailExcelGenerator {
             workbook.write(out);
             return out.toByteArray();
         } catch (IOException e) {
-            throw new RuntimeException("Failed to generate bill detail template", e);
+            throw new CustomException(ERR_TEMPLATE_GENERATE_ERROR, MSG_TEMPLATE_GENERATE_ERROR + ": " + e.getMessage());
         }
     }
 

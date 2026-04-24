@@ -229,6 +229,9 @@ public class Constants {
 	public static final String ERR_FIELD_STRIPPED_EDITOR           = "EG_EXPENSE_FIELD_STRIPPED_PAYMENT_EDITOR";
 	public static final String ERR_FIELD_STRIPPED_REVIEWER         = "EG_EXPENSE_FIELD_STRIPPED_PAYMENT_REVIEWER";
 	public static final String ERR_TEMPLATE_EMPTY                  = "EG_EXPENSE_TEMPLATE_EMPTY";
+	public static final String ERR_TEMPLATE_GENERATE_ERROR         = "EG_EXPENSE_TEMPLATE_GENERATE_ERROR";
+	public static final String ERR_TEMPLATE_INVALID_HEADER         = "EG_EXPENSE_TEMPLATE_INVALID_HEADER";
+	public static final String ERR_TEMPLATE_INVALID_FORMAT         = "EG_EXPENSE_TEMPLATE_INVALID_FORMAT";
 	public static final String ERR_TEMPLATE_INVALID_ROW            = "EG_EXPENSE_TEMPLATE_INVALID_ROW";
 	public static final String ERR_TEMPLATE_INVALID_ATTENDANCE     = "EG_EXPENSE_TEMPLATE_INVALID_ATTENDANCE";
 	public static final String ERR_TEMPLATE_PARSE_ERROR            = "EG_EXPENSE_TEMPLATE_PARSE_ERROR";
@@ -257,6 +260,10 @@ public class Constants {
 
 	// Error messages (static — no dynamic parts)
 	public static final String MSG_TEMPLATE_EMPTY                = "No valid rows found in the uploaded template";
+	public static final String MSG_TEMPLATE_GENERATE_ERROR       = "Failed to generate bill detail template";
+	public static final String MSG_TEMPLATE_INVALID_FORMAT       = "Uploaded file is not a valid Excel (.xlsx) format";
+	public static final String MSG_TEMPLATE_MISSING_HEADER_ROW  = "Template header row is missing or empty";
+	public static final String MSG_TEMPLATE_INVALID_WORKER_COL  = "Column 0 must be workerId; template file may be corrupt or wrong format";
 	public static final String MSG_UNAUTHORIZED_TEMPLATE_PREFIX  = "Access denied: only PAYMENT_REVIEWER or PAYMENT_EDITOR may ";
 	public static final String MSG_UNAUTHORIZED_UPDATE           = "User does not have PAYMENT_EDITOR or PAYMENT_REVIEWER role to update bill details";
 	public static final String MSG_BULK_STATUS_EMPTY             = "At least one bill ID is required for bulk status update";

@@ -63,7 +63,7 @@ public class BillDetailTemplateService {
 
         byte[] excelBytes = filestoreUtil.downloadFile(request.getFilestoreId(), tenantId);
 
-        List<PartialBillDetail> partialDetails = excelParser.parse(excelBytes, bill, roles);
+        List<PartialBillDetail> partialDetails = excelParser.parse(excelBytes, bill, roles, requestInfo);
         if (partialDetails.isEmpty()) {
             throw new CustomException(ERR_TEMPLATE_EMPTY, MSG_TEMPLATE_EMPTY);
         }
