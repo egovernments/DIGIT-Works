@@ -130,7 +130,13 @@ public class BillDetailExcelGenerator {
         boolean canEditWages = isEditor || isReviewer;
 
         int rowNum = 1;
-        for (BillDetail detail : bill.getBillDetails()) {
+        List<BillDetail> sortedDetails = bill.getBillDetails().stream()
+                .sorted(Comparator.comparing(
+                        d -> d.getPayee() != null && d.getPayee().getPayeeName() != null
+                                ? d.getPayee().getPayeeName() : "",
+                        String.CASE_INSENSITIVE_ORDER))
+                .collect(Collectors.toList());
+        for (BillDetail detail : sortedDetails) {
             Row row = sheet.createRow(rowNum++);
             Party payee = detail.getPayee() != null ? detail.getPayee() : new Party();
 

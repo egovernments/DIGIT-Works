@@ -24,6 +24,7 @@ import org.egov.digit.expense.web.models.PaymentBill;
 import org.egov.digit.expense.web.models.PaymentBillDetail;
 import org.egov.digit.expense.web.models.PaymentLineItem;
 import org.egov.digit.expense.web.models.PaymentRequest;
+import org.egov.digit.expense.web.models.enums.LineItemType;
 import org.egov.digit.expense.web.models.enums.PaymentStatus;
 import org.egov.digit.expense.web.models.enums.ReferenceStatus;
 import org.egov.digit.expense.web.models.WorkerDetails;
@@ -159,6 +160,8 @@ public class EnrichmentUtil {
         if (bill.getReferenceId() == null)     bill.setReferenceId(billFromSearch.getReferenceId());
         if (bill.getFromPeriod() == null)      bill.setFromPeriod(billFromSearch.getFromPeriod());
         if (bill.getToPeriod() == null)        bill.setToPeriod(billFromSearch.getToPeriod());
+        // Bill total is recalculated below from detail totals; preserve DB value only as a fallback
+        // if no bill details are present in the request.
         if (bill.getTotalAmount() == null || bill.getTotalAmount().compareTo(BigDecimal.ZERO) == 0)
             bill.setTotalAmount(billFromSearch.getTotalAmount());
         if (bill.getTotalPaidAmount() == null || bill.getTotalPaidAmount().compareTo(BigDecimal.ZERO) == 0)
@@ -181,8 +184,25 @@ public class EnrichmentUtil {
                 .flatMap(Collection::stream)
                 .collect(Collectors.toMap(BillDetail::getId, Function.identity()));
 
-        for (BillDetail billDetail : bill.getBillDetails()) {
-            enrichBillDetail(billDetail, billDetailMap, createAudit);
+        if (bill.getBillDetails() != null && !bill.getBillDetails().isEmpty()) {
+            for (BillDetail billDetail : bill.getBillDetails()) {
+                enrichBillDetail(billDetail, billDetailMap, createAudit);
+                if (billDetail.getPayableLineItems() != null && !billDetail.getPayableLineItems().isEmpty()) {
+                    // Payable items present in request — recalculate from them
+                    billDetail.setTotalAmount(computeDetailTotalAmount(billDetail.getPayableLineItems(), billDetail.getLineItems()));
+                } else if (billDetail.getTotalAmount() == null) {
+                    // No line items and no explicit total — preserve DB value (e.g. workflow-only update)
+                    BillDetail dbDetail = billDetailMap.get(billDetail.getId());
+                    if (dbDetail != null) billDetail.setTotalAmount(dbDetail.getTotalAmount());
+                }
+                // else: caller explicitly set totalAmount without line items — keep it
+            }
+
+            BigDecimal billTotal = bill.getBillDetails().stream()
+                    .filter(d -> d.getStatus() != Status.INACTIVE)
+                    .map(d -> d.getTotalAmount() != null ? d.getTotalAmount() : BigDecimal.ZERO)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            bill.setTotalAmount(billTotal);
         }
     }
 
@@ -408,6 +428,22 @@ public class EnrichmentUtil {
     }
 
     /**
+     * Computes BillDetail.totalAmount = sum(active payableItems) - sum(active DEDUCTION lineItems).
+     * payableLineItems contains only PAYABLE-type items; DEDUCTION items live in lineItems.
+     */
+    private BigDecimal computeDetailTotalAmount(List<LineItem> payableItems, List<LineItem> allLineItems) {
+        BigDecimal payable = (payableItems == null ? Collections.<LineItem>emptyList() : payableItems).stream()
+                .filter(li -> li.getStatus() != Status.INACTIVE)
+                .map(li -> li.getAmount() != null ? li.getAmount() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal deduction = (allLineItems == null ? Collections.<LineItem>emptyList() : allLineItems).stream()
+                .filter(li -> li.getStatus() != Status.INACTIVE && li.getType() == LineItemType.DEDUCTION)
+                .map(li -> li.getAmount() != null ? li.getAmount() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return payable.subtract(deduction);
+    }
+
+    /**
      * Merges each {@link org.egov.digit.expense.web.models.PartialBillDetail} in the request
      * with its corresponding DB snapshot, applying full null protection.
      * Immutable fields (id, tenantId, billId, referenceId) are always taken from DB.
@@ -435,6 +471,9 @@ public class EnrichmentUtil {
                     .lastModifiedTime(now)
                     .build();
 
+            List<LineItem> mergedPayableItems = mergeLineItems(pd.getPayableLineItems(), db.getPayableLineItems(), updatedBy, now);
+            List<LineItem> mergedLineItems    = mergeLineItems(pd.getLineItems(), db.getLineItems(), updatedBy, now);
+
             BillDetail merged = BillDetail.builder()
                     // Immutable fields — always from DB
                     .id(db.getId())
@@ -442,7 +481,7 @@ public class EnrichmentUtil {
                     .billId(db.getBillId())
                     .referenceId(db.getReferenceId())
                     // Mutable fields — request value if non-null, else DB value
-                    .totalAmount(pd.getTotalAmount()         != null ? pd.getTotalAmount()         : db.getTotalAmount())
+                    .totalAmount(computeDetailTotalAmount(mergedPayableItems, mergedLineItems))
                     .totalPaidAmount(pd.getTotalPaidAmount() != null ? pd.getTotalPaidAmount()     : db.getTotalPaidAmount())
                     .paymentStatus(pd.getPaymentStatus()     != null ? pd.getPaymentStatus()       : db.getPaymentStatus())
                     .status(pd.getStatus()                   != null ? pd.getStatus()              : db.getStatus())
@@ -452,8 +491,8 @@ public class EnrichmentUtil {
                     .totalAttendance(pd.getTotalAttendance()  != null ? pd.getTotalAttendance()     : db.getTotalAttendance())
                     .additionalDetails(pd.getAdditionalDetails() != null ? pd.getAdditionalDetails() : db.getAdditionalDetails())
                     .payee(mergePayee(pd.getPayee(), db.getPayee(), updatedBy, now))
-                    .lineItems(mergeLineItems(pd.getLineItems(), db.getLineItems(), updatedBy, now))
-                    .payableLineItems(mergeLineItems(pd.getPayableLineItems(), db.getPayableLineItems(), updatedBy, now))
+                    .lineItems(mergedLineItems)
+                    .payableLineItems(mergedPayableItems)
                     .auditDetails(updateAudit)
                     .build();
 

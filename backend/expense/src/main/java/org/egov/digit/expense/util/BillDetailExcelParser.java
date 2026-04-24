@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.enums.LineItemType;
+import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.tracer.model.CustomException;
 import org.springframework.stereotype.Component;
 
@@ -175,11 +176,11 @@ public class BillDetailExcelParser {
 
     private BigDecimal computeTotalAmount(List<LineItem> lineItems) {
         BigDecimal payable   = lineItems.stream()
-                .filter(li -> li.getType() == LineItemType.PAYABLE)
+                .filter(li -> li.getStatus() != Status.INACTIVE && li.getType() == LineItemType.PAYABLE)
                 .map(LineItem::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal deduction = lineItems.stream()
-                .filter(li -> li.getType() == LineItemType.DEDUCTION)
+                .filter(li -> li.getStatus() != Status.INACTIVE && li.getType() == LineItemType.DEDUCTION)
                 .map(LineItem::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         return payable.subtract(deduction);

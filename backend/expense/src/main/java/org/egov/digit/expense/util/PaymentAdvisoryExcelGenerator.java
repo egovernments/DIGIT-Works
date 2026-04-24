@@ -17,8 +17,10 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -115,7 +117,13 @@ public class PaymentAdvisoryExcelGenerator {
     private void writeRows(Sheet sheet, List<BillDetail> billDetails,
                            XSSFCellStyle dataStyle, XSSFCellStyle amountStyle) {
         int rowNum = 1;
-        for (BillDetail detail : billDetails) {
+        List<BillDetail> sortedDetails = billDetails.stream()
+                .sorted(Comparator.comparing(
+                        d -> d.getPayee() != null && d.getPayee().getPayeeName() != null
+                                ? d.getPayee().getPayeeName() : "",
+                        String.CASE_INSENSITIVE_ORDER))
+                .collect(Collectors.toList());
+        for (BillDetail detail : sortedDetails) {
             Party payee = detail.getPayee();
             if (payee == null) {
                 log.warn("Skipping bill detail id={} — payee is null", detail.getId());

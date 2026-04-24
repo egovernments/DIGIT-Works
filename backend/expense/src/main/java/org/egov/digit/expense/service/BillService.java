@@ -495,8 +495,9 @@ public class BillService {
 
 		billFromSearch.setBillDetails(allDetails);
 
-		// Recalculate bill-level totalAmount as sum of all BillDetail totals
+		// Recalculate bill-level totalAmount as sum of all active BillDetail totals
 		BigDecimal recalculatedTotal = allDetails.stream()
+				.filter(d -> d.getStatus() != Status.INACTIVE)
 				.map(d -> d.getTotalAmount() != null ? d.getTotalAmount() : BigDecimal.ZERO)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 		billFromSearch.setTotalAmount(recalculatedTotal);
