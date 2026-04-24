@@ -208,4 +208,69 @@ public class Constants {
              "FROM " + SCHEMA_REPLACE_STRING + ".eg_expense_bill bill ";
 
 	public static final String INVALID_TENANT_ID_ERR_CODE = "INVALID_TENANT_ID";
+
+	// Roles
+	public static final String ROLE_PAYMENT_EDITOR   = "PAYMENT_EDITOR";
+	public static final String ROLE_PAYMENT_REVIEWER = "PAYMENT_REVIEWER";
+
+	// Bill / BillDetail workflow statuses
+	public static final String STATUS_PENDING_VERIFICATION = "PENDING_VERIFICATION";
+	public static final String STATUS_PARTIALLY_VERIFIED   = "PARTIALLY_VERIFIED";
+	public static final String STATUS_VERIFICATION_FAILED  = "VERIFICATION_FAILED";
+	public static final String STATUS_UNDER_REVIEW         = "UNDER_REVIEW";
+
+	// Error codes
+	public static final String ERR_UNAUTHORIZED                    = "EG_EXPENSE_UNAUTHORIZED";
+	public static final String ERR_INVALID_BILL                    = "EG_EXPENSE_INVALID_BILL";
+	public static final String ERR_INVALID_BILL_STATUS             = "EG_EXPENSE_INVALID_BILL_STATUS";
+	public static final String ERR_INVALID_BILL_DETAIL_IDS         = "EG_EXPENSE_INVALID_BILL_DETAIL_IDS";
+	public static final String ERR_ROLE_STATUS_MISMATCH            = "EG_EXPENSE_ROLE_STATUS_MISMATCH";
+	public static final String ERR_DETAIL_STATUS_SKIPPED           = "EG_EXPENSE_DETAIL_STATUS_SKIPPED";
+	public static final String ERR_FIELD_STRIPPED_EDITOR           = "EG_EXPENSE_FIELD_STRIPPED_PAYMENT_EDITOR";
+	public static final String ERR_FIELD_STRIPPED_REVIEWER         = "EG_EXPENSE_FIELD_STRIPPED_PAYMENT_REVIEWER";
+	public static final String ERR_TEMPLATE_EMPTY                  = "EG_EXPENSE_TEMPLATE_EMPTY";
+	public static final String ERR_TEMPLATE_INVALID_ROW            = "EG_EXPENSE_TEMPLATE_INVALID_ROW";
+	public static final String ERR_TEMPLATE_INVALID_ATTENDANCE     = "EG_EXPENSE_TEMPLATE_INVALID_ATTENDANCE";
+	public static final String ERR_TEMPLATE_PARSE_ERROR            = "EG_EXPENSE_TEMPLATE_PARSE_ERROR";
+	public static final String ERR_DUPLICATE_BILL                  = "EG_EXPENSE_DUPLICATE_BILL";
+	public static final String ERR_PAYMENT_FIELD_UPDATE_NOT_ALLOWED = "EG_EXPENSE_PAYMENT_FIELD_UPDATE_NOT_ALLOWED";
+	public static final String ERR_INVALID_PAYMENT_PROVIDER        = "EG_EXPENSE_INVALID_PAYMENT_PROVIDER";
+	public static final String ERR_BILL_SEARCH_ERROR               = "EG_EXPENSE_BILL_SEARCH_ERROR";
+	public static final String ERR_MDMS_ERROR                      = "EG_EXPENSE_MDMS_ERROR";
+	public static final String ERR_BULK_STATUS_EMPTY               = "EG_EXPENSE_BULK_STATUS_EMPTY";
+	public static final String ERR_BULK_STATUS_MAX_LIMIT           = "EG_EXPENSE_BULK_STATUS_MAX_LIMIT";
+	public static final String ERR_BULK_STATUS_DUPLICATE_IDS       = "EG_EXPENSE_BULK_STATUS_DUPLICATE_IDS";
+	public static final String ERR_BULK_STATUS_INVALID             = "EG_EXPENSE_BULK_STATUS_INVALID";
+	public static final String ERR_BULK_STATUS_TENANT_REQUIRED     = "EG_EXPENSE_BULK_STATUS_TENANT_REQUIRED";
+	public static final String ERR_BILL_UPDATE_NOTNULL_PAYER_ID              = "EG_EXPENSE_BILL_UPDATE_NOTNULL_PAYER_ID";
+	public static final String ERR_BILL_UPDATE_NOTNULL_BILLDETAILS           = "EG_EXPENSE_BILL_UPDATE_NOTNULL_BILLDETAILS";
+	public static final String ERR_BILL_UPDATE_NOTNULL_BILLDETAIL_ID         = "EG_EXPENSE_BILL_UPDATE_NOTNULL_BillDETAIL_ID";
+	public static final String ERR_BILL_UPDATE_NOTNULL_LINEITEM_ID           = "EG_EXPENSE_BILL_UPDATE_NOTNULL_LINEITEM_ID";
+	public static final String ERR_BILL_UPDATE_NOTNULL_PAYABLE_LINEITEM_ID   = "EG_EXPENSE_BILL_UPDATE_NOTNULL_PAYABLE_LINEITEM_ID";
+	public static final String ERR_INVALID_BUSINESSSERVICE                   = "EG_EXPENSE_INVALID_BUSINESSSERVICE";
+	public static final String ERR_LINEITEM_INVALID_AMOUNT                   = "EG_EXPENSE_LINEITEM_INVALID_AMOUNT";
+	public static final String ERR_INVALID_HEADCODES                         = "EG_EXPENSE_INVALID_HEADCODES";
+	public static final String ERR_BILL_INVALID_DATE                         = "EG_EXPENSE_BILL_INVALID_DATE";
+	public static final String ERR_BILL_WF_ERROR                             = "EG_BILL_WF_ERROR";
+	public static final String ERR_BILL_WF_FIELDS_ERROR                     = "EG_BILL_WF_FIELDS_ERROR";
+	public static final String ERR_BILL_META_UPDATE_ERROR                   = "EG_BILL_META_UPDATE_ERROR";
+
+	// Error messages (static — no dynamic parts)
+	public static final String MSG_TEMPLATE_EMPTY                = "No valid rows found in the uploaded template";
+	public static final String MSG_UNAUTHORIZED_TEMPLATE_PREFIX  = "Access denied: only PAYMENT_REVIEWER or PAYMENT_EDITOR may ";
+	public static final String MSG_UNAUTHORIZED_UPDATE           = "User does not have PAYMENT_EDITOR or PAYMENT_REVIEWER role to update bill details";
+	public static final String MSG_BULK_STATUS_EMPTY             = "At least one bill ID is required for bulk status update";
+	public static final String MSG_BULK_STATUS_DUPLICATE_IDS     = "Duplicate bill IDs are not allowed in bulk status update request";
+	public static final String MSG_BULK_STATUS_INVALID           = "Status is required for bulk status update";
+	public static final String MSG_BULK_STATUS_TENANT_REQUIRED   = "tenantId is required for bulk status update";
+	public static final String MSG_TEMPLATE_PARSE_ERROR_PREFIX   = "Failed to read Excel file: ";
+	public static final String MSG_TEMPLATE_PARSE_UNEXPECTED     = "Unexpected error parsing template: ";
+	public static final String MSG_BILL_UPDATE_NOTNULL_PAYER_ID     = "Payer id is mandaotry for update request";
+	public static final String MSG_BILL_UPDATE_NOTNULL_BILLDETAILS  = "bill details cannot be empty for update request";
+	public static final String MSG_BILL_WF_ERROR                    = "workflow is mandatory when worflow is active";
+	public static final String MSG_BILL_WF_FIELDS_ERROR             = "workflow action is mandatory when worflow is active";
+	public static final String MSG_META_UPDATE_REQUEST_MANDATORY    = "Request is mandatory";
+	public static final String MSG_META_UPDATE_BILL_ID_MANDATORY    = "billId is mandatory";
+	public static final String MSG_META_UPDATE_TENANT_ID_MANDATORY  = "tenantId is mandatory";
+	public static final String MSG_META_UPDATE_REPORT_MANDATORY     = "reportDetails is mandatory and must not be empty";
 }

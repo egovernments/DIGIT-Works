@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.egov.digit.expense.config.Constants.*;
+
+
 @Service
 @Slf4j
 public class BillDetailTemplateService {
@@ -43,6 +46,7 @@ public class BillDetailTemplateService {
         Bill bill = fetchBillOrThrow(request.getBillId(), request.getTenantId(), requestInfo);
         Set<String> roles = extractRoles(requestInfo);
         log.info("BillDetailTemplateService::generateTemplateBytes billId={} roles={}", request.getBillId(), roles);
+        validateRoleAndBillStatus(roles, bill, "generate template");
         return excelGenerator.generateTemplate(bill, roles, requestInfo);
     }
 
@@ -53,14 +57,15 @@ public class BillDetailTemplateService {
 
         log.info("BillDetailTemplateService::processUpload billId={} filestoreId={}", billId, request.getFilestoreId());
 
-        byte[] excelBytes = filestoreUtil.downloadFile(request.getFilestoreId(), tenantId);
-
         Bill bill = fetchBillOrThrow(billId, tenantId, requestInfo);
         Set<String> roles = extractRoles(requestInfo);
+        validateRoleAndBillStatus(roles, bill, "upload template");
+
+        byte[] excelBytes = filestoreUtil.downloadFile(request.getFilestoreId(), tenantId);
 
         List<PartialBillDetail> partialDetails = excelParser.parse(excelBytes, bill, roles);
         if (partialDetails.isEmpty()) {
-            throw new CustomException("EG_EXPENSE_TEMPLATE_EMPTY", "No valid rows found in the uploaded template");
+            throw new CustomException(ERR_TEMPLATE_EMPTY, MSG_TEMPLATE_EMPTY);
         }
 
         BillDetailUpdateRequest updateRequest = BillDetailUpdateRequest.builder()
@@ -71,6 +76,35 @@ public class BillDetailTemplateService {
                 .build();
 
         return billService.partialUpdateBillDetails(updateRequest);
+    }
+
+    /**
+     * Denies access unless the user holds PAYMENT_REVIEWER or PAYMENT_EDITOR,
+     * and the bill is in a status that role is permitted to act on:
+     *   PAYMENT_EDITOR   → PENDING_VERIFICATION or PARTIALLY_VERIFIED
+     *   PAYMENT_REVIEWER → UNDER_REVIEW
+     */
+    private void validateRoleAndBillStatus(Set<String> roles, Bill bill, String operation) {
+        boolean isEditor   = roles.contains(ROLE_PAYMENT_EDITOR);
+        boolean isReviewer = roles.contains(ROLE_PAYMENT_REVIEWER);
+
+        if (!isEditor && !isReviewer) {
+            throw new CustomException(ERR_UNAUTHORIZED, MSG_UNAUTHORIZED_TEMPLATE_PREFIX + operation);
+        }
+
+        String billStatus = bill.getStatus() != null ? bill.getStatus().toString() : null;
+        Set<String> editorAllowed   = Set.of(STATUS_PENDING_VERIFICATION, STATUS_PARTIALLY_VERIFIED);
+        Set<String> reviewerAllowed = Set.of(STATUS_UNDER_REVIEW);
+
+        boolean editorStatusOk   = isEditor   && editorAllowed.contains(billStatus);
+        boolean reviewerStatusOk = isReviewer && reviewerAllowed.contains(billStatus);
+
+        if (!editorStatusOk && !reviewerStatusOk) {
+            throw new CustomException(ERR_INVALID_BILL_STATUS,
+                    "Cannot " + operation + ": bill status '" + billStatus + "' does not permit this action. "
+                    + ROLE_PAYMENT_EDITOR + " requires " + STATUS_PENDING_VERIFICATION + " or " + STATUS_PARTIALLY_VERIFIED + "; "
+                    + ROLE_PAYMENT_REVIEWER + " requires " + STATUS_UNDER_REVIEW + ".");
+        }
     }
 
     private Bill fetchBillOrThrow(String billId, String tenantId, RequestInfo requestInfo) {
@@ -84,7 +118,7 @@ public class BillDetailTemplateService {
                 .build();
         List<Bill> bills = billRepository.search(searchRequest, true);
         if (bills.isEmpty()) {
-            throw new CustomException("EG_EXPENSE_INVALID_BILL",
+            throw new CustomException(ERR_INVALID_BILL,
                     "Bill not found: id=" + billId + " tenantId=" + tenantId);
         }
         return bills.get(0);

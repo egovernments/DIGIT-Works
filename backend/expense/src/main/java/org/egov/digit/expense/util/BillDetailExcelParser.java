@@ -17,6 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.egov.digit.expense.util.BillDetailExcelGenerator.*;
+import static org.egov.digit.expense.config.Constants.*;
 
 @Component
 @Slf4j
@@ -34,8 +35,8 @@ public class BillDetailExcelParser {
         List<String> headCodes = collectPayableHeadCodes(bill);
         Map<String, BillDetail> workerToBillDetail = buildWorkerMap(bill);
 
-        boolean isEditor   = userRoles.contains("PAYMENT_EDITOR");
-        boolean isReviewer = userRoles.contains("PAYMENT_REVIEWER");
+        boolean isEditor   = userRoles.contains(ROLE_PAYMENT_EDITOR);
+        boolean isReviewer = userRoles.contains(ROLE_PAYMENT_REVIEWER);
 
         List<PartialBillDetail> result = new ArrayList<>();
 
@@ -55,7 +56,7 @@ public class BillDetailExcelParser {
 
                 BillDetail source = workerToBillDetail.get(workerId);
                 if (source == null) {
-                    throw new CustomException("EG_EXPENSE_TEMPLATE_INVALID_ROW",
+                    throw new CustomException(ERR_TEMPLATE_INVALID_ROW,
                             "No BillDetail found for workerId=" + workerId + " in bill " + bill.getId());
                 }
 
@@ -70,7 +71,7 @@ public class BillDetailExcelParser {
                 if (isReviewer) {
                     BigDecimal totalAttendance = readBigDecimal(row, STATIC_COL_COUNT + headCodes.size());
                     if (totalAttendance == null || totalAttendance.compareTo(BigDecimal.ZERO) <= 0) {
-                        throw new CustomException("EG_EXPENSE_TEMPLATE_INVALID_ATTENDANCE",
+                        throw new CustomException(ERR_TEMPLATE_INVALID_ATTENDANCE,
                                 "totalAttendance must be > 0 for workerId=" + workerId);
                     }
                     builder.totalAttendance(totalAttendance);
@@ -96,9 +97,9 @@ public class BillDetailExcelParser {
         } catch (CustomException e) {
             throw e;
         } catch (IOException e) {
-            throw new CustomException("EG_EXPENSE_TEMPLATE_PARSE_ERROR", "Failed to read Excel file: " + e.getMessage());
+            throw new CustomException(ERR_TEMPLATE_PARSE_ERROR, MSG_TEMPLATE_PARSE_ERROR_PREFIX + e.getMessage());
         } catch (Exception e) {
-            throw new CustomException("EG_EXPENSE_TEMPLATE_PARSE_ERROR", "Unexpected error parsing template: " + e.getMessage());
+            throw new CustomException(ERR_TEMPLATE_PARSE_ERROR, MSG_TEMPLATE_PARSE_UNEXPECTED + e.getMessage());
         }
 
         return result;

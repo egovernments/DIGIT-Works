@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.egov.digit.expense.config.Constants.*;
+
 @Component
 @Slf4j
 public class BillDetailExcelGenerator {
@@ -126,8 +128,8 @@ public class BillDetailExcelGenerator {
                                 Set<String> userRoles, RequestInfo requestInfo, Map<String, String> msgMap,
                                 XSSFCellStyle lockedStr, XSSFCellStyle editableStr,
                                 XSSFCellStyle lockedNum, XSSFCellStyle editableNum) {
-        boolean isEditor   = userRoles.contains("PAYMENT_EDITOR");
-        boolean isReviewer = userRoles.contains("PAYMENT_REVIEWER");
+        boolean isEditor   = userRoles.contains(ROLE_PAYMENT_EDITOR);
+        boolean isReviewer = userRoles.contains(ROLE_PAYMENT_REVIEWER);
         boolean canEditWages = isEditor || isReviewer;
 
         int rowNum = 1;

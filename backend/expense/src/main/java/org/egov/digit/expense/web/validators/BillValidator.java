@@ -1,9 +1,6 @@
 package org.egov.digit.expense.web.validators;
 
-import static org.egov.digit.expense.config.Constants.BUSINESS_SERVICE_MASTERNAME;
-import static org.egov.digit.expense.config.Constants.CODE_FILTER;
-import static org.egov.digit.expense.config.Constants.HEADCODE_MASTERNAME;
-import static org.egov.digit.expense.config.Constants.TENANT_MASTERNAME;
+import static org.egov.digit.expense.config.Constants.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -11,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -83,7 +81,7 @@ public class BillValidator {
 			}
 
 			if(!CollectionUtils.isEmpty(conflictingBills)) {
-				throw new CustomException("EG_EXPENSE_DUPLICATE_BILL", buildDuplicateBillErrorMessage(bill));
+				throw new CustomException(ERR_DUPLICATE_BILL, buildDuplicateBillErrorMessage(bill));
 			}
 		}
 
@@ -108,7 +106,7 @@ public class BillValidator {
 
 		List<Bill> billsFromSearch = getBillsForValidation(billRequest, false);
 		if(CollectionUtils.isEmpty(billsFromSearch))
-			throw new CustomException("EG_EXPENSE_INVALID_BILL","The bill does not exists for the given combination of "
+			throw new CustomException(ERR_INVALID_BILL,"The bill does not exists for the given combination of "
 					+ " id : " + bill.getId() + " and refernceId : " + bill.getTenantId());
 
 		if (!configs.isHealthContextEnabled())
@@ -144,7 +142,7 @@ public class BillValidator {
 		if(null == payer) {
 			bill.setPayer(payerFromSearch);
 		}else if(null == payer.getId()){
-			errorMap.put("EG_EXPENSE_BILL_UPDATE_NOTNULL_PAYER_ID", "Payer id is mandaotry for update request");
+			errorMap.put(ERR_BILL_UPDATE_NOTNULL_PAYER_ID, MSG_BILL_UPDATE_NOTNULL_PAYER_ID);
 		}
 
 		List<BillDetail> details = bill.getBillDetails();
@@ -163,7 +161,7 @@ public class BillValidator {
 				.collect(Collectors.toMap(LineItem::getId, Function.identity()));
 
 		if(CollectionUtils.isEmpty(details)) {
-			errorMap.put("EG_EXPENSE_BILL_UPDATE_NOTNULL_BILLDETAILS", "bill details cannot be empty for update request");
+			errorMap.put(ERR_BILL_UPDATE_NOTNULL_BILLDETAILS, MSG_BILL_UPDATE_NOTNULL_BILLDETAILS);
 		}else {
 			for (BillDetail currentDetail : details) {
 
@@ -216,15 +214,15 @@ public class BillValidator {
 			}
 
 			if(!CollectionUtils.isEmpty(invalidDetailIds))
-				errorMap.put("EG_EXPENSE_BILL_UPDATE_NOTNULL_BillDETAIL_ID",
+				errorMap.put(ERR_BILL_UPDATE_NOTNULL_BILLDETAIL_ID,
 						BILL_DETAIL_ID_IS_INVALID_FOR_THE_GIVEN_IDS_OF_UPDATE_REQUEST + invalidDetailIds);
 
 			if(!CollectionUtils.isEmpty(invalidLineItemIds))
-				errorMap.put("EG_EXPENSE_BILL_UPDATE_NOTNULL_LINEITEM_ID",
+				errorMap.put(ERR_BILL_UPDATE_NOTNULL_LINEITEM_ID,
 						BILL_DETAIL_ID_IS_INVALID_FOR_THE_GIVEN_IDS_OF_UPDATE_REQUEST + invalidLineItemIds);
 
 			if(!CollectionUtils.isEmpty(invalidPayableLineItemIds))
-				errorMap.put("EG_EXPENSE_BILL_UPDATE_NOTNULL_PAYABLE_LINEITEM_ID",
+				errorMap.put(ERR_BILL_UPDATE_NOTNULL_PAYABLE_LINEITEM_ID,
 						BILL_DETAIL_ID_IS_INVALID_FOR_THE_GIVEN_IDS_OF_UPDATE_REQUEST + invalidPayableLineItemIds);
 		}
 
@@ -239,14 +237,14 @@ public class BillValidator {
 	 * `wfStatus` (transient, only enriched during external search — always null here).
 	 */
 	public void validatePaymentFieldUpdate(Bill bill, Bill billFromSearch) {
-		Set<String> allowedBillStatuses = Set.of("PENDING_VERIFICATION", "PARTIALLY_VERIFIED");
-		Set<String> allowedBillDetailStatuses = Set.of("PENDING_VERIFICATION", "VERIFICATION_FAILED");
+		Set<String> allowedBillStatuses = Set.of(STATUS_PENDING_VERIFICATION, STATUS_PARTIALLY_VERIFIED);
+		Set<String> allowedBillDetailStatuses = Set.of(STATUS_PENDING_VERIFICATION, STATUS_VERIFICATION_FAILED);
 
 		// Use status (stored in DB) as the reliable proxy for workflow state
 		String billStatus = billFromSearch.getStatus() != null ? billFromSearch.getStatus().toString() : null;
 		if (billStatus != null && !allowedBillStatuses.contains(billStatus)) {
 			if (hasPaymentFieldChanges(bill, billFromSearch)) {
-				throw new CustomException("EG_EXPENSE_PAYMENT_FIELD_UPDATE_NOT_ALLOWED",
+				throw new CustomException(ERR_PAYMENT_FIELD_UPDATE_NOT_ALLOWED,
 						"Payment details can only be updated when bill status is PENDING_VERIFICATION or PARTIALLY_VERIFIED. Current status: " + billStatus);
 			}
 		}
@@ -264,7 +262,7 @@ public class BillValidator {
 					String detailStatus = detailFromSearch.getStatus() != null
 							? detailFromSearch.getStatus().toString() : null;
 					if (detailStatus != null && !allowedBillDetailStatuses.contains(detailStatus)) {
-						throw new CustomException("EG_EXPENSE_PAYMENT_FIELD_UPDATE_NOT_ALLOWED",
+						throw new CustomException(ERR_PAYMENT_FIELD_UPDATE_NOT_ALLOWED,
 								"Payment details on bill detail " + detail.getId()
 								+ " can only be updated when bill detail status is PENDING_VERIFICATION or VERIFICATION_FAILED. Current status: " + detailStatus);
 					}
@@ -310,7 +308,7 @@ public class BillValidator {
 			Party payee = detail.getPayee();
 			if (payee != null && payee.getPaymentProvider() != null
 					&& !Constants.VALID_PAYMENT_PROVIDERS.contains(payee.getPaymentProvider().toUpperCase())) {
-				throw new CustomException("EG_EXPENSE_INVALID_PAYMENT_PROVIDER",
+				throw new CustomException(ERR_INVALID_PAYMENT_PROVIDER,
 						"Invalid paymentProvider '" + payee.getPaymentProvider()
 						+ "' on bill detail " + detail.getId()
 						+ ". Allowed values: " + Constants.VALID_PAYMENT_PROVIDERS);
@@ -327,15 +325,15 @@ public class BillValidator {
 				&& CollectionUtils.isEmpty(billCriteria.getBillNumbers())
 				&& billCriteria.getIsPaymentStatusNull() == null ) {
 			if (configs.isHealthContextEnabled())
-				throw new CustomException("EG_EXPENSE_BILL_SEARCH_ERROR",
+				throw new CustomException(ERR_BILL_SEARCH_ERROR,
 						"One of ids OR referenceIds OR billNumbers should be provided for a bill search");
-			throw new CustomException("EG_EXPENSE_BILL_SEARCH_ERROR",
+			throw new CustomException(ERR_BILL_SEARCH_ERROR,
 					"One of ids OR (referenceIds & businessService) OR (billNumbers & businessService) should be provided for a bill search");
 		}
 
 		if (configs.isHealthContextEnabled()) {
 			if (org.apache.commons.lang3.StringUtils.isNotBlank(billCriteria.getLocalityCode()) && CollectionUtils.isEmpty(billCriteria.getReferenceIds())) {
-				throw new CustomException("EG_EXPENSE_BILL_SEARCH_ERROR", "referenceIds should be provided along with localityCode for a bill search");
+				throw new CustomException(ERR_BILL_SEARCH_ERROR, "referenceIds should be provided along with localityCode for a bill search");
 			}
 		} else {
 			boolean isRefIdOrBillNoProvided = (!CollectionUtils.isEmpty(billCriteria.getReferenceIds())
@@ -344,7 +342,7 @@ public class BillValidator {
 
 			if ((isRefIdOrBillNoProvided && !isBusinessServiceProvided)
 					|| (isBusinessServiceProvided && !isRefIdOrBillNoProvided))
-				throw new CustomException("EG_EXPENSE_BILL_SEARCH_ERROR",
+				throw new CustomException(ERR_BILL_SEARCH_ERROR,
 						"The values of referenceIds or billNumbers should be provided along with businessService for a bill search");
 		}
 	}
@@ -357,7 +355,7 @@ public class BillValidator {
 		List<String> businessCodeList = JsonPath.read(mdmsData.get(Constants.EXPENSE_MODULE_NAME).get(BUSINESS_SERVICE_MASTERNAME),CODE_FILTER);
 
 		if (!businessCodeList.contains(bill.getBusinessService())) {
-			errorMap.put("EG_EXPENSE_INVALID_BUSINESSSERVICE",
+			errorMap.put(ERR_INVALID_BUSINESSSERVICE,
 					"The business service value : " + bill.getBusinessService() + " is invalid");
 		}
 
@@ -381,7 +379,7 @@ public class BillValidator {
 					missingHeadCodes.add(item.getHeadCode());
 
 				if (amount.compareTo(paidAmount) < 0)
-					errorMap.put("EG_EXPENSE_LINEITEM_INVALID_AMOUNT",
+					errorMap.put(ERR_LINEITEM_INVALID_AMOUNT,
 							"The tax amount : " + amount + " cannot be lesser than the paid amount : " + paidAmount);
 				item.setPaidAmount(paidAmount);
 			}
@@ -402,7 +400,7 @@ public class BillValidator {
 					missingHeadCodes.add(payableLineItem.getHeadCode());
 
 				if (amount.compareTo(paidAmount) < 0)
-					errorMap.put("EG_EXPENSE_LINEITEM_INVALID_AMOUNT",
+					errorMap.put(ERR_LINEITEM_INVALID_AMOUNT,
 							"The tax amount : " + amount + " cannot be lesser than the paid amount : " + paidAmount);
 				payableLineItem.setPaidAmount(paidAmount);
 			}
@@ -419,7 +417,7 @@ public class BillValidator {
 		bill.setTotalPaidAmount(billPaidAmount);
 
 		if (!CollectionUtils.isEmpty(missingHeadCodes))
-			errorMap.put("EG_EXPENSE_INVALID_HEADCODES", "The following head codes are invalid : " + missingHeadCodes);
+			errorMap.put(ERR_INVALID_HEADCODES, "The following head codes are invalid : " + missingHeadCodes);
 	}
 
 	private void validateTenantId(BillRequest billRequest, Map<String, Map<String, JSONArray>> mdmsData) {
@@ -445,7 +443,7 @@ public class BillValidator {
 		Long dueDate = null != bill.getDueDate() ? bill.getDueDate() : Long.MAX_VALUE;
 
 		if(dueDate.compareTo(billDate) < 0)
-			errorMap.put("EG_EXPENSE_BILL_INVALID_DATE",
+			errorMap.put(ERR_BILL_INVALID_DATE,
 					"The due Date : " + billDate + " cannot be greater than the due Date : " + dueDate);
 	}
 
@@ -498,11 +496,11 @@ public class BillValidator {
 			Workflow workflow = billRequest.getWorkflow();
 
 			if (null == workflow)
-				throw new CustomException("EG_BILL_WF_ERROR", "workflow is mandatory when worflow is active");
+				throw new CustomException(ERR_BILL_WF_ERROR, MSG_BILL_WF_ERROR);
 
 			if (null == workflow.getAction())
-				errorMap.put("EG_BILL_WF_FIELDS_ERROR",
-						"workflow action is mandatory when worflow is active");
+				errorMap.put(ERR_BILL_WF_FIELDS_ERROR,
+						MSG_BILL_WF_FIELDS_ERROR);
 		}
 	}
 
@@ -511,7 +509,7 @@ public class BillValidator {
 		Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(billRequest.getRequestInfo(),
 				bill.getTenantId(), billRequest);
 		if(CollectionUtils.isEmpty(mdmsData)) {
-			throw new CustomException("EG_EXPENSE_MDMS_ERROR", "MDMS Data not found for the tenantid : " + bill.getTenantId());
+			throw new CustomException(ERR_MDMS_ERROR, "MDMS Data not found for the tenantid : " + bill.getTenantId());
 		}
 		return mdmsData;
 	}
@@ -691,15 +689,15 @@ public class BillValidator {
 
 		if (CollectionUtils.isEmpty(billIds)) {
 			errors.add(BulkUpdateError.builder()
-					.code("EG_EXPENSE_BULK_STATUS_EMPTY")
-					.message("At least one bill ID is required for bulk status update")
+					.code(ERR_BULK_STATUS_EMPTY)
+					.message(MSG_BULK_STATUS_EMPTY)
 					.build());
 			return errors;
 		}
 
 		if (billIds.size() > BULK_UPDATE_MAX_BILLS) {
 			errors.add(BulkUpdateError.builder()
-					.code("EG_EXPENSE_BULK_STATUS_MAX_LIMIT")
+					.code(ERR_BULK_STATUS_MAX_LIMIT)
 					.message("Maximum " + BULK_UPDATE_MAX_BILLS + " bill IDs allowed per bulk status update request")
 					.build());
 			return errors;
@@ -708,22 +706,22 @@ public class BillValidator {
 		Set<String> uniqueBillIds = new HashSet<>(billIds);
 		if (uniqueBillIds.size() != billIds.size()) {
 			errors.add(BulkUpdateError.builder()
-					.code("EG_EXPENSE_BULK_STATUS_DUPLICATE_IDS")
-					.message("Duplicate bill IDs are not allowed in bulk status update request")
+					.code(ERR_BULK_STATUS_DUPLICATE_IDS)
+					.message(MSG_BULK_STATUS_DUPLICATE_IDS)
 					.build());
 		}
 
 		if (bulkRequest.getStatus() == null || bulkRequest.getStatus().isBlank()) {
 			errors.add(BulkUpdateError.builder()
-					.code("EG_EXPENSE_BULK_STATUS_INVALID")
-					.message("Status is required for bulk status update")
+					.code(ERR_BULK_STATUS_INVALID)
+					.message(MSG_BULK_STATUS_INVALID)
 					.build());
 		}
 
 		if (bulkRequest.getTenantId() == null || bulkRequest.getTenantId().isBlank()) {
 			errors.add(BulkUpdateError.builder()
-					.code("EG_EXPENSE_BULK_STATUS_TENANT_REQUIRED")
-					.message("tenantId is required for bulk status update")
+					.code(ERR_BULK_STATUS_TENANT_REQUIRED)
+					.message(MSG_BULK_STATUS_TENANT_REQUIRED)
 					.build());
 		}
 
@@ -744,7 +742,7 @@ public class BillValidator {
 
 				List<Bill> billsFromSearch = billRepository.search(searchRequest, true);
 				if (CollectionUtils.isEmpty(billsFromSearch)) {
-					throw new CustomException("EG_EXPENSE_INVALID_BILL",
+					throw new CustomException(ERR_INVALID_BILL,
 							"Bill does not exist for id: " + billId);
 				}
 
@@ -795,7 +793,7 @@ public class BillValidator {
 		// 1. Fetch bill from DB
 		Bill billFromSearch = getBillById(request.getBillId(), request.getTenantId(), request.getRequestInfo());
 		if (billFromSearch == null)
-			throw new CustomException("EG_EXPENSE_INVALID_BILL",
+			throw new CustomException(ERR_INVALID_BILL,
 					"Bill not found: id=" + request.getBillId() + " tenantId=" + request.getTenantId());
 
 		// 2. Validate all requested detail IDs exist under this bill
@@ -808,7 +806,7 @@ public class BillValidator {
 				.collect(Collectors.toList());
 
 		if (!invalidIds.isEmpty())
-			throw new CustomException("EG_EXPENSE_INVALID_BILL_DETAIL_IDS",
+			throw new CustomException(ERR_INVALID_BILL_DETAIL_IDS,
 					"BillDetail ids not found under bill " + request.getBillId() + ": " + invalidIds);
 
 		// 3. Role-based field access — strips blocked fields in-place, returns warnings
@@ -840,49 +838,63 @@ public class BillValidator {
 				.map(Role::getCode)
 				.collect(Collectors.toSet());
 
-		boolean hasPaymentEditor   = userRoles.contains("PAYMENT_EDITOR");
-		boolean hasPaymentReviewer = userRoles.contains("PAYMENT_REVIEWER");
+		boolean hasPaymentEditor   = userRoles.contains(ROLE_PAYMENT_EDITOR);
+		boolean hasPaymentReviewer = userRoles.contains(ROLE_PAYMENT_REVIEWER);
 
 		if (!hasPaymentEditor && !hasPaymentReviewer)
-			throw new CustomException("EG_EXPENSE_UNAUTHORIZED",
-					"User does not have PAYMENT_EDITOR or PAYMENT_REVIEWER role to update bill details");
+			throw new CustomException(ERR_UNAUTHORIZED,
+					MSG_UNAUTHORIZED_UPDATE);
 
 		String billStatus = billFromSearch.getStatus() != null ? billFromSearch.getStatus().toString() : "";
 
-		boolean editorStatusMatch   = "PENDING_VERIFICATION".equals(billStatus) || "PARTIALLY_VERIFIED".equals(billStatus);
-		boolean reviewerStatusMatch = "UNDER_REVIEW".equals(billStatus);
+		boolean editorStatusMatch   = STATUS_PENDING_VERIFICATION.equals(billStatus) || STATUS_PARTIALLY_VERIFIED.equals(billStatus);
+		boolean reviewerStatusMatch = STATUS_UNDER_REVIEW.equals(billStatus);
 
 		List<org.egov.digit.expense.web.models.BillDetailUpdateError> warnings = new ArrayList<>();
 
 		if (hasPaymentEditor && editorStatusMatch) {
-			Set<String> allowedDetailStatuses = Set.of("PENDING_VERIFICATION", "VERIFICATION_FAILED");
-			for (org.egov.digit.expense.web.models.PartialBillDetail pd : request.getBillDetails()) {
+			Set<String> allowedDetailStatuses = Set.of(STATUS_PENDING_VERIFICATION, STATUS_VERIFICATION_FAILED);
+			Iterator<org.egov.digit.expense.web.models.PartialBillDetail> editorIter = request.getBillDetails().iterator();
+			while (editorIter.hasNext()) {
+				org.egov.digit.expense.web.models.PartialBillDetail pd = editorIter.next();
 				BillDetail db = searchDetailMap.get(pd.getId());
 				String detailStatus = db.getStatus() != null ? db.getStatus().toString() : null;
-				if (detailStatus != null && !allowedDetailStatuses.contains(detailStatus))
-					throw new CustomException("EG_EXPENSE_ROLE_STATUS_MISMATCH",
-							"PAYMENT_EDITOR cannot update bill detail " + pd.getId()
-							+ " — detail status must be PENDING_VERIFICATION or VERIFICATION_FAILED. Current: " + detailStatus);
+				if (detailStatus != null && !allowedDetailStatuses.contains(detailStatus)) {
+					warnings.add(org.egov.digit.expense.web.models.BillDetailUpdateError.builder()
+							.code(ERR_DETAIL_STATUS_SKIPPED)
+							.message("PAYMENT_EDITOR cannot update bill detail " + pd.getId()
+									+ " — detail status must be PENDING_VERIFICATION or VERIFICATION_FAILED. Current: " + detailStatus + "; skipped.")
+							.build());
+					editorIter.remove();
+					continue;
+				}
 				stripAmountFields(pd, db, warnings);
 			}
 			return warnings;
 		}
 
 		if (hasPaymentReviewer && reviewerStatusMatch) {
-			for (org.egov.digit.expense.web.models.PartialBillDetail pd : request.getBillDetails()) {
+			Iterator<org.egov.digit.expense.web.models.PartialBillDetail> reviewerIter = request.getBillDetails().iterator();
+			while (reviewerIter.hasNext()) {
+				org.egov.digit.expense.web.models.PartialBillDetail pd = reviewerIter.next();
 				BillDetail db = searchDetailMap.get(pd.getId());
 				String detailStatus = db.getStatus() != null ? db.getStatus().toString() : null;
-				if (!"UNDER_REVIEW".equals(detailStatus))
-					throw new CustomException("EG_EXPENSE_ROLE_STATUS_MISMATCH",
-							"PAYMENT_REVIEWER cannot update bill detail " + pd.getId()
-							+ " — detail status must be UNDER_REVIEW. Current: " + detailStatus);
+				if (!STATUS_UNDER_REVIEW.equals(detailStatus)) {
+					warnings.add(org.egov.digit.expense.web.models.BillDetailUpdateError.builder()
+							.code(ERR_DETAIL_STATUS_SKIPPED)
+							.message("PAYMENT_REVIEWER cannot update bill detail " + pd.getId()
+									+ " — detail status must be UNDER_REVIEW. Current: " + detailStatus + "; skipped.")
+							.build());
+					reviewerIter.remove();
+					continue;
+				}
 				stripPayeeFields(pd, db, warnings);
 			}
 			return warnings;
 		}
 
 		String displayStatus = billFromSearch.getStatus() != null ? billFromSearch.getStatus().toString() : "null";
-		throw new CustomException("EG_EXPENSE_ROLE_STATUS_MISMATCH",
+		throw new CustomException(ERR_ROLE_STATUS_MISMATCH,
 				"Bill status '" + displayStatus + "' does not permit update by the current user's role(s). "
 				+ "PAYMENT_EDITOR requires PENDING_VERIFICATION or PARTIALLY_VERIFIED; "
 				+ "PAYMENT_REVIEWER requires UNDER_REVIEW.");
@@ -921,7 +933,7 @@ public class BillValidator {
 		if (!stripped.isEmpty())
 			warnings.add(org.egov.digit.expense.web.models.BillDetailUpdateError.builder()
 					.billDetailId(pd.getId())
-					.code("EG_EXPENSE_FIELD_STRIPPED_PAYMENT_EDITOR")
+					.code(ERR_FIELD_STRIPPED_EDITOR)
 					.message("PAYMENT_EDITOR cannot update " + stripped + " on bill detail " + pd.getId() + "; ignored.")
 					.build());
 	}
@@ -964,7 +976,7 @@ public class BillValidator {
 		if (!stripped.isEmpty())
 			warnings.add(org.egov.digit.expense.web.models.BillDetailUpdateError.builder()
 					.billDetailId(pd.getId())
-					.code("EG_EXPENSE_FIELD_STRIPPED_PAYMENT_REVIEWER")
+					.code(ERR_FIELD_STRIPPED_REVIEWER)
 					.message("PAYMENT_REVIEWER cannot update " + stripped + " on bill detail " + pd.getId() + "; ignored.")
 					.build());
 	}
@@ -983,12 +995,12 @@ public class BillValidator {
 
 	public void validateReportMetaUpdateRequest(org.egov.digit.expense.web.models.ReportMetaUpdateRequest request) {
 		if (request == null)
-			throw new CustomException("EG_BILL_META_UPDATE_ERROR", "Request is mandatory");
+			throw new CustomException(ERR_BILL_META_UPDATE_ERROR, MSG_META_UPDATE_REQUEST_MANDATORY);
 		if (!StringUtils.hasText(request.getBillId()))
-			throw new CustomException("EG_BILL_META_UPDATE_ERROR", "billId is mandatory");
+			throw new CustomException(ERR_BILL_META_UPDATE_ERROR, MSG_META_UPDATE_BILL_ID_MANDATORY);
 		if (!StringUtils.hasText(request.getTenantId()))
-			throw new CustomException("EG_BILL_META_UPDATE_ERROR", "tenantId is mandatory");
+			throw new CustomException(ERR_BILL_META_UPDATE_ERROR, MSG_META_UPDATE_TENANT_ID_MANDATORY);
 		if (request.getReportDetails() == null || request.getReportDetails().isEmpty())
-			throw new CustomException("EG_BILL_META_UPDATE_ERROR", "reportDetails is mandatory and must not be empty");
+			throw new CustomException(ERR_BILL_META_UPDATE_ERROR, MSG_META_UPDATE_REPORT_MANDATORY);
 	}
 }
