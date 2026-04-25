@@ -1,0 +1,277 @@
+package org.egov.digit.expense.service.scheduler;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.digit.expense.service.BillAggregationService;
+import org.egov.digit.expense.service.PaymentWorkflowService;
+import org.egov.digit.expense.util.WorkflowUtil;
+import org.egov.digit.expense.web.models.*;
+import org.egov.digit.expense.web.models.enums.Actions;
+import org.egov.digit.expense.web.models.enums.SchedulerJobType;
+import org.egov.digit.expense.web.models.enums.Status;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import static org.egov.digit.expense.config.Constants.*;
+
+/**
+ * Handles {@link SchedulerJobType#DETAIL_WF_UPDATE} jobs (per-detail path).
+ *
+ * <p>Transitions a single BillDetail through a non-external WF action
+ * (IGNORE_ERRORS, SEND_FOR_REVIEW, SEND_FOR_APPROVAL, PAYMENT_INITIATION) and
+ * then calls {@link BillAggregationService#checkAndAggregateBill} to fire the
+ * bill-level WF transition when all sibling details have settled.
+ *
+ * <p>For PAYMENT_INITIATION, after transitioning the detail to PAYMENT_IN_PROGRESS,
+ * the handler calls {@link BillAggregationService#triggerTransferAfterPaymentInitiation}
+ * once all details are PAYMENT_IN_PROGRESS — this creates the MTN Transfer tasks.
+ *
+ * <p>Each job targets exactly one BillDetail (referenceId = billDetailId).
+ * Failures for one detail do not block other details.
+ */
+@Component
+@Slf4j
+public class DetailWfUpdateHandler implements SchedulerJobHandler {
+
+    private final PaymentWorkflowService paymentWorkflowService;
+    private final BillAggregationService billAggregationService;
+    private final WorkflowUtil workflowUtil;
+    private final ObjectMapper objectMapper;
+
+    @Autowired
+    public DetailWfUpdateHandler(PaymentWorkflowService paymentWorkflowService,
+                                  BillAggregationService billAggregationService,
+                                  WorkflowUtil workflowUtil,
+                                  ObjectMapper objectMapper) {
+        this.paymentWorkflowService = paymentWorkflowService;
+        this.billAggregationService = billAggregationService;
+        this.workflowUtil = workflowUtil;
+        this.objectMapper = objectMapper;
+    }
+
+    @Override
+    public SchedulerJobType getJobType() {
+        return SchedulerJobType.DETAIL_WF_UPDATE;
+    }
+
+    @Override
+    public SchedulerJobResult handle(SchedulerJob job) {
+        String billDetailId = job.getReferenceId();
+        String tenantId = job.getTenantId();
+
+        try {
+            DetailWfUpdateContext ctx = objectMapper.convertValue(job.getContext(), DetailWfUpdateContext.class);
+            String billId = ctx.getBillId();
+            String phase = ctx.getPhase();
+            RequestInfo requestInfo = ctx.getRequestInfo();
+
+            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+            if (bill == null) {
+                log.warn("DETAIL_WF_UPDATE: bill={} not found tenant={} — marking FAILED", billId, tenantId);
+                return SchedulerJobResult.FAILED;
+            }
+
+            BillDetail detail = findDetail(bill, billDetailId);
+            if (detail == null) {
+                log.warn("DETAIL_WF_UPDATE: detail={} not found in bill={} — marking FAILED", billDetailId, billId);
+                return SchedulerJobResult.FAILED;
+            }
+
+            Actions action = resolveAction(phase);
+            if (action == null) {
+                log.error("DETAIL_WF_UPDATE: unknown phase '{}' for detail={} — marking FAILED", phase, billDetailId);
+                return SchedulerJobResult.FAILED;
+            }
+
+            // Idempotency: already in or past the target state
+            if (isAlreadyTransitioned(detail.getStatus(), phase)) {
+                log.info("DETAIL_WF_UPDATE: detail={} already past phase {} (status={}) — checking aggregation",
+                        billDetailId, phase, detail.getStatus());
+                aggregate(bill, billId, tenantId, phase, requestInfo);
+                return SchedulerJobResult.DONE;
+            }
+
+            try {
+                paymentWorkflowService.transitionBillDetail(detail, action, requestInfo);
+                paymentWorkflowService.pushBillUpdate(buildSingleDetailBill(bill, detail), requestInfo);
+                log.info("DETAIL_WF_UPDATE: detail={} transitioned via {} → {}", billDetailId, action, detail.getStatus());
+            } catch (Exception e) {
+                if (workflowUtil.isRetryableWfError(e)) {
+                    log.info("DETAIL_WF_UPDATE: detail={} already transitioned (idempotent, phase={})", billDetailId, phase);
+                } else {
+                    log.error("DETAIL_WF_UPDATE: WF transition failed for detail={} phase={}", billDetailId, phase, e);
+                    return SchedulerJobResult.RETRY;
+                }
+            }
+
+            aggregate(bill, billId, tenantId, phase, requestInfo);
+            return SchedulerJobResult.DONE;
+
+        } catch (Exception e) {
+            log.error("DETAIL_WF_UPDATE: error for detail={} tenant={}", billDetailId, tenantId, e);
+            return SchedulerJobResult.RETRY;
+        }
+    }
+
+    /**
+     * Called when this job exhausts all retries. Forces the detail to a safe terminal state
+     * and applies bill-level compensation so the bill doesn't get permanently locked.
+     * Single attempt — no blocking sleep on the scheduler thread.
+     */
+    @Override
+    public void onMaxAttemptsExceeded(SchedulerJob job) {
+        String billDetailId = job.getReferenceId();
+        String tenantId = job.getTenantId();
+        log.error("DETAIL_WF_UPDATE: max attempts exceeded for detail={} tenant={}", billDetailId, tenantId);
+        try {
+            DetailWfUpdateContext ctx = objectMapper.convertValue(job.getContext(), DetailWfUpdateContext.class);
+            String billId = ctx.getBillId();
+            String phase = ctx.getPhase();
+            RequestInfo requestInfo = ctx.getRequestInfo();
+
+            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+            if (bill == null) return;
+
+            BillDetail detail = findDetail(bill, billDetailId);
+            if (detail == null) return;
+
+            if (POLL_PHASE_PAYMENT_INITIATION.equals(phase)) {
+                // For payment initiation, force the detail to PAYMENT_IN_PROGRESS then trigger Transfer.
+                if (detail.getStatus() == Status.REVIEWED || detail.getStatus() == Status.PAYMENT_FAILED) {
+                    try {
+                        paymentWorkflowService.transitionBillDetail(detail, Actions.PAYMENT_INITIATION, requestInfo);
+                        paymentWorkflowService.pushBillUpdate(buildSingleDetailBill(bill, detail), requestInfo);
+                    } catch (Exception ex) {
+                        if (!workflowUtil.isRetryableWfError(ex)) {
+                            log.error("CRITICAL: DETAIL_WF_UPDATE force PAYMENT_INITIATION failed for detail={} — manual intervention required",
+                                    billDetailId, ex);
+                        }
+                    }
+                }
+                // Re-fetch after potential transition and check if we can trigger Transfer
+                Bill refreshed = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+                if (refreshed != null) {
+                    billAggregationService.triggerTransferAfterPaymentInitiation(refreshed, requestInfo);
+                }
+                return;
+            }
+
+            // For non-payment phases, apply the bill-level FAIL compensation.
+            applyBillFailCompensation(bill, requestInfo, phase);
+
+        } catch (Exception e) {
+            log.error("DETAIL_WF_UPDATE: onMaxAttemptsExceeded error for detail={}", billDetailId, e);
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /** Routes to the correct aggregation method for the phase. */
+    private void aggregate(Bill bill, String billId, String tenantId, String phase, RequestInfo requestInfo) {
+        if (POLL_PHASE_PAYMENT_INITIATION.equals(phase)) {
+            // All details PAYMENT_IN_PROGRESS → trigger MTN Transfer tasks (idempotent).
+            billAggregationService.checkAndAggregateBill(billId, tenantId, POLL_PHASE_PAYMENT_INITIATION, requestInfo);
+            // The BillAggregationService.checkAndAggregateBill for PAYMENT_INITIATION returns null action
+            // and instead triggers createTransferTask when all details are PAYMENT_IN_PROGRESS.
+            // We delegate that call here explicitly for clarity.
+            Bill refreshed = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+            if (refreshed != null) {
+                boolean allPaymentInProgress = refreshed.getBillDetails().stream()
+                        .noneMatch(d -> d.getStatus() == Status.REVIEWED);
+                if (allPaymentInProgress) {
+                    billAggregationService.triggerTransferAfterPaymentInitiation(refreshed, requestInfo);
+                }
+            }
+        } else {
+            billAggregationService.checkAndAggregateBill(billId, tenantId, phase, requestInfo);
+        }
+    }
+
+    private void applyBillFailCompensation(Bill bill, RequestInfo requestInfo, String phase) {
+        try {
+            paymentWorkflowService.transitionBill(bill, Actions.FAIL, requestInfo);
+            paymentWorkflowService.pushBillUpdate(bill, requestInfo);
+            log.warn("DETAIL_WF_UPDATE: compensation applied FAIL for bill={} phase={}", bill.getId(), phase);
+        } catch (Exception ex) {
+            if (workflowUtil.isRetryableWfError(ex)) {
+                log.info("DETAIL_WF_UPDATE: bill={} already exited phase {} (idempotent)", bill.getId(), phase);
+            } else {
+                log.error("CRITICAL: DETAIL_WF_UPDATE compensation FAIL failed for bill={} phase={} — " +
+                        "stuck-job recovery will reset the scheduler job for retry", bill.getId(), phase, ex);
+            }
+        }
+    }
+
+    private Actions resolveAction(String phase) {
+        return switch (phase) {
+            case POLL_PHASE_IGNORE_ERRORS      -> Actions.IGNORE_ERRORS_AND_VERIFY;
+            case POLL_PHASE_SEND_FOR_REVIEW    -> Actions.SEND_FOR_REVIEW;
+            case POLL_PHASE_SEND_FOR_APPROVAL  -> Actions.SEND_FOR_APPROVAL;
+            case POLL_PHASE_PAYMENT_INITIATION -> Actions.PAYMENT_INITIATION;
+            default -> null;
+        };
+    }
+
+    /** Returns true if the detail is already in or past the target state for the given phase. */
+    private boolean isAlreadyTransitioned(Status status, String phase) {
+        return switch (phase) {
+            case POLL_PHASE_IGNORE_ERRORS      -> status == Status.VERIFIED || isAtOrBeyondVerified(status);
+            case POLL_PHASE_SEND_FOR_REVIEW    -> status == Status.UNDER_REVIEW || isAtOrBeyondUnderReview(status);
+            case POLL_PHASE_SEND_FOR_APPROVAL  -> status == Status.REVIEWED || isAtOrBeyondReviewed(status);
+            case POLL_PHASE_PAYMENT_INITIATION -> status == Status.PAYMENT_IN_PROGRESS
+                    || status == Status.PAID || status == Status.FULLY_PAID
+                    || status == Status.PAYMENT_FAILED;
+            default -> false;
+        };
+    }
+
+    private boolean isAtOrBeyondVerified(Status s) {
+        return s == Status.UNDER_REVIEW || s == Status.REVIEWED
+                || s == Status.PAYMENT_IN_PROGRESS || s == Status.PAYMENT_FAILED
+                || s == Status.PAID || s == Status.FULLY_PAID;
+    }
+
+    private boolean isAtOrBeyondUnderReview(Status s) {
+        return s == Status.REVIEWED || s == Status.PAYMENT_IN_PROGRESS
+                || s == Status.PAYMENT_FAILED || s == Status.PAID || s == Status.FULLY_PAID;
+    }
+
+    private boolean isAtOrBeyondReviewed(Status s) {
+        return s == Status.PAYMENT_IN_PROGRESS || s == Status.PAYMENT_FAILED
+                || s == Status.PAID || s == Status.FULLY_PAID;
+    }
+
+    private BillDetail findDetail(Bill bill, String billDetailId) {
+        if (bill.getBillDetails() == null) return null;
+        return bill.getBillDetails().stream()
+                .filter(d -> billDetailId.equals(d.getId()))
+                .findFirst().orElse(null);
+    }
+
+    private Bill buildSingleDetailBill(Bill bill, BillDetail detail) {
+        return Bill.builder()
+                .id(bill.getId())
+                .tenantId(bill.getTenantId())
+                .localityCode(bill.getLocalityCode())
+                .billDate(bill.getBillDate())
+                .dueDate(bill.getDueDate())
+                .totalAmount(bill.getTotalAmount())
+                .totalWageAmount(bill.getTotalWageAmount())
+                .totalFoodAmount(bill.getTotalFoodAmount())
+                .totalTransportAmount(bill.getTotalTransportAmount())
+                .totalPaidAmount(bill.getTotalPaidAmount())
+                .businessService(bill.getBusinessService())
+                .referenceId(bill.getReferenceId())
+                .fromPeriod(bill.getFromPeriod())
+                .toPeriod(bill.getToPeriod())
+                .paymentStatus(bill.getPaymentStatus())
+                .status(bill.getStatus())
+                .billNumber(bill.getBillNumber())
+                .payer(bill.getPayer())
+                .additionalDetails(bill.getAdditionalDetails())
+                .auditDetails(bill.getAuditDetails())
+                .billDetails(java.util.Collections.singletonList(detail))
+                .build();
+    }
+}

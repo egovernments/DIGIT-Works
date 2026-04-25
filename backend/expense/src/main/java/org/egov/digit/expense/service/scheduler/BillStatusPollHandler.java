@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.digit.expense.service.PaymentWorkflowService;
+import org.egov.digit.expense.util.WorkflowUtil;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillDetail;
 import org.egov.digit.expense.web.models.BillPollContext;
@@ -33,12 +34,15 @@ import static org.egov.digit.expense.config.Constants.*;
 public class BillStatusPollHandler implements SchedulerJobHandler {
 
     private final PaymentWorkflowService paymentWorkflowService;
+    private final WorkflowUtil workflowUtil;
     private final ObjectMapper objectMapper;
 
     @Autowired
     public BillStatusPollHandler(PaymentWorkflowService paymentWorkflowService,
+                                  WorkflowUtil workflowUtil,
                                   ObjectMapper objectMapper) {
         this.paymentWorkflowService = paymentWorkflowService;
+        this.workflowUtil = workflowUtil;
         this.objectMapper = objectMapper;
     }
 
@@ -83,7 +87,9 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
 
     /**
      * Called when this job exceeds maxAttempts. Applies the appropriate FAIL action on the bill
-     * so it is not left stranded in an in-progress locked state.
+     * so it is not left stranded in an in-progress locked state. Single attempt — no blocking
+     * sleep on the scheduler thread. If the transition fails transiently, the scheduler's
+     * stuck-job recovery will reset this job for another cycle.
      *
      * <pre>
      * IGNORING_ERRORS_IN_PROGRESS → FAIL → PARTIALLY_VERIFIED
@@ -104,33 +110,27 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
             if (bill == null) return;
 
             Actions failAction = switch (phase) {
-                case POLL_PHASE_VERIFICATION    -> Actions.FAILED;  // VERIFICATION_IN_PROGRESS → PENDING_VERIFICATION (re-try allowed)
-                case POLL_PHASE_IGNORE_ERRORS   -> Actions.FAIL;    // IGNORING_ERRORS_IN_PROGRESS → PARTIALLY_VERIFIED
-                case POLL_PHASE_SEND_FOR_REVIEW -> Actions.FAIL;    // SENDING_FOR_REVIEW → FULLY_VERIFIED
-                case POLL_PHASE_REVIEW          -> Actions.FAIL;    // REVIEW_IN_PROGRESS → UNDER_REVIEW
-                case POLL_PHASE_PAYMENT         -> Actions.FAILED;  // PAYMENT_IN_PROGRESS → timed out, mark FAILED
+                case POLL_PHASE_VERIFICATION    -> Actions.FAILED;
+                case POLL_PHASE_IGNORE_ERRORS   -> Actions.FAIL;
+                case POLL_PHASE_SEND_FOR_REVIEW -> Actions.FAIL;
+                case POLL_PHASE_REVIEW          -> Actions.FAIL;
+                case POLL_PHASE_PAYMENT         -> Actions.FAILED;
                 default                         -> null;
             };
 
             if (failAction != null) {
-                for (int attempt = 1; attempt <= 3; attempt++) {
-                    try {
-                        paymentWorkflowService.transitionBill(bill, failAction, requestInfo);
-                        enrichAuditForSystemUpdate(bill, requestInfo);
-                        paymentWorkflowService.pushBillUpdate(bill, requestInfo);
-                        log.warn("BILL_STATUS_POLL max attempts exceeded — applied FAIL action for bill={} phase={} (attempt {})",
-                                billId, phase, attempt);
-                        break;
-                    } catch (Exception ex) {
-                        if (attempt == 3) {
-                            log.error("CRITICAL: onMaxAttemptsExceeded FAIL action failed after 3 attempts for bill={} phase={} — reconciliation will recover",
-                                    billId, phase, ex);
-                        } else {
-                            log.warn("onMaxAttemptsExceeded FAIL attempt {}/3 failed for bill={} phase={}: {}",
-                                    attempt, billId, phase, ex.getMessage());
-                            try { Thread.sleep(500L * attempt); }
-                            catch (InterruptedException ie) { Thread.currentThread().interrupt(); break; }
-                        }
+                try {
+                    paymentWorkflowService.transitionBill(bill, failAction, requestInfo);
+                    enrichAuditForSystemUpdate(bill, requestInfo);
+                    paymentWorkflowService.pushBillUpdate(bill, requestInfo);
+                    log.warn("BILL_STATUS_POLL max attempts exceeded — applied {} for bill={} phase={}",
+                            failAction, billId, phase);
+                } catch (Exception ex) {
+                    if (workflowUtil.isRetryableWfError(ex)) {
+                        log.info("Bill {} already exited phase {} (idempotent) — onMaxAttemptsExceeded no-op", billId, phase);
+                    } else {
+                        log.error("CRITICAL: onMaxAttemptsExceeded FAIL action failed for bill={} phase={} — " +
+                                "stuck-job recovery will reset the scheduler job for retry", billId, phase, ex);
                     }
                 }
             }
@@ -160,7 +160,13 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
         long inProgress = countDetailsInState(bill, Status.VERIFICATION_IN_PROGRESS);
 
         if (pending > 0 || inProgress > 0) {
-            log.debug("Bill {} VERIFICATION: {} pending, {} in-progress — retrying",
+            // Dispatch DETAIL_VERIFY scheduler retry jobs for each unsettled detail so the
+            // scheduler handles them independently rather than relying solely on this poll cycling.
+            bill.getBillDetails().stream()
+                    .filter(d -> d.getStatus() == Status.PENDING_VERIFICATION
+                              || d.getStatus() == Status.VERIFICATION_IN_PROGRESS)
+                    .forEach(d -> paymentWorkflowService.insertDetailVerifyRetryJob(d, bill, requestInfo));
+            log.debug("Bill {} VERIFICATION: {} pending, {} in-progress — dispatched retry jobs",
                     bill.getId(), pending, inProgress);
             return SchedulerJobResult.RETRY;
         }
@@ -193,7 +199,10 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
         boolean anyFailed = bill.getBillDetails().stream()
                 .anyMatch(d -> d.getStatus() == Status.VERIFICATION_FAILED);
         if (anyFailed) {
-            log.debug("Bill {} IGNORE_ERRORS: detail(s) still VERIFICATION_FAILED — retrying", bill.getId());
+            bill.getBillDetails().stream()
+                    .filter(d -> d.getStatus() == Status.VERIFICATION_FAILED)
+                    .forEach(d -> paymentWorkflowService.insertDetailWfUpdateRetryJob(d, bill, POLL_PHASE_IGNORE_ERRORS, requestInfo));
+            log.debug("Bill {} IGNORE_ERRORS: detail(s) still VERIFICATION_FAILED — dispatched retry jobs", bill.getId());
             return SchedulerJobResult.RETRY;
         }
 
@@ -223,7 +232,10 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
         boolean anyVerified = bill.getBillDetails().stream()
                 .anyMatch(d -> d.getStatus() == Status.VERIFIED);
         if (anyVerified) {
-            log.debug("Bill {} SEND_FOR_REVIEW: detail(s) still VERIFIED — retrying", bill.getId());
+            bill.getBillDetails().stream()
+                    .filter(d -> d.getStatus() == Status.VERIFIED)
+                    .forEach(d -> paymentWorkflowService.insertDetailWfUpdateRetryJob(d, bill, POLL_PHASE_SEND_FOR_REVIEW, requestInfo));
+            log.debug("Bill {} SEND_FOR_REVIEW: detail(s) still VERIFIED — dispatched retry jobs", bill.getId());
             return SchedulerJobResult.RETRY;
         }
 
@@ -253,7 +265,10 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
         boolean anyUnderReview = bill.getBillDetails().stream()
                 .anyMatch(d -> d.getStatus() == Status.UNDER_REVIEW);
         if (anyUnderReview) {
-            log.debug("Bill {} REVIEW: detail(s) still UNDER_REVIEW — retrying", bill.getId());
+            bill.getBillDetails().stream()
+                    .filter(d -> d.getStatus() == Status.UNDER_REVIEW)
+                    .forEach(d -> paymentWorkflowService.insertDetailWfUpdateRetryJob(d, bill, POLL_PHASE_SEND_FOR_APPROVAL, requestInfo));
+            log.debug("Bill {} REVIEW: detail(s) still UNDER_REVIEW — dispatched retry jobs", bill.getId());
             return SchedulerJobResult.RETRY;
         }
 

@@ -374,7 +374,15 @@ public class Configuration {
 	@Value("${wf.transition.retry.initial.delay.ms:200}")
 	private long wfTransitionRetryInitialDelayMs;
 
-	public List<String> getSchedulerBootstrapTenants() {
+	/**
+	 * Delay before a safety-net BILL_STATUS_POLL job fires.
+	 * Should be long enough for all per-detail jobs + any external API calls to complete.
+	 * Default: 60 seconds.
+	 */
+	@Value("${task.scheduler.safety.net.delay.ms:60000}")
+	private long schedulerSafetyNetDelayMs;
+
+public List<String> getSchedulerBootstrapTenants() {
 		if (schedulerBootstrapTenantsRaw == null || schedulerBootstrapTenantsRaw.isBlank()) {
 			return Collections.emptyList();
 		}

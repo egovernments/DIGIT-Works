@@ -52,6 +52,7 @@ public class Task {
 
 	public enum Type {
 		Verify,
-		Transfer
+		Transfer,
+		WfUpdate
 	}
 }

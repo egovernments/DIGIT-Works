@@ -137,14 +137,6 @@ public class BillService {
 		List<Bill> billsFromSearch = validator.validateUpdateRequest(billRequest);
 		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
 
-		// Detect system update flag set by health-expense-calculator after report generation.
-		// If present, remove it before persistence and skip the report regeneration trigger (cycle prevention).
-		boolean isSystemUpdate = isSystemUpdate(bill);
-		if (isSystemUpdate) {
-			removeSystemUpdateFlag(bill);
-			log.info("System update detected for billId: {} — skipping report regeneration trigger", bill.getId());
-		}
-
 		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
 
 			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
@@ -165,9 +157,7 @@ public class BillService {
 			expenseProducer.push(tenantId, config.getBillUpdateTopic(), billRequest);
 		}
 
-		if (!isSystemUpdate) {
-			pushReportRegenerationTrigger(bill, requestInfo);
-		}
+		pushReportRegenerationTrigger(bill, requestInfo);
 
 		response = BillResponse.builder()
 				.bills(Arrays.asList(billRequest.getBill()))
@@ -247,37 +237,6 @@ public class BillService {
 		}
 		bill.setBillDetails(allBillDetails);
 		log.info("All bill details pushed to kafka");
-	}
-
-	/**
-	 * Returns true if this bill update was made by the health-expense-calculator
-	 * after report generation. The calculator sets _systemUpdate=true to signal
-	 * that report regeneration must NOT be re-triggered (cycle prevention).
-	 */
-	private boolean isSystemUpdate(Bill bill) {
-		if (bill.getAdditionalDetails() == null) return false;
-		try {
-			Map<?, ?> ad = objectMapper.convertValue(bill.getAdditionalDetails(), Map.class);
-			return Boolean.TRUE.equals(ad.get("_systemUpdate"));
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	/**
-	 * Removes the _systemUpdate flag from additionalDetails so it is never persisted to DB.
-	 */
-	private void removeSystemUpdateFlag(Bill bill) {
-		if (bill.getAdditionalDetails() == null) return;
-		try {
-			Map<String, Object> ad = objectMapper.convertValue(
-					bill.getAdditionalDetails(),
-					objectMapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class));
-			ad.remove("_systemUpdate");
-			bill.setAdditionalDetails(ad);
-		} catch (Exception e) {
-			log.warn("Failed to remove _systemUpdate flag from bill {}: {}", bill.getId(), e.getMessage());
-		}
 	}
 
 	/**

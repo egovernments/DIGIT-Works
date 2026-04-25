@@ -38,6 +38,7 @@ import java.util.stream.Stream;
 
 import static org.egov.digit.expense.config.Constants.ERROR;
 import static org.egov.digit.expense.config.Constants.EXCEPTION;
+import static org.egov.digit.expense.config.Constants.POLL_PHASE_VERIFICATION;
 
 @Service
 @Slf4j
@@ -67,13 +68,16 @@ public class MTNService implements PaymentProviderService {
 
     private final ObjectMapper objectMapper;
 
+    private final BillAggregationService billAggregationService;
+
     @Autowired
     public MTNService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator,
                       WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil,
                       ResponseInfoFactory responseInfoFactory,
                       TaskRepository taskRepository, MTNUtil mtnUtil,
                       SchedulerJobRepository schedulerJobRepository, SchedulerJobRegistry schedulerJobRegistry,
-                      ObjectMapper objectMapper) {
+                      ObjectMapper objectMapper,
+                      BillAggregationService billAggregationService) {
         this.expenseProducer = expenseProducer;
         this.config = config;
         this.validator = validator;
@@ -86,6 +90,7 @@ public class MTNService implements PaymentProviderService {
         this.schedulerJobRepository = schedulerJobRepository;
         this.schedulerJobRegistry = schedulerJobRegistry;
         this.objectMapper = objectMapper;
+        this.billAggregationService = billAggregationService;
     }
 
     private Task fetchOrCreateTask(BillTaskRequest billTaskRequest, Task.Type type) {
@@ -324,6 +329,13 @@ public class MTNService implements PaymentProviderService {
                 log.warn("Bill {} has unexpected status {} during verify task — detail(s) still persisted",
                         billFromSearch.getId(), billFromSearch.getStatus());
             }
+
+            // Inline aggregation: if this detail was the last one to settle, transition the bill now.
+            // BILL_STATUS_POLL (safety-net at 10s) handles any missed aggregations.
+            billAggregationService.checkAndAggregateBill(
+                    billFromSearch.getId(), billFromSearch.getTenantId(),
+                    POLL_PHASE_VERIFICATION, taskRequest.getRequestInfo());
+
         } finally {
             task.setStatus(Status.DONE);
             expenseProducer.push(billFromRequest.getTenantId(), config.getTaskUpdateTopic(), task);

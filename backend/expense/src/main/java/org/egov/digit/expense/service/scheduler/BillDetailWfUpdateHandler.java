@@ -3,6 +3,7 @@ package org.egov.digit.expense.service.scheduler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.digit.expense.service.BillAggregationService;
 import org.egov.digit.expense.service.PaymentWorkflowService;
 import org.egov.digit.expense.util.WorkflowUtil;
 import org.egov.digit.expense.web.models.Bill;
@@ -35,14 +36,17 @@ public class BillDetailWfUpdateHandler implements SchedulerJobHandler {
     private final PaymentWorkflowService paymentWorkflowService;
     private final WorkflowUtil workflowUtil;
     private final ObjectMapper objectMapper;
+    private final BillAggregationService billAggregationService;
 
     @Autowired
     public BillDetailWfUpdateHandler(PaymentWorkflowService paymentWorkflowService,
                                      WorkflowUtil workflowUtil,
-                                     ObjectMapper objectMapper) {
+                                     ObjectMapper objectMapper,
+                                     BillAggregationService billAggregationService) {
         this.paymentWorkflowService = paymentWorkflowService;
         this.workflowUtil = workflowUtil;
         this.objectMapper = objectMapper;
+        this.billAggregationService = billAggregationService;
     }
 
     @Override
@@ -190,25 +194,25 @@ public class BillDetailWfUpdateHandler implements SchedulerJobHandler {
     }
 
     private void applyBillFailCompensation(Bill bill, RequestInfo requestInfo, String phase) {
-        for (int attempt = 1; attempt <= 3; attempt++) {
-            try {
-                paymentWorkflowService.transitionBill(bill, Actions.FAIL, requestInfo);
-                paymentWorkflowService.pushBillUpdate(bill, requestInfo);
-                log.warn("BILL_DETAIL_WF_UPDATE compensation applied FAIL for bill={} phase={}", bill.getId(), phase);
-                return;
-            } catch (Exception ex) {
-                if (attempt == 3) {
-                    log.error("CRITICAL: compensation FAIL action failed after 3 attempts for bill={} phase={} — manual intervention required",
-                            bill.getId(), phase, ex);
-                } else {
-                    log.warn("Compensation FAIL attempt {}/3 failed for bill={} phase={}: {}",
-                            attempt, bill.getId(), phase, ex.getMessage());
-                    try { Thread.sleep(500L * attempt); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); return; }
-                }
+        try {
+            paymentWorkflowService.transitionBill(bill, Actions.FAIL, requestInfo);
+            paymentWorkflowService.pushBillUpdate(bill, requestInfo);
+            log.warn("BILL_DETAIL_WF_UPDATE compensation applied FAIL for bill={} phase={}", bill.getId(), phase);
+        } catch (Exception ex) {
+            if (workflowUtil.isRetryableWfError(ex)) {
+                log.info("Bill {} already exited phase {} (idempotent) — compensation no-op", bill.getId(), phase);
+            } else {
+                log.error("CRITICAL: compensation FAIL action failed for bill={} phase={} — " +
+                        "stuck-job recovery will reset the scheduler job for retry", bill.getId(), phase, ex);
             }
         }
     }
 
+    /**
+     * Forces any remaining REVIEWED/PAYMENT_FAILED details to PAYMENT_IN_PROGRESS, then
+     * triggers Transfer task creation so the payment is not left permanently stranded.
+     * Called when this batch job exhausts all retries mid-PAYMENT_INITIATION phase.
+     */
     private void forcePaymentInitiationOnRemainingDetails(Bill bill, RequestInfo requestInfo) {
         boolean anyForced = false;
         for (BillDetail detail : bill.getBillDetails()) {
@@ -230,6 +234,9 @@ public class BillDetailWfUpdateHandler implements SchedulerJobHandler {
         }
         if (anyForced) {
             paymentWorkflowService.pushBillUpdate(bill, requestInfo);
+            // Ensure Transfer tasks are created and the BILL_STATUS_POLL(PAYMENT) safety-net is active
+            // so the bill can exit PAYMENT_IN_PROGRESS even when the batch job exhausted its retries.
+            billAggregationService.triggerTransferAfterPaymentInitiation(bill, requestInfo);
         }
     }
 }
