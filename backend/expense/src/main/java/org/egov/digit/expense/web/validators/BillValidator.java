@@ -861,9 +861,8 @@ public class BillValidator {
 				String detailStatus = db.getStatus() != null ? db.getStatus().toString() : null;
 				if (detailStatus != null && !allowedDetailStatuses.contains(detailStatus)) {
 					warnings.add(org.egov.digit.expense.web.models.BillDetailUpdateError.builder()
-							.code(ERR_DETAIL_STATUS_SKIPPED)
-							.message("PAYMENT_EDITOR cannot update bill detail " + pd.getId()
-									+ " — detail status must be PENDING_VERIFICATION or VERIFICATION_FAILED. Current: " + detailStatus + "; skipped.")
+							.code(ERR_DETAIL_STATUS_SKIPPED_EDITOR)
+							.message("Bill detail " + pd.getId() + " cannot be updated at its current stage.")
 							.build());
 					editorIter.remove();
 					continue;
@@ -881,9 +880,8 @@ public class BillValidator {
 				String detailStatus = db.getStatus() != null ? db.getStatus().toString() : null;
 				if (!STATUS_UNDER_REVIEW.equals(detailStatus)) {
 					warnings.add(org.egov.digit.expense.web.models.BillDetailUpdateError.builder()
-							.code(ERR_DETAIL_STATUS_SKIPPED)
-							.message("PAYMENT_REVIEWER cannot update bill detail " + pd.getId()
-									+ " — detail status must be UNDER_REVIEW. Current: " + detailStatus + "; skipped.")
+							.code(ERR_DETAIL_STATUS_SKIPPED_REVIEWER)
+							.message("Bill detail " + pd.getId() + " is not available for review at its current stage.")
 							.build());
 					reviewerIter.remove();
 					continue;
@@ -893,11 +891,8 @@ public class BillValidator {
 			return warnings;
 		}
 
-		String displayStatus = billFromSearch.getStatus() != null ? billFromSearch.getStatus().toString() : "null";
 		throw new CustomException(ERR_ROLE_STATUS_MISMATCH,
-				"Bill status '" + displayStatus + "' does not permit update by the current user's role(s). "
-				+ "PAYMENT_EDITOR requires PENDING_VERIFICATION or PARTIALLY_VERIFIED; "
-				+ "PAYMENT_REVIEWER requires UNDER_REVIEW.");
+				"The bill is not available for update at its current stage.");
 	}
 
 	/** Strips amount/attendance/lineItem fields blocked for PAYMENT_EDITOR. */
@@ -934,7 +929,7 @@ public class BillValidator {
 			warnings.add(org.egov.digit.expense.web.models.BillDetailUpdateError.builder()
 					.billDetailId(pd.getId())
 					.code(ERR_FIELD_STRIPPED_EDITOR)
-					.message("PAYMENT_EDITOR cannot update " + stripped + " on bill detail " + pd.getId() + "; ignored.")
+					.message("Some fields on bill detail " + pd.getId() + " are not editable at this stage and have been ignored.")
 					.build());
 	}
 
@@ -977,7 +972,7 @@ public class BillValidator {
 			warnings.add(org.egov.digit.expense.web.models.BillDetailUpdateError.builder()
 					.billDetailId(pd.getId())
 					.code(ERR_FIELD_STRIPPED_REVIEWER)
-					.message("PAYMENT_REVIEWER cannot update " + stripped + " on bill detail " + pd.getId() + "; ignored.")
+					.message("Some fields on bill detail " + pd.getId() + " cannot be changed at this stage and have been ignored.")
 					.build());
 	}
 

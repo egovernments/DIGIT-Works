@@ -97,7 +97,7 @@ public class BillReportValidator {
                 .stream().anyMatch(r -> "PAYMENT_APPROVER".equals(r.getCode()));
         if (!isApprover) {
             throw new CustomException("EG_EXPENSE_REPORT_UNAUTHORIZED",
-                    "Only PAYMENT_APPROVER role can generate Payment Advisory Report");
+                    "You are not authorized to generate Payment Advisory Report.");
         }
 
         BillSearchRequest billSearchRequest = BillSearchRequest.builder()
@@ -120,7 +120,7 @@ public class BillReportValidator {
             }
             if (!Status.REVIEWED.equals(bill.getStatus())) {
                 throw new CustomException("EG_EXPENSE_REPORT_BILL_NOT_REVIEWED",
-                        "Bill " + billId + " must be in REVIEWED status. Current status: " + bill.getStatus());
+                        "Bill " + billId + " is not ready for Payment Advisory Report generation.");
             }
         }
     }

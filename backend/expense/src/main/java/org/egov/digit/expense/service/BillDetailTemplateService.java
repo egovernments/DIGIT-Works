@@ -89,7 +89,7 @@ public class BillDetailTemplateService {
         boolean isReviewer = roles.contains(ROLE_PAYMENT_REVIEWER);
 
         if (!isEditor && !isReviewer) {
-            throw new CustomException(ERR_UNAUTHORIZED, MSG_UNAUTHORIZED_TEMPLATE_PREFIX + operation);
+            throw new CustomException(ERR_UNAUTHORIZED, MSG_UNAUTHORIZED_TEMPLATE_PREFIX + operation + ".");
         }
 
         String billStatus = bill.getStatus() != null ? bill.getStatus().toString() : null;
@@ -101,9 +101,7 @@ public class BillDetailTemplateService {
 
         if (!editorStatusOk && !reviewerStatusOk) {
             throw new CustomException(ERR_INVALID_BILL_STATUS,
-                    "Cannot " + operation + ": bill status '" + billStatus + "' does not permit this action. "
-                    + ROLE_PAYMENT_EDITOR + " requires " + STATUS_PENDING_VERIFICATION + " or " + STATUS_PARTIALLY_VERIFIED + "; "
-                    + ROLE_PAYMENT_REVIEWER + " requires " + STATUS_UNDER_REVIEW + ".");
+                    "Cannot " + operation + ": the bill is not available for this action at its current stage.");
         }
     }
 

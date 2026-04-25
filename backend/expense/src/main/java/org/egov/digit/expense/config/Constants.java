@@ -225,7 +225,10 @@ public class Constants {
 	public static final String ERR_INVALID_BILL_STATUS             = "EG_EXPENSE_INVALID_BILL_STATUS";
 	public static final String ERR_INVALID_BILL_DETAIL_IDS         = "EG_EXPENSE_INVALID_BILL_DETAIL_IDS";
 	public static final String ERR_ROLE_STATUS_MISMATCH            = "EG_EXPENSE_ROLE_STATUS_MISMATCH";
+	@Deprecated
 	public static final String ERR_DETAIL_STATUS_SKIPPED           = "EG_EXPENSE_DETAIL_STATUS_SKIPPED";
+	public static final String ERR_DETAIL_STATUS_SKIPPED_EDITOR    = "EG_EXPENSE_DETAIL_STATUS_SKIPPED_EDITOR";
+	public static final String ERR_DETAIL_STATUS_SKIPPED_REVIEWER  = "EG_EXPENSE_DETAIL_STATUS_SKIPPED_REVIEWER";
 	public static final String ERR_FIELD_STRIPPED_EDITOR           = "EG_EXPENSE_FIELD_STRIPPED_PAYMENT_EDITOR";
 	public static final String ERR_FIELD_STRIPPED_REVIEWER         = "EG_EXPENSE_FIELD_STRIPPED_PAYMENT_REVIEWER";
 	public static final String ERR_TEMPLATE_EMPTY                  = "EG_EXPENSE_TEMPLATE_EMPTY";
@@ -264,8 +267,8 @@ public class Constants {
 	public static final String MSG_TEMPLATE_INVALID_FORMAT       = "Uploaded file is not a valid Excel (.xlsx) format";
 	public static final String MSG_TEMPLATE_MISSING_HEADER_ROW  = "Template header row is missing or empty";
 	public static final String MSG_TEMPLATE_INVALID_WORKER_COL  = "Column 0 must be workerId; template file may be corrupt or wrong format";
-	public static final String MSG_UNAUTHORIZED_TEMPLATE_PREFIX  = "Access denied: only PAYMENT_REVIEWER or PAYMENT_EDITOR may ";
-	public static final String MSG_UNAUTHORIZED_UPDATE           = "User does not have PAYMENT_EDITOR or PAYMENT_REVIEWER role to update bill details";
+	public static final String MSG_UNAUTHORIZED_TEMPLATE_PREFIX  = "You are not authorized to ";
+	public static final String MSG_UNAUTHORIZED_UPDATE           = "You are not authorized to update bill details.";
 	public static final String MSG_BULK_STATUS_EMPTY             = "At least one bill ID is required for bulk status update";
 	public static final String MSG_BULK_STATUS_DUPLICATE_IDS     = "Duplicate bill IDs are not allowed in bulk status update request";
 	public static final String MSG_BULK_STATUS_INVALID           = "Status is required for bulk status update";

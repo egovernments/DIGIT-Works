@@ -154,7 +154,7 @@ public class PaymentWorkflowService {
                 .anyMatch(d -> d.getStatus() == Status.PENDING_VERIFICATION);
         if (hasPending) {
             throw new CustomException("IGNORE_ERRORS_VALIDATION",
-                    "Cannot ignore errors when bill details are still in PENDING_VERIFICATION");
+                    "This action cannot be performed as some bill details are still pending verification.");
         }
 
         // Bill → IGNORING_ERRORS_IN_PROGRESS (1 synchronous WF call)
@@ -374,8 +374,7 @@ public class PaymentWorkflowService {
             if (bill.getStatus() == allowed) return;
         }
         throw new CustomException("INVALID_BILL_STATE",
-                "Bill " + bill.getId() + " is in state " + bill.getStatus()
-                        + " — expected one of: " + java.util.Arrays.toString(allowedStates));
+                "Bill " + bill.getId() + " is not available for this action at its current stage.");
     }
 
     /**
