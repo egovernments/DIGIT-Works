@@ -151,6 +151,13 @@ public class Configuration {
 	@Value("${expense.reference.default.status}")
 	public String defaultReferenceStatus;
 
+	// Project Service
+	@Value("${works.project.host}")
+	private String projectServiceHost;
+
+	@Value("${works.project.staff.endpoint:/project/staff/v1/_search}")
+	private String projectStaffEndpoint;
+
 	//Organisation Service
 	@Value("${works.organisation.host}")
 	private String organisationServiceHost;

@@ -21,4 +21,11 @@ public class BillPollContext {
 
     /** Original actor's RequestInfo — used for service-triggered workflow transitions. */
     private RequestInfo requestInfo;
+
+    /**
+     * Batch identifier shared across all BILL_STATUS_POLL jobs created by a single bulk request.
+     * Null for single-bill transitions — BillStatusPollHandler fires email directly.
+     * When set, BillStatusPollHandler skips email; the BILL_BATCH_EMAIL coordinator owns it.
+     */
+    private String batchId;
 }

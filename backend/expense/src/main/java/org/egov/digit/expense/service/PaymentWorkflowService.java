@@ -12,7 +12,7 @@ import org.egov.digit.expense.repository.TaskRepository;
 import org.egov.digit.expense.service.scheduler.SchedulerJobRegistry;
 import org.egov.digit.expense.util.WorkflowUtil;
 import org.egov.digit.expense.web.models.*;
-import org.egov.digit.expense.web.models.enums.WorkflowNotificationType;
+import org.egov.digit.expense.web.models.BillBatchEmailContext;
 import org.egov.digit.expense.web.models.enums.Actions;
 import org.egov.digit.expense.web.models.enums.SchedulerJobStatus;
 import org.egov.digit.expense.web.models.enums.SchedulerJobType;
@@ -53,7 +53,6 @@ public class PaymentWorkflowService {
     private final SchedulerJobRegistry schedulerJobRegistry;
     private final Configuration config;
     private final ExpenseProducer expenseProducer;
-    private final WorkflowEmailNotificationService workflowEmailNotificationService;
 
     @Autowired
     public PaymentWorkflowService(WorkflowUtil workflowUtil,
@@ -62,8 +61,7 @@ public class PaymentWorkflowService {
                                    SchedulerJobRepository schedulerJobRepository,
                                    SchedulerJobRegistry schedulerJobRegistry,
                                    Configuration config,
-                                   ExpenseProducer expenseProducer,
-                                   WorkflowEmailNotificationService workflowEmailNotificationService) {
+                                   ExpenseProducer expenseProducer) {
         this.workflowUtil = workflowUtil;
         this.billRepository = billRepository;
         this.taskRepository = taskRepository;
@@ -71,7 +69,6 @@ public class PaymentWorkflowService {
         this.schedulerJobRegistry = schedulerJobRegistry;
         this.config = config;
         this.expenseProducer = expenseProducer;
-        this.workflowEmailNotificationService = workflowEmailNotificationService;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -178,6 +175,10 @@ public class PaymentWorkflowService {
      * <p>Pre-condition: Bill in FULLY_VERIFIED.
      */
     public void sendForReview(BillRequest billRequest) {
+        sendForReview(billRequest, null);
+    }
+
+    public void sendForReview(BillRequest billRequest, String batchId) {
         Bill bill = billRequest.getBill();
         RequestInfo requestInfo = billRequest.getRequestInfo();
 
@@ -187,13 +188,11 @@ public class PaymentWorkflowService {
         transitionBill(bill, Actions.SEND_FOR_REVIEW, billRequest);
         pushBillUpdate(bill, requestInfo);
 
-        // Notify payment reviewers by email (fire-and-forget)
-        workflowEmailNotificationService.notify(billRequest, WorkflowNotificationType.REVIEW);
-
         // Kafka-first: push one WfUpdate task per detail for near-realtime processing.
         createWfUpdateTask(bill, POLL_PHASE_SEND_FOR_REVIEW, requestInfo,
                 d -> d.getStatus() == Status.VERIFIED);
-        insertBillStatusPollJob(bill, POLL_PHASE_SEND_FOR_REVIEW, requestInfo, config.getSchedulerSafetyNetDelayMs());
+        insertBillStatusPollJob(bill, POLL_PHASE_SEND_FOR_REVIEW, requestInfo,
+                config.getSchedulerSafetyNetDelayMs(), batchId);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -207,6 +206,10 @@ public class PaymentWorkflowService {
      * <p>Pre-condition: Bill in UNDER_REVIEW. Actor: PAYMENT_REVIEWER.
      */
     public void sendForApproval(BillRequest billRequest) {
+        sendForApproval(billRequest, null);
+    }
+
+    public void sendForApproval(BillRequest billRequest, String batchId) {
         Bill bill = billRequest.getBill();
         RequestInfo requestInfo = billRequest.getRequestInfo();
 
@@ -216,13 +219,11 @@ public class PaymentWorkflowService {
         transitionBill(bill, Actions.SEND_FOR_APPROVAL, billRequest);
         pushBillUpdate(bill, requestInfo);
 
-        // Notify payment approvers by email (fire-and-forget)
-        workflowEmailNotificationService.notify(billRequest, WorkflowNotificationType.APPROVAL);
-
         // Kafka-first: push one WfUpdate task per detail for near-realtime processing.
         createWfUpdateTask(bill, POLL_PHASE_SEND_FOR_APPROVAL, requestInfo,
                 d -> d.getStatus() == Status.UNDER_REVIEW);
-        insertBillStatusPollJob(bill, POLL_PHASE_REVIEW, requestInfo, config.getSchedulerSafetyNetDelayMs());
+        insertBillStatusPollJob(bill, POLL_PHASE_REVIEW, requestInfo,
+                config.getSchedulerSafetyNetDelayMs(), batchId);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -634,10 +635,15 @@ public class PaymentWorkflowService {
      *                Use {@code config.getSchedulerSafetyNetDelayMs()} for safety-net jobs.
      */
     public void insertBillStatusPollJob(Bill bill, String phase, RequestInfo requestInfo, long delayMs) {
+        insertBillStatusPollJob(bill, phase, requestInfo, delayMs, null);
+    }
+
+    public void insertBillStatusPollJob(Bill bill, String phase, RequestInfo requestInfo, long delayMs, String batchId) {
         long now = System.currentTimeMillis();
         BillPollContext context = BillPollContext.builder()
                 .phase(phase)
                 .requestInfo(requestInfo)
+                .batchId(batchId)
                 .build();
 
         SchedulerJob job = SchedulerJob.builder()
@@ -655,7 +661,40 @@ public class PaymentWorkflowService {
                 .build();
 
         insertWithRetry(job, "BILL_STATUS_POLL bill=" + bill.getId() + " phase=" + phase);
-        log.info("Inserted BILL_STATUS_POLL job for bill={} phase={} delayMs={}", bill.getId(), phase, delayMs);
+        log.info("Inserted BILL_STATUS_POLL job for bill={} phase={} batchId={} delayMs={}",
+                bill.getId(), phase, batchId, delayMs);
+    }
+
+    /**
+     * Creates a BILL_BATCH_EMAIL coordinator job for a bulk status-update request.
+     * The coordinator fires ONE email after all sibling BILL_STATUS_POLL jobs (same batchId) settle.
+     */
+    public void insertBillBatchEmailJob(String tenantId, String batchId, List<String> billIds,
+                                         String action, RequestInfo requestInfo) {
+        String phase = Actions.SEND_FOR_REVIEW.toString().equals(action)
+                ? POLL_PHASE_SEND_FOR_REVIEW : POLL_PHASE_SEND_FOR_APPROVAL;
+        long now = System.currentTimeMillis();
+        BillBatchEmailContext context = BillBatchEmailContext.builder()
+                .batchId(batchId)
+                .phase(phase)
+                .billIds(billIds)
+                .requestInfo(requestInfo)
+                .build();
+        SchedulerJob job = SchedulerJob.builder()
+                .id(UUID.randomUUID().toString())
+                .tenantId(tenantId)
+                .jobType(SchedulerJobType.BILL_BATCH_EMAIL)
+                .referenceId(batchId)
+                .schedulerStatus(SchedulerJobStatus.PENDING)
+                .nextCheckAt(null)
+                .attemptCount(0)
+                .maxAttempts(config.getSchedulerMaxAttempts())
+                .context(context)
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
+        insertWithRetry(job, "BILL_BATCH_EMAIL batchId=" + batchId + " bills=" + billIds.size());
+        log.info("Inserted BILL_BATCH_EMAIL coordinator job batchId={} billCount={}", batchId, billIds.size());
     }
 
     /** Inserts a TASK_VERIFY_CHECK job for a Kafka-dispatched Verify task (legacy path). */

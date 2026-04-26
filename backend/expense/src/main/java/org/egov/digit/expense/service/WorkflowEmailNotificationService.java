@@ -2,15 +2,12 @@ package org.egov.digit.expense.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.request.User;
-import org.egov.common.contract.workflow.ProcessInstance;
-import org.egov.common.contract.workflow.ProcessInstanceResponse;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.kafka.ExpenseProducer;
 import org.egov.digit.expense.util.EmailTemplateUtil;
 import org.egov.digit.expense.util.IndividualUtil;
 import org.egov.digit.expense.util.LocalizationUtil;
-import org.egov.digit.expense.util.WorkflowUtil;
+import org.egov.digit.expense.util.ProjectStaffUtil;
 import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.enums.WorkflowNotificationType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +15,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -35,23 +35,23 @@ import java.util.stream.Collectors;
 public class WorkflowEmailNotificationService {
 
     private final IndividualUtil individualUtil;
+    private final ProjectStaffUtil projectStaffUtil;
     private final EmailTemplateUtil emailTemplateUtil;
     private final LocalizationUtil localizationUtil;
-    private final WorkflowUtil workflowUtil;
     private final ExpenseProducer expenseProducer;
     private final Configuration config;
 
     @Autowired
     public WorkflowEmailNotificationService(IndividualUtil individualUtil,
+                                             ProjectStaffUtil projectStaffUtil,
                                              EmailTemplateUtil emailTemplateUtil,
                                              LocalizationUtil localizationUtil,
-                                             WorkflowUtil workflowUtil,
                                              ExpenseProducer expenseProducer,
                                              Configuration config) {
         this.individualUtil = individualUtil;
+        this.projectStaffUtil = projectStaffUtil;
         this.emailTemplateUtil = emailTemplateUtil;
         this.localizationUtil = localizationUtil;
-        this.workflowUtil = workflowUtil;
         this.expenseProducer = expenseProducer;
         this.config = config;
     }
@@ -79,12 +79,6 @@ public class WorkflowEmailNotificationService {
         RequestInfo requestInfo = billRequest.getRequestInfo();
         String tenantId = bill.getTenantId();
 
-        List<User> assignees = resolveAssignees(bill, tenantId, requestInfo);
-        if (CollectionUtils.isEmpty(assignees)) {
-            log.warn("WorkflowEmailNotificationService: no assignees found for bill={} type={}", bill.getId(), type);
-            return;
-        }
-
         WorkflowEmailTemplate template = emailTemplateUtil.fetchTemplate(requestInfo, tenantId, type);
         if (template == null) {
             log.warn("WorkflowEmailNotificationService: email template not found for type={} tenantId={}", type, tenantId);
@@ -93,41 +87,33 @@ public class WorkflowEmailNotificationService {
 
         String locale = resolveLocale(requestInfo);
         Map<String, String> locMap = resolveLocalizationMap(requestInfo, tenantId, locale);
+        int billCount = 1;
 
-        int billCount = 1; // currently 1 bill per request; extend to List<Bill> for future batch support
-
-        // Deduplicate assignees by UUID to avoid sending duplicate emails
-        List<String> uniqueUuids = assignees.stream()
-                .map(User::getUuid)
-                .filter(uuid -> uuid != null && !uuid.isBlank())
-                .distinct()
-                .collect(Collectors.toList());
-
-        for (String uuid : uniqueUuids) {
-            sendEmailToAssignee(uuid, tenantId, requestInfo, template, locMap, billCount, type);
-        }
-    }
-
-    private void sendEmailToAssignee(String assigneeUuid,
-                                     String tenantId,
-                                     RequestInfo requestInfo,
-                                     WorkflowEmailTemplate template,
-                                     Map<String, String> locMap,
-                                     int billCount,
-                                     WorkflowNotificationType type) {
-        IndividualDetails details = individualUtil.getIndividualDetails(requestInfo, tenantId, assigneeUuid);
-        if (details == null || !StringUtils.hasText(details.getEmail())) {
-            log.info("WorkflowEmailNotificationService: no email for assignee uuid={}, skipping {} notification", assigneeUuid, type);
+        List<IndividualDetails> recipients = resolveRecipientsForBillRoles(bill, tenantId, requestInfo, type);
+        if (CollectionUtils.isEmpty(recipients)) {
+            log.warn("WorkflowEmailNotificationService: no recipients found for bill={} type={}", bill.getId(), type);
             return;
         }
 
+        for (IndividualDetails recipient : recipients) {
+            sendEmailDirect(recipient.getEmail(), recipient.getName(), tenantId, requestInfo, template, locMap, billCount, type);
+        }
+    }
+
+    private void sendEmailDirect(String email, String name,
+                                  String tenantId,
+                                  RequestInfo requestInfo,
+                                  WorkflowEmailTemplate template,
+                                  Map<String, String> locMap,
+                                  int billCount,
+                                  WorkflowNotificationType type) {
         String subject = emailTemplateUtil.renderSubject(template, locMap, billCount);
-        String body    = emailTemplateUtil.renderHtmlBody(template, locMap, details.getName(), billCount);
+        String body    = emailTemplateUtil.renderHtmlBody(template, locMap, name, billCount);
 
         EmailRequest emailRequest = EmailRequest.builder()
                 .requestInfo(requestInfo)
                 .email(EmailRequest.EmailMessage.builder()
-                        .emailTo(Collections.singletonList(details.getEmail()))
+                        .emailTo(Collections.singletonList(email))
                         .subject(subject)
                         .body(body)
                         .tenantId(tenantId)
@@ -136,33 +122,90 @@ public class WorkflowEmailNotificationService {
                 .build();
 
         expenseProducer.push(config.getEmailNotificationTopic(), emailRequest);
-        log.info("WorkflowEmailNotificationService: email notification pushed for assignee={} type={}", details.getEmail(), type);
+        log.info("WorkflowEmailNotificationService: email sent to={} type={}", email, type);
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
+    /**
+     * Finds individuals with the role required for this notification type,
+     * then filters to those who are project staff for the bill's projects.
+     */
+    private List<IndividualDetails> resolveRecipientsForBillRoles(Bill bill, String tenantId,
+                                                                    RequestInfo requestInfo,
+                                                                    WorkflowNotificationType type) {
+        List<IndividualDetails> candidates = individualUtil.searchByRoleCodes(
+                requestInfo, tenantId, Collections.singletonList(type.getTargetRole()));
+        if (CollectionUtils.isEmpty(candidates)) return Collections.emptyList();
+
+        if (!StringUtils.hasText(bill.getReferenceId())) return Collections.emptyList();
+
+        List<String> projectIds = Arrays.asList(bill.getReferenceId().split("\\."));
+        List<String> staffIds   = candidates.stream().map(IndividualDetails::getId).collect(Collectors.toList());
+
+        Set<String> matched = projectStaffUtil.filterByProjectStaff(requestInfo, tenantId, staffIds, projectIds);
+        if (matched.isEmpty()) return Collections.emptyList();
+
+        return candidates.stream()
+                .filter(i -> matched.contains(i.getId()))
+                .collect(Collectors.toList());
+    }
 
     /**
-     * Returns assignees from the bill's process instance.
-     * Falls back to a workflow search if the process instance is absent or has no assignees.
+     * Sends one batch email to all recipients that are project staff for ANY bill in the batch.
+     * Safe to call unconditionally — all failures are logged, never thrown.
+     *
+     * @param bills     bills in the batch (used for project ID resolution)
+     * @param tenantId  tenant
+     * @param requestInfo original actor's RequestInfo
+     * @param type      REVIEW or APPROVAL
+     * @param billCount number of bills that successfully transitioned (shown in email body)
      */
-    private List<User> resolveAssignees(Bill bill, String tenantId, RequestInfo requestInfo) {
-        if (bill.getProcessInstance() != null
-                && !CollectionUtils.isEmpty(bill.getProcessInstance().getAssignes())) {
-            return bill.getProcessInstance().getAssignes();
+    public void notifyBatch(List<Bill> bills, String tenantId, RequestInfo requestInfo,
+                             WorkflowNotificationType type, int billCount) {
+        try {
+            doNotifyBatch(bills, tenantId, requestInfo, type, billCount);
+        } catch (Exception e) {
+            log.error("WorkflowEmailNotificationService.notifyBatch: unexpected error type={} billCount={}: {}",
+                    type, billCount, e.getMessage(), e);
+        }
+    }
+
+    private void doNotifyBatch(List<Bill> bills, String tenantId, RequestInfo requestInfo,
+                                WorkflowNotificationType type, int billCount) {
+        WorkflowEmailTemplate template = emailTemplateUtil.fetchTemplate(requestInfo, tenantId, type);
+        if (template == null) {
+            log.warn("WorkflowEmailNotificationService.notifyBatch: template not found type={} tenantId={}", type, tenantId);
+            return;
         }
 
-        log.info("WorkflowEmailNotificationService: no assignees on processInstance for bill={}, searching workflow", bill.getId());
-        try {
-            ProcessInstanceResponse wfResponse = workflowUtil.searchWorkflowForBusinessIds(
-                    Collections.singletonList(bill.getBillNumber()), tenantId, requestInfo);
-            if (wfResponse != null && !CollectionUtils.isEmpty(wfResponse.getProcessInstances())) {
-                ProcessInstance pi = wfResponse.getProcessInstances().get(0);
-                return pi.getAssignes() != null ? pi.getAssignes() : Collections.emptyList();
-            }
-        } catch (Exception e) {
-            log.warn("WorkflowEmailNotificationService: workflow search failed for bill={}: {}", bill.getId(), e.getMessage());
+        String locale = resolveLocale(requestInfo);
+        Map<String, String> locMap = resolveLocalizationMap(requestInfo, tenantId, locale);
+
+        // Union all project IDs across every bill in the batch
+        List<String> allProjectIds = bills.stream()
+                .filter(b -> StringUtils.hasText(b.getReferenceId()))
+                .flatMap(b -> Stream.of(b.getReferenceId().split("\\.")))
+                .distinct()
+                .collect(Collectors.toList());
+        if (allProjectIds.isEmpty()) {
+            log.warn("WorkflowEmailNotificationService.notifyBatch: no projectIds found for batch type={}", type);
+            return;
         }
-        return Collections.emptyList();
+
+        List<IndividualDetails> candidates = individualUtil.searchByRoleCodes(
+                requestInfo, tenantId, Collections.singletonList(type.getTargetRole()));
+        if (CollectionUtils.isEmpty(candidates)) return;
+
+        List<String> staffIds = candidates.stream().map(IndividualDetails::getId).collect(Collectors.toList());
+        Set<String> matched = projectStaffUtil.filterByProjectStaff(requestInfo, tenantId, staffIds, allProjectIds);
+        if (matched.isEmpty()) {
+            log.warn("WorkflowEmailNotificationService.notifyBatch: no project-staff recipients for batch type={}", type);
+            return;
+        }
+
+        candidates.stream()
+                .filter(i -> matched.contains(i.getId()))
+                .forEach(r -> sendEmailDirect(r.getEmail(), r.getName(), tenantId, requestInfo,
+                        template, locMap, billCount, type));
     }
 
     /** Extracts locale from RequestInfo msgId (format: "msgId|locale"), defaults to configured locale. */

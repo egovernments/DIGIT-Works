@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.egov.digit.expense.config.Constants.*;
@@ -94,7 +95,7 @@ public class IndividualUtil {
 
         return individualSearchRequestNode;
     }
-    public  IndividualDetails getIndividualDetails(RequestInfo requestInfo, String tenantId, String identifier){
+    public IndividualDetails getIndividualDetails(RequestInfo requestInfo, String tenantId, String identifier){
         IndividualDetails individualDetails = null;
         try{
             individualDetails = fetchIndividualDetails(requestInfo, tenantId, identifier);
@@ -102,5 +103,43 @@ public class IndividualUtil {
             log.info("The Exception occured in fetching details of payee: ",e);
         }
         return individualDetails;
+    }
+
+    /**
+     * Searches individuals by role codes and returns those with a non-blank email.
+     * Uses the same Individual search endpoint, passing roleCodes in the request body.
+     */
+    public List<IndividualDetails> searchByRoleCodes(RequestInfo requestInfo, String tenantId, List<String> roleCodes) {
+        List<IndividualDetails> result = new ArrayList<>();
+        try {
+            String uri = getIndividualSearchURLWithParams(tenantId)
+                    .queryParam("limit", 1000)
+                    .toUriString();
+
+            ObjectNode body = mapper.createObjectNode();
+            body.putPOJO(REQUEST_INFO, requestInfo);
+            ObjectNode individualNode = mapper.createObjectNode();
+            individualNode.putPOJO("roleCodes", roleCodes);
+            body.set(INDIVIDUAL, individualNode);
+
+            Object response = serviceRequestRepository.fetchResult(new StringBuilder(uri), body);
+
+            List<String> ids    = JsonPath.read(response, "$.Individual[*].id");
+            List<String> emails = JsonPath.read(response, "$.Individual[*].email");
+            List<String> names  = JsonPath.read(response, "$.Individual[*].name.givenName");
+
+            for (int i = 0; i < ids.size(); i++) {
+                String email = i < emails.size() ? emails.get(i) : null;
+                if (email == null || email.isBlank()) continue;
+                result.add(IndividualDetails.builder()
+                        .id(ids.get(i))
+                        .email(email)
+                        .name(i < names.size() ? names.get(i) : null)
+                        .build());
+            }
+        } catch (Exception e) {
+            log.warn("IndividualUtil: failed to search individuals by roleCodes={}: {}", roleCodes, e.getMessage());
+        }
+        return result;
     }
 }

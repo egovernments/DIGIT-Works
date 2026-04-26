@@ -25,5 +25,8 @@ public enum SchedulerJobType {
     DETAIL_VERIFY,
 
     /** Transitions a single BillDetail WF (non-external phases: IGNORE_ERRORS, SEND_FOR_REVIEW, SEND_FOR_APPROVAL, PAYMENT_INITIATION). */
-    DETAIL_WF_UPDATE
+    DETAIL_WF_UPDATE,
+
+    /** Coordinator: fires ONE batch email after all BILL_STATUS_POLL jobs in a bulk request settle. */
+    BILL_BATCH_EMAIL
 }

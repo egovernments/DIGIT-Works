@@ -17,6 +17,9 @@ import org.springframework.validation.annotation.Validated;
 @Builder
 public class IndividualDetails {
 
+	@JsonProperty("id")
+	private String id;
+
 	@JsonProperty("name")
 	@Valid
 	private String name;

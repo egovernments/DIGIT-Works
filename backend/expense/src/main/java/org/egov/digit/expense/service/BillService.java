@@ -328,6 +328,11 @@ public class BillService {
 		Map<String, Bill> billMap = billsFromSearch.stream()
 				.collect(Collectors.toMap(Bill::getId, Function.identity()));
 
+		String action = workflow.getAction();
+		boolean isNotificationAction = Actions.SEND_FOR_REVIEW.toString().equals(action)
+				|| Actions.SEND_FOR_APPROVAL.toString().equals(action);
+		String batchId = isNotificationAction ? UUID.randomUUID().toString() : null;
+
 		for (String billId : billIds) {
 			try {
 				Bill billFromSearch = billMap.get(billId);
@@ -360,7 +365,7 @@ public class BillService {
 						.additionalDetails(billFromSearch.getAdditionalDetails())
 						.build();
 
-				updateBillStatus(billToUpdate, workflow, requestInfo);
+				updateBillStatus(billToUpdate, workflow, requestInfo, batchId);
 
 				successfulBills.add(billToUpdate);
 
@@ -374,6 +379,17 @@ public class BillService {
 			}
 		}
 
+		if (isNotificationAction && !successfulBills.isEmpty()) {
+			List<String> successfulBillIds = successfulBills.stream()
+					.map(Bill::getId).collect(Collectors.toList());
+			try {
+				paymentWorkflowService.insertBillBatchEmailJob(
+						bulkRequest.getTenantId(), batchId, successfulBillIds, action, requestInfo);
+			} catch (Exception e) {
+				log.error("Failed to insert BILL_BATCH_EMAIL coordinator for batchId={}: {}", batchId, e.getMessage(), e);
+			}
+		}
+
 		boolean allFailed = !errors.isEmpty() && successfulBills.isEmpty();
 		return BulkBillStatusUpdateResponse.builder()
 				.bills(successfulBills)
@@ -383,6 +399,10 @@ public class BillService {
 	}
 
 	private void updateBillStatus(Bill bill, org.egov.common.contract.models.Workflow workflow, RequestInfo requestInfo) {
+		updateBillStatus(bill, workflow, requestInfo, null);
+	}
+
+	private void updateBillStatus(Bill bill, org.egov.common.contract.models.Workflow workflow, RequestInfo requestInfo, String batchId) {
 		String tenantId = bill.getTenantId();
 		String action = workflow.getAction();
 
@@ -405,9 +425,9 @@ public class BillService {
 		} else if (Actions.IGNORE_ERRORS_AND_VERIFY.toString().equals(action)) {
 			paymentWorkflowService.ignoreErrorsAndVerify(billRequest);
 		} else if (Actions.SEND_FOR_REVIEW.toString().equals(action)) {
-			paymentWorkflowService.sendForReview(billRequest);
+			paymentWorkflowService.sendForReview(billRequest, batchId);
 		} else if (Actions.SEND_FOR_APPROVAL.toString().equals(action)) {
-			paymentWorkflowService.sendForApproval(billRequest);
+			paymentWorkflowService.sendForApproval(billRequest, batchId);
 		} else if (Actions.PAYMENT_INITIATION.toString().equals(action)) {
 			Status currentStatus = billsFromSearch.get(0).getStatus();
 			if (currentStatus == Status.PAYMENT_FAILED || currentStatus == Status.PARTIALLY_PAID) {

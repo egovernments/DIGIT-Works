@@ -5,14 +5,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.digit.expense.service.PaymentWorkflowService;
+import org.egov.digit.expense.service.WorkflowEmailNotificationService;
 import org.egov.digit.expense.util.WorkflowUtil;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillDetail;
 import org.egov.digit.expense.web.models.BillPollContext;
+import org.egov.digit.expense.web.models.BillRequest;
 import org.egov.digit.expense.web.models.SchedulerJob;
 import org.egov.digit.expense.web.models.enums.Actions;
 import org.egov.digit.expense.web.models.enums.SchedulerJobType;
 import org.egov.digit.expense.web.models.enums.Status;
+import org.egov.digit.expense.web.models.enums.WorkflowNotificationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,14 +39,17 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
     private final PaymentWorkflowService paymentWorkflowService;
     private final WorkflowUtil workflowUtil;
     private final ObjectMapper objectMapper;
+    private final WorkflowEmailNotificationService workflowEmailNotificationService;
 
     @Autowired
     public BillStatusPollHandler(PaymentWorkflowService paymentWorkflowService,
                                   WorkflowUtil workflowUtil,
-                                  ObjectMapper objectMapper) {
+                                  ObjectMapper objectMapper,
+                                  WorkflowEmailNotificationService workflowEmailNotificationService) {
         this.paymentWorkflowService = paymentWorkflowService;
         this.workflowUtil = workflowUtil;
         this.objectMapper = objectMapper;
+        this.workflowEmailNotificationService = workflowEmailNotificationService;
     }
 
     @Override
@@ -60,6 +66,7 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
             BillPollContext ctx = objectMapper.convertValue(job.getContext(), BillPollContext.class);
             RequestInfo requestInfo = ctx.getRequestInfo();
             String phase = ctx.getPhase();
+            String batchId = ctx.getBatchId(); // null for single-bill; coordinator owns email when set
 
             Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
             if (bill == null) {
@@ -70,8 +77,8 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
             return switch (phase) {
                 case POLL_PHASE_VERIFICATION    -> handleVerificationPoll(billId, tenantId, bill, requestInfo);
                 case POLL_PHASE_IGNORE_ERRORS   -> handleIgnoreErrorsPoll(billId, tenantId, bill, requestInfo);
-                case POLL_PHASE_SEND_FOR_REVIEW -> handleSendForReviewPoll(billId, tenantId, bill, requestInfo);
-                case POLL_PHASE_REVIEW          -> handleReviewPoll(billId, tenantId, bill, requestInfo);
+                case POLL_PHASE_SEND_FOR_REVIEW -> handleSendForReviewPoll(billId, tenantId, bill, requestInfo, batchId);
+                case POLL_PHASE_REVIEW          -> handleReviewPoll(billId, tenantId, bill, requestInfo, batchId);
                 case POLL_PHASE_PAYMENT         -> handlePaymentPoll(billId, tenantId, bill, requestInfo);
                 default -> {
                     log.error("Unknown poll phase '{}' for bill {} — marking FAILED", phase, billId);
@@ -228,7 +235,7 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
      * Otherwise                 → RETRY
      * </pre>
      */
-    private SchedulerJobResult handleSendForReviewPoll(String billId, String tenantId, Bill bill, RequestInfo requestInfo) {
+    private SchedulerJobResult handleSendForReviewPoll(String billId, String tenantId, Bill bill, RequestInfo requestInfo, String batchId) {
         boolean anyVerified = bill.getBillDetails().stream()
                 .anyMatch(d -> d.getStatus() == Status.VERIFIED);
         if (anyVerified) {
@@ -247,6 +254,13 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
             if (fresh == null) { log.warn("Bill {} vanished before SEND_FOR_REVIEW transition — retrying", billId); return SchedulerJobResult.RETRY; }
             paymentWorkflowService.transitionBill(fresh, Actions.COMPLETE, requestInfo);
             paymentWorkflowService.pushBillUpdate(fresh, requestInfo);
+            if (batchId == null) {
+                workflowEmailNotificationService.notify(
+                        BillRequest.builder().bill(fresh).requestInfo(requestInfo).build(),
+                        WorkflowNotificationType.REVIEW);
+            } else {
+                log.debug("Bill {} settled UNDER_REVIEW — batch email coordinator will handle notify (batchId={})", billId, batchId);
+            }
             return SchedulerJobResult.DONE;
         }
         return SchedulerJobResult.RETRY;
@@ -261,7 +275,7 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
      * Otherwise             → RETRY
      * </pre>
      */
-    private SchedulerJobResult handleReviewPoll(String billId, String tenantId, Bill bill, RequestInfo requestInfo) {
+    private SchedulerJobResult handleReviewPoll(String billId, String tenantId, Bill bill, RequestInfo requestInfo, String batchId) {
         boolean anyUnderReview = bill.getBillDetails().stream()
                 .anyMatch(d -> d.getStatus() == Status.UNDER_REVIEW);
         if (anyUnderReview) {
@@ -280,6 +294,13 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
             if (fresh == null) { log.warn("Bill {} vanished before REVIEW transition — retrying", billId); return SchedulerJobResult.RETRY; }
             paymentWorkflowService.transitionBill(fresh, Actions.COMPLETE, requestInfo);
             paymentWorkflowService.pushBillUpdate(fresh, requestInfo);
+            if (batchId == null) {
+                workflowEmailNotificationService.notify(
+                        BillRequest.builder().bill(fresh).requestInfo(requestInfo).build(),
+                        WorkflowNotificationType.APPROVAL);
+            } else {
+                log.debug("Bill {} settled REVIEWED — batch email coordinator will handle notify (batchId={})", billId, batchId);
+            }
             return SchedulerJobResult.DONE;
         }
         return SchedulerJobResult.RETRY;

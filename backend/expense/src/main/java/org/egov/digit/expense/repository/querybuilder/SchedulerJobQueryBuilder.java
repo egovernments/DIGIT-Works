@@ -69,6 +69,15 @@ public class SchedulerJobQueryBuilder {
             " WHERE scheduler_status IN ('DONE', 'FAILED')" +
             "   AND updated_at < ?";
 
+    /**
+     * Find all BILL_STATUS_POLL jobs belonging to a batch (by batchId stored in JSONB context).
+     * Used by BILL_BATCH_EMAIL coordinator to check settlement of all sibling jobs.
+     * Parameters: batchId (String)
+     */
+    static final String FIND_BY_BATCH_ID =
+            "SELECT * FROM " + TABLE +
+            " WHERE context->>'batchId' = ? AND job_type = 'BILL_STATUS_POLL'";
+
     private final MultiStateInstanceUtil multiStateInstanceUtil;
 
     @Autowired
@@ -94,5 +103,9 @@ public class SchedulerJobQueryBuilder {
 
     public String cleanup(String tenantId) throws InvalidTenantIdException {
         return multiStateInstanceUtil.replaceSchemaPlaceholder(CLEANUP, tenantId);
+    }
+
+    public String findByBatchId(String tenantId) throws InvalidTenantIdException {
+        return multiStateInstanceUtil.replaceSchemaPlaceholder(FIND_BY_BATCH_ID, tenantId);
     }
 }

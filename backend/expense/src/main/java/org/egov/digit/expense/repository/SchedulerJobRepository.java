@@ -155,6 +155,19 @@ public class SchedulerJobRepository {
     }
 
     /**
+     * Finds all BILL_STATUS_POLL jobs sharing the given batchId (stored in JSONB context).
+     * Used by the BILL_BATCH_EMAIL coordinator to check whether all sibling jobs have settled.
+     */
+    public List<SchedulerJob> findByBatchId(String tenantId, String batchId) {
+        try {
+            String sql = queryBuilder.findByBatchId(tenantId);
+            return jdbcTemplate.query(sql, rowMapper, batchId);
+        } catch (InvalidTenantIdException e) {
+            throw new CustomException(INVALID_TENANT_ID_ERR_CODE, e.getMessage());
+        }
+    }
+
+    /**
      * Deletes DONE/FAILED jobs older than {@code cleanupAfterMs} to keep the table small.
      */
     public int cleanup(String tenantId, long cleanupAfterMs) {
