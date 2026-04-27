@@ -185,10 +185,7 @@ public class SchedulerService {
     }
 
     private long computeBackoffMs(int attempt) {
-        long base = config.getSchedulerBackoffBaseMs();
-        double multiplier = config.getSchedulerBackoffMultiplier();
-        long cap = config.getSchedulerBackoffMaxMs();
-        return Math.min((long) (base * Math.pow(multiplier, attempt - 1)), cap);
+        return config.getSchedulerBackoffBaseMs();
     }
 
     private SchedulerJob finalized(SchedulerJob job, SchedulerJobStatus status,

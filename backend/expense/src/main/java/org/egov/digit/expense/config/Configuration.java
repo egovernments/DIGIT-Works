@@ -357,20 +357,8 @@ public class Configuration {
 	@Value("${task.scheduler.cleanup.after.ms:604800000}")
 	private long schedulerCleanupAfterMs;
 
-	@Value("${task.scheduler.recovery.interval.ms:120000}")
-	private long schedulerRecoveryIntervalMs;
-
-	@Value("${task.scheduler.cleanup.interval.ms:3600000}")
-	private long schedulerCleanupIntervalMs;
-
-	@Value("${task.scheduler.backoff.base.ms:30000}")
+	@Value("${task.scheduler.backoff.base.ms:2000}")
 	private long schedulerBackoffBaseMs;
-
-	@Value("${task.scheduler.backoff.multiplier:1.5}")
-	private double schedulerBackoffMultiplier;
-
-	@Value("${task.scheduler.backoff.max.ms:300000}")
-	private long schedulerBackoffMaxMs;
 
 	/**
 	 * Comma-separated list of tenant IDs to pre-register in the scheduler registry at startup.
@@ -395,26 +383,6 @@ public class Configuration {
 	@Value("${task.scheduler.safety.net.delay.ms:60000}")
 	private long schedulerSafetyNetDelayMs;
 
-	// BILL_STARTED_CHECK job config
-	@Value("${scheduler.bill.started.check.max.attempts:200}")
-	private int billStartedCheckMaxAttempts;
-
-	@Value("${scheduler.bill.started.check.interval.ms:6000}")
-	private long billStartedCheckIntervalMs;
-
-	// BILL_DETAILS_TASK_VERIFY_CHECK job config
-	@Value("${scheduler.bill.details.verify.check.max.attempts:200}")
-	private int billDetailsVerifyCheckMaxAttempts;
-
-	@Value("${scheduler.bill.details.verify.check.interval.ms:6000}")
-	private long billDetailsVerifyCheckIntervalMs;
-
-	// BILL_DETAILS_TASK_PAYMENT_STATUS_CHECK job config
-	@Value("${scheduler.bill.details.payment.status.check.max.attempts:200}")
-	private int billDetailsPaymentStatusCheckMaxAttempts;
-
-	@Value("${scheduler.bill.details.payment.status.check.interval.ms:6000}")
-	private long billDetailsPaymentStatusCheckIntervalMs;
 
 	public List<String> getSchedulerBootstrapTenants() {
 		if (schedulerBootstrapTenantsRaw == null || schedulerBootstrapTenantsRaw.isBlank()) {
