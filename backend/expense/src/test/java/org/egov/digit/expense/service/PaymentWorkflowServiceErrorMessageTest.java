@@ -7,6 +7,7 @@ import org.egov.digit.expense.repository.SchedulerJobRepository;
 import org.egov.digit.expense.repository.TaskRepository;
 import org.egov.digit.expense.service.scheduler.SchedulerJobRegistry;
 import org.egov.digit.expense.util.WorkflowUtil;
+import org.egov.digit.expense.service.BillCacheService;
 import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.tracer.model.CustomException;
@@ -34,6 +35,7 @@ public class PaymentWorkflowServiceErrorMessageTest {
     @Mock private SchedulerJobRegistry schedulerJobRegistry;
     @Mock private Configuration config;
     @Mock private ExpenseProducer expenseProducer;
+    @Mock private BillCacheService billCacheService;
 
     private PaymentWorkflowService service;
 
@@ -45,7 +47,7 @@ public class PaymentWorkflowServiceErrorMessageTest {
     @BeforeEach
     public void setUp() {
         service = new PaymentWorkflowService(workflowUtil, billRepository, taskRepository,
-                schedulerJobRepository, schedulerJobRegistry, config, expenseProducer);
+                schedulerJobRepository, schedulerJobRegistry, config, expenseProducer, billCacheService);
     }
 
     // ── IGNORE_ERRORS_VALIDATION ──────────────────────────────────────────────

@@ -61,7 +61,7 @@ public class DetailWfUpdateHandlerTest {
         assertEquals(SchedulerJobResult.DONE, result);
         verify(pws).transitionBillDetail(eq(detail), eq(Actions.IGNORE_ERRORS_AND_VERIFY), any());
         ArgumentCaptor<Bill> captor = ArgumentCaptor.forClass(Bill.class);
-        verify(pws).pushBillUpdate(captor.capture(), any());
+        verify(pws).pushBillUpdate(captor.capture(), any(), eq(false));
         assertEquals(1, captor.getValue().getBillDetails().size());
         assertEquals(DETAIL_ID_1, captor.getValue().getBillDetails().get(0).getId());
         verify(agg).checkAndAggregateBill(eq(BILL_ID), eq(TENANT_ID), eq(POLL_PHASE_IGNORE_ERRORS), any());
@@ -165,7 +165,7 @@ public class DetailWfUpdateHandlerTest {
         handler.handle(buildDetailWfUpdateJob(BILL_ID, "d3", POLL_PHASE_SEND_FOR_REVIEW));
 
         ArgumentCaptor<Bill> captor = ArgumentCaptor.forClass(Bill.class);
-        verify(pws).pushBillUpdate(captor.capture(), any());
+        verify(pws).pushBillUpdate(captor.capture(), any(), eq(false));
         assertEquals(1, captor.getValue().getBillDetails().size());
         assertEquals("d3", captor.getValue().getBillDetails().get(0).getId());
     }
