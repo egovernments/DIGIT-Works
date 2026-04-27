@@ -53,6 +53,12 @@ public class Task {
 	public enum Type {
 		Verify,
 		Transfer,
-		WfUpdate
+		WfUpdate,
+
+		// New action types (improved design)
+		VerificationStart,
+		VerificationVerify,
+		PaymentInitiationStart,
+		PaymentInitiationPay
 	}
 }

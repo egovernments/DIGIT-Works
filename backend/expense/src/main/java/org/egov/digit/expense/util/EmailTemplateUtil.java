@@ -79,7 +79,7 @@ public class EmailTemplateUtil {
         try {
             StringBuilder url = new StringBuilder()
                     .append(config.getMdmsV2Host())
-                    .append(config.getMdmsV2EndPoint());
+                    .append(config.getMdmsV2EndPointV2());
 
             Object requestBody = buildMdmsV2Request(requestInfo, tenantId, type.getMdmsIdentifier());
             Object response = serviceRequestRepository.fetchResult(url, requestBody);

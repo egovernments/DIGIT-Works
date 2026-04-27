@@ -25,6 +25,7 @@ public class Constants {
 	public static final String INDIVIDUAL_GENDER_PATH = "$.Individual.*.gender";
 
 	public static final String INDIVIDUAL_NAME_PATH = "$.Individual.*.name.givenName";
+	public static final String INDIVIDUAL_USER_UUID_PATH = "$.Individual.*.userUuid";
 	public static final String INDIVIDUAL_PHONE_NUMBER_PATH = "$.Individual.*.mobileNumber";
 	public static final String INDIVIDUAL_EMAIL_PATH = "$.Individual.*.email";
 	public static final String INDIVIDUAL_ROLE_PATH = "$.Individual.*.skills[0].type";
@@ -101,6 +102,10 @@ public class Constants {
 	public static final String POLL_PHASE_PAYMENT           = "PAYMENT";
 	public static final String POLL_PHASE_PAYMENT_INITIATION = "PAYMENT_INITIATION";
 	public static final String SYSTEM_SCHEDULER_ACTOR       = "system-scheduler";
+
+	// BILL_STARTED_CHECK phase identifiers
+	public static final String STARTED_CHECK_PHASE_VERIFY   = "VERIFY_STARTED";
+	public static final String STARTED_CHECK_PHASE_PAYMENT  = "PAYMENT_STARTED";
 
 	public static final String EFFECTIVE_FROM_FIELD_MDMS = "effectiveFrom";
 	public static final String EFFECTIVE_TO_FIELD_MDMS = "effectiveTo";

@@ -57,18 +57,25 @@ public class TaskConsumer {
         log.info("Consuming message from kafka task topic");
         TaskRequest taskRequest = objectMapper.convertValue(message, TaskRequest.class);
 
-        // WfUpdate tasks: internal WF-only transitions — no external payment provider involved.
-        if (taskRequest.getTask() != null && taskRequest.getTask().getType() == Task.Type.WfUpdate) {
-            handleWfUpdateTask(taskRequest);
+        if (taskRequest.getTask() == null) {
+            log.warn("Received task message with null task — skipping");
             return;
         }
 
+        switch (taskRequest.getTask().getType()) {
+            case WfUpdate             -> handleWfUpdateTask(taskRequest);
+            case VerificationStart    -> handleVerificationStartTask(taskRequest);
+            case VerificationVerify   -> handleVerificationVerifyTask(taskRequest);
+            case PaymentInitiationStart -> handlePaymentInitiationStartTask(taskRequest);
+            case PaymentInitiationPay   -> handlePaymentInitiationPayTask(taskRequest);
+            default                   -> handleProviderTask(taskRequest);  // Verify / Transfer (legacy)
+        }
+    }
+
+    private void handleProviderTask(TaskRequest taskRequest) {
         Set<String> providers = extractProviders(taskRequest.getBill());
         log.info("Task for bill={} providers={}", taskRequest.getTask().getBillId(), providers);
 
-        // Call each service at most once — only if at least one provider in this bill is supported.
-        // Each service then handles all its matching details internally in a single pass.
-        // Wrapped per-service so one service throwing does not block offset commit or other services.
         paymentProviderServices.stream()
                 .filter(s -> providers.stream().anyMatch(s::supports))
                 .forEach(s -> {
@@ -81,6 +88,137 @@ public class TaskConsumer {
                                 taskRequest.getTask().getBillId(), e);
                     }
                 });
+    }
+
+    /**
+     * Transitions bill detail → VERIFICATION_IN_PROGRESS; persists task record.
+     * No external payment provider call — BILL_STARTED_CHECK handles re-check via scheduler.
+     */
+    private void handleVerificationStartTask(TaskRequest taskRequest) {
+        Task task = taskRequest.getTask();
+        BillDetail detail = taskRequest.getBill().getBillDetails().get(0);
+        String billId = task.getBillId();
+        try {
+            // Skip if detail already advanced past PENDING_VERIFICATION
+            if (detail.getStatus() != Status.PENDING_VERIFICATION
+                    && detail.getStatus() != Status.VERIFICATION_FAILED) {
+                log.info("VerificationStart: detail={} already in status={} — skipping", detail.getId(), detail.getStatus());
+                markTaskDone(task);
+                return;
+            }
+            paymentWorkflowService.transitionBillDetail(detail, Actions.VERIFY, taskRequest.getRequestInfo());
+            paymentWorkflowService.pushBillUpdate(taskRequest.getBill(), taskRequest.getRequestInfo());
+            log.info("VerificationStart: detail={} → VERIFICATION_IN_PROGRESS for bill={}", detail.getId(), billId);
+        } catch (Exception e) {
+            log.error("VerificationStart failed for bill={} detail={} — BILL_STARTED_CHECK will retry: {}",
+                    billId, detail.getId(), e.getMessage());
+        } finally {
+            markTaskDone(task);
+        }
+    }
+
+    /**
+     * Calls payment provider to initiate verification; creates BILL_DETAILS_TASK_VERIFY_CHECK job.
+     */
+    private void handleVerificationVerifyTask(TaskRequest taskRequest) {
+        Task task = taskRequest.getTask();
+        BillDetail detail = taskRequest.getBill().getBillDetails().get(0);
+        String billId = task.getBillId();
+        try {
+            if (detail.getStatus() != Status.VERIFICATION_IN_PROGRESS) {
+                log.info("VerificationVerify: detail={} not in VERIFICATION_IN_PROGRESS (status={}) — skipping",
+                        detail.getId(), detail.getStatus());
+                markTaskDone(task);
+                return;
+            }
+            // Initiate verification via provider
+            Set<String> providers = extractProviders(taskRequest.getBill());
+            paymentProviderServices.stream()
+                    .filter(s -> providers.stream().anyMatch(s::supports))
+                    .forEach(s -> s.executeTask(taskRequest));
+
+            // Create polling job for this detail
+            paymentWorkflowService.insertBillDetailsTaskVerifyCheckJob(
+                    taskRequest.getBill(), detail, taskRequest.getRequestInfo());
+            log.info("VerificationVerify: initiated for bill={} detail={}", billId, detail.getId());
+        } catch (Exception e) {
+            log.error("VerificationVerify failed for bill={} detail={} — BILL_DETAILS_TASK_VERIFY_CHECK will poll: {}",
+                    billId, detail.getId(), e.getMessage());
+        } finally {
+            markTaskDone(task);
+        }
+    }
+
+    /**
+     * Transitions bill detail → PAYMENT_IN_PROGRESS; persists task record.
+     * No external payment provider call — BILL_STARTED_CHECK handles re-check via scheduler.
+     */
+    private void handlePaymentInitiationStartTask(TaskRequest taskRequest) {
+        Task task = taskRequest.getTask();
+        BillDetail detail = taskRequest.getBill().getBillDetails().get(0);
+        String billId = task.getBillId();
+        try {
+            if (detail.getStatus() != Status.REVIEWED && detail.getStatus() != Status.PAYMENT_FAILED) {
+                log.info("PaymentInitiationStart: detail={} not eligible (status={}) — skipping",
+                        detail.getId(), detail.getStatus());
+                markTaskDone(task);
+                return;
+            }
+            paymentWorkflowService.transitionBillDetail(detail, Actions.PAYMENT_INITIATION, taskRequest.getRequestInfo());
+            paymentWorkflowService.pushBillUpdate(taskRequest.getBill(), taskRequest.getRequestInfo());
+            log.info("PaymentInitiationStart: detail={} → PAYMENT_IN_PROGRESS for bill={}", detail.getId(), billId);
+        } catch (Exception e) {
+            log.error("PaymentInitiationStart failed for bill={} detail={} — BILL_STARTED_CHECK will retry: {}",
+                    billId, detail.getId(), e.getMessage());
+        } finally {
+            markTaskDone(task);
+        }
+    }
+
+    /**
+     * Calls payment provider to initiate payment; creates BILL_DETAILS_TASK_PAYMENT_STATUS_CHECK job.
+     */
+    private void handlePaymentInitiationPayTask(TaskRequest taskRequest) {
+        Task task = taskRequest.getTask();
+        BillDetail detail = taskRequest.getBill().getBillDetails().get(0);
+        String billId = task.getBillId();
+        try {
+            if (detail.getStatus() != Status.PAYMENT_IN_PROGRESS) {
+                log.info("PaymentInitiationPay: detail={} not in PAYMENT_IN_PROGRESS (status={}) — skipping",
+                        detail.getId(), detail.getStatus());
+                markTaskDone(task);
+                return;
+            }
+            // Initiate payment via provider (Transfer task type)
+            Task transferTask = Task.builder()
+                    .id(task.getId())
+                    .tenantId(task.getTenantId())
+                    .billId(task.getBillId())
+                    .billDetailId(task.getBillDetailId())
+                    .type(Task.Type.Transfer)
+                    .status(Status.IN_PROGRESS)
+                    .auditDetails(task.getAuditDetails())
+                    .build();
+            TaskRequest transferReq = TaskRequest.builder()
+                    .task(transferTask)
+                    .bill(taskRequest.getBill())
+                    .requestInfo(taskRequest.getRequestInfo())
+                    .build();
+            Set<String> providers = extractProviders(taskRequest.getBill());
+            paymentProviderServices.stream()
+                    .filter(s -> providers.stream().anyMatch(s::supports))
+                    .forEach(s -> s.executeTask(transferReq));
+
+            // Create polling job for this detail
+            paymentWorkflowService.insertBillDetailsTaskPaymentStatusCheckJob(
+                    taskRequest.getBill(), detail, taskRequest.getRequestInfo());
+            log.info("PaymentInitiationPay: initiated for bill={} detail={}", billId, detail.getId());
+        } catch (Exception e) {
+            log.error("PaymentInitiationPay failed for bill={} detail={} — BILL_DETAILS_TASK_PAYMENT_STATUS_CHECK will poll: {}",
+                    billId, detail.getId(), e.getMessage());
+        } finally {
+            markTaskDone(task);
+        }
     }
 
     /**
@@ -135,7 +273,6 @@ public class TaskConsumer {
             case POLL_PHASE_IGNORE_ERRORS      -> Actions.IGNORE_ERRORS_AND_VERIFY;
             case POLL_PHASE_SEND_FOR_REVIEW    -> Actions.SEND_FOR_REVIEW;
             case POLL_PHASE_SEND_FOR_APPROVAL  -> Actions.SEND_FOR_APPROVAL;
-            case POLL_PHASE_PAYMENT_INITIATION -> Actions.PAYMENT_INITIATION;
             default -> null;
         };
     }

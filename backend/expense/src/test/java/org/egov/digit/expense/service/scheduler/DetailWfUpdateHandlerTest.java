@@ -26,7 +26,6 @@ import static org.egov.digit.expense.TestDataBuilder.*;
 import static org.egov.digit.expense.config.Constants.POLL_PHASE_IGNORE_ERRORS;
 import static org.egov.digit.expense.config.Constants.POLL_PHASE_SEND_FOR_REVIEW;
 import static org.egov.digit.expense.config.Constants.POLL_PHASE_SEND_FOR_APPROVAL;
-import static org.egov.digit.expense.config.Constants.POLL_PHASE_PAYMENT_INITIATION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -94,22 +93,6 @@ public class DetailWfUpdateHandlerTest {
         verify(agg).checkAndAggregateBill(eq(BILL_ID), eq(TENANT_ID), eq(POLL_PHASE_SEND_FOR_APPROVAL), any());
     }
 
-    @Test
-    public void handle_paymentInitiation_transitionsAndAggregates() {
-        BillDetail detail = buildDetail(DETAIL_ID_1, Status.REVIEWED);
-        Bill bill = buildBillWithDetails(Status.PAYMENT_IN_PROGRESS, List.of(detail));
-        Bill refreshed = buildBillWithDetails(Status.PAYMENT_IN_PROGRESS,
-                List.of(buildDetail(DETAIL_ID_1, Status.PAYMENT_IN_PROGRESS)));
-        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any()))
-                .thenReturn(bill)
-                .thenReturn(refreshed);
-
-        SchedulerJobResult result = handler.handle(buildDetailWfUpdateJob(BILL_ID, DETAIL_ID_1, POLL_PHASE_PAYMENT_INITIATION));
-
-        assertEquals(SchedulerJobResult.DONE, result);
-        verify(pws).transitionBillDetail(eq(detail), eq(Actions.PAYMENT_INITIATION), any());
-    }
-
     // ── Idempotency: detail already transitioned ──────────────────────────────
 
     @Test
@@ -132,20 +115,6 @@ public class DetailWfUpdateHandlerTest {
         when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any())).thenReturn(bill);
 
         SchedulerJobResult result = handler.handle(buildDetailWfUpdateJob(BILL_ID, DETAIL_ID_1, POLL_PHASE_SEND_FOR_REVIEW));
-
-        assertEquals(SchedulerJobResult.DONE, result);
-        verify(pws, never()).transitionBillDetail(any(), any(), any());
-    }
-
-    @Test
-    public void handle_paymentInitiation_alreadyInProgress_skipsTransition() {
-        BillDetail detail = buildDetail(DETAIL_ID_1, Status.PAYMENT_IN_PROGRESS);
-        Bill bill = buildBillWithDetails(Status.PAYMENT_IN_PROGRESS, List.of(detail));
-        Bill refreshed = buildBillWithDetails(Status.PAYMENT_IN_PROGRESS, List.of(detail));
-        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any()))
-                .thenReturn(bill).thenReturn(refreshed);
-
-        SchedulerJobResult result = handler.handle(buildDetailWfUpdateJob(BILL_ID, DETAIL_ID_1, POLL_PHASE_PAYMENT_INITIATION));
 
         assertEquals(SchedulerJobResult.DONE, result);
         verify(pws, never()).transitionBillDetail(any(), any(), any());
@@ -228,34 +197,6 @@ public class DetailWfUpdateHandlerTest {
     }
 
     // ── onMaxAttemptsExceeded ────────────────────────────────────────────────
-
-    @Test
-    public void onMaxAttempts_paymentInitiation_detailReviewed_forcesAndTriggersTransfer() {
-        BillDetail detail = buildDetail(DETAIL_ID_1, Status.REVIEWED);
-        Bill bill = buildBillWithDetails(Status.PAYMENT_IN_PROGRESS, List.of(detail));
-        Bill refreshed = buildBillWithDetails(Status.PAYMENT_IN_PROGRESS,
-                List.of(buildDetail(DETAIL_ID_1, Status.PAYMENT_IN_PROGRESS)));
-        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any()))
-                .thenReturn(bill).thenReturn(refreshed);
-
-        handler.onMaxAttemptsExceeded(buildDetailWfUpdateJob(BILL_ID, DETAIL_ID_1, POLL_PHASE_PAYMENT_INITIATION));
-
-        verify(pws).transitionBillDetail(eq(detail), eq(Actions.PAYMENT_INITIATION), any());
-        verify(agg).triggerTransferAfterPaymentInitiation(eq(refreshed), any());
-    }
-
-    @Test
-    public void onMaxAttempts_paymentInitiation_alreadyInProgress_triggersTransferOnly() {
-        BillDetail detail = buildDetail(DETAIL_ID_1, Status.PAYMENT_IN_PROGRESS);
-        Bill bill = buildBillWithDetails(Status.PAYMENT_IN_PROGRESS, List.of(detail));
-        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any()))
-                .thenReturn(bill).thenReturn(bill);
-
-        handler.onMaxAttemptsExceeded(buildDetailWfUpdateJob(BILL_ID, DETAIL_ID_1, POLL_PHASE_PAYMENT_INITIATION));
-
-        verify(pws, never()).transitionBillDetail(any(), eq(Actions.PAYMENT_INITIATION), any());
-        verify(agg).triggerTransferAfterPaymentInitiation(any(), any());
-    }
 
     @Test
     public void onMaxAttempts_nonPaymentPhase_appliesFailCompensation() {

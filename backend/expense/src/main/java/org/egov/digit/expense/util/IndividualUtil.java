@@ -9,13 +9,13 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.repository.ServiceRequestRepository;
 import org.egov.digit.expense.web.models.IndividualDetails;
-import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.egov.digit.expense.config.Constants.*;
 
@@ -35,40 +35,55 @@ public class IndividualUtil {
         this.mapper = mapper;
     }
 
-    private IndividualDetails fetchIndividualDetails(RequestInfo requestInfo, String tenantId, String identifier)  {
+    private IndividualDetails fetchIndividualDetails(RequestInfo requestInfo, String tenantId, String identifier) {
         String uri = getIndividualSearchURLWithParams(tenantId).toUriString();
+        Object individualSearchRequest = getIndividualSearchRequest(requestInfo, identifier);
+        Object individualResponse = serviceRequestRepository.fetchResult(new StringBuilder(uri), individualSearchRequest);
 
-        Object individualSearchRequest = getIndividualSearchRequest(requestInfo,identifier);
-        Object individualResponse =  serviceRequestRepository.fetchResult(new StringBuilder(uri), individualSearchRequest);
-
-        return IndividualDetails.builder()
-                .name(getIndividualField(individualResponse, INDIVIDUAL_NAME_PATH, identifier))
-                .phoneNumber(getIndividualField(individualResponse, INDIVIDUAL_PHONE_NUMBER_PATH, identifier))
-                .email(getIndividualField(individualResponse, INDIVIDUAL_EMAIL_PATH, identifier))
-                .role(getIndividualField(individualResponse, INDIVIDUAL_ROLE_PATH, identifier))
-                .build();
-
+        List<IndividualDetails> details = mapIndividualResponse(individualResponse);
+        if (details.isEmpty()) {
+            log.info("The Payee is not available in the individual index, Id: {}", identifier);
+            return null;
+        }
+        return details.get(0);
     }
 
-    private String getIndividualField(Object individualResponse, String fieldPath, String identifier){
-        String field = "";
-        List<String> individualField = null;
+    private List<IndividualDetails> mapIndividualResponse(Object response) {
+        List<IndividualDetails> result = new ArrayList<>();
+        List<Map<String, Object>> individuals = JsonPath.read(response, "$.Individual");
+        for (Map<String, Object> individual : individuals) {
+            result.add(mapSingleIndividual(individual));
+        }
+        return result;
+    }
 
-        try{
-            individualField = JsonPath.read(individualResponse, fieldPath);
+    @SuppressWarnings("unchecked")
+    private IndividualDetails mapSingleIndividual(Map<String, Object> individual) {
+        String id = (String) individual.get("id");
+        String userUuid = (String) individual.get("userUuid");
+        String email = (String) individual.get("email");
+        String phoneNumber = (String) individual.get("mobileNumber");
 
-        } catch (Exception e){
-            throw new CustomException("PARSING_INDIVIDUAL_ERROR", "Failed to parse response from individual");
+        Map<String, Object> nameMap = (Map<String, Object>) individual.get("name");
+        String name = nameMap != null ? (String) nameMap.get("givenName") : null;
+
+        List<Map<String, Object>> skills = (List<Map<String, Object>>) individual.get("skills");
+        List<String> roles = new ArrayList<>();
+        if (skills != null) {
+            for (Map<String, Object> skill : skills) {
+                String type = (String) skill.get("type");
+                if (type != null) roles.add(type);
+            }
         }
 
-        if(!individualField.isEmpty()) {
-            field = individualField.get(0);
-        }else{
-            log.info("The Payee is not available in the individual index, Ids : ", identifier);
-        }
-
-        return field;
-
+        return IndividualDetails.builder()
+                .id(id)
+                .userUuid(userUuid)
+                .email(email)
+                .phoneNumber(phoneNumber)
+                .name(name)
+                .roles(roles)
+                .build();
     }
 
     private UriComponentsBuilder getIndividualSearchURLWithParams(String tenantId) {
@@ -105,10 +120,6 @@ public class IndividualUtil {
         return individualDetails;
     }
 
-    /**
-     * Searches individuals by role codes and returns those with a non-blank email.
-     * Uses the same Individual search endpoint, passing roleCodes in the request body.
-     */
     public List<IndividualDetails> searchByRoleCodes(RequestInfo requestInfo, String tenantId, List<String> roleCodes) {
         List<IndividualDetails> result = new ArrayList<>();
         try {
@@ -124,18 +135,11 @@ public class IndividualUtil {
 
             Object response = serviceRequestRepository.fetchResult(new StringBuilder(uri), body);
 
-            List<String> ids    = JsonPath.read(response, "$.Individual[*].id");
-            List<String> emails = JsonPath.read(response, "$.Individual[*].email");
-            List<String> names  = JsonPath.read(response, "$.Individual[*].name.givenName");
-
-            for (int i = 0; i < ids.size(); i++) {
-                String email = i < emails.size() ? emails.get(i) : null;
-                if (email == null || email.isBlank()) continue;
-                result.add(IndividualDetails.builder()
-                        .id(ids.get(i))
-                        .email(email)
-                        .name(i < names.size() ? names.get(i) : null)
-                        .build());
+            List<IndividualDetails> all = mapIndividualResponse(response);
+            for (IndividualDetails details : all) {
+                if (details.getEmail() != null && !details.getEmail().isBlank()) {
+                    result.add(details);
+                }
             }
         } catch (Exception e) {
             log.warn("IndividualUtil: failed to search individuals by roleCodes={}: {}", roleCodes, e.getMessage());

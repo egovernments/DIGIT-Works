@@ -19,13 +19,9 @@ import static org.egov.digit.expense.config.Constants.*;
  * Handles {@link SchedulerJobType#DETAIL_WF_UPDATE} jobs (per-detail path).
  *
  * <p>Transitions a single BillDetail through a non-external WF action
- * (IGNORE_ERRORS, SEND_FOR_REVIEW, SEND_FOR_APPROVAL, PAYMENT_INITIATION) and
- * then calls {@link BillAggregationService#checkAndAggregateBill} to fire the
+ * (IGNORE_ERRORS, SEND_FOR_REVIEW, SEND_FOR_APPROVAL) and then calls
+ * {@link BillAggregationService#checkAndAggregateBill} to fire the
  * bill-level WF transition when all sibling details have settled.
- *
- * <p>For PAYMENT_INITIATION, after transitioning the detail to PAYMENT_IN_PROGRESS,
- * the handler calls {@link BillAggregationService#triggerTransferAfterPaymentInitiation}
- * once all details are PAYMENT_IN_PROGRESS — this creates the MTN Transfer tasks.
  *
  * <p>Each job targets exactly one BillDetail (referenceId = billDetailId).
  * Failures for one detail do not block other details.
@@ -136,28 +132,6 @@ public class DetailWfUpdateHandler implements SchedulerJobHandler {
             BillDetail detail = findDetail(bill, billDetailId);
             if (detail == null) return;
 
-            if (POLL_PHASE_PAYMENT_INITIATION.equals(phase)) {
-                // For payment initiation, force the detail to PAYMENT_IN_PROGRESS then trigger Transfer.
-                if (detail.getStatus() == Status.REVIEWED || detail.getStatus() == Status.PAYMENT_FAILED) {
-                    try {
-                        paymentWorkflowService.transitionBillDetail(detail, Actions.PAYMENT_INITIATION, requestInfo);
-                        paymentWorkflowService.pushBillUpdate(buildSingleDetailBill(bill, detail), requestInfo);
-                    } catch (Exception ex) {
-                        if (!workflowUtil.isRetryableWfError(ex)) {
-                            log.error("CRITICAL: DETAIL_WF_UPDATE force PAYMENT_INITIATION failed for detail={} — manual intervention required",
-                                    billDetailId, ex);
-                        }
-                    }
-                }
-                // Re-fetch after potential transition and check if we can trigger Transfer
-                Bill refreshed = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
-                if (refreshed != null) {
-                    billAggregationService.triggerTransferAfterPaymentInitiation(refreshed, requestInfo);
-                }
-                return;
-            }
-
-            // For non-payment phases, apply the bill-level FAIL compensation.
             applyBillFailCompensation(bill, requestInfo, phase);
 
         } catch (Exception e) {
@@ -167,25 +141,8 @@ public class DetailWfUpdateHandler implements SchedulerJobHandler {
 
     // ─────────────────────────────────────────────────────────────────────────
 
-    /** Routes to the correct aggregation method for the phase. */
     private void aggregate(Bill bill, String billId, String tenantId, String phase, RequestInfo requestInfo) {
-        if (POLL_PHASE_PAYMENT_INITIATION.equals(phase)) {
-            // All details PAYMENT_IN_PROGRESS → trigger MTN Transfer tasks (idempotent).
-            billAggregationService.checkAndAggregateBill(billId, tenantId, POLL_PHASE_PAYMENT_INITIATION, requestInfo);
-            // The BillAggregationService.checkAndAggregateBill for PAYMENT_INITIATION returns null action
-            // and instead triggers createTransferTask when all details are PAYMENT_IN_PROGRESS.
-            // We delegate that call here explicitly for clarity.
-            Bill refreshed = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
-            if (refreshed != null) {
-                boolean allPaymentInProgress = refreshed.getBillDetails().stream()
-                        .noneMatch(d -> d.getStatus() == Status.REVIEWED);
-                if (allPaymentInProgress) {
-                    billAggregationService.triggerTransferAfterPaymentInitiation(refreshed, requestInfo);
-                }
-            }
-        } else {
-            billAggregationService.checkAndAggregateBill(billId, tenantId, phase, requestInfo);
-        }
+        billAggregationService.checkAndAggregateBill(billId, tenantId, phase, requestInfo);
     }
 
     private void applyBillFailCompensation(Bill bill, RequestInfo requestInfo, String phase) {
@@ -208,7 +165,6 @@ public class DetailWfUpdateHandler implements SchedulerJobHandler {
             case POLL_PHASE_IGNORE_ERRORS      -> Actions.IGNORE_ERRORS_AND_VERIFY;
             case POLL_PHASE_SEND_FOR_REVIEW    -> Actions.SEND_FOR_REVIEW;
             case POLL_PHASE_SEND_FOR_APPROVAL  -> Actions.SEND_FOR_APPROVAL;
-            case POLL_PHASE_PAYMENT_INITIATION -> Actions.PAYMENT_INITIATION;
             default -> null;
         };
     }
@@ -219,9 +175,6 @@ public class DetailWfUpdateHandler implements SchedulerJobHandler {
             case POLL_PHASE_IGNORE_ERRORS      -> status == Status.VERIFIED || isAtOrBeyondVerified(status);
             case POLL_PHASE_SEND_FOR_REVIEW    -> status == Status.UNDER_REVIEW || isAtOrBeyondUnderReview(status);
             case POLL_PHASE_SEND_FOR_APPROVAL  -> status == Status.REVIEWED || isAtOrBeyondReviewed(status);
-            case POLL_PHASE_PAYMENT_INITIATION -> status == Status.PAYMENT_IN_PROGRESS
-                    || status == Status.PAID || status == Status.FULLY_PAID
-                    || status == Status.PAYMENT_FAILED;
             default -> false;
         };
     }

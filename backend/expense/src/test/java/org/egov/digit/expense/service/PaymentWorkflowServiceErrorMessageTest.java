@@ -34,7 +34,6 @@ public class PaymentWorkflowServiceErrorMessageTest {
     @Mock private SchedulerJobRegistry schedulerJobRegistry;
     @Mock private Configuration config;
     @Mock private ExpenseProducer expenseProducer;
-    @Mock private WorkflowEmailNotificationService workflowEmailNotificationService;
 
     private PaymentWorkflowService service;
 
@@ -46,8 +45,7 @@ public class PaymentWorkflowServiceErrorMessageTest {
     @BeforeEach
     public void setUp() {
         service = new PaymentWorkflowService(workflowUtil, billRepository, taskRepository,
-                schedulerJobRepository, schedulerJobRegistry, config, expenseProducer,
-                workflowEmailNotificationService);
+                schedulerJobRepository, schedulerJobRegistry, config, expenseProducer);
     }
 
     // ── IGNORE_ERRORS_VALIDATION ──────────────────────────────────────────────

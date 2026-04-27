@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
+
 @Validated
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-04-02T17:49:59.877+05:30[Asia/Kolkata]")
 @Data
@@ -19,6 +21,9 @@ public class IndividualDetails {
 
 	@JsonProperty("id")
 	private String id;
+
+	@JsonProperty("userUuid")
+	private String userUuid;
 
 	@JsonProperty("name")
 	@Valid
@@ -33,8 +38,8 @@ public class IndividualDetails {
 	@Valid
 	private String email;
 
-	@JsonProperty("role")
+	@JsonProperty("roles")
 	@Valid
-	private String role;
+	private List<String> roles;
 
 }

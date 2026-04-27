@@ -421,6 +421,7 @@ public class BillService {
 		bill.setStatus(billsFromSearch.get(0).getStatus());
 
 		if (Actions.VERIFY.toString().equals(action)) {
+			validator.validateNoBillDetailInVerificationInProgress(billsFromSearch.get(0));
 			paymentWorkflowService.verifyBill(billRequest);
 		} else if (Actions.IGNORE_ERRORS_AND_VERIFY.toString().equals(action)) {
 			paymentWorkflowService.ignoreErrorsAndVerify(billRequest);

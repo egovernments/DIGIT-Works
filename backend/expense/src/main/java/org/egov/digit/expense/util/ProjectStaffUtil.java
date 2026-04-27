@@ -41,7 +41,7 @@ public class ProjectStaffUtil {
             String uri = UriComponentsBuilder
                     .fromHttpUrl(config.getProjectServiceHost() + config.getProjectStaffEndpoint())
                     .queryParam("tenantId", tenantId)
-                    .queryParam("limit", staffIds.size())
+                    .queryParam("limit", config.getProjectStaffSearchLimit())
                     .queryParam("offset", 0)
                     .toUriString();
 
@@ -53,7 +53,7 @@ public class ProjectStaffUtil {
             body.set("ProjectStaff", staffNode);
 
             Object response = serviceRequestRepository.fetchResult(new StringBuilder(uri), body);
-            List<String> matched = JsonPath.read(response, "$.ProjectStaff[*].staffId");
+            List<String> matched = JsonPath.read(response, "$.ProjectStaff[*].userId");
             return new HashSet<>(matched);
         } catch (Exception e) {
             log.warn("ProjectStaffUtil: failed to filter project staff tenantId={}: {}", tenantId, e.getMessage());

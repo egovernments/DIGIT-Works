@@ -88,24 +88,6 @@ public class BillAggregationService {
         applyBillTransition(bill, action, requestInfo, phase);
     }
 
-    /**
-     * Called after {@code DETAIL_WF_UPDATE(PAYMENT_INITIATION)} force-transitions remaining
-     * details to {@code PAYMENT_IN_PROGRESS} (compensation path). Triggers Transfer task
-     * creation so that MTN disbursement can proceed.
-     *
-     * @param bill        bill in {@code PAYMENT_IN_PROGRESS}
-     * @param requestInfo actor context
-     */
-    public void triggerTransferAfterPaymentInitiation(Bill bill, RequestInfo requestInfo) {
-        try {
-            paymentWorkflowService.createTransferTask(bill, requestInfo);
-            log.info("BillAggregationService: triggered Transfer tasks for bill={} after compensation", bill.getId());
-        } catch (Exception e) {
-            log.error("BillAggregationService: failed to trigger Transfer tasks for bill={} — " +
-                    "BILL_STATUS_POLL safety-net will cover", bill.getId(), e);
-        }
-    }
-
     // ─────────────────────────────────────────────────────────────────────────
     // Phase-specific settlement checks
     // ─────────────────────────────────────────────────────────────────────────
@@ -129,9 +111,6 @@ public class BillAggregationService {
 
             case POLL_PHASE_SEND_FOR_APPROVAL ->
                     details.stream().noneMatch(d -> d.getStatus() == Status.UNDER_REVIEW);
-
-            case POLL_PHASE_PAYMENT_INITIATION ->
-                    details.stream().noneMatch(d -> d.getStatus() == Status.REVIEWED);
 
             case POLL_PHASE_PAYMENT ->
                     details.stream().noneMatch(d -> d.getStatus() == Status.PAYMENT_IN_PROGRESS);
@@ -161,10 +140,6 @@ public class BillAggregationService {
             case POLL_PHASE_IGNORE_ERRORS   -> Actions.COMPLETE;
             case POLL_PHASE_SEND_FOR_REVIEW -> Actions.COMPLETE;
             case POLL_PHASE_SEND_FOR_APPROVAL -> Actions.COMPLETE;
-
-            // PAYMENT_INITIATION: no bill WF transition here — bill is already PAYMENT_IN_PROGRESS.
-            // Transfer tasks are triggered by DetailWfUpdateHandler directly.
-            case POLL_PHASE_PAYMENT_INITIATION -> null;
 
             case POLL_PHASE_PAYMENT -> {
                 long paid = details.stream()

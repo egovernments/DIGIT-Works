@@ -107,11 +107,11 @@ public class PaymentWorkflowService {
     // ─────────────────────────────────────────────────────────────────────────
 
     /**
-     * Transitions the bill and eligible bill details to VERIFICATION_IN_PROGRESS,
-     * then inserts a BILL_STATUS_POLL scheduler job for the VERIFICATION phase.
+     * Transitions the bill to VERIFICATION_IN_PROGRESS, pushes VerificationStart tasks per
+     * eligible detail, and inserts a BILL_STARTED_CHECK coordinator job.
+     * BILL_STATUS_POLL is created later by BILL_STARTED_CHECK once all details confirm in-progress.
      *
      * <p>Pre-condition: Bill must be in PENDING_VERIFICATION or PARTIALLY_VERIFIED.
-     * Detail-level transitions target details in PENDING_VERIFICATION or VERIFICATION_FAILED.
      */
     public void verifyBill(BillRequest billRequest) {
         Bill bill = billRequest.getBill();
@@ -123,12 +123,11 @@ public class PaymentWorkflowService {
         transitionBill(bill, Actions.VERIFY, billRequest);
         pushBillUpdate(bill, requestInfo);
 
-        // Kafka-first: push one Verify task per detail for near-realtime processing.
-        // TASK_VERIFY_CHECK crash-recovery jobs are created inside createVerifyTask().
-        createVerifyTask(bill, requestInfo);
+        // Push one VerificationStart task per eligible detail (transitions detail → VERIFICATION_IN_PROGRESS)
+        createVerificationStartTasks(bill, requestInfo);
 
-        // Safety-net aggregator — fires after a short delay; dispatches scheduler retry jobs for any details still unsettled.
-        insertBillStatusPollJob(bill, POLL_PHASE_VERIFICATION, requestInfo, config.getSchedulerSafetyNetDelayMs());
+        // Coordinator: waits for all details to confirm in-progress before pushing VerificationVerify tasks
+        insertBillStartedCheckJob(bill, STARTED_CHECK_PHASE_VERIFY, requestInfo);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -231,11 +230,9 @@ public class PaymentWorkflowService {
     // ─────────────────────────────────────────────────────────────────────────
 
     /**
-     * Transitions bill to PAYMENT_IN_PROGRESS and each REVIEWED detail to PAYMENT_IN_PROGRESS.
-     *
-     * <p>BILL_STATUS_POLL(PAYMENT) is inserted upfront as a safety-net to guarantee the bill
-     * exits PAYMENT_IN_PROGRESS even if a pod crash occurs between this call and the
-     * BillDetailWfUpdateHandler completing Transfer task creation.
+     * Transitions bill to PAYMENT_IN_PROGRESS, pushes PaymentInitiationStart tasks per eligible
+     * detail, and inserts a BILL_STARTED_CHECK coordinator job.
+     * BILL_STATUS_POLL is created later by BILL_STARTED_CHECK once all details confirm in-progress.
      *
      * <p>Pre-condition: Bill in REVIEWED. Actor: PAYMENT_APPROVER.
      */
@@ -249,14 +246,11 @@ public class PaymentWorkflowService {
         transitionBill(bill, Actions.PAYMENT_INITIATION, billRequest);
         pushBillUpdate(bill, requestInfo);
 
-        // Kafka-first: push one WfUpdate task per detail for near-realtime processing.
-        createWfUpdateTask(bill, POLL_PHASE_PAYMENT_INITIATION, requestInfo,
-                d -> d.getStatus() == Status.REVIEWED);
+        // Push one PaymentInitiationStart task per eligible detail (transitions detail → PAYMENT_IN_PROGRESS)
+        createPaymentInitiationStartTasks(bill, requestInfo);
 
-        // Safety-net aggregator for PAYMENT phase — fires after a long delay to handle the case
-        // where a pod crash prevents Transfer tasks from being created or TASK_STATUS_CHECK from
-        // completing the bill-level transition.
-        insertBillStatusPollJob(bill, POLL_PHASE_PAYMENT, requestInfo, config.getSchedulerSafetyNetDelayMs());
+        // Coordinator: waits for all details to confirm in-progress before pushing PaymentInitiationPay tasks
+        insertBillStartedCheckJob(bill, STARTED_CHECK_PHASE_PAYMENT, requestInfo);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -278,12 +272,12 @@ public class PaymentWorkflowService {
         transitionBill(bill, Actions.PAYMENT_INITIATION, billRequest);
         pushBillUpdate(bill, requestInfo);
 
-        // Kafka-first: push one WfUpdate task per detail for near-realtime processing.
-        createWfUpdateTask(bill, POLL_PHASE_PAYMENT_INITIATION, requestInfo,
+        // Push one PaymentInitiationStart task per eligible PAYMENT_FAILED detail
+        createPaymentInitiationStartTasks(bill, requestInfo,
                 d -> d.getStatus() == Status.PAYMENT_FAILED);
 
-        // Safety-net aggregator inserted upfront for both initial payment and retry.
-        insertBillStatusPollJob(bill, POLL_PHASE_PAYMENT, requestInfo, config.getSchedulerSafetyNetDelayMs());
+        // Coordinator: waits for all details to confirm in-progress before pushing PaymentInitiationPay tasks
+        insertBillStartedCheckJob(bill, STARTED_CHECK_PHASE_PAYMENT, requestInfo);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -392,110 +386,6 @@ public class PaymentWorkflowService {
     }
 
     /**
-     * Pushes a Transfer task to the expense-bill-task Kafka topic so that TaskConsumer
-     * triggers MTN disbursement for all PAYMENT_IN_PROGRESS details. Called by
-     * BillDetailWfUpdateHandler after all PAYMENT_INITIATION transitions succeed.
-     * Idempotent — deduplicates against any existing IN_PROGRESS Transfer task.
-     */
-    public void createTransferTask(Bill bill, RequestInfo requestInfo) {
-        int pushed = 0;
-        for (BillDetail detail : bill.getBillDetails()) {
-            Task existing = taskRepository.searchTask(Task.builder()
-                    .billId(bill.getId())
-                    .billDetailId(detail.getId())
-                    .tenantId(bill.getTenantId())
-                    .type(Task.Type.Transfer)
-                    .status(Status.IN_PROGRESS)
-                    .build());
-            if (existing != null) {
-                long ageMs = System.currentTimeMillis() -
-                        (existing.getAuditDetails() != null ? existing.getAuditDetails().getLastModifiedTime() : 0L);
-                if (ageMs < config.getSchedulerStuckThresholdMs()) {
-                    log.info("Transfer task already exists for bill={} detail={} — skipping", bill.getId(), detail.getId());
-                    continue;
-                }
-                log.warn("Stale IN_PROGRESS transfer task {} for bill={} detail={} (age={}ms) — marking DONE and re-creating",
-                        existing.getId(), bill.getId(), detail.getId(), ageMs);
-                existing.setStatus(Status.DONE);
-                expenseProducer.push(bill.getTenantId(), config.getTaskUpdateTopic(), existing);
-            }
-            Task task = Task.builder()
-                    .id(UUID.randomUUID().toString())
-                    .tenantId(bill.getTenantId())
-                    .billId(bill.getId())
-                    .billDetailId(detail.getId())
-                    .type(Task.Type.Transfer)
-                    .status(Status.IN_PROGRESS)
-                    .auditDetails(bill.getAuditDetails())
-                    .build();
-            TaskRequest taskRequest = TaskRequest.builder()
-                    .task(task)
-                    .bill(buildSingleDetailBill(bill, detail))
-                    .requestInfo(requestInfo)
-                    .build();
-            expenseProducer.push(bill.getTenantId(), config.getBillTaskTopic(), taskRequest);
-            log.info("Pushed Transfer task to Kafka for bill={} detail={}", bill.getId(), detail.getId());
-            pushed++;
-        }
-        // BILL_STATUS_POLL(PAYMENT) is now inserted upfront in initiatePayment/retryPayment,
-        // so no deferred insertion is needed here. createTransferTask is called after all
-        // details have been transitioned to PAYMENT_IN_PROGRESS.
-    }
-
-    /**
-     * Pushes one Verify task per BillDetail to the expense-bill-task Kafka topic so that
-     * TaskConsumer triggers MTN verification asynchronously per detail. Idempotent —
-     * deduplicates against any existing IN_PROGRESS Verify task for the same (bill, detail).
-     * Also inserts a TASK_VERIFY_CHECK crash-recovery job for each task so that a pod
-     * crash after Kafka commit but before TaskConsumer processes the message is handled.
-     */
-    private void createVerifyTask(Bill bill, RequestInfo requestInfo) {
-        for (BillDetail detail : bill.getBillDetails()) {
-            Task existing = taskRepository.searchTask(Task.builder()
-                    .billId(bill.getId())
-                    .billDetailId(detail.getId())
-                    .tenantId(bill.getTenantId())
-                    .type(Task.Type.Verify)
-                    .status(Status.IN_PROGRESS)
-                    .build());
-            if (existing != null) {
-                long ageMs = System.currentTimeMillis() -
-                        (existing.getAuditDetails() != null ? existing.getAuditDetails().getLastModifiedTime() : 0L);
-                if (ageMs < config.getSchedulerStuckThresholdMs()) {
-                    log.info("Verify task already exists for bill={} detail={} — skipping", bill.getId(), detail.getId());
-                    continue;
-                }
-                log.warn("Stale IN_PROGRESS verify task {} for bill={} detail={} (age={}ms) — marking DONE and re-creating",
-                        existing.getId(), bill.getId(), detail.getId(), ageMs);
-                existing.setStatus(Status.DONE);
-                expenseProducer.push(bill.getTenantId(), config.getTaskUpdateTopic(), existing);
-            }
-            String taskId = UUID.randomUUID().toString();
-            Task task = Task.builder()
-                    .id(taskId)
-                    .tenantId(bill.getTenantId())
-                    .billId(bill.getId())
-                    .billDetailId(detail.getId())
-                    .type(Task.Type.Verify)
-                    .status(Status.IN_PROGRESS)
-                    .auditDetails(bill.getAuditDetails())
-                    .build();
-            TaskRequest taskRequest = TaskRequest.builder()
-                    .task(task)
-                    .bill(buildSingleDetailBill(bill, detail))
-                    .requestInfo(requestInfo)
-                    .build();
-            expenseProducer.push(bill.getTenantId(), config.getBillTaskTopic(), taskRequest);
-            log.info("Pushed Verify task to Kafka for bill={} detail={}", bill.getId(), detail.getId());
-
-            // TASK_VERIFY_CHECK: fires after a delay so that if the Kafka consumer crashes before
-            // processing this task, the scheduler re-runs verification rather than leaving
-            // the detail stuck in VERIFICATION_IN_PROGRESS.
-            insertTaskVerifyCheckJob(taskId, bill.getTenantId(), requestInfo);
-        }
-    }
-
-    /**
      * Pushes one WfUpdate task per eligible BillDetail to the expense-bill-task Kafka topic.
      * TaskConsumer processes these in near-realtime by calling the appropriate WF transition.
      * BILL_STATUS_POLL (inserted by the caller) fires after a short delay and dispatches
@@ -523,31 +413,6 @@ public class PaymentWorkflowService {
             expenseProducer.push(bill.getTenantId(), config.getBillTaskTopic(), req);
             log.info("Pushed WfUpdate task to Kafka for bill={} detail={} phase={}", bill.getId(), detail.getId(), phase);
         }
-    }
-
-    /** Inserts an immediate DETAIL_VERIFY scheduler retry job for a single detail. */
-    public void insertDetailVerifyRetryJob(BillDetail detail, Bill bill, RequestInfo requestInfo) {
-        long now = System.currentTimeMillis();
-        DetailVerifyContext context = DetailVerifyContext.builder()
-                .billId(bill.getId())
-                .billDetailId(detail.getId())
-                .requestInfo(requestInfo)
-                .build();
-        SchedulerJob job = SchedulerJob.builder()
-                .id(UUID.randomUUID().toString())
-                .tenantId(bill.getTenantId())
-                .jobType(SchedulerJobType.DETAIL_VERIFY)
-                .referenceId(detail.getId())
-                .schedulerStatus(SchedulerJobStatus.PENDING)
-                .nextCheckAt(null)
-                .attemptCount(0)
-                .maxAttempts(config.getSchedulerMaxAttempts())
-                .context(context)
-                .createdAt(now)
-                .updatedAt(now)
-                .build();
-        insertWithRetry(job, "DETAIL_VERIFY(retry) bill=" + bill.getId() + " detail=" + detail.getId());
-        log.info("Inserted DETAIL_VERIFY retry job for bill={} detail={}", bill.getId(), detail.getId());
     }
 
     /** Inserts an immediate DETAIL_WF_UPDATE scheduler retry job for a single detail. */
@@ -602,31 +467,7 @@ public class PaymentWorkflowService {
                 .build();
     }
 
-    /** Inserts a BILL_DETAIL_WF_UPDATE scheduler job for the given bill and phase. */
-    private void insertBillDetailWfUpdateJob(Bill bill, String phase, RequestInfo requestInfo) {
-        long now = System.currentTimeMillis();
-        BillDetailWfUpdateContext context = BillDetailWfUpdateContext.builder()
-                .phase(phase)
-                .requestInfo(requestInfo)
-                .build();
 
-        SchedulerJob job = SchedulerJob.builder()
-                .id(UUID.randomUUID().toString())
-                .tenantId(bill.getTenantId())
-                .jobType(SchedulerJobType.BILL_DETAIL_WF_UPDATE)
-                .referenceId(bill.getId())
-                .schedulerStatus(SchedulerJobStatus.PENDING)
-                .nextCheckAt(null)
-                .attemptCount(0)
-                .maxAttempts(config.getSchedulerMaxAttempts())
-                .context(context)
-                .createdAt(now)
-                .updatedAt(now)
-                .build();
-
-        insertWithRetry(job, "BILL_DETAIL_WF_UPDATE bill=" + bill.getId() + " phase=" + phase);
-        log.info("Inserted BILL_DETAIL_WF_UPDATE job for bill={} phase={}", bill.getId(), phase);
-    }
 
     /**
      * Inserts a BILL_STATUS_POLL scheduler job for the given bill and phase.
@@ -697,91 +538,203 @@ public class PaymentWorkflowService {
         log.info("Inserted BILL_BATCH_EMAIL coordinator job batchId={} billCount={}", batchId, billIds.size());
     }
 
-    /** Inserts a TASK_VERIFY_CHECK job for a Kafka-dispatched Verify task (legacy path). */
-    private void insertTaskVerifyCheckJob(String taskId, String tenantId, RequestInfo requestInfo) {
+    // ─────────────────────────────────────────────────────────────────────────
+    // New helpers for BILL_STARTED_CHECK design
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /** Exposes safety-net delay for use in BillStartedCheckHandler. */
+    public long getSafetyNetDelayMs() {
+        return config.getSchedulerSafetyNetDelayMs();
+    }
+
+    /** Inserts a BILL_STARTED_CHECK coordinator job for the given bill and phase. */
+    public void insertBillStartedCheckJob(Bill bill, String phase, RequestInfo requestInfo) {
         long now = System.currentTimeMillis();
+        BillStartedCheckContext context = BillStartedCheckContext.builder()
+                .billId(bill.getId())
+                .tenantId(bill.getTenantId())
+                .phase(phase)
+                .requestInfo(requestInfo)
+                .build();
+
         SchedulerJob job = SchedulerJob.builder()
                 .id(UUID.randomUUID().toString())
-                .tenantId(tenantId)
-                .jobType(SchedulerJobType.TASK_VERIFY_CHECK)
-                .referenceId(taskId)
+                .tenantId(bill.getTenantId())
+                .jobType(SchedulerJobType.BILL_STARTED_CHECK)
+                .referenceId(bill.getId())
                 .schedulerStatus(SchedulerJobStatus.PENDING)
-                .nextCheckAt(now + config.getSchedulerSafetyNetDelayMs())
+                .nextCheckAt(null)
                 .attemptCount(0)
-                .maxAttempts(config.getSchedulerMaxAttempts())
-                .context(requestInfo)
+                .maxAttempts(config.getBillStartedCheckMaxAttempts())
+                .context(context)
                 .createdAt(now)
                 .updatedAt(now)
                 .build();
 
-        insertWithRetry(job, "TASK_VERIFY_CHECK taskId=" + taskId);
-        log.info("Inserted TASK_VERIFY_CHECK job for taskId={}", taskId);
+        insertWithRetry(job, "BILL_STARTED_CHECK bill=" + bill.getId() + " phase=" + phase);
+        log.info("Inserted BILL_STARTED_CHECK job for bill={} phase={}", bill.getId(), phase);
     }
 
-    /** Inserts one DETAIL_VERIFY scheduler job per BillDetail. */
-    private void insertDetailVerifyJobsForAllDetails(Bill bill, RequestInfo requestInfo) {
+    /**
+     * Pushes one VerificationStart task per eligible detail (PENDING_VERIFICATION or VERIFICATION_FAILED).
+     * The task consumer transitions the detail → VERIFICATION_IN_PROGRESS.
+     */
+    private void createVerificationStartTasks(Bill bill, RequestInfo requestInfo) {
         for (BillDetail detail : bill.getBillDetails()) {
-            long now = System.currentTimeMillis();
-            DetailVerifyContext context = DetailVerifyContext.builder()
-                    .billId(bill.getId())
-                    .billDetailId(detail.getId())
-                    .requestInfo(requestInfo)
-                    .build();
+            if (detail.getStatus() != Status.PENDING_VERIFICATION
+                    && detail.getStatus() != Status.VERIFICATION_FAILED) continue;
 
-            SchedulerJob job = SchedulerJob.builder()
+            Task task = Task.builder()
                     .id(UUID.randomUUID().toString())
                     .tenantId(bill.getTenantId())
-                    .jobType(SchedulerJobType.DETAIL_VERIFY)
-                    .referenceId(detail.getId())
-                    .schedulerStatus(SchedulerJobStatus.PENDING)
-                    .nextCheckAt(null)
-                    .attemptCount(0)
-                    .maxAttempts(config.getSchedulerMaxAttempts())
-                    .context(context)
-                    .createdAt(now)
-                    .updatedAt(now)
+                    .billId(bill.getId())
+                    .billDetailId(detail.getId())
+                    .type(Task.Type.VerificationStart)
+                    .status(Status.IN_PROGRESS)
+                    .auditDetails(bill.getAuditDetails())
                     .build();
-
-            insertWithRetry(job, "DETAIL_VERIFY bill=" + bill.getId() + " detail=" + detail.getId());
-            log.info("Inserted DETAIL_VERIFY job for bill={} detail={}", bill.getId(), detail.getId());
+            TaskRequest req = TaskRequest.builder()
+                    .task(task)
+                    .bill(buildSingleDetailBill(bill, detail))
+                    .requestInfo(requestInfo)
+                    .build();
+            expenseProducer.push(bill.getTenantId(), config.getBillTaskTopic(), req);
+            log.info("Pushed VerificationStart task for bill={} detail={}", bill.getId(), detail.getId());
         }
     }
 
     /**
-     * Inserts one DETAIL_WF_UPDATE scheduler job per eligible BillDetail.
-     *
-     * @param eligibilityFilter predicate selecting which details to insert jobs for
+     * Pushes one PaymentInitiationStart task per eligible detail (REVIEWED or PAYMENT_FAILED).
      */
-    private void insertDetailWfUpdateJobsForEligibleDetails(
-            Bill bill, String phase, RequestInfo requestInfo,
-            java.util.function.Predicate<org.egov.digit.expense.web.models.BillDetail> eligibilityFilter) {
+    private void createPaymentInitiationStartTasks(Bill bill, RequestInfo requestInfo) {
+        createPaymentInitiationStartTasks(bill, requestInfo,
+                d -> d.getStatus() == Status.REVIEWED || d.getStatus() == Status.PAYMENT_FAILED);
+    }
 
+    private void createPaymentInitiationStartTasks(Bill bill, RequestInfo requestInfo,
+                                                    java.util.function.Predicate<BillDetail> filter) {
         for (BillDetail detail : bill.getBillDetails()) {
-            if (!eligibilityFilter.test(detail)) continue;
-            long now = System.currentTimeMillis();
-            DetailWfUpdateContext context = DetailWfUpdateContext.builder()
-                    .billId(bill.getId())
-                    .billDetailId(detail.getId())
-                    .phase(phase)
-                    .requestInfo(requestInfo)
-                    .build();
+            if (!filter.test(detail)) continue;
 
-            SchedulerJob job = SchedulerJob.builder()
+            Task task = Task.builder()
                     .id(UUID.randomUUID().toString())
                     .tenantId(bill.getTenantId())
-                    .jobType(SchedulerJobType.DETAIL_WF_UPDATE)
-                    .referenceId(detail.getId())
-                    .schedulerStatus(SchedulerJobStatus.PENDING)
-                    .nextCheckAt(null)
-                    .attemptCount(0)
-                    .maxAttempts(config.getSchedulerMaxAttempts())
-                    .context(context)
-                    .createdAt(now)
-                    .updatedAt(now)
+                    .billId(bill.getId())
+                    .billDetailId(detail.getId())
+                    .type(Task.Type.PaymentInitiationStart)
+                    .status(Status.IN_PROGRESS)
+                    .auditDetails(bill.getAuditDetails())
                     .build();
-
-            insertWithRetry(job, "DETAIL_WF_UPDATE bill=" + bill.getId() + " detail=" + detail.getId() + " phase=" + phase);
-            log.info("Inserted DETAIL_WF_UPDATE job for bill={} detail={} phase={}", bill.getId(), detail.getId(), phase);
+            TaskRequest req = TaskRequest.builder()
+                    .task(task)
+                    .bill(buildSingleDetailBill(bill, detail))
+                    .requestInfo(requestInfo)
+                    .build();
+            expenseProducer.push(bill.getTenantId(), config.getBillTaskTopic(), req);
+            log.info("Pushed PaymentInitiationStart task for bill={} detail={}", bill.getId(), detail.getId());
         }
     }
+
+    /**
+     * Pushes a VerificationVerify task for a single detail (called from BILL_STARTED_CHECK).
+     * The task consumer calls the payment provider to initiate verification.
+     */
+    public void pushVerificationVerifyTask(Bill bill, BillDetail detail, RequestInfo requestInfo) {
+        Task task = Task.builder()
+                .id(UUID.randomUUID().toString())
+                .tenantId(bill.getTenantId())
+                .billId(bill.getId())
+                .billDetailId(detail.getId())
+                .type(Task.Type.VerificationVerify)
+                .status(Status.IN_PROGRESS)
+                .auditDetails(bill.getAuditDetails())
+                .build();
+        TaskRequest req = TaskRequest.builder()
+                .task(task)
+                .bill(buildSingleDetailBill(bill, detail))
+                .requestInfo(requestInfo)
+                .build();
+        expenseProducer.push(bill.getTenantId(), config.getBillTaskTopic(), req);
+        log.info("Pushed VerificationVerify task for bill={} detail={}", bill.getId(), detail.getId());
+    }
+
+    /**
+     * Pushes a PaymentInitiationPay task for a single detail (called from BILL_STARTED_CHECK).
+     * The task consumer calls the payment provider to initiate payment.
+     */
+    public void pushPaymentInitiationPayTask(Bill bill, BillDetail detail, RequestInfo requestInfo) {
+        Task task = Task.builder()
+                .id(UUID.randomUUID().toString())
+                .tenantId(bill.getTenantId())
+                .billId(bill.getId())
+                .billDetailId(detail.getId())
+                .type(Task.Type.PaymentInitiationPay)
+                .status(Status.IN_PROGRESS)
+                .auditDetails(bill.getAuditDetails())
+                .build();
+        TaskRequest req = TaskRequest.builder()
+                .task(task)
+                .bill(buildSingleDetailBill(bill, detail))
+                .requestInfo(requestInfo)
+                .build();
+        expenseProducer.push(bill.getTenantId(), config.getBillTaskTopic(), req);
+        log.info("Pushed PaymentInitiationPay task for bill={} detail={}", bill.getId(), detail.getId());
+    }
+
+    /**
+     * Inserts a BILL_DETAILS_TASK_VERIFY_CHECK job for a single detail.
+     * Called from TaskConsumer after VerificationVerify task consumer initiates verification.
+     */
+    public void insertBillDetailsTaskVerifyCheckJob(Bill bill, BillDetail detail, RequestInfo requestInfo) {
+        long now = System.currentTimeMillis();
+        DetailVerifyContext context = DetailVerifyContext.builder()
+                .billId(bill.getId())
+                .billDetailId(detail.getId())
+                .requestInfo(requestInfo)
+                .build();
+        SchedulerJob job = SchedulerJob.builder()
+                .id(UUID.randomUUID().toString())
+                .tenantId(bill.getTenantId())
+                .jobType(SchedulerJobType.BILL_DETAILS_TASK_VERIFY_CHECK)
+                .referenceId(detail.getId())
+                .schedulerStatus(SchedulerJobStatus.PENDING)
+                .nextCheckAt(null)
+                .attemptCount(0)
+                .maxAttempts(config.getBillDetailsVerifyCheckMaxAttempts())
+                .context(context)
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
+        insertWithRetry(job, "BILL_DETAILS_TASK_VERIFY_CHECK bill=" + bill.getId() + " detail=" + detail.getId());
+        log.info("Inserted BILL_DETAILS_TASK_VERIFY_CHECK job for bill={} detail={}", bill.getId(), detail.getId());
+    }
+
+    /**
+     * Inserts a BILL_DETAILS_TASK_PAYMENT_STATUS_CHECK job for a single detail.
+     * Called from TaskConsumer after PaymentInitiationPay task consumer initiates payment.
+     */
+    public void insertBillDetailsTaskPaymentStatusCheckJob(Bill bill, BillDetail detail, RequestInfo requestInfo) {
+        long now = System.currentTimeMillis();
+        DetailVerifyContext context = DetailVerifyContext.builder()
+                .billId(bill.getId())
+                .billDetailId(detail.getId())
+                .requestInfo(requestInfo)
+                .build();
+        SchedulerJob job = SchedulerJob.builder()
+                .id(UUID.randomUUID().toString())
+                .tenantId(bill.getTenantId())
+                .jobType(SchedulerJobType.BILL_DETAILS_TASK_PAYMENT_STATUS_CHECK)
+                .referenceId(detail.getId())
+                .schedulerStatus(SchedulerJobStatus.PENDING)
+                .nextCheckAt(null)
+                .attemptCount(0)
+                .maxAttempts(config.getBillDetailsPaymentStatusCheckMaxAttempts())
+                .context(context)
+                .createdAt(now)
+                .updatedAt(now)
+                .build();
+        insertWithRetry(job, "BILL_DETAILS_TASK_PAYMENT_STATUS_CHECK bill=" + bill.getId() + " detail=" + detail.getId());
+        log.info("Inserted BILL_DETAILS_TASK_PAYMENT_STATUS_CHECK job for bill={} detail={}", bill.getId(), detail.getId());
+    }
+
 }

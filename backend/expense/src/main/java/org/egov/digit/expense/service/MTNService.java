@@ -165,7 +165,6 @@ public class MTNService implements PaymentProviderService {
     public BillTaskResponse verify(BillTaskRequest billTaskRequest) {
 
         Task task = fetchOrCreateTask(billTaskRequest, Task.Type.Verify);
-        insertVerifySchedulerJob(task, billTaskRequest.getBill().getTenantId(), billTaskRequest.getRequestInfo());
 
         ResponseInfo responseInfo = responseInfoFactory.
                 createResponseInfoFromRequestInfo(billTaskRequest.getRequestInfo(), true);
@@ -486,10 +485,8 @@ public class MTNService implements PaymentProviderService {
                 }
             }
             expenseProducer.push(billFromSearch.getTenantId(), config.getTaskUpdateTopic(), task);
-        } finally {
-            // Always register scheduler job — even if bill search or loop fails, the task exists in DB
-            // and needs status polling. insertSchedulerJob has its own try-catch so it never throws.
-            insertSchedulerJob(task, billFromRequest.getTenantId(), taskRequest.getRequestInfo());
+        } catch (Exception e) {
+            log.error("transfer() failed for task={} bill={}", task.getId(), billFromRequest.getId(), e);
         }
     }
 
@@ -509,54 +506,6 @@ public class MTNService implements PaymentProviderService {
         } catch (Exception ex) {
             log.error("CRITICAL: failed to force billDetail {} to FAILED — manual intervention required",
                     billDetail.getId(), ex);
-        }
-    }
-
-    private void insertVerifySchedulerJob(Task task, String tenantId, RequestInfo requestInfo) {
-        try {
-            long now = System.currentTimeMillis();
-            SchedulerJob schedulerJob = SchedulerJob.builder()
-                    .id(UUID.randomUUID().toString())
-                    .tenantId(tenantId)
-                    .jobType(SchedulerJobType.TASK_VERIFY_CHECK)
-                    .referenceId(task.getId())
-                    .schedulerStatus(SchedulerJobStatus.PENDING)
-                    .nextCheckAt(now + 5000L)
-                    .attemptCount(0)
-                    .maxAttempts(config.getSchedulerMaxAttempts())
-                    .context(requestInfo)
-                    .createdAt(now)
-                    .updatedAt(now)
-                    .build();
-            schedulerJobRepository.insert(schedulerJob);
-            schedulerJobRegistry.register(tenantId);
-            log.info("Verify scheduler job created for task {} tenant {}", task.getId(), tenantId);
-        } catch (Exception e) {
-            log.error("Failed to insert verify scheduler job for task {} — crash recovery will not run", task.getId(), e);
-        }
-    }
-
-    private void insertSchedulerJob(Task task, String tenantId, RequestInfo requestInfo) {
-        try {
-            long now = System.currentTimeMillis();
-            SchedulerJob schedulerJob = SchedulerJob.builder()
-                    .id(UUID.randomUUID().toString())
-                    .tenantId(tenantId)
-                    .jobType(SchedulerJobType.TASK_STATUS_CHECK)
-                    .referenceId(task.getId())
-                    .schedulerStatus(SchedulerJobStatus.PENDING)
-                    .nextCheckAt(null)
-                    .attemptCount(0)
-                    .maxAttempts(config.getSchedulerMaxAttempts())
-                    .context(requestInfo)
-                    .createdAt(now)
-                    .updatedAt(now)
-                    .build();
-            schedulerJobRepository.insert(schedulerJob);
-            schedulerJobRegistry.register(tenantId);
-            log.info("Scheduler job created for task {} tenant {}", task.getId(), tenantId);
-        } catch (Exception e) {
-            log.error("Failed to insert scheduler job for task {} — status polling will not run", task.getId(), e);
         }
     }
 

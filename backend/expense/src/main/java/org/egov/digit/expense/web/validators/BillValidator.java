@@ -642,6 +642,20 @@ public class BillValidator {
 	}
 
 	/**
+	 * Rejects VERIFY action if any bill detail is already in VERIFICATION_IN_PROGRESS.
+	 * Per design: a duplicate verify request on an in-flight bill must be rejected immediately.
+	 */
+	public void validateNoBillDetailInVerificationInProgress(Bill bill) {
+		boolean anyInProgress = bill.getBillDetails().stream()
+				.anyMatch(d -> d.getStatus() == Status.VERIFICATION_IN_PROGRESS);
+		if (anyInProgress) {
+			throw new CustomException("BILL_DETAIL_VERIFICATION_IN_PROGRESS",
+					"Cannot VERIFY: one or more bill details are already in VERIFICATION_IN_PROGRESS. "
+							+ "Wait for current verification to complete.");
+		}
+	}
+
+	/**
 	 * Rejects any API mutation when the bill is in a locked state (isStateUpdatable=false).
 	 * Must be called before any update or workflow action on a PAYMENTS.BILL entity.
 	 */

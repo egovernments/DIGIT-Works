@@ -116,12 +116,16 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
             Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
             if (bill == null) return;
 
+            if (POLL_PHASE_PAYMENT.equals(phase)) {
+                forceFailPaymentInProgressDetails(bill, billId, tenantId, requestInfo);
+                return;
+            }
+
             Actions failAction = switch (phase) {
                 case POLL_PHASE_VERIFICATION    -> Actions.FAILED;
                 case POLL_PHASE_IGNORE_ERRORS   -> Actions.FAIL;
                 case POLL_PHASE_SEND_FOR_REVIEW -> Actions.FAIL;
                 case POLL_PHASE_REVIEW          -> Actions.FAIL;
-                case POLL_PHASE_PAYMENT         -> Actions.FAILED;
                 default                         -> null;
             };
 
@@ -167,12 +171,11 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
         long inProgress = countDetailsInState(bill, Status.VERIFICATION_IN_PROGRESS);
 
         if (pending > 0 || inProgress > 0) {
-            // Dispatch DETAIL_VERIFY scheduler retry jobs for each unsettled detail so the
-            // scheduler handles them independently rather than relying solely on this poll cycling.
+            // Dispatch BILL_DETAILS_TASK_VERIFY_CHECK retry jobs for each unsettled detail
             bill.getBillDetails().stream()
                     .filter(d -> d.getStatus() == Status.PENDING_VERIFICATION
                               || d.getStatus() == Status.VERIFICATION_IN_PROGRESS)
-                    .forEach(d -> paymentWorkflowService.insertDetailVerifyRetryJob(d, bill, requestInfo));
+                    .forEach(d -> paymentWorkflowService.insertBillDetailsTaskVerifyCheckJob(bill, d, requestInfo));
             log.debug("Bill {} VERIFICATION: {} pending, {} in-progress — dispatched retry jobs",
                     bill.getId(), pending, inProgress);
             return SchedulerJobResult.RETRY;
@@ -188,8 +191,10 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
         // RC-9: re-fetch just before commit to capture any concurrent detail updates
         Bill fresh = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
         if (fresh == null) { log.warn("Bill {} vanished before VERIFICATION transition — retrying", billId); return SchedulerJobResult.RETRY; }
-        paymentWorkflowService.transitionBill(fresh, action, requestInfo);
-        paymentWorkflowService.pushBillUpdate(fresh, requestInfo);
+        if (fresh.getStatus() == Status.VERIFICATION_IN_PROGRESS) {
+            paymentWorkflowService.transitionBill(fresh, action, requestInfo);
+            paymentWorkflowService.pushBillUpdate(fresh, requestInfo);
+        }
         return SchedulerJobResult.DONE;
     }
 
@@ -288,7 +293,7 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
 
         boolean allReviewed = bill.getBillDetails().stream()
                 .allMatch(d -> isAtOrBeyondReviewed(d.getStatus()));
-        if (allReviewed) {
+        if (allReviewed && bill.getStatus() != Status.REVIEWED) {
             // RC-9: re-fetch before commit
             Bill fresh = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
             if (fresh == null) { log.warn("Bill {} vanished before REVIEW transition — retrying", billId); return SchedulerJobResult.RETRY; }
@@ -302,11 +307,68 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
                 log.debug("Bill {} settled REVIEWED — batch email coordinator will handle notify (batchId={})", billId, batchId);
             }
             return SchedulerJobResult.DONE;
+        } else if (bill.getStatus() == Status.REVIEWED) {
+            return SchedulerJobResult.DONE;
         }
         return SchedulerJobResult.RETRY;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Force-fails all PAYMENT_IN_PROGRESS details, then re-aggregates the bill to
+     * determine FULLY_PAID / PARTIALLY_PAID / PAYMENT_FAILED.
+     * Called from onMaxAttemptsExceeded for the PAYMENT phase.
+     */
+    private void forceFailPaymentInProgressDetails(Bill bill, String billId, String tenantId, RequestInfo requestInfo) {
+        log.warn("BILL_STATUS_POLL PAYMENT timeout: force-failing PAYMENT_IN_PROGRESS details for bill={}", billId);
+
+        // Force each stuck detail to PAYMENT_FAILED
+        for (BillDetail detail : bill.getBillDetails()) {
+            if (detail.getStatus() == Status.PAYMENT_IN_PROGRESS) {
+                try {
+                    paymentWorkflowService.transitionBillDetail(detail, Actions.FAILED, requestInfo);
+                } catch (Exception ex) {
+                    if (workflowUtil.isRetryableWfError(ex)) {
+                        log.info("BILL_STATUS_POLL: detail={} already in terminal state (idempotent)", detail.getId());
+                    } else {
+                        log.error("CRITICAL: BILL_STATUS_POLL force-fail PAYMENT detail={} bill={} failed",
+                                detail.getId(), billId, ex);
+                    }
+                }
+            }
+        }
+        paymentWorkflowService.pushBillUpdate(bill, requestInfo);
+
+        // Re-fetch and determine final bill action based on all detail statuses
+        try {
+            Bill fresh = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+            if (fresh == null) {
+                log.warn("BILL_STATUS_POLL PAYMENT timeout: bill={} not found for re-aggregation", billId);
+                return;
+            }
+            if (fresh.getStatus() != Status.PAYMENT_IN_PROGRESS) {
+                log.info("BILL_STATUS_POLL PAYMENT timeout: bill={} already exited PAYMENT_IN_PROGRESS — done", billId);
+                return;
+            }
+
+            long paid  = countDetailsInState(fresh, Status.PAID) + countDetailsInState(fresh, Status.FULLY_PAID);
+            long total = fresh.getBillDetails().size();
+            Actions action = (paid == total) ? Actions.FULLY_PAY
+                           : (paid > 0)      ? Actions.PARTIALLY_PAY
+                           :                   Actions.FAILED;
+
+            paymentWorkflowService.transitionBill(fresh, action, requestInfo);
+            paymentWorkflowService.pushBillUpdate(fresh, requestInfo);
+            log.warn("BILL_STATUS_POLL PAYMENT timeout: applied action={} for bill={}", action, billId);
+        } catch (Exception ex) {
+            if (workflowUtil.isRetryableWfError(ex)) {
+                log.info("BILL_STATUS_POLL PAYMENT timeout: bill={} already exited PAYMENT_IN_PROGRESS (idempotent)", billId);
+            } else {
+                log.error("CRITICAL: BILL_STATUS_POLL PAYMENT timeout final transition failed for bill={}", billId, ex);
+            }
+        }
+    }
 
     private boolean isAtOrBeyondUnderReview(Status s) {
         return s == Status.UNDER_REVIEW || s == Status.REVIEWED

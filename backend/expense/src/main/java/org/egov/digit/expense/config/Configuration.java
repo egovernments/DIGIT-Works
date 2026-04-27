@@ -113,6 +113,9 @@ public class Configuration {
 	@Value("${egov.mdms.v2.search.endpoint}")
 	private String mdmsV2EndPoint;
 
+	@Value("${egov.mdms.v2.search.v2.endpoint}")
+	private String mdmsV2EndPointV2;
+
 	// HRMS
 	@Value("${egov.hrms.host}")
 	private String hrmsHost;
@@ -157,6 +160,9 @@ public class Configuration {
 
 	@Value("${works.project.staff.endpoint:/project/staff/v1/_search}")
 	private String projectStaffEndpoint;
+
+	@Value("${works.project.staff.search.limit:200}")
+	private Integer projectStaffSearchLimit;
 
 	//Organisation Service
 	@Value("${works.organisation.host}")
@@ -389,7 +395,28 @@ public class Configuration {
 	@Value("${task.scheduler.safety.net.delay.ms:60000}")
 	private long schedulerSafetyNetDelayMs;
 
-public List<String> getSchedulerBootstrapTenants() {
+	// BILL_STARTED_CHECK job config
+	@Value("${scheduler.bill.started.check.max.attempts:200}")
+	private int billStartedCheckMaxAttempts;
+
+	@Value("${scheduler.bill.started.check.interval.ms:6000}")
+	private long billStartedCheckIntervalMs;
+
+	// BILL_DETAILS_TASK_VERIFY_CHECK job config
+	@Value("${scheduler.bill.details.verify.check.max.attempts:200}")
+	private int billDetailsVerifyCheckMaxAttempts;
+
+	@Value("${scheduler.bill.details.verify.check.interval.ms:6000}")
+	private long billDetailsVerifyCheckIntervalMs;
+
+	// BILL_DETAILS_TASK_PAYMENT_STATUS_CHECK job config
+	@Value("${scheduler.bill.details.payment.status.check.max.attempts:200}")
+	private int billDetailsPaymentStatusCheckMaxAttempts;
+
+	@Value("${scheduler.bill.details.payment.status.check.interval.ms:6000}")
+	private long billDetailsPaymentStatusCheckIntervalMs;
+
+	public List<String> getSchedulerBootstrapTenants() {
 		if (schedulerBootstrapTenantsRaw == null || schedulerBootstrapTenantsRaw.isBlank()) {
 			return Collections.emptyList();
 		}

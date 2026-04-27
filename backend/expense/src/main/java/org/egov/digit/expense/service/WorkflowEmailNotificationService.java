@@ -123,6 +123,7 @@ public class WorkflowEmailNotificationService {
 
         expenseProducer.push(config.getEmailNotificationTopic(), emailRequest);
         log.info("WorkflowEmailNotificationService: email sent to={} type={}", email, type);
+        log.info("WorkflowEmailNotificationService: email subject={} body={}", subject, body);
     }
 
     /**
@@ -139,13 +140,13 @@ public class WorkflowEmailNotificationService {
         if (!StringUtils.hasText(bill.getReferenceId())) return Collections.emptyList();
 
         List<String> projectIds = Arrays.asList(bill.getReferenceId().split("\\."));
-        List<String> staffIds   = candidates.stream().map(IndividualDetails::getId).collect(Collectors.toList());
+        List<String> staffIds   = candidates.stream().map(IndividualDetails::getUserUuid).collect(Collectors.toList());
 
         Set<String> matched = projectStaffUtil.filterByProjectStaff(requestInfo, tenantId, staffIds, projectIds);
         if (matched.isEmpty()) return Collections.emptyList();
 
         return candidates.stream()
-                .filter(i -> matched.contains(i.getId()))
+                .filter(i -> matched.contains(i.getUserUuid()))
                 .collect(Collectors.toList());
     }
 
@@ -195,7 +196,7 @@ public class WorkflowEmailNotificationService {
                 requestInfo, tenantId, Collections.singletonList(type.getTargetRole()));
         if (CollectionUtils.isEmpty(candidates)) return;
 
-        List<String> staffIds = candidates.stream().map(IndividualDetails::getId).collect(Collectors.toList());
+        List<String> staffIds = candidates.stream().map(IndividualDetails::getUserUuid).collect(Collectors.toList());
         Set<String> matched = projectStaffUtil.filterByProjectStaff(requestInfo, tenantId, staffIds, allProjectIds);
         if (matched.isEmpty()) {
             log.warn("WorkflowEmailNotificationService.notifyBatch: no project-staff recipients for batch type={}", type);
@@ -203,7 +204,7 @@ public class WorkflowEmailNotificationService {
         }
 
         candidates.stream()
-                .filter(i -> matched.contains(i.getId()))
+                .filter(i -> matched.contains(i.getUserUuid()))
                 .forEach(r -> sendEmailDirect(r.getEmail(), r.getName(), tenantId, requestInfo,
                         template, locMap, billCount, type));
     }

@@ -3,6 +3,7 @@ package org.egov.digit.expense.service.scheduler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.service.PaymentWorkflowService;
+import org.egov.digit.expense.service.WorkflowEmailNotificationService;
 import org.egov.digit.expense.util.WorkflowUtil;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.SchedulerJob;
@@ -32,12 +33,14 @@ public class BillStatusPollHandlerTest {
     private PaymentWorkflowService pws;
     @Mock
     private WorkflowUtil workflowUtil;
+    @Mock
+    private WorkflowEmailNotificationService workflowEmailNotificationService;
 
     private BillStatusPollHandler handler;
 
     @BeforeEach
     public void setUp() {
-        handler = new BillStatusPollHandler(pws, workflowUtil, new ObjectMapper());
+        handler = new BillStatusPollHandler(pws, workflowUtil, new ObjectMapper(), workflowEmailNotificationService);
     }
 
     // ── VERIFICATION ──────────────────────────────────────────────────────────
@@ -52,7 +55,7 @@ public class BillStatusPollHandlerTest {
         SchedulerJobResult result = handler.handle(job);
 
         assertEquals(SchedulerJobResult.RETRY, result);
-        verify(pws, times(2)).insertDetailVerifyRetryJob(any(), eq(bill), any());
+        verify(pws, times(2)).insertBillDetailsTaskVerifyCheckJob(eq(bill), any(), any());
         verify(pws, never()).transitionBill(any(), any(), any(RequestInfo.class));
     }
 

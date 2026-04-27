@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class DetailVerifyHandlerTest {
+public class BillDetailsTaskVerifyCheckHandlerTest {
 
     @Mock
     private PaymentWorkflowService pws;
@@ -41,11 +41,11 @@ public class DetailVerifyHandlerTest {
     @Mock
     private PaymentProviderService mtnService;
 
-    private DetailVerifyHandler handler;
+    private BillDetailsTaskVerifyCheckHandler handler;
 
     @BeforeEach
     public void setUp() {
-        handler = new DetailVerifyHandler(pws, agg, workflowUtil, List.of(mtnService), new ObjectMapper());
+        handler = new BillDetailsTaskVerifyCheckHandler(pws, agg, workflowUtil, List.of(mtnService), new ObjectMapper());
         when(mtnService.supports(any())).thenReturn(true);
     }
 

@@ -24,7 +24,6 @@ import static org.egov.digit.expense.TestDataBuilder.*;
 import static org.egov.digit.expense.config.Constants.POLL_PHASE_IGNORE_ERRORS;
 import static org.egov.digit.expense.config.Constants.POLL_PHASE_SEND_FOR_REVIEW;
 import static org.egov.digit.expense.config.Constants.POLL_PHASE_SEND_FOR_APPROVAL;
-import static org.egov.digit.expense.config.Constants.POLL_PHASE_PAYMENT_INITIATION;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -137,18 +136,6 @@ public class TaskConsumerTest {
 
         verify(pws).transitionBillDetail(any(), eq(Actions.SEND_FOR_APPROVAL), any());
         verify(agg).checkAndAggregateBill(eq(BILL_ID), eq(TENANT_ID), eq(POLL_PHASE_SEND_FOR_APPROVAL), any());
-    }
-
-    @Test
-    public void listen_wfUpdatePaymentInitiation_transitionsAndAggregates() {
-        BillDetail detail = buildDetail(DETAIL_ID_1, Status.REVIEWED);
-        Bill bill = buildBillWithDetails(Status.PAYMENT_IN_PROGRESS, List.of(detail));
-        TaskRequest req = buildWfUpdateTaskRequest(bill, detail, POLL_PHASE_PAYMENT_INITIATION);
-
-        consumer.listen(toMap(req));
-
-        verify(pws).transitionBillDetail(any(), eq(Actions.PAYMENT_INITIATION), any());
-        verify(agg).checkAndAggregateBill(eq(BILL_ID), eq(TENANT_ID), eq(POLL_PHASE_PAYMENT_INITIATION), any());
     }
 
     // ── WfUpdate error handling ───────────────────────────────────────────────

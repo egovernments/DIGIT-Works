@@ -168,7 +168,7 @@ public class BillServiceTest {
 
         billService.bulkUpdateStatus(buildBulkRequest("SENDING_FOR_REVIEW", Actions.SEND_FOR_REVIEW.toString(), "b1"));
 
-        verify(paymentWorkflowService).sendForReview(any(BillRequest.class));
+        verify(paymentWorkflowService).sendForReview(any(BillRequest.class), any());
     }
 
     @Test

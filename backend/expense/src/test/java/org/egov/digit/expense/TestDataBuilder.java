@@ -137,7 +137,7 @@ public class TestDataBuilder {
         return SchedulerJob.builder()
                 .id(UUID.randomUUID().toString())
                 .tenantId(TENANT_ID)
-                .jobType(SchedulerJobType.DETAIL_VERIFY)
+                .jobType(SchedulerJobType.BILL_DETAILS_TASK_VERIFY_CHECK)
                 .referenceId(detailId)
                 .schedulerStatus(SchedulerJobStatus.PENDING)
                 .attemptCount(0).maxAttempts(200)

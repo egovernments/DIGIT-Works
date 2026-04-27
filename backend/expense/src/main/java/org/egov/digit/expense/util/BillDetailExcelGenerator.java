@@ -159,9 +159,9 @@ public class BillDetailExcelGenerator {
             createCell(row, col++, safeStr(payee.getBankCode()),        isEditor ? editableStr : lockedStr);
             createCell(row, col++, safeStr(payee.getBeneficiaryCode()), isEditor ? editableStr : lockedStr);
 
-            // Col 9: role — localized
-            String rawRole = (individual != null && individual.getRole() != null && !individual.getRole().isBlank())
-                    ? individual.getRole() : safeStr(detail.getWfStatus());
+            // Col 9: role — localized (first role from list)
+            String rawRole = (individual != null && individual.getRoles() != null && !individual.getRoles().isEmpty())
+                    ? individual.getRoles().get(0) : safeStr(detail.getWfStatus());
             String roleKey = "EXPENSE_TEMPLATE_ROLE_" + rawRole.toUpperCase().replace(" ", "_");
             createCell(row, col++, msgMap.getOrDefault(roleKey, rawRole), lockedStr);
 
