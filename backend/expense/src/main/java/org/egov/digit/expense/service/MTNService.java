@@ -70,6 +70,8 @@ public class MTNService implements PaymentProviderService {
 
     private final BillAggregationService billAggregationService;
 
+    private final BillCacheService billCacheService;
+
     @Autowired
     public MTNService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator,
                       WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil,
@@ -77,7 +79,8 @@ public class MTNService implements PaymentProviderService {
                       TaskRepository taskRepository, MTNUtil mtnUtil,
                       SchedulerJobRepository schedulerJobRepository, SchedulerJobRegistry schedulerJobRegistry,
                       ObjectMapper objectMapper,
-                      BillAggregationService billAggregationService) {
+                      BillAggregationService billAggregationService,
+                      BillCacheService billCacheService) {
         this.expenseProducer = expenseProducer;
         this.config = config;
         this.validator = validator;
@@ -91,6 +94,7 @@ public class MTNService implements PaymentProviderService {
         this.schedulerJobRegistry = schedulerJobRegistry;
         this.objectMapper = objectMapper;
         this.billAggregationService = billAggregationService;
+        this.billCacheService = billCacheService;
     }
 
     private Task fetchOrCreateTask(BillTaskRequest billTaskRequest, Task.Type type) {
@@ -594,6 +598,7 @@ public class MTNService implements PaymentProviderService {
             }
         }
         if (!isWorkflowChange || wfSucceeded) {
+            billCacheService.put(bill);
             expenseProducer.push(bill.getTenantId(), config.getBillUpdateTopic(), billRequest);
         }
     }

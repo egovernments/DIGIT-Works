@@ -53,6 +53,7 @@ public class PaymentWorkflowService {
     private final SchedulerJobRegistry schedulerJobRegistry;
     private final Configuration config;
     private final ExpenseProducer expenseProducer;
+    private final BillCacheService billCacheService;
 
     @Autowired
     public PaymentWorkflowService(WorkflowUtil workflowUtil,
@@ -61,7 +62,8 @@ public class PaymentWorkflowService {
                                    SchedulerJobRepository schedulerJobRepository,
                                    SchedulerJobRegistry schedulerJobRegistry,
                                    Configuration config,
-                                   ExpenseProducer expenseProducer) {
+                                   ExpenseProducer expenseProducer,
+                                   BillCacheService billCacheService) {
         this.workflowUtil = workflowUtil;
         this.billRepository = billRepository;
         this.taskRepository = taskRepository;
@@ -69,6 +71,7 @@ public class PaymentWorkflowService {
         this.schedulerJobRegistry = schedulerJobRegistry;
         this.config = config;
         this.expenseProducer = expenseProducer;
+        this.billCacheService = billCacheService;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -377,10 +380,17 @@ public class PaymentWorkflowService {
      * so the persister writes the new status values to eg_expense_bill / eg_expense_billdetail.
      */
     public void pushBillUpdate(Bill bill, RequestInfo requestInfo) {
+        pushBillUpdate(bill, requestInfo, true);
+    }
+
+    public void pushBillUpdate(Bill bill, RequestInfo requestInfo, boolean cache) {
         BillRequest billRequest = BillRequest.builder()
                 .requestInfo(requestInfo)
                 .bill(bill)
                 .build();
+        if (cache) {
+            billCacheService.put(bill);
+        }
         expenseProducer.push(bill.getTenantId(), config.getBillUpdateTopic(), billRequest);
         log.info("Pushed bill update to Kafka for bill id={} status={}", bill.getId(), bill.getStatus());
     }

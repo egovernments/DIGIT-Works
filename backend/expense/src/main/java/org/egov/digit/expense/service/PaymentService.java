@@ -44,8 +44,10 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
 
+    private final BillCacheService billCacheService;
+
     @Autowired
-    public PaymentService(PaymentValidator validator, ExpenseProducer expenseProducer, Configuration config, BillService billService, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, PaymentRepository paymentRepository) {
+    public PaymentService(PaymentValidator validator, ExpenseProducer expenseProducer, Configuration config, BillService billService, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, PaymentRepository paymentRepository, BillCacheService billCacheService) {
         this.validator = validator;
         this.expenseProducer = expenseProducer;
         this.config = config;
@@ -53,6 +55,7 @@ public class PaymentService {
         this.enrichmentUtil = enrichmentUtil;
         this.responseInfoFactory = responseInfoFactory;
         this.paymentRepository = paymentRepository;
+        this.billCacheService = billCacheService;
     }
 
     public PaymentResponse create(@Valid PaymentRequest paymentRequest) {
@@ -184,6 +187,7 @@ public class PaymentService {
                     .bill(bill)
                     .requestInfo(requestInfo)
                     .build();
+            billCacheService.put(bill);
             expenseProducer.push(tenantId, config.getBillUpdateTopic(), billRequest);
         }
     }

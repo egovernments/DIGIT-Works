@@ -54,8 +54,10 @@ public class BillService {
 
 	private final ObjectMapper objectMapper;
 
+	private final BillCacheService billCacheService;
+
 	@Autowired
-	public BillService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator, WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, NotificationService notificationService, CalculatorUtil calculatorUtil, PaymentWorkflowService paymentWorkflowService, ObjectMapper objectMapper) {
+	public BillService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator, WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, NotificationService notificationService, CalculatorUtil calculatorUtil, PaymentWorkflowService paymentWorkflowService, ObjectMapper objectMapper, BillCacheService billCacheService) {
 		this.expenseProducer = expenseProducer;
 		this.config = config;
 		this.validator = validator;
@@ -67,6 +69,7 @@ public class BillService {
 		this.calculatorUtil = calculatorUtil;
 		this.paymentWorkflowService = paymentWorkflowService;
 		this.objectMapper = objectMapper;
+		this.billCacheService = billCacheService;
     }
 
 	/**
@@ -149,6 +152,7 @@ public class BillService {
 			log.error("Exception while sending notification: " + e);
 		}
 
+		billCacheService.put(bill);
 		if (config.isBillBreakdownEnabled() && bill.getBillDetails().size() > config.getBillBreakdownSize()) {
 			/* For bills with high number of bill details, break down of billDetails into batches is done.
 			 Every bill will have a batch of billDetails */
@@ -187,6 +191,16 @@ public class BillService {
 		Integer totalBills = billRepository.searchCount(billSearchRequest);
 		billSearchRequest.getPagination().setTotalCount(totalBills);
 		Map<String, Integer> statusCount = billRepository.searchStatusCount(billSearchRequest);
+
+		if (bills != null && !bills.isEmpty()) {
+			Set<String> billIds = bills.stream().map(Bill::getId).collect(Collectors.toSet());
+			Map<String, Bill> cached = billCacheService.getMultiple(billCriteria.getTenantId(), billIds);
+			if (!cached.isEmpty()) {
+				bills = bills.stream()
+						.map(b -> cached.getOrDefault(b.getId(), b))
+						.collect(Collectors.toList());
+			}
+		}
 
 		ResponseInfo responseInfo = responseInfoFactory.
 		createResponseInfoFromRequestInfo(billSearchRequest.getRequestInfo(),true);
@@ -441,6 +455,7 @@ public class BillService {
 				State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
 				bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
 			}
+			billCacheService.put(bill);
 			expenseProducer.push(tenantId, config.getBillUpdateTopic(), billRequest);
 		}
 	}
@@ -488,6 +503,7 @@ public class BillService {
 				.bill(billFromSearch)
 				.build();
 
+		billCacheService.put(billFromSearch);
 		if (config.isBillBreakdownEnabled() && allDetails.size() > config.getBillBreakdownSize()) {
 			produceBillsBatchWise(billRequest, config.getBillUpdateTopic());
 		} else {
@@ -558,6 +574,7 @@ public class BillService {
 				.bill(bill)
 				.build();
 
+		billCacheService.put(bill);
 		expenseProducer.push(bill.getTenantId(), config.getBillUpdateTopic(), billRequest);
 
 		log.info("Report metadata updated for billId: {}, status: {}",

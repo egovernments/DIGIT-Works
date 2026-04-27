@@ -90,7 +90,7 @@ public class DetailWfUpdateHandler implements SchedulerJobHandler {
 
             try {
                 paymentWorkflowService.transitionBillDetail(detail, action, requestInfo);
-                paymentWorkflowService.pushBillUpdate(buildSingleDetailBill(bill, detail), requestInfo);
+                paymentWorkflowService.pushBillUpdate(buildSingleDetailBill(bill, detail), requestInfo, false);
                 log.info("DETAIL_WF_UPDATE: detail={} transitioned via {} → {}", billDetailId, action, detail.getStatus());
             } catch (Exception e) {
                 if (workflowUtil.isRetryableWfError(e)) {
