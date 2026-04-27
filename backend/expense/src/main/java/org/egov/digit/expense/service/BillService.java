@@ -135,40 +135,37 @@ public class BillService {
 		Bill bill = billRequest.getBill();
 		String tenantId = bill.getTenantId();
 		RequestInfo requestInfo = billRequest.getRequestInfo();
-		BillResponse response = null;
 
-		List<Bill> billsFromSearch = validator.validateUpdateRequest(billRequest);
-		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
-
-		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
-
-			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
-			bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
-		}
-		try {
-			if (billRequest.getBill().getBusinessService().equalsIgnoreCase("EXPENSE.PURCHASE"))
-				notificationService.sendNotificationForPurchaseBill(billRequest);
-		}catch (Exception e){
-			log.error("Exception while sending notification: " + e);
-		}
-
-		billCacheService.put(bill);
-		if (config.isBillBreakdownEnabled() && bill.getBillDetails().size() > config.getBillBreakdownSize()) {
-			/* For bills with high number of bill details, break down of billDetails into batches is done.
-			 Every bill will have a batch of billDetails */
-			produceBillsBatchWise(billRequest, config.getBillUpdateTopic());
+		if ("PAYMENTS.BILL".equalsIgnoreCase(bill.getBusinessService()) && billRequest.getWorkflow() != null) {
+			updateBillStatus(bill, billRequest.getWorkflow(), requestInfo);
 		} else {
-			expenseProducer.push(tenantId, config.getBillUpdateTopic(), billRequest);
+			List<Bill> billsFromSearch = validator.validateUpdateRequest(billRequest);
+			enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
+			if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
+				State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
+				bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+			}
+			billCacheService.put(bill);
+			if (config.isBillBreakdownEnabled() && bill.getBillDetails().size() > config.getBillBreakdownSize()) {
+				produceBillsBatchWise(billRequest, config.getBillUpdateTopic());
+			} else {
+				expenseProducer.push(tenantId, config.getBillUpdateTopic(), billRequest);
+			}
+		}
+
+		try {
+			if (bill.getBusinessService().equalsIgnoreCase("EXPENSE.PURCHASE"))
+				notificationService.sendNotificationForPurchaseBill(billRequest);
+		} catch (Exception e) {
+			log.error("Exception while sending notification: " + e);
 		}
 
 		pushReportRegenerationTrigger(bill, requestInfo);
 
-		response = BillResponse.builder()
-				.bills(Arrays.asList(billRequest.getBill()))
-				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo,true))
+		return BillResponse.builder()
+				.bills(Arrays.asList(bill))
+				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true))
 				.build();
-
-		return response;
 	}
 	
 	/**
