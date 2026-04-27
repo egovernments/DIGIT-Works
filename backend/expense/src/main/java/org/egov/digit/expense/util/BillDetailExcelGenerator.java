@@ -344,13 +344,29 @@ public class BillDetailExcelGenerator {
     }
 
     private void setColumnWidths(Sheet sheet, int headCodeCount) {
-        int totalCols = STATIC_COL_COUNT + headCodeCount + 2;
-        for (int i = 0; i < totalCols; i++) {
-            sheet.autoSizeColumn(i);
-            // Add a small padding so text isn't clipped at the edge
-            int paddedWidth = sheet.getColumnWidth(i) + 1024;
-            sheet.setColumnWidth(i, paddedWidth);
+        // autoSizeColumn() requires AWT/fontconfig which is absent in Alpine Docker
+        // images. Use fixed widths instead (POI unit = 1/256 of a character width).
+        int[] staticWidths = {
+            6000,  // workerId
+            5000,  // username
+            7000,  // name
+            7000,  // payeeName
+            5000,  // mobileNumber
+            5500,  // payeePhoneNumber
+            6000,  // bankAccount
+            4500,  // bankCode
+            6500,  // beneficiaryCode
+            7500,  // role
+        };
+        for (int i = 0; i < staticWidths.length; i++) {
+            sheet.setColumnWidth(i, staticWidths[i]);
         }
+        for (int i = 0; i < headCodeCount; i++) {
+            sheet.setColumnWidth(STATIC_COL_COUNT + i, 6000);
+        }
+        // totalAttendance + totalAmount
+        sheet.setColumnWidth(STATIC_COL_COUNT + headCodeCount,     4500);
+        sheet.setColumnWidth(STATIC_COL_COUNT + headCodeCount + 1, 5000);
     }
 
     private String safeStr(String value) {
