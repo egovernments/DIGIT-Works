@@ -6,8 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Represents the email template structure fetched from MDMS (EXPENSE.workflowEmailNotification).
- * Each field holds a localization key that is resolved before rendering the email.
+ * Represents the email template fetched from MDMS (EXPENSE.billEmailNotification).
+ * Both fields may contain {{LOCALIZATION_KEY}} placeholders (resolved via localization service)
+ * and runtime tokens {userName} / {billCount} (replaced at render time).
  */
 @Data
 @Builder
@@ -15,18 +16,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class WorkflowEmailTemplate {
 
-    /** Localization key for the email subject line. */
+    /** Email subject; may contain {{LOC_KEY}} and {billCount} placeholders. */
     private String subject;
 
-    /** Localization key for the header title. */
-    private String headerTitle;
-
-    /** Localization key for the greeting line in the email body. */
-    private String greeting;
-
-    /** Localization key for the main instruction paragraph. */
-    private String instruction;
-
-    /** Localization key for the footer text. */
-    private String footerContent;
+    /** Full HTML email body; may contain {{LOC_KEY}}, {userName}, {billCount} placeholders. */
+    private String htmlBody;
 }
