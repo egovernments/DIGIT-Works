@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
+import java.util.Optional;
+
 @Controller
 @RequestMapping("/face-auth/v1")
 public class FaceAuthEventApiController {
@@ -55,7 +57,9 @@ public class FaceAuthEventApiController {
             @RequestHeader(value = "Content-Type", required = false) String contentType,
             @ApiParam(value = "") @Valid @RequestBody FaceAuthEventRequest request) {
         request.getRequestInfo().setApiId(httpServletRequest.getRequestURI());
-        producer.push(config.getBulkCreateFaceAuthEventTopic(), request);
+        String tenantId = Optional.ofNullable(request).map(req -> req.getRequestInfo().getUserInfo().getTenantId())
+                .get();
+        producer.push(tenantId, config.getBulkCreateFaceAuthEventTopic(), request);
         return ResponseEntity.status(HttpStatus.ACCEPTED)
                 .body(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true));
     }

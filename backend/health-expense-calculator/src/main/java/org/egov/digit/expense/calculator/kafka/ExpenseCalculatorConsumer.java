@@ -260,7 +260,7 @@ public class ExpenseCalculatorConsumer {
 	 * Only root projects (parent == null) carry campaign-level date changes.
 	 * Child projects (per locality) are handled by the attendance service.
 	 */
-	@KafkaListener(topicPattern = "${project.management.system.kafka.update.topic}")
+	@KafkaListener(topics = "${project.management.system.kafka.update.date.topic}")
 	public void listenProjectUpdate(final Map<String, Object> consumerRecord,
 									@Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 		log.info("ExpenseCalculatorConsumer:listenProjectUpdate from topic: {}", topic);

@@ -27,7 +27,7 @@ public class FaceAuthEventConsumer {
         this.objectMapper = objectMapper;
     }
 
-    @KafkaListener(topicPattern = "(${attendance.kafka.tenant.id.pattern}){0,1}${attendance.face.auth.kafka.consumer.bulk.create.topic}")
+    @KafkaListener(topicPattern = "(${attendance.kafka.tenant.id.pattern})${attendance.face.auth.kafka.consumer.bulk.create.topic}")
     public void bulkCreate(Map<String, Object> consumerRecord,
                            @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
