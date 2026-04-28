@@ -376,6 +376,13 @@ public class MusterRollService {
 
         //check if the user is enrolled in the attendance register for resubmit
         MusterRoll existingMusterRoll = fetchExistingMusterRoll(musterRollRequest.getMusterRoll());
+
+        boolean isCampaignSupervisorEdit = isCampaignSupervisorEditingApproved(
+                existingMusterRoll.getMusterRollStatus(), musterRollRequest.getRequestInfo());
+
+        if (isCampaignSupervisorEdit) {
+            validateBillNotInitiated(existingMusterRoll, musterRollRequest.getRequestInfo());
+        }
         log.info("MusterRollService::updateMusterRoll::update request for musterRollNumber::"+existingMusterRoll.getMusterRollNumber());
 
         //fetch MDMS data for muster - skill level
@@ -400,8 +407,13 @@ public class MusterRollService {
         // V2 Intermediate Billing - Capture previous status before workflow update
         String previousStatus = musterRollRequest.getMusterRoll().getMusterRollStatus();
 
-        if(config.isMusterRollWorkflowEnabled()) {
+        if (config.isMusterRollWorkflowEnabled() && !isCampaignSupervisorEdit) {
             workflowService.updateWorkflowStatus(musterRollRequest);
+        }
+
+        // CAMPAIGN_SUPERVISOR edits do not trigger a workflow transition — preserve APPROVED status
+        if (isCampaignSupervisorEdit) {
+            musterRollRequest.getMusterRoll().setMusterRollStatus(STATUS_APPROVED);
         }
 
         // V2 Intermediate Billing - Publish status update event (for V2 muster rolls only)
@@ -577,6 +589,43 @@ public class MusterRollService {
         }
 
         log.info("validatePeriodNotLocked::Period is not locked, update allowed");
+    }
+
+    private boolean isCampaignSupervisorEditingApproved(String currentStatus, RequestInfo requestInfo) {
+        if (!STATUS_APPROVED.equalsIgnoreCase(currentStatus)) return false;
+        String campaignRole = config.getCampaignSupervisorRole();
+        return requestInfo.getUserInfo().getRoles().stream()
+                .anyMatch(r -> campaignRole.equalsIgnoreCase(r.getCode()));
+    }
+
+    private void validateBillNotInitiated(MusterRoll musterRoll, RequestInfo requestInfo) {
+        if (StringUtils.isBlank(musterRoll.getBillingPeriodId())) {
+            log.debug("validateBillNotInitiated::No billingPeriodId — skipping (V1)");
+            return;
+        }
+        String campaignNumber = null;
+        try {
+            AttendanceRegisterResponse registerResponse = musterRollServiceUtil.fetchAttendanceRegister(
+                    requestInfo, musterRoll.getTenantId(), musterRoll.getRegisterId());
+            if (registerResponse != null && !CollectionUtils.isEmpty(registerResponse.getAttendanceRegister())) {
+                campaignNumber = registerResponse.getAttendanceRegister().get(0).getReferenceId();
+            }
+        } catch (Exception e) {
+            log.warn("validateBillNotInitiated::Could not fetch register (fail-open): {}", e.getMessage());
+            return;
+        }
+        if (StringUtils.isBlank(campaignNumber)) {
+            log.warn("validateBillNotInitiated::No campaign number found — skipping check");
+            return;
+        }
+        boolean isInitiated = musterRollServiceUtil.isBillInitiated(
+                musterRoll.getBillingPeriodId(), campaignNumber,
+                musterRoll.getTenantId(), requestInfo);
+        if (isInitiated) {
+            throw new CustomException("BILL_ALREADY_INITIATED",
+                    "Cannot edit muster roll: bill generation has already been initiated for period "
+                    + musterRoll.getBillingPeriodId());
+        }
     }
 
     /**

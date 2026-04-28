@@ -198,6 +198,22 @@ public class ExpenseCalculatorRepository {
     }
 
     /**
+     * Returns true if any bill generation attempt (INITIATED or SUCCESSFUL) exists for the period.
+     * Used to gate CAMPAIGN_SUPERVISOR edits — blocks as soon as bill processing starts.
+     */
+    public boolean isBillInitiatedForPeriod(String periodId) {
+        String sql = "SELECT COUNT(*) FROM eg_expense_bill_gen_status " +
+                     "WHERE period_id = :periodId " +
+                     "AND status IN ('INITIATED', 'SUCCESSFUL')";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("periodId", periodId);
+
+        Integer count = namedParameterJdbcTemplate.queryForObject(sql, params, Integer.class);
+        return count != null && count > 0;
+    }
+
+    /**
      * Create bill status with V2 fields
      * Includes period information and processing time tracking
      *

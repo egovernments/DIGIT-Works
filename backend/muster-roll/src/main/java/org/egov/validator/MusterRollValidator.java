@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.MdmsUtil;
@@ -145,7 +146,11 @@ public class MusterRollValidator {
         if(serviceConfiguration.isValidateAttendanceRegisterEnabled()) {
             validateAndEnrichAttendance(musterRoll, requestInfo, false);
         }
-        if(serviceConfiguration.isMusterRollWorkflowEnabled()) {
+        // CAMPAIGN_SUPERVISOR editing an already-approved muster roll does not require
+        // a workflow action — they update attendance values directly without a transition
+        boolean isCampaignSupervisorEdit = isCampaignSupervisorEditingApproved(
+                musterRoll.getMusterRollStatus(), requestInfo);
+        if (!isCampaignSupervisorEdit && serviceConfiguration.isMusterRollWorkflowEnabled()) {
             validateWorkFlow(workflow, errorMap);
         }
         validateUpdateMusterRollRequest(musterRoll);
@@ -313,6 +318,13 @@ public class MusterRollValidator {
         log.info("MusterRollValidator::validateEstimateMusterRoll::startDate in epoch::"+musterRoll.getStartDate());
         log.info("MusterRollValidator::validateEstimateMusterRoll::endDate in epoch::"+musterRoll.getEndDate());
 
+    }
+
+    private boolean isCampaignSupervisorEditingApproved(String musterRollStatus, RequestInfo requestInfo) {
+        if (!STATUS_APPROVED.equalsIgnoreCase(musterRollStatus)) return false;
+        String campaignRole = serviceConfiguration.getCampaignSupervisorRole();
+        return requestInfo.getUserInfo().getRoles().stream()
+                .anyMatch(role -> campaignRole.equalsIgnoreCase(role.getCode()));
     }
 
     private void validateWorkFlow(Workflow workflow, Map<String, String> errorMap) {

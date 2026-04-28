@@ -1225,9 +1225,18 @@ public class ExpenseCalculatorService {
         // Check if bill exists (comprehensive check)
         boolean isBilled = checkIfBillExists(requestInfo, tenantId, projectId, billingPeriodId, registerId);
 
+        // Check if bill generation was initiated or completed (INITIATED or SUCCESSFUL in status table)
+        // Used by CAMPAIGN_SUPERVISOR gate — blocks edits as soon as bill processing starts
+        boolean isInitiated = false;
+        if (billingPeriodId != null && !billingPeriodId.isEmpty()) {
+            isInitiated = expenseCalculatorRepository.isBillInitiatedForPeriod(billingPeriodId);
+            log.info("checkBillStatusAndBuildResponse::isInitiated: {} for period: {}", isInitiated, billingPeriodId);
+        }
+
         // Build response
         HashMap<String, Object> response = new HashMap<>();
         response.put("isBilled", isBilled);
+        response.put("isInitiated", isInitiated);
         response.put("tenantId", tenantId);
         response.put("projectId", projectId);
 
@@ -1241,8 +1250,8 @@ public class ExpenseCalculatorService {
             response.put("checkPerformed", "NOT_IMPLEMENTED");
         }
 
-        log.info("checkBillStatusAndBuildResponse::Response - isBilled: {}, flowType: {}",
-            isBilled, response.get("flowType"));
+        log.info("checkBillStatusAndBuildResponse::Response - isBilled: {}, isInitiated: {}, flowType: {}",
+            isBilled, isInitiated, response.get("flowType"));
 
         return response;
     }

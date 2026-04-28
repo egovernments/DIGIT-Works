@@ -184,6 +184,9 @@ public class MusterRollServiceConfiguration {
     @Value("${works.expense.calculator.check.bill.status.endpoint:/health-expense-calculator/v1/_checkBillStatus}")
     private String checkBillStatusEndpoint;
 
+    @Value("${muster.campaign.supervisor.role:CAMPAIGN_SUPERVISOR}")
+    private String campaignSupervisorRole;
+
     @Value("${egov.user.create.path}")
     private String userCreateEndpoint;
 
