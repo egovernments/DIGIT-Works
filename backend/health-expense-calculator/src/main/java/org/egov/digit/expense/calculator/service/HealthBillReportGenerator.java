@@ -668,49 +668,80 @@ public class HealthBillReportGenerator {
         }
         BigDecimal totalNumberOfDays = BigDecimal.ZERO;
 
-        // Try to get attendance from muster roll map first (works for regular bills)
-        if (individualMusterAttendanceMap.containsKey(billDetail.getReferenceId()) &&
-            individualMusterAttendanceMap.get(billDetail.getReferenceId()).containsKey(individual.getId())) {
-            totalNumberOfDays = individualMusterAttendanceMap.get(billDetail.getReferenceId()).get(individual.getId());
+        boolean billHasStoredData =
+                billDetail.getTotalAttendance() != null
+                && billDetail.getTotalAttendance().compareTo(BigDecimal.ZERO) > 0
+                && !CollectionUtils.isEmpty(billDetail.getPayableLineItems());
+
+        if (billHasStoredData) {
+            // Reverse-calculate per-day rates from stored payableLineItems / totalAttendance
+            // so re-generated reports reflect the actual amounts on the bill, not live MDMS rates.
+            totalNumberOfDays = billDetail.getTotalAttendance();
+            log.debug("Bill exists - using totalAttendance {} days for bill detail {}",
+                    totalNumberOfDays, billDetail.getId());
+
+            Map<String, BigDecimal> amountByHeadCode = billDetail.getPayableLineItems().stream()
+                    .filter(li -> li.getHeadCode() != null && li.getAmount() != null)
+                    .collect(Collectors.toMap(
+                            LineItem::getHeadCode,
+                            LineItem::getAmount,
+                            BigDecimal::add));
+
             reportBillDetail.setTotalNumberOfDays(totalNumberOfDays.floatValue());
-            log.debug("Found attendance {} days for individual {} from muster roll map", totalNumberOfDays, individual.getId());
-        }
-        // BUGFIX: Fallback to bill detail additionalDetails for aggregate bills
-        // For aggregate bills, attendance is stored directly in bill detail since consolidated muster roll isn't persisted
-        else if (billDetail.getAdditionalDetails() != null) {
-            try {
-                Map<String, Object> additionalDetails = objectMapper.convertValue(
-                    billDetail.getAdditionalDetails(), Map.class
-                );
-                Object attendanceObj = additionalDetails.get("attendance");
-                if (attendanceObj != null) {
+            reportBillDetail.setWageAmount(
+                    perDayAmount(amountByHeadCode.getOrDefault(PER_DIEM_HEAD_CODE, BigDecimal.ZERO), totalNumberOfDays));
+            reportBillDetail.setFoodAmount(
+                    perDayAmount(amountByHeadCode.getOrDefault(FOOD_HEAD_CODE, BigDecimal.ZERO), totalNumberOfDays));
+            reportBillDetail.setTransportAmount(
+                    perDayAmount(amountByHeadCode.getOrDefault(TRANSPORT_HEAD_CODE, BigDecimal.ZERO), totalNumberOfDays));
+        } else if (individual != null) {
+            // New bill: derive attendance from muster roll, per-day rates from MDMS.
+            if (individualMusterAttendanceMap.containsKey(billDetail.getReferenceId())
+                    && individualMusterAttendanceMap.get(billDetail.getReferenceId()).containsKey(individual.getId())) {
+                totalNumberOfDays = individualMusterAttendanceMap.get(billDetail.getReferenceId()).get(individual.getId());
+                reportBillDetail.setTotalNumberOfDays(totalNumberOfDays.floatValue());
+                log.debug("Found attendance {} days for individual {} from muster roll map",
+                        totalNumberOfDays, individual.getId());
+            } else if (billDetail.getAdditionalDetails() != null) {
+                try {
+                    Map<String, Object> additionalDetails = objectMapper.convertValue(
+                            billDetail.getAdditionalDetails(), Map.class);
+                    Object attendanceObj = additionalDetails.get("attendance");
                     if (attendanceObj instanceof BigDecimal) {
                         totalNumberOfDays = (BigDecimal) attendanceObj;
                     } else if (attendanceObj instanceof Number) {
                         totalNumberOfDays = BigDecimal.valueOf(((Number) attendanceObj).doubleValue());
                     }
-                    reportBillDetail.setTotalNumberOfDays(totalNumberOfDays.floatValue());
-                    log.debug("Found attendance {} days for individual {} from bill detail additionalDetails (aggregate bill)",
-                        totalNumberOfDays, individual.getId());
-                } else {
-                    log.warn("No attendance data found for individual {} in bill detail {}. Setting to 0.",
-                        individual.getId(), billDetail.getId());
+                    if (totalNumberOfDays.compareTo(BigDecimal.ZERO) > 0) {
+                        reportBillDetail.setTotalNumberOfDays(totalNumberOfDays.floatValue());
+                        log.debug("Found attendance {} days for individual {} from bill detail additionalDetails",
+                                totalNumberOfDays, individual.getId());
+                    } else {
+                        log.warn("No attendance data found for individual {} in bill detail {}. Setting to 0.",
+                                individual.getId(), billDetail.getId());
+                    }
+                } catch (Exception e) {
+                    log.error("Failed to extract attendance from bill detail additionalDetails: {}", e.getMessage());
                 }
-            } catch (Exception e) {
-                log.error("Failed to extract attendance from bill detail additionalDetails: {}", e.getMessage());
+            } else {
+                log.warn("No attendance data found for individual {} in muster map or bill detail. Setting to 0.",
+                        individual.getId());
             }
-        } else {
-            log.warn("No attendance data found for individual {} in muster map or bill detail. Setting to 0.",
-                individual.getId());
+
+            String role = reportBillDetail.getRole();
+            if (role != null && skillCodeRateMap.containsKey(role)) {
+                reportBillDetail.setFoodAmount(skillCodeRateMap.get(role).getRateBreakup()
+                        .getOrDefault(FOOD_HEAD_CODE, BigDecimal.ZERO));
+                reportBillDetail.setTransportAmount(skillCodeRateMap.get(role).getRateBreakup()
+                        .getOrDefault(TRANSPORT_HEAD_CODE, BigDecimal.ZERO));
+                reportBillDetail.setWageAmount(skillCodeRateMap.get(role).getRateBreakup()
+                        .getOrDefault(PER_DIEM_HEAD_CODE, BigDecimal.ZERO));
+            }
         }
 
-        String role = reportBillDetail.getRole();
-        if (role != null && skillCodeRateMap.containsKey(role)) {
-            reportBillDetail.setFoodAmount(skillCodeRateMap.get(role).getRateBreakup().getOrDefault(FOOD_HEAD_CODE, BigDecimal.ZERO));
-            reportBillDetail.setTransportAmount(skillCodeRateMap.get(role).getRateBreakup().getOrDefault(TRANSPORT_HEAD_CODE, BigDecimal.ZERO));
-            reportBillDetail.setWageAmount(skillCodeRateMap.get(role).getRateBreakup().getOrDefault(PER_DIEM_HEAD_CODE, BigDecimal.ZERO));
-        }
-        reportBillDetail.setTotalWages(reportBillDetail.getWageAmount().add(reportBillDetail.getTransportAmount()).add(reportBillDetail.getFoodAmount()));
+        reportBillDetail.setTotalWages(reportBillDetail.getWageAmount()
+                .add(reportBillDetail.getTransportAmount())
+                .add(reportBillDetail.getFoodAmount()));
         reportBillDetail.setTotalAmount(billDetail.getTotalAmount());
         return reportBillDetail;
     }
