@@ -333,9 +333,6 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${report.generation.auto.enabled}")
 	private boolean reportGenerationAuto;
 
-	@Value("${project.management.system.kafka.update.topic}")
-	private String projectUpdateTopic;
-
 	/**
 	 * V2 Intermediate Billing - Batch Processing Configuration
 	 *
