@@ -90,7 +90,7 @@ public class MusterRollStatusUpdateConsumer {
             ObjectMapper objectMapper,
             RegisterRepository registerRepository,
             Producer producer,
-            @Value("(${attendance.kafka.tenant.id.pattern})${attendance.register.kafka.update.topic}") String updateAttendanceRegisterTopic) {
+            @Value("${attendance.register.kafka.update.topic}") String updateAttendanceRegisterTopic) {
         this.objectMapper = objectMapper;
         this.registerRepository = registerRepository;
         this.producer = producer;
@@ -147,7 +147,7 @@ public class MusterRollStatusUpdateConsumer {
      * @param consumerRecord The Kafka message as Map
      * @param topic The Kafka topic name (for logging)
      */
-    @KafkaListener(topics = "(${attendance.kafka.tenant.id.pattern})${attendance.register.kafka.muster.status.update.topic}")
+    @KafkaListener(topicPattern = "(${attendance.kafka.tenant.id.pattern})${attendance.register.kafka.muster.status.update.topic}")
     public void processMusterRollStatusUpdate(
             Map<String, Object> consumerRecord,
             @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
