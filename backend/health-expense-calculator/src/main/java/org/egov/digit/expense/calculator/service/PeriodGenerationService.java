@@ -46,7 +46,7 @@ public class PeriodGenerationService {
 
     // Date formatter for logging (thread-safe)
     private static final DateTimeFormatter DATE_FORMAT =
-        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z")
             .withZone(ZoneId.systemDefault());
 
     /**
@@ -411,6 +411,23 @@ public class PeriodGenerationService {
     public List<BillingPeriod> regeneratePeriods(BillingConfig config) {
         log.info("Regenerating periods for billing config: {}", config.getId());
         return generatePeriods(config);
+    }
+
+    /**
+     * Returns the billing frequency duration in milliseconds for the given config.
+     * Returns 0 for END_OF_CAMPAIGN (no fixed interval).
+     */
+    public long getFrequencyDurationMs(BillingConfig config) {
+        if (config.getBillingFrequency() == null) return 0;
+        switch (config.getBillingFrequency()) {
+            case WEEKLY:    return ONE_WEEK_MS;
+            case BI_WEEKLY: return TWO_WEEKS_MS;
+            case MONTHLY:   return THIRTY_DAYS_MS;
+            case CUSTOM:
+                return config.getCustomFrequencyDays() != null
+                    ? config.getCustomFrequencyDays() * ONE_DAY_MS : 0;
+            default:        return 0;
+        }
     }
 
     /**

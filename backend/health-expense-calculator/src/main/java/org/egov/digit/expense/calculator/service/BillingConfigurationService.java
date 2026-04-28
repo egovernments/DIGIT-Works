@@ -15,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -41,6 +44,9 @@ import java.util.UUID;
 @Service
 @Slf4j
 public class BillingConfigurationService {
+
+    private static final DateTimeFormatter DT_FORMAT =
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z").withZone(ZoneId.systemDefault());
 
     private final BillingConfigRepository repository;
     private final PeriodGenerationService periodGenerationService;
@@ -880,12 +886,38 @@ public class BillingConfigurationService {
                 .orElseThrow();
 
             long extensionStart = lastPeriod.getPeriodEndDate() + 1;
+
+            // If the last period is still PENDING and its end date has not yet passed,
+            // and it was trimmed short (natural frequency boundary is later than its current end),
+            // extend it to the natural boundary before appending new periods.
+            long frequencyDurationMs = periodGenerationService.getFrequencyDurationMs(config);
+            log.info("Last period [{}] — status: {}, start: {}, end: {}, currentTime: {}, frequencyDuration: {} days",
+                lastPeriod.getPeriodNumber(), lastPeriod.getStatus(),
+                fmt(lastPeriod.getPeriodStartDate()), fmt(lastPeriod.getPeriodEndDate()),
+                fmt(currentTime), frequencyDurationMs / 86_400_000L);
+            if (lastPeriod.isPending()
+                    && lastPeriod.getPeriodEndDate() >= currentTime
+                    && frequencyDurationMs > 0) {
+                long naturalEnd = lastPeriod.getPeriodStartDate() + frequencyDurationMs - 1;
+                log.info("Natural end of last period [{}]: {}, willExtend: {}",
+                    lastPeriod.getPeriodNumber(), fmt(naturalEnd), naturalEnd > lastPeriod.getPeriodEndDate());
+                if (naturalEnd > lastPeriod.getPeriodEndDate()) {
+                    long updatedEnd = Math.min(naturalEnd, newEnd);
+                    repository.updatePeriodEndDate(lastPeriod.getId(), updatedEnd, userId, currentTime);
+                    log.info("Extended period [{}] — start: {}, previousEnd: {} → updatedEnd: {} (natural {} boundary)",
+                        lastPeriod.getPeriodNumber(),
+                        fmt(lastPeriod.getPeriodStartDate()), fmt(lastPeriod.getPeriodEndDate()),
+                        fmt(updatedEnd), config.getBillingFrequency());
+                    extensionStart = updatedEnd + 1;
+                }
+            }
+
             if (extensionStart >= newEnd) {
-                log.info("Extension start {} >= newEnd {} — nothing to append for config: {}",
-                    extensionStart, newEnd, configId);
+                log.info("No new periods to append — extensionStart: {} >= newEnd: {} for config: {}",
+                    fmt(extensionStart), fmt(newEnd), configId);
             } else {
-                log.info("Appending periods from {} to {} for campaign: {}",
-                    extensionStart, newEnd, config.getCampaignNumber());
+                log.info("Appending new periods from {} to {} for campaign: {}",
+                    fmt(extensionStart), fmt(newEnd), config.getCampaignNumber());
 
                 BillingConfig tailConfig = BillingConfig.builder()
                     .id(config.getId())
@@ -902,7 +934,8 @@ public class BillingConfigurationService {
                 List<BillingPeriod> newPeriods = periodGenerationService.generatePeriods(
                     tailConfig, lastPeriod.getPeriodNumber() + 1);
                 repository.savePeriods(newPeriods);
-                log.info("Appended {} new periods for campaign: {}", newPeriods.size(), config.getCampaignNumber());
+                log.info("Appended {} new periods for campaign: {} ({} to {})",
+                    newPeriods.size(), config.getCampaignNumber(), fmt(extensionStart), fmt(newEnd));
             }
         }
 
@@ -911,5 +944,9 @@ public class BillingConfigurationService {
         config.setLastModifiedBy(userId);
         config.setLastModifiedTime(currentTime);
         repository.update(config);
+    }
+
+    private String fmt(long epochMs) {
+        return DT_FORMAT.format(Instant.ofEpochMilli(epochMs));
     }
 }
