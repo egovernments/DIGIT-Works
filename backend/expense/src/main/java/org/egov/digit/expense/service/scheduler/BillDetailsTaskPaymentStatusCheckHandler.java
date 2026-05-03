@@ -8,6 +8,7 @@ import org.egov.digit.expense.service.BankPaymentService;
 import org.egov.digit.expense.service.BillAggregationService;
 import org.egov.digit.expense.service.MTNService;
 import org.egov.digit.expense.service.PaymentWorkflowService;
+import org.egov.digit.expense.service.TaskCacheService;
 import org.egov.digit.expense.util.WorkflowUtil;
 import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.enums.Actions;
@@ -36,6 +37,7 @@ public class BillDetailsTaskPaymentStatusCheckHandler implements SchedulerJobHan
     private final WorkflowUtil workflowUtil;
     private final MTNService mtnService;
     private final BankPaymentService bankPaymentService;
+    private final TaskCacheService taskCacheService;
     private final TaskRepository taskRepository;
     private final ObjectMapper objectMapper;
 
@@ -45,6 +47,7 @@ public class BillDetailsTaskPaymentStatusCheckHandler implements SchedulerJobHan
                                                      WorkflowUtil workflowUtil,
                                                      MTNService mtnService,
                                                      BankPaymentService bankPaymentService,
+                                                     TaskCacheService taskCacheService,
                                                      TaskRepository taskRepository,
                                                      ObjectMapper objectMapper) {
         this.paymentWorkflowService = paymentWorkflowService;
@@ -52,6 +55,7 @@ public class BillDetailsTaskPaymentStatusCheckHandler implements SchedulerJobHan
         this.workflowUtil = workflowUtil;
         this.mtnService = mtnService;
         this.bankPaymentService = bankPaymentService;
+        this.taskCacheService = taskCacheService;
         this.taskRepository = taskRepository;
         this.objectMapper = objectMapper;
     }
@@ -71,7 +75,7 @@ public class BillDetailsTaskPaymentStatusCheckHandler implements SchedulerJobHan
             String billId = ctx.getBillId();
             RequestInfo requestInfo = ctx.getRequestInfo();
 
-            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
             if (bill == null) {
                 log.warn("BILL_DETAILS_TASK_PAYMENT_STATUS_CHECK: bill={} not found — marking FAILED", billId);
                 return SchedulerJobResult.FAILED;
@@ -92,14 +96,15 @@ public class BillDetailsTaskPaymentStatusCheckHandler implements SchedulerJobHan
                 return SchedulerJobResult.DONE;
             }
 
-            // Look up the Transfer task for this detail
-            Task task = taskRepository.searchTask(Task.builder()
-                    .billId(billId)
-                    .billDetailId(billDetailId)
-                    .tenantId(tenantId)
-                    .type(Task.Type.Transfer)
-                    .status(Status.IN_PROGRESS)
-                    .build());
+            // EC-5: look up Transfer task — cache first, then DB to cover Kafka→persister lag
+            Task task = taskCacheService.get(tenantId, billDetailId, Task.Type.Transfer)
+                    .orElseGet(() -> taskRepository.searchTask(Task.builder()
+                            .billId(billId)
+                            .billDetailId(billDetailId)
+                            .tenantId(tenantId)
+                            .type(Task.Type.Transfer)
+                            .status(Status.IN_PROGRESS)
+                            .build()));
 
             if (task == null) {
                 log.warn("BILL_DETAILS_TASK_PAYMENT_STATUS_CHECK: no IN_PROGRESS Transfer task for detail={} bill={} — retrying",
@@ -123,7 +128,7 @@ public class BillDetailsTaskPaymentStatusCheckHandler implements SchedulerJobHan
             }
 
             // Re-fetch to check settled status and trigger aggregation
-            Bill refreshed = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+            Bill refreshed = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
             if (refreshed != null) {
                 BillDetail refreshedDetail = findDetail(refreshed, billDetailId);
                 if (refreshedDetail != null && isPaymentSettled(refreshedDetail.getStatus())) {
@@ -151,7 +156,7 @@ public class BillDetailsTaskPaymentStatusCheckHandler implements SchedulerJobHan
             String billId = ctx.getBillId();
             RequestInfo requestInfo = ctx.getRequestInfo();
 
-            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
             if (bill == null) return;
 
             BillDetail detail = findDetail(bill, billDetailId);

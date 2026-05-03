@@ -369,11 +369,8 @@ public class Configuration {
 	@Value("${task.scheduler.bootstrap.tenants:}")
 	private String schedulerBootstrapTenantsRaw;
 
-	@Value("${wf.transition.retry.max.attempts:3}")
-	private int wfTransitionRetryMaxAttempts;
-
-	@Value("${wf.transition.retry.initial.delay.ms:200}")
-	private long wfTransitionRetryInitialDelayMs;
+	@Value("${expense.task.cache.ttl.seconds:120}")
+	private long taskCacheTtlSeconds;
 
 	/**
 	 * Delay before a safety-net BILL_STATUS_POLL job fires.

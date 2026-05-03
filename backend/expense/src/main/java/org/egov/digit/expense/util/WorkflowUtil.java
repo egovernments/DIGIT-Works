@@ -22,7 +22,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
+
+import static org.egov.digit.expense.config.Constants.*;
 
 @Service
 @Slf4j
@@ -86,13 +87,15 @@ public class WorkflowUtil {
 
     /**
      * Returns true if the WF error is the async-persistence race (INVALID ACTION / No valid action).
-     * Only this specific error class is retried — network/5xx errors propagate immediately.
+     * These indicate the transition was already applied — caller should search WF state to reconcile.
      */
     public boolean isRetryableWfError(Exception e) {
         Throwable t = e;
         while (t != null) {
             String msg = Optional.ofNullable(t.getMessage()).orElse("");
-            if (msg.contains("INVALID ACTION") || msg.contains("No valid action") || msg.contains("INVALID_ACTION")) {
+            if (msg.contains(WF_INVALID_ACTION_MSG_1)
+                    || msg.contains(WF_INVALID_ACTION_MSG_2)
+                    || msg.contains(WF_INVALID_ACTION_MSG_3)) {
                 return true;
             }
             t = t.getCause();
@@ -101,37 +104,47 @@ public class WorkflowUtil {
     }
 
     /**
-     * Calls the workflow transition with exponential backoff + jitter on INVALID_ACTION races.
-     * Max attempts and initial delay are driven by {@code wf.transition.retry.max.attempts}
-     * and {@code wf.transition.retry.initial.delay.ms} config properties.
+     * Makes a single WF transition attempt with no retry or sleep.
+     * Callers that need to handle INVALID_ACTION must catch it and call
+     * {@link #searchCurrentWfState} to reconcile — or return RETRY to the scheduler.
+     * No Thread.sleep here: blocking the Kafka consumer or scheduler thread degrades all processing.
      */
     private State callWorkFlowWithRetry(ProcessInstanceRequest workflowRequest,
                                         java.util.function.Supplier<State> workflowCall) {
-        int max = configs.getWfTransitionRetryMaxAttempts();
-        long base = configs.getWfTransitionRetryInitialDelayMs();
-        Exception last = null;
-        for (int attempt = 1; attempt <= max; attempt++) {
-            try {
-                return workflowCall.get();
-            } catch (Exception e) {
-                last = e;
-                if (!isRetryableWfError(e)) {
-                    log.error("WF_TRANSITION | FAILED (non-retryable, attempt {}/{}) | error={}", attempt, max, e.getMessage());
-                    throw e;
-                }
-                if (attempt == max) {
-                    log.info("WF_TRANSITION | already transitioned (idempotent, attempt {}/{}) | error={}", attempt, max, e.getMessage());
-                    throw e;
-                }
-                long delay = (long) (base * Math.pow(2, attempt - 1));
-                long jitter = ThreadLocalRandom.current().nextLong(0, Math.max(1, delay / 4));
-                log.warn("WF_TRANSITION retryable error (attempt {}/{}) — retrying in {}ms: {}",
-                        attempt, max, delay + jitter, e.getMessage());
-                try { Thread.sleep(delay + jitter); }
-                catch (InterruptedException ie) { Thread.currentThread().interrupt(); throw new RuntimeException(ie); }
+        try {
+            return workflowCall.get();
+        } catch (Exception e) {
+            if (isRetryableWfError(e)) {
+                log.warn("WF_TRANSITION | INVALID_ACTION — transition may already be done; caller must search WF state | error={}",
+                        e.getMessage());
+            } else {
+                e.printStackTrace();
+                log.error("WF_TRANSITION | FAILED (non-retryable) | error={}", e.getMessage());
             }
+            throw e;
         }
-        throw new IllegalStateException("unreachable", last);
+    }
+
+    /**
+     * Searches the current workflow state for a given business entity.
+     * Used to reconcile in-memory state after an INVALID_ACTION failure.
+     * Returns null if the search itself fails or finds no process instance.
+     */
+    public State searchCurrentWfState(String businessId, String tenantId, RequestInfo requestInfo) {
+        try {
+            ProcessInstanceResponse resp = searchWorkflowForBusinessIds(
+                    Collections.singletonList(businessId), tenantId, requestInfo);
+            if (resp == null || resp.getProcessInstances() == null || resp.getProcessInstances().isEmpty()) {
+                log.warn("WF_STATE_SEARCH | no process instance found for businessId={} tenantId={}", businessId, tenantId);
+                return null;
+            }
+            State state = resp.getProcessInstances().get(0).getState();
+            log.info("WF_STATE_SEARCH | businessId={} currentState={}", businessId, state.getApplicationStatus());
+            return state;
+        } catch (Exception e) {
+            log.error("WF_STATE_SEARCH | failed for businessId={} tenantId={}: {}", businessId, tenantId, e.getMessage());
+            return null;
+        }
     }
 
     /**

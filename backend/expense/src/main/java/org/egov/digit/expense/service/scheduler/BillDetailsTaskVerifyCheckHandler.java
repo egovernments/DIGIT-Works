@@ -3,9 +3,11 @@ package org.egov.digit.expense.service.scheduler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.digit.expense.repository.TaskRepository;
 import org.egov.digit.expense.service.BillAggregationService;
 import org.egov.digit.expense.service.PaymentProviderService;
 import org.egov.digit.expense.service.PaymentWorkflowService;
+import org.egov.digit.expense.service.TaskCacheService;
 import org.egov.digit.expense.util.WorkflowUtil;
 import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.enums.Actions;
@@ -40,6 +42,8 @@ public class BillDetailsTaskVerifyCheckHandler implements SchedulerJobHandler {
     private final BillAggregationService billAggregationService;
     private final WorkflowUtil workflowUtil;
     private final List<PaymentProviderService> paymentProviderServices;
+    private final TaskCacheService taskCacheService;
+    private final TaskRepository taskRepository;
     private final ObjectMapper objectMapper;
 
     @Autowired
@@ -47,11 +51,15 @@ public class BillDetailsTaskVerifyCheckHandler implements SchedulerJobHandler {
                                               BillAggregationService billAggregationService,
                                               WorkflowUtil workflowUtil,
                                               List<PaymentProviderService> paymentProviderServices,
+                                              TaskCacheService taskCacheService,
+                                              TaskRepository taskRepository,
                                               ObjectMapper objectMapper) {
         this.paymentWorkflowService = paymentWorkflowService;
         this.billAggregationService = billAggregationService;
         this.workflowUtil = workflowUtil;
         this.paymentProviderServices = paymentProviderServices;
+        this.taskCacheService = taskCacheService;
+        this.taskRepository = taskRepository;
         this.objectMapper = objectMapper;
     }
 
@@ -70,7 +78,7 @@ public class BillDetailsTaskVerifyCheckHandler implements SchedulerJobHandler {
             String billId = ctx.getBillId();
             RequestInfo requestInfo = ctx.getRequestInfo();
 
-            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
             if (bill == null) {
                 log.warn("BILL_DETAILS_TASK_VERIFY_CHECK: bill={} not found — marking FAILED", billId);
                 return SchedulerJobResult.FAILED;
@@ -93,15 +101,22 @@ public class BillDetailsTaskVerifyCheckHandler implements SchedulerJobHandler {
 
             // Poll payment provider for verification status
             Bill singleDetailBill = buildSingleDetailBill(bill, detail);
-            Task task = Task.builder()
-                    .id(job.getId())
-                    .billId(billId)
-                    .billDetailId(billDetailId)
-                    .tenantId(tenantId)
-                    .type(Task.Type.Verify)
-                    .status(Status.IN_PROGRESS)
-                    .auditDetails(bill.getAuditDetails())
-                    .build();
+            // EC-5: fetch persisted Verify task from cache first, then DB, then fall back to synthetic
+            Task task = taskCacheService.get(tenantId, billDetailId, Task.Type.Verify)
+                    .orElseGet(() -> {
+                        Task probe = Task.builder().tenantId(tenantId).billDetailId(billDetailId)
+                                .type(Task.Type.Verify).build();
+                        Task dbTask = taskRepository.searchTask(probe);
+                        return dbTask != null ? dbTask : Task.builder()
+                                .id(job.getId())
+                                .billId(billId)
+                                .billDetailId(billDetailId)
+                                .tenantId(tenantId)
+                                .type(Task.Type.Verify)
+                                .status(Status.IN_PROGRESS)
+                                .auditDetails(bill.getAuditDetails())
+                                .build();
+                    });
             TaskRequest taskRequest = TaskRequest.builder()
                     .task(task)
                     .bill(singleDetailBill)
@@ -121,8 +136,8 @@ public class BillDetailsTaskVerifyCheckHandler implements SchedulerJobHandler {
                         }
                     });
 
-            // Re-fetch to check if detail settled
-            Bill refreshed = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+            // Re-fetch from DB (bypass cache) to check if detail settled
+            Bill refreshed = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
             if (refreshed != null) {
                 BillDetail refreshedDetail = findDetail(refreshed, billDetailId);
                 if (refreshedDetail != null && isVerifySettled(refreshedDetail.getStatus())) {
@@ -151,7 +166,7 @@ public class BillDetailsTaskVerifyCheckHandler implements SchedulerJobHandler {
             String billId = ctx.getBillId();
             RequestInfo requestInfo = ctx.getRequestInfo();
 
-            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
             if (bill == null) return;
 
             BillDetail detail = findDetail(bill, billDetailId);

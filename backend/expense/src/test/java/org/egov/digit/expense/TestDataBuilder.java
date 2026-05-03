@@ -183,6 +183,43 @@ public class TestDataBuilder {
                 .build();
     }
 
+    public static SchedulerJob buildBillStartedCheckJob(String billId, String phase) {
+        org.egov.digit.expense.web.models.BillStartedCheckContext ctx =
+                org.egov.digit.expense.web.models.BillStartedCheckContext.builder()
+                        .phase(phase)
+                        .requestInfo(buildRequestInfo("PAYMENT_EDITOR"))
+                        .build();
+        return SchedulerJob.builder()
+                .id(UUID.randomUUID().toString())
+                .tenantId(TENANT_ID)
+                .jobType(SchedulerJobType.BILL_STARTED_CHECK)
+                .referenceId(billId)
+                .schedulerStatus(SchedulerJobStatus.PENDING)
+                .attemptCount(0).maxAttempts(200)
+                .context(MAPPER.convertValue(ctx, Object.class))
+                .createdAt(System.currentTimeMillis())
+                .updatedAt(System.currentTimeMillis())
+                .build();
+    }
+
+    public static SchedulerJob buildPaymentStatusCheckJob(String billId, String detailId) {
+        DetailVerifyContext ctx = DetailVerifyContext.builder()
+                .billId(billId).billDetailId(detailId)
+                .requestInfo(buildRequestInfo("PAYMENT_EDITOR"))
+                .build();
+        return SchedulerJob.builder()
+                .id(UUID.randomUUID().toString())
+                .tenantId(TENANT_ID)
+                .jobType(SchedulerJobType.BILL_DETAILS_TASK_PAYMENT_STATUS_CHECK)
+                .referenceId(detailId)
+                .schedulerStatus(SchedulerJobStatus.PENDING)
+                .attemptCount(0).maxAttempts(200)
+                .context(MAPPER.convertValue(ctx, Object.class))
+                .createdAt(System.currentTimeMillis())
+                .updatedAt(System.currentTimeMillis())
+                .build();
+    }
+
     public static BillRequest buildBillRequest(Bill bill) {
         return BillRequest.builder()
                 .bill(bill)

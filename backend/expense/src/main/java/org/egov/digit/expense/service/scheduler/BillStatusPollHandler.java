@@ -68,7 +68,7 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
             String phase = ctx.getPhase();
             String batchId = ctx.getBatchId(); // null for single-bill; coordinator owns email when set
 
-            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
             if (bill == null) {
                 log.warn("Bill {} not found for tenant {} — marking job FAILED", billId, tenantId);
                 return SchedulerJobResult.FAILED;
@@ -113,7 +113,7 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
             RequestInfo requestInfo = ctx.getRequestInfo();
             String phase = ctx.getPhase();
 
-            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
             if (bill == null) return;
 
             if (POLL_PHASE_PAYMENT.equals(phase)) {
@@ -130,19 +130,22 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
             };
 
             if (failAction != null) {
+                // EC-8: only compensate if bill is still in the expected intermediate state
+                Status expectedIntermediate = resolveExpectedIntermediateStatus(phase);
+                if (expectedIntermediate != null && bill.getStatus() != expectedIntermediate) {
+                    log.info("BILL_STATUS_POLL: bill={} already exited intermediate {} (now={}) — skipping compensation",
+                            billId, expectedIntermediate, bill.getStatus());
+                    return;
+                }
                 try {
+                    // transitionBill reconciles INVALID_ACTION internally; remaining exceptions are genuine
                     paymentWorkflowService.transitionBill(bill, failAction, requestInfo);
                     enrichAuditForSystemUpdate(bill, requestInfo);
                     paymentWorkflowService.pushBillUpdate(bill, requestInfo);
                     log.warn("BILL_STATUS_POLL max attempts exceeded — applied {} for bill={} phase={}",
                             failAction, billId, phase);
                 } catch (Exception ex) {
-                    if (workflowUtil.isRetryableWfError(ex)) {
-                        log.info("Bill {} already exited phase {} (idempotent) — onMaxAttemptsExceeded no-op", billId, phase);
-                    } else {
-                        log.error("CRITICAL: onMaxAttemptsExceeded FAIL action failed for bill={} phase={} — " +
-                                "stuck-job recovery will reset the scheduler job for retry", billId, phase, ex);
-                    }
+                    log.error("CRITICAL: onMaxAttemptsExceeded FAIL action failed for bill={} phase={}", billId, phase, ex);
                 }
             }
         } catch (Exception e) {
@@ -189,7 +192,7 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
                        :                       Actions.FAILED;
 
         // RC-9: re-fetch just before commit to capture any concurrent detail updates
-        Bill fresh = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+        Bill fresh = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
         if (fresh == null) { log.warn("Bill {} vanished before VERIFICATION transition — retrying", billId); return SchedulerJobResult.RETRY; }
         if (fresh.getStatus() == Status.VERIFICATION_IN_PROGRESS) {
             paymentWorkflowService.transitionBill(fresh, action, requestInfo);
@@ -222,7 +225,7 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
                 .allMatch(d -> d.getStatus() == Status.VERIFIED || d.getStatus() == Status.PAID);
         if (allVerified) {
             // RC-9: re-fetch before commit
-            Bill fresh = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+            Bill fresh = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
             if (fresh == null) { log.warn("Bill {} vanished before IGNORE_ERRORS transition — retrying", billId); return SchedulerJobResult.RETRY; }
             paymentWorkflowService.transitionBill(fresh, Actions.COMPLETE, requestInfo);
             paymentWorkflowService.pushBillUpdate(fresh, requestInfo);
@@ -255,7 +258,7 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
                 .allMatch(d -> isAtOrBeyondUnderReview(d.getStatus()));
         if (allUnderReview) {
             // RC-9: re-fetch before commit
-            Bill fresh = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+            Bill fresh = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
             if (fresh == null) { log.warn("Bill {} vanished before SEND_FOR_REVIEW transition — retrying", billId); return SchedulerJobResult.RETRY; }
             paymentWorkflowService.transitionBill(fresh, Actions.COMPLETE, requestInfo);
             paymentWorkflowService.pushBillUpdate(fresh, requestInfo);
@@ -295,7 +298,7 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
                 .allMatch(d -> isAtOrBeyondReviewed(d.getStatus()));
         if (allReviewed && bill.getStatus() != Status.REVIEWED) {
             // RC-9: re-fetch before commit
-            Bill fresh = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+            Bill fresh = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
             if (fresh == null) { log.warn("Bill {} vanished before REVIEW transition — retrying", billId); return SchedulerJobResult.RETRY; }
             paymentWorkflowService.transitionBill(fresh, Actions.COMPLETE, requestInfo);
             paymentWorkflowService.pushBillUpdate(fresh, requestInfo);
@@ -342,7 +345,7 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
 
         // Re-fetch and determine final bill action based on all detail statuses
         try {
-            Bill fresh = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+            Bill fresh = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
             if (fresh == null) {
                 log.warn("BILL_STATUS_POLL PAYMENT timeout: bill={} not found for re-aggregation", billId);
                 return;
@@ -414,7 +417,7 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
                        :                   Actions.FAILED;
 
         // RC-9: re-fetch before commit
-        Bill fresh = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+        Bill fresh = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
         if (fresh == null) { log.warn("Bill {} vanished before PAYMENT transition — retrying", billId); return SchedulerJobResult.RETRY; }
         if (fresh.getStatus() != Status.PAYMENT_IN_PROGRESS) {
             log.info("Bill {} exited PAYMENT_IN_PROGRESS concurrently (status={}) — done", billId, fresh.getStatus());
@@ -429,6 +432,16 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
         return bill.getBillDetails().stream()
                 .filter(d -> d.getStatus() == status)
                 .count();
+    }
+
+    private Status resolveExpectedIntermediateStatus(String phase) {
+        return switch (phase) {
+            case POLL_PHASE_VERIFICATION    -> Status.VERIFICATION_IN_PROGRESS;
+            case POLL_PHASE_IGNORE_ERRORS   -> Status.IGNORING_ERRORS_IN_PROGRESS;
+            case POLL_PHASE_SEND_FOR_REVIEW -> Status.SENDING_FOR_REVIEW;
+            case POLL_PHASE_REVIEW          -> Status.REVIEW_IN_PROGRESS;
+            default -> null;
+        };
     }
 
     private void enrichAuditForSystemUpdate(Bill bill, RequestInfo requestInfo) {

@@ -288,4 +288,23 @@ public class Constants {
 	public static final String MSG_META_UPDATE_BILL_ID_MANDATORY    = "billId is mandatory";
 	public static final String MSG_META_UPDATE_TENANT_ID_MANDATORY  = "tenantId is mandatory";
 	public static final String MSG_META_UPDATE_REPORT_MANDATORY     = "reportDetails is mandatory and must not be empty";
+
+	// Cache key prefixes
+	public static final String BILL_CACHE_KEY_PREFIX = "bill:";
+	public static final String TASK_CACHE_KEY_PREFIX = "task:";
+
+	// WF error detection strings
+	public static final String WF_INVALID_ACTION_MSG_1 = "INVALID ACTION";
+	public static final String WF_INVALID_ACTION_MSG_2 = "No valid action";
+	public static final String WF_INVALID_ACTION_MSG_3 = "INVALID_ACTION";
+
+	// Error codes — locking and WF state
+	public static final String ERR_BILL_DETAIL_LOCKED_SENDING_FOR_REVIEW = "BILL_DETAIL_LOCKED_SENDING_FOR_REVIEW";
+	public static final String ERR_BILL_DETAIL_LOCKED_REVIEW_IN_PROGRESS = "BILL_DETAIL_LOCKED_REVIEW_IN_PROGRESS";
+	public static final String ERR_WF_STATE_SEARCH_FAILED                = "EG_WF_STATE_SEARCH_FAILED";
+
+	// Error messages — locking and WF state
+	public static final String MSG_BILL_DETAIL_LOCKED_SENDING_FOR_REVIEW = "Bill detail is locked while bill is being sent for review";
+	public static final String MSG_BILL_DETAIL_LOCKED_REVIEW_IN_PROGRESS = "Bill detail is locked while bill review is in progress";
+	public static final String MSG_WF_STATE_SEARCH_FAILED                = "Failed to fetch current workflow state after transition failure";
 }

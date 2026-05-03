@@ -613,33 +613,14 @@ public class MTNService implements PaymentProviderService {
                 .workflow(workflow)
                 .requestInfo(requestInfo)
                 .build();
-        int maxRetries = config.getWfTransitionRetryMaxAttempts();
-        long delayMs = config.getWfTransitionRetryInitialDelayMs();
-        for (int attempt = 1; attempt <= maxRetries; attempt++) {
-            try {
-                State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBillDetail(billDetailRequest), billDetailRequest);
-                billDetail.setStatus(Status.fromValue(wfState.getApplicationStatus()));
-                return;
-            } catch (Exception e) {
-                // Retry all errors (INVALID_ACTION race AND transient 5xx/network) up to maxRetries.
-                // Previously only INVALID_ACTION was retried — transient WF outages immediately
-                // force-failed workers. Now we exhaust all attempts before forcing FAILED.
-                if (attempt == maxRetries) {
-                    log.error("WF retries exhausted ({}/{}) for billDetail {}, status={}, action={} — forcing FAILED",
-                            attempt, maxRetries, billDetail.getId(), billDetail.getStatus(), workflow.getAction(), e);
-                    forceBillDetailFailed(billDetail, requestInfo);
-                    return;
-                }
-                log.warn("WF retry {}/{} for billDetail {}, action={}, retrying in {}ms: {}",
-                        attempt, maxRetries, billDetail.getId(), workflow.getAction(), delayMs, e.getMessage());
-                try {
-                    Thread.sleep(delayMs);
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    return;
-                }
-                delayMs *= 2;
-            }
+        // Single attempt — no Thread.sleep. On failure the scheduler handler returns RETRY
+        // and the scheduler's own exponential backoff provides the delay without blocking the thread.
+        try {
+            State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBillDetail(billDetailRequest), billDetailRequest);
+            billDetail.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+        } catch (Exception e) {
+            log.error("WF transition failed for billDetail={} action={}: {}", billDetail.getId(), workflow.getAction(), e.getMessage());
+            throw e;
         }
     }
 
@@ -712,9 +693,24 @@ public class MTNService implements PaymentProviderService {
 
         Map<String, BillDetail> billDetailsToBeUpdatedById = new HashMap<>();
         for (String id : billDetailsFromRequestById.keySet()) {
-            billDetailsToBeUpdatedById.put(id, billDetailsFromSearchById.get(id));
+            BillDetail dbDetail = billDetailsFromSearchById.get(id);
+            BillDetail requestDetail = billDetailsFromRequestById.get(id);
+            // When the Kafka consumer runs immediately after VerificationStart, the DB persister may
+            // still show PENDING_VERIFICATION while the WF engine already advanced the detail to
+            // VERIFICATION_IN_PROGRESS. Trust the request status when it is more advanced so that
+            // the MTN call proceeds without redundantly retrying the WF VERIFY step.
+            if (dbDetail != null && requestDetail != null
+                    && isStatusMoreAdvanced(requestDetail.getStatus(), dbDetail.getStatus())) {
+                dbDetail.setStatus(requestDetail.getStatus());
+            }
+            billDetailsToBeUpdatedById.put(id, dbDetail);
         }
         return billDetailsToBeUpdatedById;
+    }
+
+    private boolean isStatusMoreAdvanced(Status requestStatus, Status dbStatus) {
+        return requestStatus == Status.VERIFICATION_IN_PROGRESS && dbStatus == Status.PENDING_VERIFICATION
+                || requestStatus == Status.PAYMENT_IN_PROGRESS && dbStatus == Status.REVIEWED;
     }
 
     public List<TaskDetails> updatePaymentTaskStatus(TaskRequest taskRequest) {

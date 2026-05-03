@@ -287,18 +287,33 @@ public class PaymentWorkflowService {
     // Helpers
     // ─────────────────────────────────────────────────────────────────────────
 
-    /** Fetches a fresh bill (with details) from the DB by bill ID. Excludes soft-deleted (INACTIVE) bills. */
+    /**
+     * Fetches bill with details — Redis-first, DB fallback.
+     * Redis holds the most recent in-flight state (written before every Kafka push),
+     * so this always returns the latest known state even during Kafka→persister lag.
+     *
+     * <p>Use {@code bypassCache=true} in aggregation contexts where counting ALL sibling
+     * details is required for correctness — the cache may hold a partial single-detail bill
+     * written during individual task processing.
+     */
     public Bill fetchBillWithDetails(String billId, String tenantId, RequestInfo requestInfo) {
+        return fetchBillWithDetails(billId, tenantId, requestInfo, false);
+    }
+
+    public Bill fetchBillWithDetails(String billId, String tenantId, RequestInfo requestInfo, boolean bypassCache) {
         BillSearchRequest searchRequest = BillSearchRequest.builder()
                 .requestInfo(requestInfo)
                 .billCriteria(BillCriteria.builder()
                         .tenantId(tenantId)
                         .ids(Collections.singleton(billId))
-                        .statusesNot(Collections.singletonList(Status.INACTIVE.toString()))  // RC-13
+                        .statusesNot(Collections.singletonList(Status.INACTIVE.toString()))
                         .build())
                 .build();
         List<Bill> bills = billRepository.search(searchRequest, false);
-        return bills.isEmpty() ? null : bills.get(0);
+        if (bills.isEmpty()) return null;
+        Bill dbBill = bills.get(0);
+        if (bypassCache) return dbBill;
+        return billCacheService.get(tenantId, billId).orElse(dbBill);
     }
 
     /**
@@ -327,11 +342,18 @@ public class PaymentWorkflowService {
     /** Transitions the bill workflow and updates the in-memory status. */
     public void transitionBill(Bill bill, Actions action, BillRequest billRequest) {
         billRequest.setWorkflow(Workflow.builder().action(action.toString()).build());
-        State wfState = workflowUtil.callWorkFlow(
-                workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
-        bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
-        log.info("Bill {} transitioned via action={} → status={}",
-                bill.getId(), action, bill.getStatus());
+        try {
+            State wfState = workflowUtil.callWorkFlow(
+                    workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
+            bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+            log.info("Bill {} transitioned via action={} → status={}", bill.getId(), action, bill.getStatus());
+        } catch (Exception e) {
+            if (workflowUtil.isRetryableWfError(e)) {
+                reconcileBillFromWf(bill, billRequest.getRequestInfo());
+            } else {
+                throw e;
+            }
+        }
     }
 
     /**
@@ -344,11 +366,18 @@ public class PaymentWorkflowService {
                 .requestInfo(requestInfo)
                 .workflow(Workflow.builder().action(action.toString()).build())
                 .build();
-        State wfState = workflowUtil.callWorkFlow(
-                workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
-        bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
-        log.info("Bill {} service-transitioned via action={} → status={}",
-                bill.getId(), action, bill.getStatus());
+        try {
+            State wfState = workflowUtil.callWorkFlow(
+                    workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
+            bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+            log.info("Bill {} service-transitioned via action={} → status={}", bill.getId(), action, bill.getStatus());
+        } catch (Exception e) {
+            if (workflowUtil.isRetryableWfError(e)) {
+                reconcileBillFromWf(bill, requestInfo);
+            } else {
+                throw e;
+            }
+        }
     }
 
     /** Transitions a single bill detail workflow and updates the in-memory status. */
@@ -359,11 +388,46 @@ public class PaymentWorkflowService {
                 .workflow(Workflow.builder().action(action.toString()).build())
                 .requestInfo(requestInfo)
                 .build();
-        State wfState = workflowUtil.callWorkFlow(
-                workflowUtil.prepareWorkflowRequestForBillDetail(detailRequest), detailRequest);
-        detail.setStatus(Status.fromValue(wfState.getApplicationStatus()));
-        log.info("BillDetail {} transitioned via action={} → status={}",
-                detail.getId(), action, detail.getStatus());
+        try {
+            State wfState = workflowUtil.callWorkFlow(
+                    workflowUtil.prepareWorkflowRequestForBillDetail(detailRequest), detailRequest);
+            detail.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+            log.info("BillDetail {} transitioned via action={} → status={}", detail.getId(), action, detail.getStatus());
+        } catch (Exception e) {
+            if (workflowUtil.isRetryableWfError(e)) {
+                reconcileDetailFromWf(detail, requestInfo);
+            } else {
+                throw e;
+            }
+        }
+    }
+
+    /**
+     * On INVALID_ACTION for a bill: searches the WF service for the actual current state
+     * and updates the in-memory bill status to match.
+     * Throws if the WF search itself fails — caller should treat as RETRY.
+     */
+    private void reconcileBillFromWf(Bill bill, RequestInfo requestInfo) {
+        State actual = workflowUtil.searchCurrentWfState(bill.getBillNumber(), bill.getTenantId(), requestInfo);
+        if (actual == null) {
+            throw new CustomException(ERR_WF_STATE_SEARCH_FAILED, MSG_WF_STATE_SEARCH_FAILED + " bill=" + bill.getId());
+        }
+        bill.setStatus(Status.fromValue(actual.getApplicationStatus()));
+        log.warn("Bill {} reconciled from WF after INVALID_ACTION — status={}", bill.getId(), bill.getStatus());
+    }
+
+    /**
+     * On INVALID_ACTION for a bill detail: searches the WF service for the actual current state
+     * and updates the in-memory detail status to match.
+     * Throws if the WF search itself fails — caller should treat as RETRY.
+     */
+    private void reconcileDetailFromWf(BillDetail detail, RequestInfo requestInfo) {
+        State actual = workflowUtil.searchCurrentWfState(detail.getId(), detail.getTenantId(), requestInfo);
+        if (actual == null) {
+            throw new CustomException(ERR_WF_STATE_SEARCH_FAILED, MSG_WF_STATE_SEARCH_FAILED + " detail=" + detail.getId());
+        }
+        detail.setStatus(Status.fromValue(actual.getApplicationStatus()));
+        log.warn("BillDetail {} reconciled from WF after INVALID_ACTION — status={}", detail.getId(), detail.getStatus());
     }
 
     /** Validates that the bill's current status is one of the allowed states. */

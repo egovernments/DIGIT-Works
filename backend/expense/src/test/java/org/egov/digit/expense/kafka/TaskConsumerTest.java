@@ -4,14 +4,18 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.service.BillAggregationService;
+import org.egov.digit.expense.service.BillCacheService;
 import org.egov.digit.expense.service.PaymentProviderService;
 import org.egov.digit.expense.service.PaymentWorkflowService;
+import org.egov.digit.expense.service.TaskCacheService;
 import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.enums.Actions;
 import org.egov.digit.expense.web.models.enums.Status;
+import org.egov.digit.expense.web.models.enums.Actions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -31,16 +35,13 @@ import static org.mockito.Mockito.*;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class TaskConsumerTest {
 
-    @Mock
-    private PaymentWorkflowService pws;
-    @Mock
-    private BillAggregationService agg;
-    @Mock
-    private PaymentProviderService mtnService;
-    @Mock
-    private ExpenseProducer producer;
-    @Mock
-    private Configuration config;
+    @Mock private PaymentWorkflowService pws;
+    @Mock private BillAggregationService agg;
+    @Mock private PaymentProviderService mtnService;
+    @Mock private ExpenseProducer producer;
+    @Mock private Configuration config;
+    @Mock private BillCacheService billCacheService;
+    @Mock private TaskCacheService taskCacheService;
 
     private TaskConsumer consumer;
     private ObjectMapper objectMapper;
@@ -49,7 +50,7 @@ public class TaskConsumerTest {
     public void setUp() {
         objectMapper = new ObjectMapper();
         when(config.getTaskUpdateTopic()).thenReturn("expense-task-status-update");
-        consumer = new TaskConsumer(objectMapper, List.of(mtnService), pws, agg, config, producer);
+        consumer = new TaskConsumer(objectMapper, List.of(mtnService), pws, agg, billCacheService, taskCacheService, config, producer);
         when(mtnService.supports(any())).thenReturn(true);
     }
 
@@ -203,6 +204,152 @@ public class TaskConsumerTest {
 
         // Should not throw — exception is caught per-service
         consumer.listen(toMap(req));
+    }
+
+    // ── EC-1/EC-6: Cache-before-Kafka ordering ───────────────────────────────
+
+    @Test
+    public void listen_wfUpdate_success_cachesBillBeforeKafkaPush() {
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFIED);
+        Bill bill = buildBillWithDetails(Status.SENDING_FOR_REVIEW, List.of(detail));
+        TaskRequest req = buildWfUpdateTaskRequest(bill, detail, POLL_PHASE_SEND_FOR_REVIEW);
+
+        consumer.listen(toMap(req));
+
+        InOrder order = inOrder(billCacheService, pws);
+        order.verify(billCacheService).put(any(Bill.class));
+        order.verify(pws).pushBillUpdate(any(Bill.class), any());
+    }
+
+    @Test
+    public void listen_wfUpdate_success_taskCachedBeforeKafkaPush() {
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFIED);
+        Bill bill = buildBillWithDetails(Status.SENDING_FOR_REVIEW, List.of(detail));
+        TaskRequest req = buildWfUpdateTaskRequest(bill, detail, POLL_PHASE_SEND_FOR_REVIEW);
+
+        consumer.listen(toMap(req));
+
+        InOrder order = inOrder(taskCacheService, producer);
+        order.verify(taskCacheService).put(argThat(t -> t.getStatus() == Status.DONE));
+        order.verify(producer).push(any(), any(), argThat(t -> ((Task) t).getStatus() == Status.DONE));
+    }
+
+    @Test
+    public void listen_wfUpdate_wfFails_taskStillMarkedDoneWithCacheBeforeKafka() {
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFIED);
+        Bill bill = buildBillWithDetails(Status.SENDING_FOR_REVIEW, List.of(detail));
+        TaskRequest req = buildWfUpdateTaskRequest(bill, detail, POLL_PHASE_SEND_FOR_REVIEW);
+        doThrow(new RuntimeException("WF error")).when(pws).transitionBillDetail(any(), any(), any());
+
+        consumer.listen(toMap(req));
+
+        InOrder order = inOrder(taskCacheService, producer);
+        order.verify(taskCacheService).put(argThat(t -> t.getStatus() == Status.DONE));
+        order.verify(producer).push(any(), any(), argThat(t -> ((Task) t).getStatus() == Status.DONE));
+        verify(billCacheService, never()).put(any());  // no cache on WF failure
+    }
+
+    // ── VerificationStart ─────────────────────────────────────────────────────
+
+    @Test
+    public void listen_verificationStart_pendingDetail_transitionsAndCachesBeforeKafka() {
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.PENDING_VERIFICATION);
+        Bill bill = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS, List.of(detail));
+        Task task = Task.builder().id(TASK_ID).tenantId(TENANT_ID).billId(BILL_ID)
+                .billDetailId(DETAIL_ID_1).type(Task.Type.VerificationStart)
+                .status(Status.IN_PROGRESS).auditDetails(buildAuditDetails()).build();
+        TaskRequest req = TaskRequest.builder().task(task).bill(bill)
+                .requestInfo(buildRequestInfo("PAYMENT_EDITOR")).build();
+
+        consumer.listen(toMap(req));
+
+        verify(pws).transitionBillDetail(any(), eq(Actions.VERIFY), any());
+        InOrder order = inOrder(billCacheService, pws);
+        order.verify(billCacheService).put(any(Bill.class));
+        order.verify(pws).pushBillUpdate(any(Bill.class), any());
+    }
+
+    @Test
+    public void listen_verificationStart_detailAlreadyInProgress_skipsTransition() {
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFICATION_IN_PROGRESS);
+        Bill bill = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS, List.of(detail));
+        Task task = Task.builder().id(TASK_ID).tenantId(TENANT_ID).billId(BILL_ID)
+                .billDetailId(DETAIL_ID_1).type(Task.Type.VerificationStart)
+                .status(Status.IN_PROGRESS).auditDetails(buildAuditDetails()).build();
+        TaskRequest req = TaskRequest.builder().task(task).bill(bill)
+                .requestInfo(buildRequestInfo("PAYMENT_EDITOR")).build();
+
+        consumer.listen(toMap(req));
+
+        verify(pws, never()).transitionBillDetail(any(), any(), any());
+        verify(producer).push(any(), any(), argThat(t -> ((Task) t).getStatus() == Status.DONE));
+    }
+
+    @Test
+    public void listen_verificationStart_wfFails_taskMarkedDone_noException() {
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.PENDING_VERIFICATION);
+        Bill bill = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS, List.of(detail));
+        Task task = Task.builder().id(TASK_ID).tenantId(TENANT_ID).billId(BILL_ID)
+                .billDetailId(DETAIL_ID_1).type(Task.Type.VerificationStart)
+                .status(Status.IN_PROGRESS).auditDetails(buildAuditDetails()).build();
+        TaskRequest req = TaskRequest.builder().task(task).bill(bill)
+                .requestInfo(buildRequestInfo("PAYMENT_EDITOR")).build();
+        doThrow(new RuntimeException("WF timeout")).when(pws).transitionBillDetail(any(), any(), any());
+
+        consumer.listen(toMap(req));  // must not throw
+
+        verify(producer).push(any(), any(), argThat(t -> ((Task) t).getStatus() == Status.DONE));
+    }
+
+    // ── PaymentInitiationStart ────────────────────────────────────────────────
+
+    @Test
+    public void listen_paymentInitiationStart_reviewedDetail_transitionsAndCachesBeforeKafka() {
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.REVIEWED);
+        Bill bill = buildBillWithDetails(Status.PAYMENT_IN_PROGRESS, List.of(detail));
+        Task task = Task.builder().id(TASK_ID).tenantId(TENANT_ID).billId(BILL_ID)
+                .billDetailId(DETAIL_ID_1).type(Task.Type.PaymentInitiationStart)
+                .status(Status.IN_PROGRESS).auditDetails(buildAuditDetails()).build();
+        TaskRequest req = TaskRequest.builder().task(task).bill(bill)
+                .requestInfo(buildRequestInfo("PAYMENT_EDITOR")).build();
+
+        consumer.listen(toMap(req));
+
+        verify(pws).transitionBillDetail(any(), eq(Actions.PAYMENT_INITIATION), any());
+        InOrder order = inOrder(billCacheService, pws);
+        order.verify(billCacheService).put(any(Bill.class));
+        order.verify(pws).pushBillUpdate(any(Bill.class), any());
+    }
+
+    @Test
+    public void listen_paymentInitiationStart_wfFails_taskMarkedDone() {
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.REVIEWED);
+        Bill bill = buildBillWithDetails(Status.PAYMENT_IN_PROGRESS, List.of(detail));
+        Task task = Task.builder().id(TASK_ID).tenantId(TENANT_ID).billId(BILL_ID)
+                .billDetailId(DETAIL_ID_1).type(Task.Type.PaymentInitiationStart)
+                .status(Status.IN_PROGRESS).auditDetails(buildAuditDetails()).build();
+        TaskRequest req = TaskRequest.builder().task(task).bill(bill)
+                .requestInfo(buildRequestInfo("PAYMENT_EDITOR")).build();
+        doThrow(new RuntimeException("WF error")).when(pws).transitionBillDetail(any(), any(), any());
+
+        consumer.listen(toMap(req));  // must not throw
+
+        verify(producer).push(any(), any(), argThat(t -> ((Task) t).getStatus() == Status.DONE));
+    }
+
+    // ── markTaskDone: EC-6 cache ordering ────────────────────────────────────
+
+    @Test
+    public void markTaskDone_always_cachesBeforeKafka() {
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFIED);
+        Bill bill = buildBillWithDetails(Status.SENDING_FOR_REVIEW, List.of(detail));
+        TaskRequest req = buildWfUpdateTaskRequest(bill, detail, POLL_PHASE_SEND_FOR_REVIEW);
+
+        consumer.listen(toMap(req));
+
+        InOrder order = inOrder(taskCacheService, producer);
+        order.verify(taskCacheService).put(argThat(t -> t.getStatus() == Status.DONE));
+        order.verify(producer).push(any(), any(), any());
     }
 
     // ── Helper ────────────────────────────────────────────────────────────────

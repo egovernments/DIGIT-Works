@@ -61,7 +61,7 @@ public class BillStartedCheckHandler implements SchedulerJobHandler {
             RequestInfo requestInfo = ctx.getRequestInfo();
             String phase = ctx.getPhase();
 
-            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
             if (bill == null) {
                 log.warn("BILL_STARTED_CHECK: bill={} not found for tenant={} — marking FAILED", billId, tenantId);
                 return SchedulerJobResult.FAILED;
@@ -93,8 +93,15 @@ public class BillStartedCheckHandler implements SchedulerJobHandler {
             RequestInfo requestInfo = ctx.getRequestInfo();
             String phase = ctx.getPhase();
 
-            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
             if (bill == null) return;
+
+            // EC-8: skip compensation if bill already exited the intermediate state naturally
+            if (isBillAlreadyPastPhase(bill, phase)) {
+                log.info("BILL_STARTED_CHECK: bill={} already past phase={} (status={}) — skipping compensation",
+                        billId, phase, bill.getStatus());
+                return;
+            }
 
             if (STARTED_CHECK_PHASE_VERIFY.equals(phase)) {
                 forceFailVerifyDetails(bill, requestInfo);
@@ -104,6 +111,24 @@ public class BillStartedCheckHandler implements SchedulerJobHandler {
         } catch (Exception e) {
             log.error("BILL_STARTED_CHECK: onMaxAttemptsExceeded error for bill={}", billId, e);
         }
+    }
+
+    /** EC-8: returns true if the bill has already settled past the started-check phase. */
+    private boolean isBillAlreadyPastPhase(Bill bill, String phase) {
+        Status s = bill.getStatus();
+        if (STARTED_CHECK_PHASE_VERIFY.equals(phase)) {
+            // Past verification-started: any state beyond VERIFICATION_IN_PROGRESS
+            return s == Status.FULLY_VERIFIED || s == Status.IGNORING_ERRORS_IN_PROGRESS
+                    || s == Status.SENDING_FOR_REVIEW || s == Status.UNDER_REVIEW
+                    || s == Status.REVIEW_IN_PROGRESS || s == Status.REVIEWED
+                    || s == Status.PAYMENT_IN_PROGRESS || s == Status.PAYMENT_FAILED
+                    || s == Status.PAID || s == Status.FULLY_PAID;
+        }
+        if (STARTED_CHECK_PHASE_PAYMENT.equals(phase)) {
+            // Past payment-started: any settled state
+            return s == Status.PAID || s == Status.FULLY_PAID || s == Status.PAYMENT_FAILED;
+        }
+        return false;
     }
 
     // ─────────────────────────────────────────────────────────────────────────

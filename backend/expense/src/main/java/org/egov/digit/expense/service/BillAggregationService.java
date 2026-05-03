@@ -62,7 +62,7 @@ public class BillAggregationService {
      * @param requestInfo actor context for the WF call
      */
     public void checkAndAggregateBill(String billId, String tenantId, String phase, RequestInfo requestInfo) {
-        Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo);
+        Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
         if (bill == null) {
             log.warn("BillAggregationService: bill={} not found for phase={} — skipping aggregation", billId, phase);
             return;

@@ -188,26 +188,15 @@ public class BankPaymentService implements PaymentProviderService {
                 .workflow(workflow)
                 .requestInfo(requestInfo)
                 .build();
-        int maxRetries = config.getWfTransitionRetryMaxAttempts();
-        long delayMs = config.getWfTransitionRetryInitialDelayMs();
-        for (int attempt = 1; attempt <= maxRetries; attempt++) {
-            try {
-                State wfState = workflowUtil.callWorkFlow(
-                        workflowUtil.prepareWorkflowRequestForBillDetail(billDetailRequest), billDetailRequest);
-                billDetail.setStatus(Status.fromValue(wfState.getApplicationStatus()));
-                return;
-            } catch (Exception e) {
-                if (attempt == maxRetries) {
-                    log.error("Bank WF retries exhausted for billDetail {}, action={} — forcing FAILED",
-                            billDetail.getId(), workflow.getAction(), e);
-                    forceBillDetailFailed(billDetail, requestInfo);
-                    return;
-                }
-                log.warn("Bank WF retry {}/{} for billDetail {}, action={}: {}",
-                        attempt, maxRetries, billDetail.getId(), workflow.getAction(), e.getMessage());
-                try { Thread.sleep(delayMs); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); return; }
-                delayMs *= 2;
-            }
+        // Single attempt — no Thread.sleep. On failure the scheduler handler returns RETRY
+        // and the scheduler's own exponential backoff provides the delay without blocking the thread.
+        try {
+            State wfState = workflowUtil.callWorkFlow(
+                    workflowUtil.prepareWorkflowRequestForBillDetail(billDetailRequest), billDetailRequest);
+            billDetail.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+        } catch (Exception e) {
+            log.error("Bank WF transition failed for billDetail={} action={}: {}", billDetail.getId(), workflow.getAction(), e.getMessage());
+            throw e;
         }
     }
 

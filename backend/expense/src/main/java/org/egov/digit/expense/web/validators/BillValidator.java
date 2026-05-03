@@ -679,18 +679,31 @@ public class BillValidator {
 	/**
 	 * Rejects any API mutation when the bill detail is in a locked state (isStateUpdatable=false).
 	 * Must be called before any update or workflow action on a PAYMENTS.BILLDETAILS entity.
+	 * Pass the parent bill to enable additional bill-state-driven locks (EC-7).
 	 */
-	public void validateBillDetailStateUpdatable(BillDetail detail) {
-		Set<Status> lockedStates = Set.of(
+	public void validateBillDetailStateUpdatable(BillDetail detail, Bill bill) {
+		Set<Status> alwaysLocked = Set.of(
 				Status.VERIFICATION_IN_PROGRESS,
 				Status.PAYMENT_IN_PROGRESS,
 				Status.PAID
 		);
 
-		if (lockedStates.contains(detail.getStatus())) {
+		if (alwaysLocked.contains(detail.getStatus())) {
 			throw new CustomException("BILL_DETAIL_STATE_LOCKED",
 					"Bill detail " + detail.getId() + " is in locked state " + detail.getStatus()
 							+ " — no API mutations allowed");
+		}
+
+		// EC-7: additional locks driven by bill-level intermediate states
+		if (bill != null) {
+			if (bill.getStatus() == Status.SENDING_FOR_REVIEW && detail.getStatus() == Status.VERIFIED) {
+				throw new CustomException(ERR_BILL_DETAIL_LOCKED_SENDING_FOR_REVIEW,
+						MSG_BILL_DETAIL_LOCKED_SENDING_FOR_REVIEW);
+			}
+			if (bill.getStatus() == Status.REVIEW_IN_PROGRESS && detail.getStatus() == Status.UNDER_REVIEW) {
+				throw new CustomException(ERR_BILL_DETAIL_LOCKED_REVIEW_IN_PROGRESS,
+						MSG_BILL_DETAIL_LOCKED_REVIEW_IN_PROGRESS);
+			}
 		}
 	}
 

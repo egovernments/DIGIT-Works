@@ -3,6 +3,7 @@ package org.egov.digit.expense.service.scheduler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.service.BillAggregationService;
+import org.egov.digit.expense.service.BillCacheService;
 import org.egov.digit.expense.service.PaymentWorkflowService;
 import org.egov.digit.expense.util.WorkflowUtil;
 import org.egov.digit.expense.web.models.Bill;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -34,18 +36,16 @@ import static org.mockito.Mockito.*;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class DetailWfUpdateHandlerTest {
 
-    @Mock
-    private PaymentWorkflowService pws;
-    @Mock
-    private BillAggregationService agg;
-    @Mock
-    private WorkflowUtil workflowUtil;
+    @Mock private PaymentWorkflowService pws;
+    @Mock private BillAggregationService agg;
+    @Mock private WorkflowUtil workflowUtil;
+    @Mock private BillCacheService billCacheService;
 
     private DetailWfUpdateHandler handler;
 
     @BeforeEach
     public void setUp() {
-        handler = new DetailWfUpdateHandler(pws, agg, workflowUtil, new ObjectMapper());
+        handler = new DetailWfUpdateHandler(pws, agg, workflowUtil, billCacheService, new ObjectMapper());
     }
 
     // ── Phase happy paths ─────────────────────────────────────────────────────
@@ -54,7 +54,7 @@ public class DetailWfUpdateHandlerTest {
     public void handle_ignoreErrors_transitionsAndAggregates() {
         BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFICATION_FAILED);
         Bill bill = buildBillWithDetails(Status.IGNORING_ERRORS_IN_PROGRESS, List.of(detail));
-        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any())).thenReturn(bill);
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
 
         SchedulerJobResult result = handler.handle(buildDetailWfUpdateJob(BILL_ID, DETAIL_ID_1, POLL_PHASE_IGNORE_ERRORS));
 
@@ -71,7 +71,7 @@ public class DetailWfUpdateHandlerTest {
     public void handle_sendForReview_transitionsAndAggregates() {
         BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFIED);
         Bill bill = buildBillWithDetails(Status.SENDING_FOR_REVIEW, List.of(detail));
-        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any())).thenReturn(bill);
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
 
         SchedulerJobResult result = handler.handle(buildDetailWfUpdateJob(BILL_ID, DETAIL_ID_1, POLL_PHASE_SEND_FOR_REVIEW));
 
@@ -84,7 +84,7 @@ public class DetailWfUpdateHandlerTest {
     public void handle_sendForApproval_transitionsAndAggregates() {
         BillDetail detail = buildDetail(DETAIL_ID_1, Status.UNDER_REVIEW);
         Bill bill = buildBillWithDetails(Status.REVIEW_IN_PROGRESS, List.of(detail));
-        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any())).thenReturn(bill);
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
 
         SchedulerJobResult result = handler.handle(buildDetailWfUpdateJob(BILL_ID, DETAIL_ID_1, POLL_PHASE_SEND_FOR_APPROVAL));
 
@@ -99,7 +99,7 @@ public class DetailWfUpdateHandlerTest {
     public void handle_ignoreErrors_alreadyVerified_skipsTransition() {
         BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFIED);
         Bill bill = buildBillWithDetails(Status.IGNORING_ERRORS_IN_PROGRESS, List.of(detail));
-        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any())).thenReturn(bill);
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
 
         SchedulerJobResult result = handler.handle(buildDetailWfUpdateJob(BILL_ID, DETAIL_ID_1, POLL_PHASE_IGNORE_ERRORS));
 
@@ -112,7 +112,7 @@ public class DetailWfUpdateHandlerTest {
     public void handle_sendForReview_alreadyUnderReview_skipsTransition() {
         BillDetail detail = buildDetail(DETAIL_ID_1, Status.UNDER_REVIEW);
         Bill bill = buildBillWithDetails(Status.SENDING_FOR_REVIEW, List.of(detail));
-        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any())).thenReturn(bill);
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
 
         SchedulerJobResult result = handler.handle(buildDetailWfUpdateJob(BILL_ID, DETAIL_ID_1, POLL_PHASE_SEND_FOR_REVIEW));
 
@@ -126,7 +126,7 @@ public class DetailWfUpdateHandlerTest {
     public void handle_invalidActionFromWf_treatedAsIdempotent_returnsDone() {
         BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFIED);
         Bill bill = buildBillWithDetails(Status.SENDING_FOR_REVIEW, List.of(detail));
-        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any())).thenReturn(bill);
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
         doThrow(new RuntimeException("INVALID ACTION")).when(pws).transitionBillDetail(any(), any(), any());
         when(workflowUtil.isRetryableWfError(any())).thenReturn(true);
 
@@ -142,7 +142,7 @@ public class DetailWfUpdateHandlerTest {
     public void handle_nonRetryableError_returnsRetry() {
         BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFIED);
         Bill bill = buildBillWithDetails(Status.SENDING_FOR_REVIEW, List.of(detail));
-        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any())).thenReturn(bill);
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
         doThrow(new RuntimeException("DB connection failed")).when(pws).transitionBillDetail(any(), any(), any());
         when(workflowUtil.isRetryableWfError(any())).thenReturn(false);
 
@@ -160,7 +160,7 @@ public class DetailWfUpdateHandlerTest {
                 buildDetail("d3", Status.VERIFIED), buildDetail("d4", Status.VERIFIED),
                 buildDetail("d5", Status.VERIFIED));
         Bill bill = buildBillWithDetails(Status.SENDING_FOR_REVIEW, details);
-        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any())).thenReturn(bill);
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
 
         handler.handle(buildDetailWfUpdateJob(BILL_ID, "d3", POLL_PHASE_SEND_FOR_REVIEW));
 
@@ -174,7 +174,7 @@ public class DetailWfUpdateHandlerTest {
 
     @Test
     public void handle_billNotFound_returnsFailed() {
-        when(pws.fetchBillWithDetails(any(), any(), any())).thenReturn(null);
+        when(pws.fetchBillWithDetails(any(), any(), any(), anyBoolean())).thenReturn(null);
         assertEquals(SchedulerJobResult.FAILED,
                 handler.handle(buildDetailWfUpdateJob(BILL_ID, DETAIL_ID_1, POLL_PHASE_SEND_FOR_REVIEW)));
     }
@@ -182,7 +182,7 @@ public class DetailWfUpdateHandlerTest {
     @Test
     public void handle_detailNotInBill_returnsFailed() {
         Bill bill = buildBill(Status.SENDING_FOR_REVIEW, Status.VERIFIED, 1);
-        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any())).thenReturn(bill);
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
         assertEquals(SchedulerJobResult.FAILED,
                 handler.handle(buildDetailWfUpdateJob(BILL_ID, "NON_EXISTENT", POLL_PHASE_SEND_FOR_REVIEW)));
     }
@@ -191,7 +191,7 @@ public class DetailWfUpdateHandlerTest {
     public void handle_unknownPhase_returnsFailed() {
         BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFIED);
         Bill bill = buildBillWithDetails(Status.SENDING_FOR_REVIEW, List.of(detail));
-        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any())).thenReturn(bill);
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
         assertEquals(SchedulerJobResult.FAILED,
                 handler.handle(buildDetailWfUpdateJob(BILL_ID, DETAIL_ID_1, "UNKNOWN")));
     }
@@ -202,7 +202,7 @@ public class DetailWfUpdateHandlerTest {
     public void onMaxAttempts_nonPaymentPhase_appliesFailCompensation() {
         BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFIED);
         Bill bill = buildBillWithDetails(Status.SENDING_FOR_REVIEW, List.of(detail, buildDetail(DETAIL_ID_2, Status.VERIFIED)));
-        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any())).thenReturn(bill);
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
 
         handler.onMaxAttemptsExceeded(buildDetailWfUpdateJob(BILL_ID, DETAIL_ID_1, POLL_PHASE_SEND_FOR_REVIEW));
 
@@ -214,12 +214,67 @@ public class DetailWfUpdateHandlerTest {
     public void onMaxAttempts_compensationInvalidAction_noException() {
         BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFIED);
         Bill bill = buildBillWithDetails(Status.SENDING_FOR_REVIEW, List.of(detail, buildDetail(DETAIL_ID_2, Status.VERIFIED)));
-        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any())).thenReturn(bill);
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
         doThrow(new RuntimeException("INVALID ACTION"))
                 .when(pws).transitionBill(any(), any(), any(RequestInfo.class));
         when(workflowUtil.isRetryableWfError(any())).thenReturn(true);
 
         handler.onMaxAttemptsExceeded(buildDetailWfUpdateJob(BILL_ID, DETAIL_ID_1, POLL_PHASE_SEND_FOR_REVIEW));
         // no exception thrown
+    }
+
+    // ── EC-1: full bill cache before single-detail Kafka push ─────────────────
+
+    @Test
+    public void handle_success_cachesBillBeforeKafkaPush() {
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFIED);
+        Bill bill = buildBillWithDetails(Status.SENDING_FOR_REVIEW, List.of(detail));
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
+
+        handler.handle(buildDetailWfUpdateJob(BILL_ID, DETAIL_ID_1, POLL_PHASE_SEND_FOR_REVIEW));
+
+        InOrder order = inOrder(billCacheService, pws);
+        order.verify(billCacheService).put(same(bill));       // full bill cached
+        order.verify(pws).pushBillUpdate(any(), any(), eq(false));  // single-detail Kafka push after
+    }
+
+    // ── EC-8: compensation skipped when bill already past intermediate state ──
+
+    @Test
+    public void onMaxAttempts_billAlreadyPastIntermediate_skipsCompensation() {
+        // Bill already settled to FULLY_VERIFIED — should NOT apply FAIL
+        Bill bill = buildBillWithDetails(Status.FULLY_VERIFIED,
+                List.of(buildDetail(DETAIL_ID_1, Status.VERIFIED)));
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
+
+        handler.onMaxAttemptsExceeded(buildDetailWfUpdateJob(BILL_ID, DETAIL_ID_1, POLL_PHASE_SEND_FOR_REVIEW));
+
+        verify(pws, never()).transitionBill(any(Bill.class), any(Actions.class), any(RequestInfo.class));
+        verify(pws, never()).pushBillUpdate(any(), any());
+    }
+
+    @Test
+    public void onMaxAttempts_billInExpectedIntermediate_appliesCompensation() {
+        Bill bill = buildBillWithDetails(Status.SENDING_FOR_REVIEW,
+                List.of(buildDetail(DETAIL_ID_1, Status.VERIFIED)));
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
+
+        handler.onMaxAttemptsExceeded(buildDetailWfUpdateJob(BILL_ID, DETAIL_ID_1, POLL_PHASE_SEND_FOR_REVIEW));
+
+        verify(pws).transitionBill(any(Bill.class), eq(Actions.FAIL), any(RequestInfo.class));
+    }
+
+    // ── Infinite loop prevention: idempotency for all phases ─────────────────
+
+    @Test
+    public void handle_alreadyFullyPaid_skipsTransition_returnsD() {
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.FULLY_PAID);
+        Bill bill = buildBillWithDetails(Status.FULLY_PAID, List.of(detail));
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
+
+        SchedulerJobResult result = handler.handle(buildDetailWfUpdateJob(BILL_ID, DETAIL_ID_1, POLL_PHASE_IGNORE_ERRORS));
+
+        assertEquals(SchedulerJobResult.DONE, result);
+        verify(pws, never()).transitionBillDetail(any(), any(), any());
     }
 }

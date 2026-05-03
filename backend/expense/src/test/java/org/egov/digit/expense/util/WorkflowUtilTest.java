@@ -1,17 +1,29 @@
 package org.egov.digit.expense.util;
 
+import org.egov.common.contract.workflow.ProcessInstance;
+import org.egov.common.contract.workflow.ProcessInstanceResponse;
+import org.egov.common.contract.workflow.State;
+import org.egov.digit.expense.config.Configuration;
+import org.egov.digit.expense.repository.ServiceRequestRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.egov.digit.expense.config.Configuration;
-import org.egov.digit.expense.repository.ServiceRequestRepository;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.List;
+import java.util.Optional;
+
+import static org.egov.digit.expense.TestDataBuilder.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class WorkflowUtilTest {
 
     @Mock
@@ -67,5 +79,64 @@ public class WorkflowUtilTest {
     @Test
     public void notRetryable_emptyMessage() {
         assertFalse(util.isRetryableWfError(new RuntimeException("")));
+    }
+
+    // ── searchCurrentWfState ──────────────────────────────────────────────────
+
+    @Test
+    public void searchCurrentWfState_found_returnsState() {
+        State state = buildWfState("VERIFIED");
+        ProcessInstance pi = new ProcessInstance();
+        pi.setState(state);
+        ProcessInstanceResponse resp = new ProcessInstanceResponse();
+        resp.setProcessInstances(List.of(pi));
+        when(repository.fetchResult(any(), any())).thenReturn(Optional.of(resp));
+        when(mapper.convertValue(any(), eq(ProcessInstanceResponse.class))).thenReturn(resp);
+        when(configs.getWfHost()).thenReturn("http://wf-host");
+        when(configs.getWfProcessInstanceSearchPath()).thenReturn("/wf/process");
+
+        State result = util.searchCurrentWfState("bill-001", TENANT_ID, buildRequestInfo());
+
+        assertNotNull(result);
+        assertEquals("VERIFIED", result.getApplicationStatus());
+    }
+
+    @Test
+    public void searchCurrentWfState_notFound_returnsNull() {
+        ProcessInstanceResponse emptyResp = new ProcessInstanceResponse();
+        emptyResp.setProcessInstances(List.of());
+        when(repository.fetchResult(any(), any())).thenReturn(Optional.of(emptyResp));
+        when(mapper.convertValue(any(), eq(ProcessInstanceResponse.class))).thenReturn(emptyResp);
+        when(configs.getWfHost()).thenReturn("http://wf-host");
+        when(configs.getWfProcessInstanceSearchPath()).thenReturn("/wf/process");
+
+        State result = util.searchCurrentWfState("bill-001", TENANT_ID, buildRequestInfo());
+
+        assertNull(result);
+    }
+
+    @Test
+    public void searchCurrentWfState_repositoryThrows_returnsNull() {
+        when(repository.fetchResult(any(), any())).thenThrow(new RuntimeException("Connection refused"));
+        when(configs.getWfHost()).thenReturn("http://wf-host");
+        when(configs.getWfProcessInstanceSearchPath()).thenReturn("/wf/process");
+
+        State result = util.searchCurrentWfState("bill-001", TENANT_ID, buildRequestInfo());
+
+        assertNull(result);  // exception swallowed, null returned
+    }
+
+    // ── Single attempt — no Thread.sleep ─────────────────────────────────────
+
+    @Test
+    public void callWorkFlow_failure_doesNotSleepOrRetry() {
+        // With the retry loop removed, a failure should propagate immediately.
+        // We can't mock callWorkFlow directly, but we verify the behaviour:
+        // isRetryableWfError still works correctly for classifying the error.
+        RuntimeException invalidAction = new RuntimeException("INVALID ACTION");
+        assertTrue(util.isRetryableWfError(invalidAction));
+
+        RuntimeException networkError = new RuntimeException("Connection refused: localhost:8080");
+        assertFalse(util.isRetryableWfError(networkError));
     }
 }

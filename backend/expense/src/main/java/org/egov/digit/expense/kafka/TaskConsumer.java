@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.service.BillAggregationService;
+import org.egov.digit.expense.service.BillCacheService;
 import org.egov.digit.expense.service.PaymentProviderService;
 import org.egov.digit.expense.service.PaymentWorkflowService;
+import org.egov.digit.expense.service.TaskCacheService;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillDetail;
 import org.egov.digit.expense.web.models.Party;
@@ -34,6 +36,8 @@ public class TaskConsumer {
     private final List<PaymentProviderService> paymentProviderServices;
     private final PaymentWorkflowService paymentWorkflowService;
     private final BillAggregationService billAggregationService;
+    private final BillCacheService billCacheService;
+    private final TaskCacheService taskCacheService;
     private final Configuration config;
     private final ExpenseProducer expenseProducer;
 
@@ -42,12 +46,16 @@ public class TaskConsumer {
                         List<PaymentProviderService> paymentProviderServices,
                         PaymentWorkflowService paymentWorkflowService,
                         BillAggregationService billAggregationService,
+                        BillCacheService billCacheService,
+                        TaskCacheService taskCacheService,
                         Configuration config,
                         ExpenseProducer expenseProducer) {
         this.objectMapper = objectMapper;
         this.paymentProviderServices = paymentProviderServices;
         this.paymentWorkflowService = paymentWorkflowService;
         this.billAggregationService = billAggregationService;
+        this.billCacheService = billCacheService;
+        this.taskCacheService = taskCacheService;
         this.config = config;
         this.expenseProducer = expenseProducer;
     }
@@ -91,26 +99,32 @@ public class TaskConsumer {
     }
 
     /**
-     * Transitions bill detail → VERIFICATION_IN_PROGRESS; persists task record.
-     * No external payment provider call — BILL_STARTED_CHECK handles re-check via scheduler.
+     * Transitions bill detail → VERIFICATION_IN_PROGRESS; immediately pushes a VerificationVerify
+     * task so the MTN call happens in the next Kafka message rather than waiting for the
+     * BILL_STARTED_CHECK scheduler. BILL_STARTED_CHECK still runs as a fallback and inserts the
+     * BILL_STATUS_POLL safety-net.
      */
     private void handleVerificationStartTask(TaskRequest taskRequest) {
         Task task = taskRequest.getTask();
-        BillDetail detail = taskRequest.getBill().getBillDetails().get(0);
+        Bill bill = taskRequest.getBill();
+        BillDetail detail = bill.getBillDetails().get(0);
         String billId = task.getBillId();
         try {
-            // Skip if detail already advanced past PENDING_VERIFICATION
             if (detail.getStatus() != Status.PENDING_VERIFICATION
                     && detail.getStatus() != Status.VERIFICATION_FAILED) {
                 log.info("VerificationStart: detail={} already in status={} — skipping", detail.getId(), detail.getStatus());
-                markTaskDone(task);
                 return;
             }
+            // Single attempt — transitionBillDetail reconciles INVALID_ACTION internally
             paymentWorkflowService.transitionBillDetail(detail, Actions.VERIFY, taskRequest.getRequestInfo());
-            paymentWorkflowService.pushBillUpdate(taskRequest.getBill(), taskRequest.getRequestInfo());
-            log.info("VerificationStart: detail={} → VERIFICATION_IN_PROGRESS for bill={}", detail.getId(), billId);
+            billCacheService.put(bill);  // EC-1: cache full bill before Kafka
+            paymentWorkflowService.pushBillUpdate(bill, taskRequest.getRequestInfo());
+            // Immediately push VerificationVerify so MTN call happens via next Kafka message,
+            // not after the BILL_STARTED_CHECK scheduler delay (~17–30 s).
+            paymentWorkflowService.pushVerificationVerifyTask(bill, detail, taskRequest.getRequestInfo());
+            log.info("VerificationStart: detail={} → VERIFICATION_IN_PROGRESS, VerificationVerify pushed for bill={}", detail.getId(), billId);
         } catch (Exception e) {
-            log.error("VerificationStart failed for bill={} detail={} — BILL_STARTED_CHECK will retry: {}",
+            log.warn("VerificationStart failed for bill={} detail={} — BILL_STARTED_CHECK will retry: {}",
                     billId, detail.getId(), e.getMessage());
         } finally {
             markTaskDone(task);
@@ -118,57 +132,68 @@ public class TaskConsumer {
     }
 
     /**
-     * Calls payment provider to initiate verification; creates BILL_DETAILS_TASK_VERIFY_CHECK job.
+     * Calls the payment provider to verify the detail. On success or business failure
+     * (e.g. inactive MSISDN → VERIFICATION_FAILED) the result is terminal — no scheduler
+     * job is created. Only a service-level exception (network error, WF failure) triggers a
+     * BILL_DETAILS_TASK_VERIFY_CHECK retry job.
      */
     private void handleVerificationVerifyTask(TaskRequest taskRequest) {
         Task task = taskRequest.getTask();
         BillDetail detail = taskRequest.getBill().getBillDetails().get(0);
         String billId = task.getBillId();
+        boolean serviceFailure = false;
         try {
             if (detail.getStatus() != Status.VERIFICATION_IN_PROGRESS) {
                 log.info("VerificationVerify: detail={} not in VERIFICATION_IN_PROGRESS (status={}) — skipping",
                         detail.getId(), detail.getStatus());
-                markTaskDone(task);
                 return;
             }
-            // Initiate verification via provider
+            // Execute MTN call. Business failures (inactive account) are handled inside
+            // executeTask() and result in VERIFICATION_FAILED — no exception is thrown.
             Set<String> providers = extractProviders(taskRequest.getBill());
             paymentProviderServices.stream()
                     .filter(s -> providers.stream().anyMatch(s::supports))
                     .forEach(s -> s.executeTask(taskRequest));
 
-            // Create polling job for this detail
-            paymentWorkflowService.insertBillDetailsTaskVerifyCheckJob(
-                    taskRequest.getBill(), detail, taskRequest.getRequestInfo());
-            log.info("VerificationVerify: initiated for bill={} detail={}", billId, detail.getId());
+            taskCacheService.put(task);  // EC-5: cache task so verify-check handler can find it
+            log.info("VerificationVerify: completed for bill={} detail={}", billId, detail.getId());
         } catch (Exception e) {
-            log.error("VerificationVerify failed for bill={} detail={} — BILL_DETAILS_TASK_VERIFY_CHECK will poll: {}",
-                    billId, detail.getId(), e.getMessage());
+            // Service failure (network, WF error) — schedule a retry via scheduler.
+            serviceFailure = true;
+            log.error("VerificationVerify: service failure for bill={} detail={} — scheduling BILL_DETAILS_TASK_VERIFY_CHECK retry",
+                    billId, detail.getId(), e);
         } finally {
+            if (serviceFailure) {
+                paymentWorkflowService.insertBillDetailsTaskVerifyCheckJob(
+                        taskRequest.getBill(), detail, taskRequest.getRequestInfo());
+            }
             markTaskDone(task);
         }
     }
 
     /**
      * Transitions bill detail → PAYMENT_IN_PROGRESS; persists task record.
-     * No external payment provider call — BILL_STARTED_CHECK handles re-check via scheduler.
+     * Single WF attempt — fast first try. On failure, BILL_STARTED_CHECK retries via scheduler.
+     * Caches full bill in Redis BEFORE Kafka push (EC-1 Fix B).
      */
     private void handlePaymentInitiationStartTask(TaskRequest taskRequest) {
         Task task = taskRequest.getTask();
-        BillDetail detail = taskRequest.getBill().getBillDetails().get(0);
+        Bill bill = taskRequest.getBill();
+        BillDetail detail = bill.getBillDetails().get(0);
         String billId = task.getBillId();
         try {
             if (detail.getStatus() != Status.REVIEWED && detail.getStatus() != Status.PAYMENT_FAILED) {
                 log.info("PaymentInitiationStart: detail={} not eligible (status={}) — skipping",
                         detail.getId(), detail.getStatus());
-                markTaskDone(task);
                 return;
             }
+            // Single attempt — transitionBillDetail reconciles INVALID_ACTION internally
             paymentWorkflowService.transitionBillDetail(detail, Actions.PAYMENT_INITIATION, taskRequest.getRequestInfo());
-            paymentWorkflowService.pushBillUpdate(taskRequest.getBill(), taskRequest.getRequestInfo());
+            billCacheService.put(bill);  // EC-1: cache full bill before Kafka
+            paymentWorkflowService.pushBillUpdate(bill, taskRequest.getRequestInfo());
             log.info("PaymentInitiationStart: detail={} → PAYMENT_IN_PROGRESS for bill={}", detail.getId(), billId);
         } catch (Exception e) {
-            log.error("PaymentInitiationStart failed for bill={} detail={} — BILL_STARTED_CHECK will retry: {}",
+            log.warn("PaymentInitiationStart failed for bill={} detail={} — BILL_STARTED_CHECK will retry: {}",
                     billId, detail.getId(), e.getMessage());
         } finally {
             markTaskDone(task);
@@ -209,6 +234,7 @@ public class TaskConsumer {
                     .filter(s -> providers.stream().anyMatch(s::supports))
                     .forEach(s -> s.executeTask(transferReq));
 
+            taskCacheService.put(transferTask);  // EC-5: cache Transfer task before Kafka so payment-status-check handler can find it
             // Create polling job for this detail
             paymentWorkflowService.insertBillDetailsTaskPaymentStatusCheckJob(
                     taskRequest.getBill(), detail, taskRequest.getRequestInfo());
@@ -228,9 +254,15 @@ public class TaskConsumer {
      * On failure: logs and marks task DONE so offset commits; BILL_STATUS_POLL will dispatch a
      * DETAIL_WF_UPDATE scheduler retry job for this detail.
      */
+    /**
+     * Pure WF transition (no external API). Single attempt — fast first try.
+     * On failure, BILL_STATUS_POLL dispatches DETAIL_WF_UPDATE scheduler retry.
+     * Caches full bill in Redis BEFORE Kafka push (EC-1 Fix B).
+     */
     @SuppressWarnings("unchecked")
     private void handleWfUpdateTask(TaskRequest taskRequest) {
         Task task = taskRequest.getTask();
+        Bill bill = taskRequest.getBill();
         String billId = task.getBillId();
         String tenantId = task.getTenantId();
         try {
@@ -239,19 +271,20 @@ public class TaskConsumer {
             Actions action = resolveWfUpdateAction(phase);
             if (action == null) {
                 log.error("WfUpdate task has unknown phase '{}' for bill={} — skipping", phase, billId);
-                markTaskDone(task);
                 return;
             }
 
-            BillDetail detail = taskRequest.getBill().getBillDetails().get(0);
+            BillDetail detail = bill.getBillDetails().get(0);
             log.info("WfUpdate task: bill={} detail={} phase={} action={}", billId, detail.getId(), phase, action);
 
+            // Single attempt — transitionBillDetail reconciles INVALID_ACTION internally
             paymentWorkflowService.transitionBillDetail(detail, action, taskRequest.getRequestInfo());
-            paymentWorkflowService.pushBillUpdate(taskRequest.getBill(), taskRequest.getRequestInfo());
+            billCacheService.put(bill);  // EC-1: cache full bill before Kafka
+            paymentWorkflowService.pushBillUpdate(bill, taskRequest.getRequestInfo());
             billAggregationService.checkAndAggregateBill(billId, tenantId, phase, taskRequest.getRequestInfo());
 
         } catch (Exception e) {
-            log.error("WfUpdate task failed bill={} detail={} — BILL_STATUS_POLL will dispatch DETAIL_WF_UPDATE retry | error={}",
+            log.warn("WfUpdate task failed bill={} detail={} — BILL_STATUS_POLL will dispatch DETAIL_WF_UPDATE retry | error={}",
                     billId, task.getBillDetailId(), e.getMessage());
         } finally {
             markTaskDone(task);
@@ -261,9 +294,10 @@ public class TaskConsumer {
     private void markTaskDone(Task task) {
         try {
             task.setStatus(Status.DONE);
+            taskCacheService.put(task);  // EC-6: cache before Kafka so scheduler sees terminal status
             expenseProducer.push(task.getTenantId(), config.getTaskUpdateTopic(), task);
         } catch (Exception e) {
-            log.warn("Failed to mark WfUpdate task DONE for taskId={}: {}", task.getId(), e.getMessage());
+            log.warn("Failed to mark task DONE for taskId={}: {}", task.getId(), e.getMessage());
         }
     }
 
