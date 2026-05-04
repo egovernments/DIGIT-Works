@@ -70,6 +70,8 @@ public class ExpenseCalculatorServiceConstants {
     public static final String RATES_CONSTANT = "Rates";
     public static final String HCM_CONSTANT = "HCM";
     public static final String WORKER_RATES = "WORKER_RATES";
+    public static final String HCM_PAYMENTS_CONFIG = "paymentsConfig";
+    public static final String JSON_PATH_FOR_PAYMENTS_CONFIG = MDMS_RESP_CONSTANT + HCM_CONSTANT + "." + HCM_PAYMENTS_CONFIG;
     public static final String JSON_PATH_FOR_SOR = MDMS_RESP_CONSTANT+WORKS_SOR_CONSTANT + "." + SOR_CONSTANT;
     public static final String JSON_PATH_FOR_RATES = MDMS_RESP_CONSTANT+WORKS_SOR_CONSTANT + "." + RATES_CONSTANT;
     public static final String JSON_PATH_FOR_HCM = MDMS_RESP_CONSTANT+HCM_CONSTANT + "." + WORKER_RATES;

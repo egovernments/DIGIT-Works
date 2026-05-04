@@ -199,9 +199,9 @@ public class IntermediateBillingService {
             selectedPeriod.getPeriodNumber());
 
         // Fetch registers for the period
-        boolean isDistrictLevel = checkIfDistrictLevel(requestInfo, criteria);
+        boolean isLowestBillBoundary = isLowestBillBoundary(requestInfo, criteria);
         List<AttendanceRegister> periodRegisters = getRegistersForPeriod(
-            requestInfo, criteria, isDistrictLevel, selectedPeriod
+            requestInfo, criteria, isLowestBillBoundary, selectedPeriod
         );
 
         if (periodRegisters.isEmpty()) {
@@ -224,7 +224,8 @@ public class IntermediateBillingService {
             registerIds,
             criteria.getTenantId(),
             criteria.getLocalityCode(),
-            projectId
+            projectId,
+            isLowestBillBoundary
         );
 
         // CRITICAL VALIDATION: Check if user has permission on ALL project registers
@@ -232,7 +233,7 @@ public class IntermediateBillingService {
         // If user doesn't have permission on all, the post-billing update will fail
         // Better to fail here (pre-validation) than after async bill generation
         log.info("IntermediateBillingService::validateV2BillingPrerequisites - Validating user permissions for ALL project registers (post-billing requirement)");
-        validateUserHasPermissionForAllProjectRegisters(requestInfo, criteria, isDistrictLevel, projectId);
+        validateUserHasPermissionForAllProjectRegisters(requestInfo, criteria, isLowestBillBoundary, projectId);
 
         // Validate muster roll existence and approval
         List<MusterRoll> musterRolls = searchExistingMusterRollsForPeriod(
@@ -266,14 +267,14 @@ public class IntermediateBillingService {
      *
      * @param requestInfo Request info with user details
      * @param criteria Billing criteria
-     * @param isDistrictLevel Whether this is a district-level project
+     * @param isLowestBillBoundary True when locality is at the lowest billing level (no children needed)
      * @param projectId Project ID
      * @throws CustomException if user doesn't have permission on all registers
      */
     private void validateUserHasPermissionForAllProjectRegisters(
             RequestInfo requestInfo,
             Criteria criteria,
-            boolean isDistrictLevel,
+            boolean isLowestBillBoundary,
             String projectId) {
 
         try {
@@ -288,7 +289,7 @@ public class IntermediateBillingService {
                     criteria.getTenantId(),
                     requestInfo,
                     criteria.getLocalityCode(),
-                    isDistrictLevel,
+                    isLowestBillBoundary,
                     offset
                 );
 
@@ -316,7 +317,8 @@ public class IntermediateBillingService {
                 allRegisterIds,
                 criteria.getTenantId(),
                 criteria.getLocalityCode(),
-                projectId
+                projectId,
+                isLowestBillBoundary
             );
 
             log.info("✓ User has permission on all {} project registers", allProjectRegisters.size());
@@ -365,11 +367,14 @@ public class IntermediateBillingService {
     }
 
     /**
-     * Helper method to check if boundary is district level
+     * Checks whether the request's locality is at the lowest billing boundary level (e.g. LGA).
+     * Returns true when the boundary type matches lowestLevelBoundary from HCM.paymentsConfig MDMS.
+     * Returns false when the boundary is above the lowest level (e.g. district), which means
+     * child registers must be fetched (isChildrenRequired = isLowestBillBoundary).
      */
-    private boolean checkIfDistrictLevel(RequestInfo requestInfo, Criteria criteria) {
+    private boolean isLowestBillBoundary(RequestInfo requestInfo, Criteria criteria) {
         try {
-            // Pass hierarchyType from criteria for fallback if the primary search returns empty
+            String lowestLevelBoundary = fetchLowestLevelBoundary(requestInfo, criteria.getTenantId());
             List<TenantBoundary> boundaries = boundaryUtil.fetchBoundary(
                 RequestInfoWrapper.builder().requestInfo(requestInfo).build(),
                 criteria.getLocalityCode(),
@@ -377,14 +382,28 @@ public class IntermediateBillingService {
                 false,
                 criteria.getHierarchyType()
             );
-            return !boundaries.isEmpty() &&
-                   boundaries.get(0).getBoundary() != null &&
-                   !boundaries.get(0).getBoundary().isEmpty() &&
-                   "DISTRICT".equals(boundaries.get(0).getBoundary().get(0).getBoundaryType());
+            if (boundaries.isEmpty()
+                    || boundaries.get(0).getBoundary() == null
+                    || boundaries.get(0).getBoundary().isEmpty()) {
+                return true; // safe default: treat as lowest level → no children fetched
+            }
+            String boundaryType = boundaries.get(0).getBoundary().get(0).getBoundaryType();
+            return lowestLevelBoundary.equalsIgnoreCase(boundaryType);
         } catch (Exception e) {
-            log.warn("Error checking district level: {}", e.getMessage());
-            return false;
+            log.warn("Error checking lowest bill boundary level: {}", e.getMessage());
+            return true; // safe default
         }
+    }
+
+    private String fetchLowestLevelBoundary(RequestInfo requestInfo, String tenantId) {
+        Object mdmsData = mdmsUtils.getPaymentsConfigFromMDMS(requestInfo, tenantId);
+        List<Object> configList = commonUtil.readJSONPathValue(mdmsData, JSON_PATH_FOR_PAYMENTS_CONFIG);
+        if (CollectionUtils.isEmpty(configList)) {
+            throw new CustomException("PAYMENTS_CONFIG_NOT_FOUND",
+                "HCM.paymentsConfig not found in MDMS for tenantId: " + tenantId);
+        }
+        PaymentsConfig paymentsConfig = mapper.convertValue(configList.get(0), PaymentsConfig.class);
+        return paymentsConfig.getLowestLevelBoundary();
     }
 
     /**
@@ -412,14 +431,14 @@ public class IntermediateBillingService {
      * @param requestInfo Request info with user details
      * @param criteria Billing criteria (includes billingPeriodId for UI-driven mode)
      * @param project Project details
-     * @param isDistrictLevel Whether project is district level
+     * @param isLowestBillBoundary True when locality is at the lowest billing level (no children needed)
      * @param billingConfig Billing configuration
      * @return List of generated bills (one per period)
      */
     public List<Bill> processIntermediateBilling(RequestInfo requestInfo,
                                                  Criteria criteria,
                                                  Project project,
-                                                 boolean isDistrictLevel,
+                                                 boolean isLowestBillBoundary,
                                                  BillingConfig billingConfig) {
         log.info("IntermediateBillingService::processIntermediateBilling - Starting V2 bill generation for project {}",
                 project.getId());
@@ -439,7 +458,7 @@ public class IntermediateBillingService {
         // Step 2: Check if aggregate mode requested
         if (BILLING_PERIOD_AGGREGATE.equalsIgnoreCase(criteria.getBillingPeriodId())) {
             log.info("Aggregate mode detected for project {}", projectId);
-            return processAggregateBilling(requestInfo, criteria, project, isDistrictLevel,
+            return processAggregateBilling(requestInfo, criteria, project, isLowestBillBoundary,
                     billingConfig, projectId, campaignNumber);
         }
 
@@ -461,7 +480,7 @@ public class IntermediateBillingService {
 
             // Process only the selected period
             Bill bill = processSinglePeriod(requestInfo, criteria, selectedPeriod, project,
-                    isDistrictLevel, projectId, campaignNumber);
+                    isLowestBillBoundary, projectId, campaignNumber);
 
             if (bill != null) {
                 generatedBills.add(bill);
@@ -515,7 +534,7 @@ public class IntermediateBillingService {
 
                 // Step 4b: Process this period
                 Bill bill = processSinglePeriod(requestInfo, criteria, period, project,
-                        isDistrictLevel, projectId, campaignNumber);
+                        isLowestBillBoundary, projectId, campaignNumber);
 
                 if (bill != null) {
                     generatedBills.add(bill);
@@ -553,14 +572,14 @@ public class IntermediateBillingService {
      * @param criteria Billing criteria
      * @param period Billing period to process
      * @param project Project details
-     * @param isDistrictLevel Whether project is district level
+     * @param isLowestBillBoundary True when locality is at the lowest billing level (no children needed)
      * @param projectId Project reference ID
      * @param campaignNumber Campaign number
      * @return Generated bill, or null if skipped
      */
     private Bill processSinglePeriod(RequestInfo requestInfo, Criteria criteria,
                                     BillingPeriod period, Project project,
-                                    boolean isDistrictLevel, String projectId,
+                                    boolean isLowestBillBoundary, String projectId,
                                     String campaignNumber) {
         log.info("Processing period {} for project {}", period.getPeriodNumber(), projectId);
 
@@ -573,7 +592,7 @@ public class IntermediateBillingService {
 
         // Step 2: Fetch registers overlapping with period dates
         List<AttendanceRegister> periodRegisters = getRegistersForPeriod(
-                requestInfo, criteria, isDistrictLevel, period
+                requestInfo, criteria, isLowestBillBoundary, period
         );
 
         if (periodRegisters.isEmpty()) {
@@ -600,7 +619,8 @@ public class IntermediateBillingService {
             registerIds,
             criteria.getTenantId(),
             criteria.getLocalityCode(),
-            projectId
+            projectId,
+            isLowestBillBoundary
         );
         log.info("IntermediateBillingService::processOnePeriod - Permission validation successful for user in period {}",
                 period.getPeriodNumber());
@@ -976,13 +996,13 @@ public class IntermediateBillingService {
      *
      * @param requestInfo Request info
      * @param criteria Billing criteria
-     * @param isDistrictLevel Whether to fetch children registers
+     * @param isLowestBillBoundary True when locality is at the lowest billing level (no children needed)
      * @param period Billing period
      * @return List of registers overlapping with period
      */
     private List<AttendanceRegister> getRegistersForPeriod(RequestInfo requestInfo,
                                                             Criteria criteria,
-                                                            boolean isDistrictLevel,
+                                                            boolean isLowestBillBoundary,
                                                             BillingPeriod period) {
         List<AttendanceRegister> allRegisters = new ArrayList<>();
         Integer offset = 0;
@@ -994,7 +1014,7 @@ public class IntermediateBillingService {
                     criteria.getTenantId(),        // Tenant ID
                     requestInfo,                   // Request Info
                     criteria.getLocalityCode(),    // Boundary Code
-                    isDistrictLevel,               // Fetch children flag
+                    isLowestBillBoundary,          // Fetch children flag (true when at lowest billing level)
                     offset                         // Batch offset
             );
 
@@ -1461,7 +1481,7 @@ public class IntermediateBillingService {
      * @param requestInfo Request info
      * @param criteria Billing criteria
      * @param project Project details
-     * @param isDistrictLevel Whether project is district level
+     * @param isLowestBillBoundary True when locality is at the lowest billing level (no children needed)
      * @param billingConfig Billing configuration
      * @param projectId Project reference ID
      * @param campaignNumber Campaign number
@@ -1470,7 +1490,7 @@ public class IntermediateBillingService {
     private List<Bill> processAggregateBilling(RequestInfo requestInfo,
                                                Criteria criteria,
                                                Project project,
-                                               boolean isDistrictLevel,
+                                               boolean isLowestBillBoundary,
                                                BillingConfig billingConfig,
                                                String projectId,
                                                String campaignNumber) {
@@ -1512,7 +1532,7 @@ public class IntermediateBillingService {
         List<MusterRoll> allMusterRolls = fetchAllMusterRollsForAllPeriods(
                 requestInfo,
                 criteria,
-                isDistrictLevel,
+                isLowestBillBoundary,
                 allPeriods
         );
         log.info("✓ Fetched {} muster rolls across {} periods", allMusterRolls.size(), allPeriods.size());
@@ -1542,7 +1562,7 @@ public class IntermediateBillingService {
         // Now using CONSOLIDATED muster rolls with accumulated worker data
         log.info("Generating aggregate bill using existing bill generator...");
         // BUGFIX: Calculate actual unique register count instead of reading from additionalDetails
-        int totalRegisterCount = getTotalRegisterCountForAggregate(requestInfo, criteria, isDistrictLevel, allPeriods);
+        int totalRegisterCount = getTotalRegisterCountForAggregate(requestInfo, criteria, isLowestBillBoundary, allPeriods);
         log.info("Aggregate bill will be generated for {} unique registers", totalRegisterCount);
 
         Bill aggregateBill = generatePeriodBill(
@@ -1593,13 +1613,13 @@ public class IntermediateBillingService {
      *
      * @param requestInfo Request info
      * @param criteria Billing criteria
-     * @param isDistrictLevel Whether to fetch children registers
+     * @param isLowestBillBoundary True when locality is at the lowest billing level (no children needed)
      * @param allPeriods All billing periods
      * @return List of ALL muster rolls from ALL periods
      */
     private List<MusterRoll> fetchAllMusterRollsForAllPeriods(RequestInfo requestInfo,
                                                                Criteria criteria,
-                                                               boolean isDistrictLevel,
+                                                               boolean isLowestBillBoundary,
                                                                List<BillingPeriod> allPeriods) {
         List<MusterRoll> allMusterRolls = new ArrayList<>();
 
@@ -1614,7 +1634,7 @@ public class IntermediateBillingService {
                 List<AttendanceRegister> periodRegisters = getRegistersForPeriod(
                         requestInfo,
                         criteria,
-                        isDistrictLevel,
+                        isLowestBillBoundary,
                         period
                 );
 
@@ -2212,13 +2232,13 @@ public class IntermediateBillingService {
      *
      * @param requestInfo Request info for fetching registers
      * @param criteria Billing criteria
-     * @param isDistrictLevel Whether to fetch children registers
+     * @param isLowestBillBoundary True when locality is at the lowest billing level (no children needed)
      * @param allPeriods All billing periods
      * @return Total UNIQUE register count
      */
     private int getTotalRegisterCountForAggregate(RequestInfo requestInfo,
                                                     Criteria criteria,
-                                                    boolean isDistrictLevel,
+                                                    boolean isLowestBillBoundary,
                                                     List<BillingPeriod> allPeriods) {
         Set<String> uniqueRegisterIds = new HashSet<>();
 
@@ -2228,7 +2248,7 @@ public class IntermediateBillingService {
             try {
                 // Fetch registers for this period
                 List<AttendanceRegister> periodRegisters = getRegistersForPeriod(
-                    requestInfo, criteria, isDistrictLevel, period
+                    requestInfo, criteria, isLowestBillBoundary, period
                 );
 
                 // Collect unique register IDs

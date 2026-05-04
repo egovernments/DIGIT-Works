@@ -581,8 +581,12 @@ public class ExpenseCalculatorService {
                 throw new CustomException("BOUNDARY_NOT_FOUND", "Boundary not found");
             }
 
-            // Check if boundary is of district level
-            boolean isBoundaryDistrict = isBoundaryDistrictLevel(boundaries.get(0));
+            // Check if boundary is at the lowest billing level (from HCM.paymentsConfig MDMS)
+            boolean isLowestBillBoundary = isLowestBillBoundary(
+                boundaries.get(0),
+                calculationRequest.getRequestInfo(),
+                calculationRequest.getCriteria().getTenantId()
+            );
 
             expenseCalculatorServiceValidator.validateCalculatorCalculateRequest(calculationRequest, projectResponse.getProject().get(0));
             RequestInfo requestInfo = calculationRequest.getRequestInfo();
@@ -591,7 +595,7 @@ public class ExpenseCalculatorService {
             Map<String, String> metaInfo = new HashMap<>();
 
             if ((criteria.getMusterRollId() != null && !criteria.getMusterRollId().isEmpty()) || config.isHealthIntegrationEnabled()) {
-                bills = createWageBill(requestInfo, criteria, metaInfo, projectResponse.getProject().get(0), isBoundaryDistrict);
+                bills = createWageBill(requestInfo, criteria, metaInfo, projectResponse.getProject().get(0), isLowestBillBoundary);
             } else {
                 bills = createSupervisionBill(requestInfo, criteria, metaInfo);
             }
@@ -734,7 +738,7 @@ public class ExpenseCalculatorService {
     }
 
     private List<Bill> createWageBill(RequestInfo requestInfo, Criteria criteria, Map<String, String> metaInfo,
-                                      Project project, boolean isDistrictLevel) {
+                                      Project project, boolean isLowestBillBoundary) {
         log.info("ExpenseCalculatorService::createWageBill - Starting bill generation for project: {}", project.getId());
 
         // NEW V2: Extract campaign number from project.referenceID and check for billing configuration
@@ -760,12 +764,12 @@ public class ExpenseCalculatorService {
             // V2 Mode: Process intermediate billing with periods
             log.info("ExpenseCalculatorService::createWageBill - V2 Mode: Billing configuration found for campaign {}", campaignNumber);
             return intermediateBillingService.processIntermediateBilling(
-                    requestInfo, criteria, project, isDistrictLevel, billingConfig
+                    requestInfo, criteria, project, isLowestBillBoundary, billingConfig
             );
         } else {
             // V1 Mode: Regular billing (existing logic - NO CHANGES)
             log.info("ExpenseCalculatorService::createWageBill - V1 Mode: No active billing configuration, using regular billing");
-            return processRegularBillingV1(requestInfo, criteria, project, isDistrictLevel);
+            return processRegularBillingV1(requestInfo, criteria, project, isLowestBillBoundary);
         }
     }
 
@@ -810,11 +814,11 @@ public class ExpenseCalculatorService {
      * @param requestInfo Request info
      * @param criteria Billing criteria
      * @param project Project details
-     * @param isDistrictLevel Whether project is district level
+     * @param isLowestBillBoundary True when locality is at the lowest billing level (no children needed)
      * @return Single bill for entire project duration
      */
     private List<Bill> processRegularBillingV1(RequestInfo requestInfo, Criteria criteria,
-                                                Project project, boolean isDistrictLevel) {
+                                                Project project, boolean isLowestBillBoundary) {
         log.info("ExpenseCalculatorService::processRegularBillingV1 - Create wage bill for musterRollIds: {}", criteria.getMusterRollId());
 
         Bill bill = Bill.builder().totalAmount(BigDecimal.ZERO).billDetails(new ArrayList<>()).build();
@@ -833,7 +837,7 @@ public class ExpenseCalculatorService {
             // Fetch children attendance registers if district level else just fetch current level registers
             attendanceRegisters = attendanceUtil
                     .fetchAttendanceRegister(criteria.getReferenceId(), criteria.getTenantId(), requestInfo,
-                            criteria.getLocalityCode(), isDistrictLevel, offset);
+                            criteria.getLocalityCode(), isLowestBillBoundary, offset);
             if (attendanceRegisters.isEmpty())
                 break;
             offset = offset + config.getRegisterBatchSize();
@@ -1160,8 +1164,22 @@ public class ExpenseCalculatorService {
         bill.setAdditionalDetails(additionalDetails);
     }
 
-    private boolean isBoundaryDistrictLevel(TenantBoundary boundary) {
-        return boundary.getBoundary().get(0).getBoundaryType().equals(DISTRICT_BOUNDARYTYPE);
+    private boolean isLowestBillBoundary(TenantBoundary boundary, RequestInfo requestInfo, String tenantId) {
+        try {
+            Object mdmsData = mdmsUtils.getPaymentsConfigFromMDMS(requestInfo, tenantId);
+            List<Object> configList = commonUtil.readJSONPathValue(mdmsData, JSON_PATH_FOR_PAYMENTS_CONFIG);
+            if (CollectionUtils.isEmpty(configList)) {
+                log.warn("HCM.paymentsConfig not found in MDMS, defaulting to lowest level (no children)");
+                return true;
+            }
+            PaymentsConfig paymentsConfig = mapper.convertValue(configList.get(0), PaymentsConfig.class);
+            String lowestLevelBoundary = paymentsConfig.getLowestLevelBoundary();
+            String boundaryType = boundary.getBoundary().get(0).getBoundaryType();
+            return lowestLevelBoundary.equalsIgnoreCase(boundaryType);
+        } catch (Exception e) {
+            log.warn("Error checking lowest bill boundary via MDMS: {}", e.getMessage());
+            return true;
+        }
     }
 
     private void enrichBill(Bill bill, Criteria criteria,  Project project) {
