@@ -43,6 +43,7 @@ import static org.egov.digit.expense.calculator.util.BillReportConstraints.*;
 import static org.egov.digit.expense.calculator.util.BillReportConstraints.REPORT_STATUS_COMPLETED;
 import static org.egov.digit.expense.calculator.util.BillReportConstraints.REPORT_STATUS_FAILED;
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.*;
+import org.egov.digit.expense.calculator.util.RateFieldConfigConstants;
 
 @Slf4j
 @Service
@@ -165,10 +166,12 @@ public class HealthBillReportGenerator {
             }
             // Update the report status to initiated
             updateReportStatus(billRequest, REPORT_STATUS_INITIATED, null, null, null, eventName);
+            // Fetch WorkerMdms once — shared by both getReportBillDetail and enrichReportRequest
+            WorkerMdms workerMdms = fetchWorkerMdms(billRequest.getRequestInfo(), billRequest.getBill());
             // Fetch the report bill details
-            List<ReportBillDetail> reportBillDetail = getReportBillDetail(billRequest.getRequestInfo(), billRequest.getBill());
+            List<ReportBillDetail> reportBillDetail = getReportBillDetail(billRequest.getRequestInfo(), billRequest.getBill(), workerMdms);
             // Enrich the report request
-            BillReportRequest billReportRequest = enrichReportRequest(billRequest, reportBillDetail); //enrichReportRequest
+            BillReportRequest billReportRequest = enrichReportRequest(billRequest, reportBillDetail, workerMdms);
 
             // Validate the report request before sending to PDF service
             log.info("Validating BillReportRequest before PDF generation:");
@@ -220,7 +223,7 @@ public class HealthBillReportGenerator {
      * @param reportBillDetail the report bill details
      * @return the enriched report bill
      */
-    private BillReportRequest enrichReportRequest(BillRequest billRequest, List<ReportBillDetail> reportBillDetail) {
+    private BillReportRequest enrichReportRequest(BillRequest billRequest, List<ReportBillDetail> reportBillDetail, WorkerMdms workerMdms) {
         String createdBy = billRequest.getRequestInfo() != null &&
                 billRequest.getRequestInfo().getUserInfo() != null &&
                 billRequest.getRequestInfo().getUserInfo().getName() != null
@@ -229,11 +232,16 @@ public class HealthBillReportGenerator {
 
         BillingPeriodDisplay billingPeriodDisplay = getBillingPeriodDisplay(billRequest);
 
+        // Resolve fieldConfigs — use MDMS fieldConfig if present, else DEFAULT_FIELD_CONFIGS
+        List<RateFieldConfig> rawConfigs = workerMdms != null ? workerMdms.getFieldConfig() : null;
+        List<RateFieldConfig> fieldConfigs = (rawConfigs != null && !rawConfigs.isEmpty())
+                ? rawConfigs.stream()
+                        .sorted(Comparator.comparingInt(f -> Optional.ofNullable(f.getOrder()).orElse(99)))
+                        .collect(Collectors.toList())
+                : RateFieldConfigConstants.DEFAULT_FIELD_CONFIGS;
+
         ReportBill reportBill = ReportBill.builder()
                 .totalAmount(billRequest.getBill().getTotalAmount())
-                .totalFoodAmount(billRequest.getBill().getTotalFoodAmount())
-                .totalTransportAmount(billRequest.getBill().getTotalTransportAmount())
-                .totalWageAmount(billRequest.getBill().getTotalWageAmount())
                 .reportTitle(billRequest.getBill().getLocalityCode())
                 .createdBy(createdBy)
                 .createdTime(System.currentTimeMillis())
@@ -244,10 +252,33 @@ public class HealthBillReportGenerator {
                 .billingPeriodDateRange(billingPeriodDisplay.dateRange)
                 .billingPeriodStartDate(billingPeriodDisplay.startDate)
                 .billingPeriodEndDate(billingPeriodDisplay.endDate)
+                .fieldConfigs(fieldConfigs)
                 .build();
+        // Derive amount breakup from payableLineItems — more reliable than bill-level fields
+        // because the expense service may not persist dynamic top-level fields.
+        Map<String, String> headCodeMap = workerMdms != null && workerMdms.getHeadCodeMapping() != null
+                ? workerMdms.getHeadCodeMapping() : Collections.emptyMap();
+        Map<String, String> headCodeToBillAmountKey = fieldConfigs.stream()
+                .filter(cfg -> cfg.getBillAmountKey() != null)
+                .collect(Collectors.toMap(
+                        cfg -> headCodeMap.getOrDefault(cfg.getFieldKey(), cfg.getFieldKey()),
+                        RateFieldConfig::getBillAmountKey,
+                        (a, b) -> a
+                ));
+        if (billRequest.getBill().getBillDetails() != null) {
+            for (BillDetail billDetail : billRequest.getBill().getBillDetails()) {
+                if (billDetail.getPayableLineItems() == null) continue;
+                for (LineItem item : billDetail.getPayableLineItems()) {
+                    String billAmountKey = headCodeToBillAmountKey.get(item.getHeadCode());
+                    if (billAmountKey != null && item.getAmount() != null) {
+                        reportBill.getAmountBreakup().merge(billAmountKey, item.getAmount(), BigDecimal::add);
+                    }
+                }
+            }
+        }
 
         enrichCampaignName(reportBill, billRequest);
-//        enrichLocalization(reportBill, billRequest);
+        enrichLocalization(reportBill, billRequest);
         billRequest.getRequestInfo().setMsgId(getMsgIdWithLocalCode(billRequest.getRequestInfo().getMsgId()));
 
         return BillReportRequest.builder()
@@ -502,11 +533,11 @@ public class HealthBillReportGenerator {
      * @param bill        the bill
      * @return a list of report bill detail objects
      */
-    private List<ReportBillDetail> getReportBillDetail(RequestInfo requestInfo, Bill bill) {
+    private List<ReportBillDetail> getReportBillDetail(RequestInfo requestInfo, Bill bill, WorkerMdms workerMdms) {
         // Get the bill details
         List<BillDetail> billDetails = bill.getBillDetails();
-        // Get the skill code to worker rate map
-        Map<String, WorkerRate> skillCodeRateMap = getSkillCodeRateMap(requestInfo, bill);
+        Map<String, WorkerRate> skillCodeRateMap = buildSkillCodeRateMap(workerMdms);
+        Map<String, String> headCodeToDetailKey = buildHeadCodeToDetailKeyMap(workerMdms);
         // Set the page size
         int pageSize = 10;
         // Create a list to store the report bill details
@@ -516,7 +547,7 @@ public class HealthBillReportGenerator {
             // Get the current batch
             List<BillDetail> batch = billDetails.subList(i, Math.min(i + pageSize, billDetails.size()));
             // Generate the report bill details for the current batch
-            List<ReportBillDetail> reportBillDetail = generateReport(requestInfo, batch, skillCodeRateMap, bill.getTenantId());
+            List<ReportBillDetail> reportBillDetail = generateReport(requestInfo, batch, skillCodeRateMap, headCodeToDetailKey, workerMdms, bill.getTenantId());
             // Add the report bill details to the result list
             reportBillDetails.addAll(reportBillDetail);
         }
@@ -538,26 +569,42 @@ public class HealthBillReportGenerator {
         return sortedReportBillDetails;
     }
 
-    /**
-     * Method to fetch the skill code to worker rate map
-     *
-     * @param requestInfo the request info
-     * @param bill        the bill
-     * @return a map of skill code to the corresponding worker rate
-     */
-    private Map<String, WorkerRate> getSkillCodeRateMap(RequestInfo requestInfo, Bill bill) {
-        WorkerMdms workerRateMdms = null;
-        Map<String, WorkerRate> skillCodeRateMap = new HashMap<>();
+    private WorkerMdms fetchWorkerMdms(RequestInfo requestInfo, Bill bill) {
         if (bill.getReferenceId() != null) {
             String parentProjectId = bill.getReferenceId().split("\\.")[0];
-            workerRateMdms = expenseCalculatorService.fetchMDMSDataForWorker(requestInfo, bill.getTenantId(), parentProjectId).get(0);
+            List<WorkerMdms> list = expenseCalculatorService.fetchMDMSDataForWorker(requestInfo, bill.getTenantId(), parentProjectId);
+            if (list != null && !list.isEmpty()) return list.get(0);
         }
-        if (workerRateMdms != null) {
-            for (WorkerRate workerRate : workerRateMdms.getRates()) {
-                skillCodeRateMap.put(workerRate.getSkillCode(), workerRate);
+        return null;
+    }
+
+    private Map<String, WorkerRate> buildSkillCodeRateMap(WorkerMdms workerMdms) {
+        Map<String, WorkerRate> map = new HashMap<>();
+        if (workerMdms != null && workerMdms.getRates() != null) {
+            for (WorkerRate workerRate : workerMdms.getRates()) {
+                map.put(workerRate.getSkillCode(), workerRate);
             }
         }
-        return skillCodeRateMap;
+        return map;
+    }
+
+    /** Builds headCode → reportDetailKey map from fieldConfig + headCodeMapping. */
+    private Map<String, String> buildHeadCodeToDetailKeyMap(WorkerMdms workerMdms) {
+        Map<String, String> result = new HashMap<>();
+        List<RateFieldConfig> configs;
+        if (workerMdms == null || workerMdms.getFieldConfig() == null || workerMdms.getFieldConfig().isEmpty()) {
+            configs = RateFieldConfigConstants.DEFAULT_FIELD_CONFIGS;
+        } else {
+            configs = workerMdms.getFieldConfig();
+        }
+        Map<String, String> headCodeMapping = (workerMdms != null && workerMdms.getHeadCodeMapping() != null)
+                ? workerMdms.getHeadCodeMapping() : Collections.emptyMap();
+        for (RateFieldConfig config : configs) {
+            if (config.getFieldKey() == null || config.getReportDetailKey() == null) continue;
+            String headCode = headCodeMapping.getOrDefault(config.getFieldKey(), config.getFieldKey());
+            result.put(headCode, config.getReportDetailKey());
+        }
+        return result;
     }
 
     /**
@@ -569,7 +616,10 @@ public class HealthBillReportGenerator {
      * @param tenantId               the tenant id
      * @return a list of report bill details
      */
-    private List<ReportBillDetail> generateReport(RequestInfo requestInfo, List<BillDetail> billDetails, Map<String, WorkerRate> skillCodeRateMap, String tenantId) {
+    private List<ReportBillDetail> generateReport(RequestInfo requestInfo, List<BillDetail> billDetails,
+                                                   Map<String, WorkerRate> skillCodeRateMap,
+                                                   Map<String, String> headCodeToDetailKey,
+                                                   WorkerMdms workerMdms, String tenantId) {
         List<String> individualIds = new ArrayList<>();
         List<String> musterRollIds = new ArrayList<>();
         List<ReportBillDetail> reportBillDetails = new ArrayList<>();
@@ -602,7 +652,7 @@ public class HealthBillReportGenerator {
         }
 
         for (BillDetail billDetail : billDetails) {
-            reportBillDetails.add(getReportBillDetail(billDetail, individualMap.get(billDetail.getPayee().getIdentifier()), individualMusterAttendanceMap, skillCodeRateMap));
+            reportBillDetails.add(getReportBillDetail(billDetail, individualMap.get(billDetail.getPayee().getIdentifier()), individualMusterAttendanceMap, skillCodeRateMap, headCodeToDetailKey, workerMdms));
         }
         return reportBillDetails;
     }
@@ -615,7 +665,11 @@ public class HealthBillReportGenerator {
      * @param skillCodeRateMap  the map of skill code to the corresponding worker rate
      * @return a ReportBillDetail object
      */
-    private ReportBillDetail getReportBillDetail(BillDetail billDetail, Individual individual, Map<String, Map<String, BigDecimal>> individualMusterAttendanceMap, Map<String, WorkerRate> skillCodeRateMap) {
+    private ReportBillDetail getReportBillDetail(BillDetail billDetail, Individual individual,
+                                                  Map<String, Map<String, BigDecimal>> individualMusterAttendanceMap,
+                                                  Map<String, WorkerRate> skillCodeRateMap,
+                                                  Map<String, String> headCodeToDetailKey,
+                                                  WorkerMdms workerMdms) {
         ReportBillDetail reportBillDetail = new ReportBillDetail().builder()
                 .slNo(0)
                 .individualName(null)
@@ -624,9 +678,6 @@ public class HealthBillReportGenerator {
                 .locality(null)
                 .idNumber(null)
                 .totalNumberOfDays((float) 0)
-                .foodAmount(BigDecimal.ZERO)
-                .transportAmount(BigDecimal.ZERO)
-                .wageAmount(BigDecimal.ZERO)
                 .totalWages(BigDecimal.ZERO)
                 .totalAmount(BigDecimal.ZERO)
                 .build();
@@ -688,12 +739,11 @@ public class HealthBillReportGenerator {
                             BigDecimal::add));
 
             reportBillDetail.setTotalNumberOfDays(totalNumberOfDays.floatValue());
-            reportBillDetail.setWageAmount(
-                    perDayAmount(amountByHeadCode.getOrDefault(PER_DIEM_HEAD_CODE, BigDecimal.ZERO), totalNumberOfDays));
-            reportBillDetail.setFoodAmount(
-                    perDayAmount(amountByHeadCode.getOrDefault(FOOD_HEAD_CODE, BigDecimal.ZERO), totalNumberOfDays));
-            reportBillDetail.setTransportAmount(
-                    perDayAmount(amountByHeadCode.getOrDefault(TRANSPORT_HEAD_CODE, BigDecimal.ZERO), totalNumberOfDays));
+            for (Map.Entry<String, BigDecimal> entry : amountByHeadCode.entrySet()) {
+                String detailKey = headCodeToDetailKey.getOrDefault(entry.getKey(), entry.getKey() + "Amount");
+                reportBillDetail.getPerDayBreakup().put(detailKey,
+                        perDayAmount(entry.getValue(), totalNumberOfDays));
+            }
         } else if (individual != null) {
             // New bill: derive attendance from muster roll, per-day rates from MDMS.
             if (individualMusterAttendanceMap.containsKey(billDetail.getReferenceId())
@@ -729,19 +779,22 @@ public class HealthBillReportGenerator {
             }
 
             String role = reportBillDetail.getRole();
-            if (role != null && skillCodeRateMap.containsKey(role)) {
-                reportBillDetail.setFoodAmount(skillCodeRateMap.get(role).getRateBreakup()
-                        .getOrDefault(FOOD_HEAD_CODE, BigDecimal.ZERO));
-                reportBillDetail.setTransportAmount(skillCodeRateMap.get(role).getRateBreakup()
-                        .getOrDefault(TRANSPORT_HEAD_CODE, BigDecimal.ZERO));
-                reportBillDetail.setWageAmount(skillCodeRateMap.get(role).getRateBreakup()
-                        .getOrDefault(PER_DIEM_HEAD_CODE, BigDecimal.ZERO));
+            if (role != null && skillCodeRateMap.containsKey(role) && workerMdms != null
+                    && workerMdms.getFieldConfig() != null) {
+                Map<String, BigDecimal> rateBreakup = skillCodeRateMap.get(role).getRateBreakup();
+                Map<String, String> headCodeMapping = workerMdms.getHeadCodeMapping() != null
+                        ? workerMdms.getHeadCodeMapping() : Collections.emptyMap();
+                for (RateFieldConfig config : workerMdms.getFieldConfig()) {
+                    if (config.getFieldKey() == null || config.getReportDetailKey() == null) continue;
+                    BigDecimal rate = rateBreakup.getOrDefault(config.getFieldKey(), BigDecimal.ZERO);
+                    reportBillDetail.getPerDayBreakup().put(config.getReportDetailKey(), rate);
+                }
             }
         }
 
-        reportBillDetail.setTotalWages(reportBillDetail.getWageAmount()
-                .add(reportBillDetail.getTransportAmount())
-                .add(reportBillDetail.getFoodAmount()));
+        BigDecimal totalWages = reportBillDetail.getPerDayBreakup().values().stream()
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        reportBillDetail.setTotalWages(totalWages);
         reportBillDetail.setTotalAmount(billDetail.getTotalAmount());
         return reportBillDetail;
     }

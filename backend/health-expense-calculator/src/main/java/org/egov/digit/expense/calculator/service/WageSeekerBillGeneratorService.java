@@ -29,6 +29,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.*;
+import static org.egov.digit.expense.calculator.util.RateFieldConfigConstants.*;
 
 @Slf4j
 @Component
@@ -90,8 +91,26 @@ public class WageSeekerBillGeneratorService {
 		return mdmsData;
 	}
 
+	/**
+	 * @param billingPeriodNumber period number from BillingPeriod (1-based). Pass 1 for non-V2 billing paths
+	 *                            so ONE_TIME fields are always included in single-period bills.
+	 */
 	public void createWageSeekerBillsHealth(RequestInfo requestInfo, List<MusterRoll> musterRolls,
-											List<WorkerMdms> workerMdms, Bill bill) {
+											List<WorkerMdms> workerMdms, Bill bill, int billingPeriodNumber) {
+
+		WorkerMdms mdms = workerMdms.get(0);
+		List<RateFieldConfig> rawConfigs = mdms.getFieldConfig();
+		List<RateFieldConfig> fieldConfigs = (rawConfigs != null && !rawConfigs.isEmpty() ? rawConfigs : DEFAULT_FIELD_CONFIGS)
+				.stream()
+				.sorted(Comparator.comparingInt(f -> Optional.ofNullable(f.getOrder()).orElse(99)))
+				.collect(Collectors.toList());
+
+		if (rawConfigs == null || rawConfigs.isEmpty()) {
+			log.info("No fieldConfig in WorkerMdms for campaignId: {}. Using default field config.", mdms.getCampaignId());
+		}
+
+		Map<String, String> headCodeMap = Optional.ofNullable(mdms.getHeadCodeMapping())
+				.orElse(Collections.emptyMap());
 
 		for (MusterRoll musterRoll : musterRolls) {
 
@@ -108,49 +127,45 @@ public class WageSeekerBillGeneratorService {
 				Individual individual = individualMap.get(individualEntry.getIndividualId());
 				Map<String, BigDecimal> rateBreakup = new HashMap<>();
 				// Find the skill that has a configured work rate
-				String matchedSkillCode = getSkillWithConfiguredWorkRate(individual, workerMdms.get(0));
+				String matchedSkillCode = getSkillWithConfiguredWorkRate(individual, mdms);
 				if (matchedSkillCode == null) {
 					log.error("No skill with configured work rate found for individual :: " + individualEntry.getIndividualId());
 				} else {
 					//fetch rate breakup for the matched skill code
-					Optional<WorkerRate> rate = workerMdms.get(0).getRates().stream()
+					Optional<WorkerRate> rate = mdms.getRates().stream()
 							.filter(workerRate -> workerRate.getSkillCode() != null && workerRate.getSkillCode().equalsIgnoreCase(matchedSkillCode))
 							.findFirst();
 					rateBreakup = rate
 							.map(WorkerRate::getRateBreakup)
 							.orElse(new HashMap<>());
 				}
+
+				BigDecimal attendance = individualEntry.getModifiedTotalAttendance() != null ?
+					individualEntry.getModifiedTotalAttendance() : individualEntry.getActualTotalAttendance();
+
 				List<LineItem> payableLineItem = new ArrayList<>();
 				BigDecimal totalBillDetailAmount = BigDecimal.ZERO;
-				BigDecimal food = BigDecimal.ZERO;
-				BigDecimal transport = BigDecimal.ZERO;
-				BigDecimal wage = BigDecimal.ZERO;
-				for (Map.Entry<String, BigDecimal> entry : rateBreakup.entrySet()) {
-					//Create line item for each skill
-					BigDecimal amount = calculateAmount(individualEntry, entry.getValue());
-					switch (entry.getKey()) {
-						case "FOOD":
-							food = food.add(amount);
-							break;
-						case "TRAVEL":
-							transport = transport.add(amount);
-							break;
-						case "PER_DAY":
-							wage = wage.add(amount);
-							break;
-						default:
-							break;
-					}
-					LineItem lineItem = buildLineItem(musterRoll.getTenantId(), amount, entry.getKey(), LineItem.TypeEnum.PAYABLE);
-					totalBillDetailAmount = totalBillDetailAmount.add(lineItem.getAmount());
+
+				for (RateFieldConfig config : fieldConfigs) {
+					if (!Boolean.TRUE.equals(config.getIsPayable())) continue;
+					if (PAYMENT_TYPE_ONE_TIME.equals(config.getPaymentType()) && billingPeriodNumber != 1) continue;
+
+					BigDecimal amount = computeFieldAmount(config, rateBreakup, attendance);
+					if (amount == null || amount.compareTo(BigDecimal.ZERO) == 0) continue;
+
+					String headCode = headCodeMap.getOrDefault(config.getFieldKey(), config.getFieldKey());
+					LineItem lineItem = buildLineItem(musterRoll.getTenantId(), amount, headCode, LineItem.TypeEnum.PAYABLE);
 					payableLineItem.add(lineItem);
+					totalBillDetailAmount = totalBillDetailAmount.add(amount);
+
+					// Accumulate into bill — key driven by MDMS billAmountKey
+					bill.getAmountBreakup().merge(config.getBillAmountKey(), amount, BigDecimal::add);
 				}
+
 				// BUGFIX: Store attendance data in bill detail additionalDetails for aggregate bill reports
 				// For aggregate bills, the consolidated muster roll isn't persisted, so report generation
 				// can't fetch it. We store attendance here so reports can access it without muster roll lookup.
 				Map<String, Object> billDetailAdditionalDetails = new HashMap<>();
-				BigDecimal attendance = individualEntry.getModifiedTotalAttendance() != null ?
-					individualEntry.getModifiedTotalAttendance() : individualEntry.getActualTotalAttendance();
 				billDetailAdditionalDetails.put("attendance", attendance);
 				billDetailAdditionalDetails.put("individualId", individualEntry.getIndividualId());
 
@@ -179,13 +194,35 @@ public class WageSeekerBillGeneratorService {
 				billDetail.setAdditionalDetails(additionalDetails);
 
 				bill.addBillDetailsItem(billDetail);
-				bill.setTotalFoodAmount(bill.getTotalFoodAmount().add(food));
-				bill.setTotalWageAmount(bill.getTotalWageAmount().add(wage));
-				bill.setTotalTransportAmount(bill.getTotalTransportAmount().add(transport));
 				bill.setTotalAmount(bill.getTotalAmount().add(billDetail.getTotalAmount()));
 			}
 		}
+	}
 
+	private BigDecimal computeFieldAmount(RateFieldConfig config, Map<String, BigDecimal> rateBreakup,
+										  BigDecimal attendance) {
+		String paymentType = config.getPaymentType();
+
+		if (VALUE_TYPE_FLAT.equals(config.getValueType())) {
+			BigDecimal rate = rateBreakup.get(config.getFieldKey());
+			if (rate == null) return BigDecimal.ZERO;
+			return PAYMENT_TYPE_PER_DAY.equals(paymentType)
+					? rate.multiply(attendance)
+					: rate; // ONE_TIME or PER_PERIOD — no attendance multiplier
+		}
+
+		if (VALUE_TYPE_PERCENTAGE.equals(config.getValueType())) {
+			BigDecimal percentageValue = rateBreakup.get(config.getPercentageKey());
+			if (percentageValue == null || config.getComponents() == null) return BigDecimal.ZERO;
+			BigDecimal base = config.getComponents().stream()
+					.map(rateBreakup::get)
+					.filter(Objects::nonNull)
+					.map(r -> PAYMENT_TYPE_PER_DAY.equals(paymentType) ? r.multiply(attendance) : r)
+					.reduce(BigDecimal.ZERO, BigDecimal::add);
+			return base.multiply(percentageValue).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+		}
+
+		return BigDecimal.ZERO;
 	}
 
 	BigDecimal sumRateBreakup(Map<String, BigDecimal> rateBreakup) {

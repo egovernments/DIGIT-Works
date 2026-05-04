@@ -272,6 +272,7 @@ public class ExpenseCalculatorUtil {
 
         if(response!=null) {
             bills.addAll(response.getBills());
+            bills.forEach(this::restoreAmountBreakupFromAdditionalDetails);
         }
         else {
             throw new CustomException("Bill_Search_Error","Error in bill search");
@@ -280,6 +281,34 @@ public class ExpenseCalculatorUtil {
         return bills;
     }
     
+    /**
+     * Restores amountBreakup entries from bill.additionalDetails["amountBreakup"] when the
+     * expense service returns 0 for the dynamic top-level fields it cannot persist.
+     */
+    @SuppressWarnings("unchecked")
+    private void restoreAmountBreakupFromAdditionalDetails(Bill bill) {
+        if (bill == null || bill.getAdditionalDetails() == null) return;
+        try {
+            Map<String, Object> details = mapper.convertValue(bill.getAdditionalDetails(),
+                    mapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class));
+            Object stored = details.get("amountBreakup");
+            if (!(stored instanceof Map)) return;
+            Map<String, Object> storedBreakup = (Map<String, Object>) stored;
+            storedBreakup.forEach((key, val) -> {
+                if (val instanceof Number) {
+                    BigDecimal storedVal = new BigDecimal(val.toString());
+                    // Only restore when current value is absent or 0 (expense service didn't persist it)
+                    if (storedVal.compareTo(BigDecimal.ZERO) > 0 &&
+                            bill.getAmountBreakup().getOrDefault(key, BigDecimal.ZERO).compareTo(BigDecimal.ZERO) == 0) {
+                        bill.getAmountBreakup().put(key, storedVal);
+                    }
+                }
+            });
+        } catch (Exception e) {
+            log.warn("Failed to restore amountBreakup from additionalDetails for bill {}: {}", bill.getId(), e.getMessage());
+        }
+    }
+
     public LineItem buildPayableLineItem(BigDecimal amount, String tenantId, String headCode) {
         return LineItem.builder()
                  .amount(amount)

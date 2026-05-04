@@ -1147,9 +1147,10 @@ public class IntermediateBillingService {
                 project.getProjectHierarchy().split("\\.")[0] : project.getId();
         List<WorkerMdms> workerMdms = fetchMDMSDataForWorker(requestInfo, criteria.getTenantId(), parentProjectId);
 
-        // Generate bill details from muster rolls (V1 logic preserved)
+        // Generate bill details from muster rolls
+        int periodNumber = period.getPeriodNumber() != null ? period.getPeriodNumber() : 1;
         wageSeekerBillGeneratorService.createWageSeekerBillsHealth(
-                requestInfo, musterRolls, workerMdms, bill
+                requestInfo, musterRolls, workerMdms, bill, periodNumber
         );
 
         // Enrich with V1 bill fields
@@ -1181,6 +1182,12 @@ public class IntermediateBillingService {
         String campaignNumber = extractCampaignNumber(project);
         if (campaignNumber != null) {
             additionalDetails.put("campaignNumber", campaignNumber);
+        }
+
+        // Store computed amount breakup under a dedicated key — expense service may not persist dynamic
+        // top-level fields, but additionalDetails IS preserved as a JSON blob.
+        if (!bill.getAmountBreakup().isEmpty()) {
+            additionalDetails.put("amountBreakup", new java.util.LinkedHashMap<>(bill.getAmountBreakup()));
         }
 
         bill.setAdditionalDetails(additionalDetails);
@@ -1983,6 +1990,11 @@ public class IntermediateBillingService {
         // BUGFIX: Mark this as an aggregate bill for report generation
         // Report generator will use this flag to handle muster roll lookups differently
         additionalDetails.put("isAggregateBill", true);
+
+        // Store computed amount breakup under a dedicated key for persistence
+        if (!bill.getAmountBreakup().isEmpty()) {
+            additionalDetails.put("amountBreakup", new java.util.LinkedHashMap<>(bill.getAmountBreakup()));
+        }
 
         bill.setAdditionalDetails(additionalDetails);
 

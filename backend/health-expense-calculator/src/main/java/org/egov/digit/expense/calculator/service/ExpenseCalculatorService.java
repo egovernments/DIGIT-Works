@@ -630,9 +630,7 @@ public class ExpenseCalculatorService {
                 if (SUCCESSFUL_CONSTANT.equalsIgnoreCase(billResponse.getResponseInfo().getStatus())) {
                     log.info("Bill successfully posted to expense service. Reference ID " + bill.getReferenceId());
                     List<Bill> respBills = billResponse.getBills();
-                    respBills.get(0).setTotalTransportAmount(bill.getTotalTransportAmount());
-                    respBills.get(0).setTotalFoodAmount(bill.getTotalFoodAmount());
-                    respBills.get(0).setTotalWageAmount(bill.getTotalWageAmount());
+                    respBills.get(0).getAmountBreakup().putAll(bill.getAmountBreakup());
                     submittedBills.addAll(respBills);
 //                if(respBills != null && !respBills.isEmpty()) {
 //                    log.info("Persisting meta for bill reference ID: " + bill.getReferenceId());
@@ -846,7 +844,7 @@ public class ExpenseCalculatorService {
             // Fetch musterRolls for given muster roll IDs
             List<MusterRoll> musterRolls =  expenseCalculatorUtil.fetchMusterRollByRegIds(requestInfo,criteria.getTenantId(),regIds);
 
-            wageSeekerBillGeneratorService.createWageSeekerBillsHealth(requestInfo,musterRolls,workerMdms, bill);
+            wageSeekerBillGeneratorService.createWageSeekerBillsHealth(requestInfo, musterRolls, workerMdms, bill, 1);
         } while(attendanceRegisters.size() > 0);
 
         //Enrich bill common fields

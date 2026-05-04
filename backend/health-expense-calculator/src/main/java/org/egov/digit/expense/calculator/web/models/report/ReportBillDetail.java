@@ -1,5 +1,8 @@
 package org.egov.digit.expense.calculator.web.models.report;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +11,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Bill details of the individual payee
@@ -39,15 +44,21 @@ public class ReportBillDetail {
     @Schema(description = "mobileNumber")
     private String mobileNumber;
 
-    @Schema(description = "wageAmount")
+    @JsonIgnore
     @Builder.Default
-    private BigDecimal wageAmount = BigDecimal.ZERO;
+    private Map<String, BigDecimal> perDayBreakup = new LinkedHashMap<>();
 
-    @Schema(description = "foodAmount")
-    private BigDecimal foodAmount = BigDecimal.ZERO;
+    @JsonAnyGetter
+    public Map<String, BigDecimal> getPerDayBreakup() {
+        return perDayBreakup;
+    }
 
-    @Schema(description = "transportAmount")
-    private BigDecimal transportAmount = BigDecimal.ZERO;
+    @JsonAnySetter
+    public void setPerDayEntry(String key, Object value) {
+        if (value instanceof Number) {
+            perDayBreakup.put(key, new BigDecimal(value.toString()));
+        }
+    }
 
     @Schema(description = "totalWages")
     private BigDecimal totalWages = BigDecimal.ZERO;
