@@ -118,9 +118,9 @@ public class HealthBillReportGenerator {
             if (noOfBillDetailsObject == null) {
                 log.warn("Total number of bill details not present in additional details. " +
                         "Generating report for number of bill details currently present in db");
-            } else if (Integer.parseInt((String)noOfBillDetailsObject) > bill.getBillDetails().size()) {
+            } else if (Integer.parseInt(noOfBillDetailsObject.toString()) > bill.getBillDetails().size()) {
                 throw new CustomException("ALL_BILL_DETAILS_NOT_PERSISTED",
-                        Integer.parseInt((String)noOfBillDetailsObject) - bill.getBillDetails().size() +
+                        Integer.parseInt(noOfBillDetailsObject.toString()) - bill.getBillDetails().size() +
                                 " billDetails are yet to be persisted. Please wait for sometime and try again");
             }
         }
