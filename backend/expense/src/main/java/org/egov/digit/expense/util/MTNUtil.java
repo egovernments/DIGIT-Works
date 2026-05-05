@@ -129,7 +129,6 @@ public class MTNUtil {
     public boolean isMsisdnActive(String msisdn) {
         if (config.isMtnApiMockEnabled()) {
             log.info("[MTN MOCK] isMsisdnActive({}) → true", msisdn);
-            if (Objects.equals(msisdn, "9876500001") || Objects.equals(msisdn, "9876500002")) return false;
             return true;
         }
         String accessToken;
