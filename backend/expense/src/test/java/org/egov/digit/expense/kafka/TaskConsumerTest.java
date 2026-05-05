@@ -81,7 +81,6 @@ public class TaskConsumerTest {
                 .billNumber(BILL_NUMBER).billDate(System.currentTimeMillis())
                 .dueDate(System.currentTimeMillis() + 86400000L)
                 .totalAmount(java.math.BigDecimal.valueOf(1000))
-                .totalWageAmount(java.math.BigDecimal.valueOf(1000))
                 .status(Status.PAYMENT_IN_PROGRESS).referenceId("register-001")
                 .billDetails(List.of(detail)).auditDetails(buildAuditDetails()).build();
         TaskRequest req = TaskRequest.builder()
