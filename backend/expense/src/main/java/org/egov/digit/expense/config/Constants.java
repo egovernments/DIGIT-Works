@@ -40,8 +40,13 @@ public class Constants {
 
 	// BankPaymentService error codes
 	public static final String BILL_NOT_FOUND_ERR_CODE = "BILL_NOT_FOUND";
-	public static final String MISSING_BANK_ACCOUNT_ERR_CODE = "MISSING_BANK_ACCOUNT";
-	public static final String MISSING_BENEFICIARY_CODE_ERR_CODE = "MISSING_BENEFICIARY_CODE";
+	public static final String MISSING_PAYEE_NAME_ERR_CODE           = "MISSING_PAYEE_NAME";
+	public static final String MISSING_PAYEE_PHONE_NUMBER_ERR_CODE   = "MISSING_PAYEE_PHONE_NUMBER";
+	public static final String MISSING_BANK_ACCOUNT_ERR_CODE         = "MISSING_BANK_ACCOUNT";
+	public static final String INVALID_BANK_ACCOUNT_ERR_CODE         = "INVALID_BANK_ACCOUNT";
+	public static final String INVALID_BANK_CODE_ERR_CODE            = "INVALID_BANK_CODE";
+	public static final String MISSING_BENEFICIARY_CODE_ERR_CODE     = "MISSING_BENEFICIARY_CODE";
+	public static final String INVALID_BENEFICIARY_CODE_ERR_CODE     = "INVALID_BENEFICIARY_CODE";
 	public static final String BANK_TRANSFER_NOT_IMPLEMENTED_ERR_CODE = "BANK_TRANSFER_NOT_IMPLEMENTED";
 
 	public static final String CONTACT_NAME_PATH = "$.organisations.*.contactDetails.*.contactName";

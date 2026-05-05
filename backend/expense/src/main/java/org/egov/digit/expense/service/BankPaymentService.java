@@ -1,5 +1,8 @@
 package org.egov.digit.expense.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
@@ -17,7 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,16 +40,22 @@ public class BankPaymentService implements PaymentProviderService {
     private final BillRepository billRepository;
     private final WorkflowUtil workflowUtil;
     private final ExpenseProducer expenseProducer;
+    private final BillCacheService billCacheService;
+    private final ObjectMapper objectMapper;
 
     @Autowired
     public BankPaymentService(Configuration config,
                                BillRepository billRepository,
                                WorkflowUtil workflowUtil,
-                               ExpenseProducer expenseProducer) {
+                               ExpenseProducer expenseProducer,
+                               BillCacheService billCacheService,
+                               ObjectMapper objectMapper) {
         this.config = config;
         this.billRepository = billRepository;
         this.workflowUtil = workflowUtil;
         this.expenseProducer = expenseProducer;
+        this.billCacheService = billCacheService;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -85,6 +96,11 @@ public class BankPaymentService implements PaymentProviderService {
                 .build();
         try {
             verify(billRequest);
+            // Push the updated bill so the persister writes the new detail statuses to DB.
+            // The handler re-fetches from DB after executeTask returns, so without this
+            // the details remain VERIFICATION_IN_PROGRESS in the DB indefinitely.
+            billCacheService.put(billFromSearch);
+            expenseProducer.push(billFromSearch.getTenantId(), config.getBillUpdateTopic(), billRequest);
         } finally {
             task.setStatus(Status.DONE);
             expenseProducer.push(billFromSearch.getTenantId(), config.getTaskUpdateTopic(), task);
@@ -108,7 +124,7 @@ public class BankPaymentService implements PaymentProviderService {
                 continue;
             }
             Party payee = billDetail.getPayee();
-            if (payee == null || !Constants.PAYMENT_PROVIDER_BANK.equalsIgnoreCase(payee.getPaymentProvider())) {
+            if (payee == null) {
                 continue;
             }
 
@@ -121,18 +137,28 @@ public class BankPaymentService implements PaymentProviderService {
                 }
             }
 
-            // Step 2: validate required bank fields
-            boolean validationPassed = validateBankFields(billDetail, payee);
+            // Clear any prior errorDetails before validation — must be unconditional so the
+            // re-poll path (already VERIFICATION_IN_PROGRESS, Step 1 skipped) also gets a clean slate.
+            Map<String, Object> cleaned = toMutableAdditionalDetails(billDetail.getAdditionalDetails());
+            cleaned.remove("errorDetails");
+            billDetail.setAdditionalDetails(cleaned.isEmpty() ? null : cleaned);
+
+            // Step 2: validate payment fields for the detail's provider
+            String failureReason = validatePaymentFields(payee);
 
             // Step 3: finalize based on validation
-            if (validationPassed) {
+            if (failureReason == null) {
                 setBillDetailStatus(billDetail,
                         Workflow.builder().action(Actions.VERIFICATION_SUCCESS.toString()).build(), requestInfo);
                 log.info("Bank verification succeeded for billDetail {}", billDetail.getId());
             } else {
+                Map<String, Object> additionalDetails = toMutableAdditionalDetails(billDetail.getAdditionalDetails());
+                additionalDetails.put("errorDetails", Map.of("reasonForFailure", failureReason));
+                billDetail.setAdditionalDetails(additionalDetails);
                 setBillDetailStatus(billDetail,
-                        Workflow.builder().action(Actions.FAILED.toString()).build(), requestInfo);
-                log.info("Bank verification failed for billDetail {}", billDetail.getId());
+                        Workflow.builder().action(Actions.FAILED.toString()).comments(failureReason).build(),
+                        requestInfo);
+                log.info("Bank verification failed for billDetail {}: {}", billDetail.getId(), failureReason);
             }
         }
     }
@@ -222,16 +248,39 @@ public class BankPaymentService implements PaymentProviderService {
         }
     }
 
-    private boolean validateBankFields(BillDetail billDetail, Party payee) {
-        if (!StringUtils.hasText(payee.getBankAccount())) {
-            log.warn("Bank account missing for billDetail {}", billDetail.getId());
-            return false;
-        }
-        if (!StringUtils.hasText(payee.getBeneficiaryCode())) {
-            log.warn("Beneficiary code missing for billDetail {}", billDetail.getId());
-            return false;
-        }
-        return true;
+    private String validatePaymentFields(Party payee) {
+        String provider = payee.getPaymentProvider();
+        if (Constants.PAYMENT_PROVIDER_BANK.equalsIgnoreCase(provider))
+            return validateBankPaymentFields(payee);
+        if (Constants.PAYMENT_PROVIDER_MTN.equalsIgnoreCase(provider))
+            return validateMtnPaymentFields(payee);
+        return null;
+    }
+
+    private String validateBankPaymentFields(Party payee) {
+        if (!StringUtils.hasText(payee.getPayeeName()))
+            return Constants.MISSING_PAYEE_NAME_ERR_CODE;
+        if (!StringUtils.hasText(payee.getBankAccount()))
+            return Constants.MISSING_BANK_ACCOUNT_ERR_CODE;
+        if (!payee.getBankAccount().matches("\\d{10}"))
+            return Constants.INVALID_BANK_ACCOUNT_ERR_CODE;
+        if (!StringUtils.hasText(payee.getBankCode()))
+            return Constants.INVALID_BANK_CODE_ERR_CODE;
+        if (!payee.getBankCode().matches("\\d{3}|\\d{9}"))
+            return Constants.INVALID_BANK_CODE_ERR_CODE;
+        if (!StringUtils.hasText(payee.getBeneficiaryCode()))
+            return Constants.MISSING_BENEFICIARY_CODE_ERR_CODE;
+        if (payee.getBeneficiaryCode().length() > 35 || !payee.getBeneficiaryCode().matches("[a-zA-Z0-9]+"))
+            return Constants.INVALID_BENEFICIARY_CODE_ERR_CODE;
+        return null;
+    }
+
+    private String validateMtnPaymentFields(Party payee) {
+        if (!StringUtils.hasText(payee.getPayeeName()))
+            return Constants.MISSING_PAYEE_NAME_ERR_CODE;
+        if (!StringUtils.hasText(payee.getPayeePhoneNumber()))
+            return Constants.MISSING_PAYEE_PHONE_NUMBER_ERR_CODE;
+        return null;
     }
 
     private Bill getBillFromSearch(Bill billFromRequest, RequestInfo requestInfo) {
@@ -250,5 +299,21 @@ public class BankPaymentService implements PaymentProviderService {
                     "Bill not found for id: " + billFromRequest.getId());
         }
         return bills.get(0);
+    }
+
+    /**
+     * Returns a mutable copy of additionalDetails as a Map<String, Object>,
+     * handling both JsonNode (returned by BillRowMapper) and plain Map.
+     */
+    private Map<String, Object> toMutableAdditionalDetails(Object raw) {
+        if (raw instanceof JsonNode jsonNode) {
+            return objectMapper.convertValue(jsonNode, new TypeReference<Map<String, Object>>() {});
+        }
+        if (raw instanceof Map<?, ?> map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> copy = new HashMap<>((Map<String, Object>) map);
+            return copy;
+        }
+        return new HashMap<>();
     }
 }

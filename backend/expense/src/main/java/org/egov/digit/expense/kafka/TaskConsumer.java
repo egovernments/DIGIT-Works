@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -117,6 +118,9 @@ public class TaskConsumer {
             }
             // Single attempt — transitionBillDetail reconciles INVALID_ACTION internally
             paymentWorkflowService.transitionBillDetail(detail, Actions.VERIFY, taskRequest.getRequestInfo());
+            // Clear any error from a prior failed attempt as soon as the detail re-enters
+            // VERIFICATION_IN_PROGRESS so the DB is clean before any provider or aggregation push.
+            clearErrorDetails(detail);
             billCacheService.put(bill);  // EC-1: cache full bill before Kafka
             paymentWorkflowService.pushBillUpdate(bill, taskRequest.getRequestInfo());
             // Immediately push VerificationVerify so MTN call happens via next Kafka message,
@@ -316,6 +320,15 @@ public class TaskConsumer {
      * Null is included when any detail has no provider configured, so that
      * {@link org.egov.digit.expense.service.MTNService} (which handles null) can mark them FAILED.
      */
+    private void clearErrorDetails(BillDetail detail) {
+        if (detail.getAdditionalDetails() instanceof Map<?, ?> existing) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> updated = new HashMap<>((Map<String, Object>) existing);
+            updated.remove("errorDetails");
+            detail.setAdditionalDetails(updated.isEmpty() ? null : updated);
+        }
+    }
+
     private Set<String> extractProviders(Bill bill) {
         if (bill == null || CollectionUtils.isEmpty(bill.getBillDetails())) {
             return Collections.singleton(null);

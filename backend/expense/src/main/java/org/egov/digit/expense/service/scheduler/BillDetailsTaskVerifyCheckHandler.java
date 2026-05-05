@@ -175,7 +175,10 @@ public class BillDetailsTaskVerifyCheckHandler implements SchedulerJobHandler {
             if (!isVerifySettled(detail.getStatus())) {
                 try {
                     paymentWorkflowService.transitionBillDetail(detail, Actions.FAILED, requestInfo);
-                    paymentWorkflowService.pushBillUpdate(bill, requestInfo);
+                    // Push only this detail to avoid overwriting concurrent detail transitions.
+                    // Each per-detail job fetches a stale full-bill snapshot; pushing the full bill
+                    // causes last-writer-wins races that revert earlier detail transitions in the DB.
+                    paymentWorkflowService.pushBillUpdate(buildSingleDetailBill(bill, detail), requestInfo, false);
                     log.warn("BILL_DETAILS_TASK_VERIFY_CHECK: forced detail={} to VERIFICATION_FAILED", billDetailId);
                 } catch (Exception ex) {
                     if (workflowUtil.isRetryableWfError(ex)) {
