@@ -29,6 +29,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.egov.digit.expense.calculator.util.ExpenseCalculatorServiceConstants.*;
+import static org.egov.digit.expense.calculator.util.RateFieldConfigConstants.*;
 
 /**
  * IntermediateBillingService
@@ -1209,6 +1210,19 @@ public class IntermediateBillingService {
         if (!bill.getAmountBreakup().isEmpty()) {
             additionalDetails.put("amountBreakup", new java.util.LinkedHashMap<>(bill.getAmountBreakup()));
         }
+
+        // Store fieldConfig + headCodeMapping snapshot so the expense service can correctly
+        // display and re-compute per-field amounts in the Excel template without an MDMS call.
+        WorkerMdms mdms = workerMdms.get(0);
+        List<RateFieldConfig> rawConfigs = mdms.getFieldConfig();
+        List<RateFieldConfig> orderedFieldConfigs = (rawConfigs != null && !rawConfigs.isEmpty()
+                ? rawConfigs : DEFAULT_FIELD_CONFIGS)
+                .stream()
+                .sorted(Comparator.comparingInt(f -> Optional.ofNullable(f.getOrder()).orElse(99)))
+                .collect(Collectors.toList());
+        additionalDetails.put(WORKER_RATES_SNAPSHOT_KEY, orderedFieldConfigs);
+        additionalDetails.put("headCodeMapping",
+                Optional.ofNullable(mdms.getHeadCodeMapping()).orElse(Collections.emptyMap()));
 
         bill.setAdditionalDetails(additionalDetails);
 
