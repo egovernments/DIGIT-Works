@@ -738,12 +738,66 @@ public class HealthBillReportGenerator {
                             LineItem::getAmount,
                             BigDecimal::add));
 
-            reportBillDetail.setTotalNumberOfDays(totalNumberOfDays.floatValue());
-            for (Map.Entry<String, BigDecimal> entry : amountByHeadCode.entrySet()) {
-                String detailKey = headCodeToDetailKey.getOrDefault(entry.getKey(), entry.getKey() + "Amount");
-                reportBillDetail.getPerDayBreakup().put(detailKey,
-                        perDayAmount(entry.getValue(), totalNumberOfDays));
+            // Build lookup maps from workerMdms to identify PERCENTAGE fields and their components
+            Map<String, RateFieldConfig> fieldKeyToConfig = new HashMap<>();
+            Map<String, String> headCodeToFieldKey = new HashMap<>();
+            if (workerMdms != null && workerMdms.getFieldConfig() != null) {
+                Map<String, String> headCodeMapping = workerMdms.getHeadCodeMapping() != null
+                        ? workerMdms.getHeadCodeMapping() : Collections.emptyMap();
+                for (RateFieldConfig cfg : workerMdms.getFieldConfig()) {
+                    if (cfg.getFieldKey() == null) continue;
+                    fieldKeyToConfig.put(cfg.getFieldKey(), cfg);
+                    String headCode = headCodeMapping.getOrDefault(cfg.getFieldKey(), cfg.getFieldKey());
+                    headCodeToFieldKey.put(headCode, cfg.getFieldKey());
+                }
             }
+
+            // Build fieldKey → stored total map for component lookups in percentage calculations
+            Map<String, BigDecimal> fieldKeyToAmount = new HashMap<>();
+            for (Map.Entry<String, BigDecimal> entry : amountByHeadCode.entrySet()) {
+                String fieldKey = headCodeToFieldKey.getOrDefault(entry.getKey(), entry.getKey());
+                fieldKeyToAmount.put(fieldKey, entry.getValue());
+            }
+
+            reportBillDetail.setTotalNumberOfDays(totalNumberOfDays.floatValue());
+
+            // Sum of all stored amounts used to compute actual totalWages per day
+            BigDecimal sumOfAllAmounts = amountByHeadCode.values().stream()
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            for (Map.Entry<String, BigDecimal> entry : amountByHeadCode.entrySet()) {
+                String headCode = entry.getKey();
+                BigDecimal storedTotal = entry.getValue();
+                String detailKey = headCodeToDetailKey.getOrDefault(headCode, headCode + "Amount");
+                String fieldKey = headCodeToFieldKey.getOrDefault(headCode, headCode);
+                RateFieldConfig cfg = fieldKeyToConfig.get(fieldKey);
+
+                // Always store the actual bill total for use in the total column
+                reportBillDetail.getTotalAmountBreakup().put(detailKey, storedTotal);
+
+                if (cfg != null && "PERCENTAGE".equals(cfg.getValueType())
+                        && cfg.getComponents() != null && !cfg.getComponents().isEmpty()) {
+                    // Reverse-calculate the percentage from stored bill amounts so manual bill
+                    // edits are reflected without needing to re-read MDMS rates.
+                    BigDecimal componentsTotalAmount = cfg.getComponents().stream()
+                            .map(componentFieldKey -> fieldKeyToAmount.getOrDefault(componentFieldKey, BigDecimal.ZERO))
+                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    BigDecimal reversePct = componentsTotalAmount.compareTo(BigDecimal.ZERO) == 0
+                            ? BigDecimal.ZERO
+                            : storedTotal.divide(componentsTotalAmount, 4, RoundingMode.HALF_UP)
+                                         .multiply(BigDecimal.valueOf(100))
+                                         .setScale(2, RoundingMode.HALF_UP);
+                    reportBillDetail.getPerDayBreakup().put(detailKey, reversePct);
+                    log.debug("PERCENTAGE field {} reverse-calculated as {}% (total={}, componentsTotal={})",
+                            fieldKey, reversePct, storedTotal, componentsTotalAmount);
+                } else {
+                    reportBillDetail.getPerDayBreakup().put(detailKey,
+                            perDayAmount(storedTotal, totalNumberOfDays));
+                }
+            }
+
+            // totalWages = sum of all actual per-day dollar amounts (not the percentage display values)
+            reportBillDetail.setTotalWages(perDayAmount(sumOfAllAmounts, totalNumberOfDays));
         } else if (individual != null) {
             // New bill: derive attendance from muster roll, per-day rates from MDMS.
             if (individualMusterAttendanceMap.containsKey(billDetail.getReferenceId())
@@ -792,9 +846,13 @@ public class HealthBillReportGenerator {
             }
         }
 
-        BigDecimal totalWages = reportBillDetail.getPerDayBreakup().values().stream()
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        reportBillDetail.setTotalWages(totalWages);
+        // totalWages for new-bill path: sum raw perDayBreakup values (all flat rates from MDMS).
+        // For the existing-bill path, totalWages was already set above from actual stored amounts.
+        if (!billHasStoredData) {
+            BigDecimal totalWages = reportBillDetail.getPerDayBreakup().values().stream()
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            reportBillDetail.setTotalWages(totalWages);
+        }
         reportBillDetail.setTotalAmount(billDetail.getTotalAmount());
         return reportBillDetail;
     }

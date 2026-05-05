@@ -187,9 +187,15 @@ public class BillExcelGenerate {
             }
             data.add(detail.getTotalWages());
             data.add(detail.getTotalNumberOfDays());
-            // Total amounts (perDay * days) for each dynamic field
+            // Total amounts per field: use stored bill total when available (PERCENTAGE fields),
+            // otherwise fall back to perDayBreakup × days (FLAT fields).
             for (String key : dynamicKeys) {
-                data.add(detail.getPerDayBreakup().getOrDefault(key, BigDecimal.ZERO).multiply(totalDays));
+                BigDecimal storedTotal = detail.getTotalAmountBreakup().get(key);
+                if (storedTotal != null) {
+                    data.add(storedTotal);
+                } else {
+                    data.add(detail.getPerDayBreakup().getOrDefault(key, BigDecimal.ZERO).multiply(totalDays));
+                }
             }
             data.add(detail.getTotalAmount());
 

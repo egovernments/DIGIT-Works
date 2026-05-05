@@ -60,6 +60,12 @@ public class ReportBillDetail {
         }
     }
 
+    // Stores actual stored bill totals per field; used for PERCENTAGE fields so the
+    // total column shows the real payout (not perDayBreakup × days which would be wrong).
+    @JsonIgnore
+    @Builder.Default
+    private Map<String, BigDecimal> totalAmountBreakup = new LinkedHashMap<>();
+
     @Schema(description = "totalWages")
     private BigDecimal totalWages = BigDecimal.ZERO;
 
