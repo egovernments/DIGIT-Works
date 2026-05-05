@@ -1,6 +1,7 @@
 package org.egov.digit.expense.repository.rowmapper;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -52,19 +53,21 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 			if (bill == null) {
 				
 				billDetailMap.clear();
-				
-				
+
+
 				Party payer = getPayer(rs);
-				
+
 				AuditDetails billAuditDetails = getAuditDetailsForKey(rs,
 						"b_createdby",
 						"b_createdtime",
 						"b_lastmodifiedby",
 						"b_lastmodifiedtime");
-				
+
+				JsonNode billAdditionalDetails = getadditionalDetail(rs, "b_additionalDetails");
+
 				bill = Bill.builder()
 					.paymentStatus(PaymentStatus.fromValue(rs.getString("b_paymentstatus")))
-					.additionalDetails(getadditionalDetail(rs, "b_additionalDetails"))
+					.additionalDetails(billAdditionalDetails)
 					.totalPaidAmount(rs.getBigDecimal("b_totalpaidamount"))
 					.status(Status.fromValue(rs.getString("b_status")))
 					.businessService(rs.getString("businessservice"))
@@ -164,6 +167,37 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>>{
 
 					
 		}
+
+		// Restore amountBreakup: prefer the value stored in additionalDetails (which uses billAmountKey
+		// as key, e.g. "totalWageAmount"). Fall back to summing payableLineItems by headCode only
+		// for legacy bills that don't have the snapshot.
+		for (Bill bill : billMap.values()) {
+			boolean restored = false;
+			if (bill.getAdditionalDetails() instanceof JsonNode) {
+				JsonNode ad = (JsonNode) bill.getAdditionalDetails();
+				JsonNode stored = ad.get("amountBreakup");
+				if (stored != null && stored.isObject() && !stored.isEmpty()) {
+					stored.fields().forEachRemaining(e -> {
+						if (e.getValue().isNumber()) {
+							bill.getAmountBreakup().put(e.getKey(), e.getValue().decimalValue());
+						}
+					});
+					restored = true;
+				}
+			}
+			if (!restored) {
+				if (bill.getBillDetails() == null) continue;
+				for (BillDetail detail : bill.getBillDetails()) {
+					if (detail.getPayableLineItems() == null) continue;
+					for (LineItem li : detail.getPayableLineItems()) {
+						if (li.getHeadCode() != null && li.getAmount() != null) {
+							bill.getAmountBreakup().merge(li.getHeadCode(), li.getAmount(), BigDecimal::add);
+						}
+					}
+				}
+			}
+		}
+
 		log.debug("converting map to list object ::: " + billMap.values());
 		return new ArrayList<>(billMap.values());
 	}

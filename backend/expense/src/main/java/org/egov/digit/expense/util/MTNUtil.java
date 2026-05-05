@@ -17,6 +17,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Objects;
+
 import static org.egov.digit.expense.config.Constants.*;
 
 @Slf4j
@@ -127,6 +129,7 @@ public class MTNUtil {
     public boolean isMsisdnActive(String msisdn) {
         if (config.isMtnApiMockEnabled()) {
             log.info("[MTN MOCK] isMsisdnActive({}) → true", msisdn);
+            if (Objects.equals(msisdn, "9876500001") || Objects.equals(msisdn, "9876500002")) return false;
             return true;
         }
         String accessToken;

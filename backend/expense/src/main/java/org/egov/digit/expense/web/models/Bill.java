@@ -1,5 +1,7 @@
 package org.egov.digit.expense.web.models;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,7 +21,9 @@ import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A Object which holds the info about the expense details
@@ -60,20 +64,21 @@ public class Bill {
 	@Builder.Default
 	private BigDecimal totalAmount = BigDecimal.ZERO;
 
-	@JsonProperty("totalWageAmount")
-	@Valid
+	@JsonIgnore
 	@Builder.Default
-	private BigDecimal totalWageAmount = BigDecimal.ZERO;
+	private Map<String, BigDecimal> amountBreakup = new LinkedHashMap<>();
 
-	@JsonProperty("totalFoodAmount")
-	@Valid
-	@Builder.Default
-	private BigDecimal totalFoodAmount = BigDecimal.ZERO;
+	@JsonAnyGetter
+	public Map<String, BigDecimal> getAmountBreakup() {
+		return amountBreakup;
+	}
 
-	@JsonProperty("totalTransportAmount")
-	@Valid
-	@Builder.Default
-	private BigDecimal totalTransportAmount = BigDecimal.ZERO;
+	@JsonAnySetter
+	public void setAmountEntry(String key, Object value) {
+		if (value instanceof Number) {
+			amountBreakup.put(key, new BigDecimal(value.toString()));
+		}
+	}
 
 	@JsonProperty("totalPaidAmount")
 	@Valid
