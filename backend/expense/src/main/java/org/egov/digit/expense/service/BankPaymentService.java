@@ -101,8 +101,10 @@ public class BankPaymentService implements PaymentProviderService {
         log.info("Starting bank payment verification for bill: {}", bill.getId());
 
         for (BillDetail billDetail : bill.getBillDetails()) {
-            if (billDetail.getStatus() != Status.PENDING_VERIFICATION
-                    && billDetail.getStatus() != Status.VERIFICATION_FAILED) {
+            Status currentStatus = billDetail.getStatus();
+            if (currentStatus != Status.PENDING_VERIFICATION
+                    && currentStatus != Status.VERIFICATION_FAILED
+                    && currentStatus != Status.VERIFICATION_IN_PROGRESS) {
                 continue;
             }
             Party payee = billDetail.getPayee();
@@ -110,11 +112,13 @@ public class BankPaymentService implements PaymentProviderService {
                 continue;
             }
 
-            // Step 1: VERIFY → VERIFICATION_IN_PROGRESS
-            setBillDetailStatus(billDetail, Workflow.builder().action(Actions.VERIFY.toString()).build(), requestInfo);
-            if (billDetail.getStatus() != Status.VERIFICATION_IN_PROGRESS) {
-                log.error("Bank WF Step 1 (VERIFY) failed for billDetail {} — skipping field validation", billDetail.getId());
-                continue;
+            // Step 1: VERIFY → VERIFICATION_IN_PROGRESS (skip if already there — e.g. re-poll from scheduler)
+            if (currentStatus != Status.VERIFICATION_IN_PROGRESS) {
+                setBillDetailStatus(billDetail, Workflow.builder().action(Actions.VERIFY.toString()).build(), requestInfo);
+                if (billDetail.getStatus() != Status.VERIFICATION_IN_PROGRESS) {
+                    log.error("Bank WF Step 1 (VERIFY) failed for billDetail {} — skipping field validation", billDetail.getId());
+                    continue;
+                }
             }
 
             // Step 2: validate required bank fields
