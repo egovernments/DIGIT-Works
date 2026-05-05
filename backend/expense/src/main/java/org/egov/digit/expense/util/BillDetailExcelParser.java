@@ -1,5 +1,6 @@
 package org.egov.digit.expense.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -28,11 +29,16 @@ public class BillDetailExcelParser {
 
     private final LocalizationUtil localizationUtil;
     private final Configuration config;
+    private final ObjectMapper objectMapper;
+    private final BillDetailExcelGenerator generator;
 
     @Autowired
-    public BillDetailExcelParser(LocalizationUtil localizationUtil, Configuration config) {
+    public BillDetailExcelParser(LocalizationUtil localizationUtil, Configuration config,
+                                  ObjectMapper objectMapper, BillDetailExcelGenerator generator) {
         this.localizationUtil = localizationUtil;
         this.config = config;
+        this.objectMapper = objectMapper;
+        this.generator = generator;
     }
 
     /**
@@ -61,7 +67,10 @@ public class BillDetailExcelParser {
         if (excelBytes == null || excelBytes.length == 0)
             throw new CustomException(ERR_TEMPLATE_INVALID_FORMAT, MSG_TEMPLATE_INVALID_FORMAT);
 
-        List<String> headCodes = collectPayableHeadCodes(bill);
+        BillDetailExcelGenerator.FieldConfigContext fcCtx =
+                generator.buildFieldConfigContext(bill, requestInfo);
+
+        List<String> headCodes = BillDetailExcelGenerator.resolveOrderedHeadCodes(bill, fcCtx);
         Map<String, BillDetail> workerToBillDetail = buildWorkerMap(bill);
 
         boolean isEditor   = userRoles.contains(ROLE_PAYMENT_EDITOR);
@@ -74,7 +83,7 @@ public class BillDetailExcelParser {
         try (XSSFWorkbook workbook = new XSSFWorkbook(new ByteArrayInputStream(excelBytes))) {
             Sheet sheet = workbook.getSheetAt(0);
 
-            ColumnMap colMap = buildAndValidateColumnMap(sheet, headCodes, msgMap, isEditor, isReviewer);
+            ColumnMap colMap = buildAndValidateColumnMap(sheet, headCodes, fcCtx, msgMap, isEditor, isReviewer);
 
             int lastRow = sheet.getLastRowNum();
 
@@ -109,7 +118,7 @@ public class BillDetailExcelParser {
                     }
                     builder.totalAttendance(totalAttendance);
 
-                    List<LineItem> updatedLineItems = buildLineItems(row, headCodes, source, totalAttendance, colMap);
+                    List<LineItem> updatedLineItems = buildLineItems(row, headCodes, source, totalAttendance, colMap, fcCtx);
                     builder.lineItems(updatedLineItems);
 
                     List<LineItem> updatedPayableItems = updatedLineItems.stream()
@@ -137,21 +146,15 @@ public class BillDetailExcelParser {
      * Builds a name→colIndex map from the header row, then resolves each required and optional
      * column by matching against: the raw column key, the default English label, and the
      * localized label from msgMap — all case-insensitively.
-     *
-     * Throws ERR_TEMPLATE_INVALID_HEADER for:
-     *   - missing/empty header row
-     *   - workerId column not found (required for all roles)
-     *   - any head code column not found (required for PAYMENT_REVIEWER)
-     *   - totalAttendance column not found (required for PAYMENT_REVIEWER)
      */
     private ColumnMap buildAndValidateColumnMap(Sheet sheet, List<String> headCodes,
+                                                BillDetailExcelGenerator.FieldConfigContext fcCtx,
                                                 Map<String, String> msgMap,
                                                 boolean isEditor, boolean isReviewer) {
         Row header = sheet.getRow(0);
         if (header == null || header.getLastCellNum() <= 0)
             throw new CustomException(ERR_TEMPLATE_INVALID_HEADER, MSG_TEMPLATE_MISSING_HEADER_ROW);
 
-        // Build headerValue(lowercase) → colIdx map from the uploaded file
         Map<String, Integer> headerIndexMap = new LinkedHashMap<>();
         for (int c = 0; c < header.getLastCellNum(); c++) {
             String val = readString(header, c);
@@ -161,9 +164,6 @@ public class BillDetailExcelParser {
 
         ColumnMap colMap = new ColumnMap();
 
-        // Resolve each STATIC_COL by key + default label + localized label
-        // STATIC_COLS order: workerId(0), username(1), name(2), payeeName(3), mobileNumber(4),
-        //                    payeePhone(5), bankAccount(6), bankCode(7), beneficiaryCode(8), role(9)
         colMap.workerId        = resolveColumn(headerIndexMap, COL_WORKER_ID,        msgMap.get("EXPENSE_TEMPLATE_COL_WORKER_ID"),        "Worker ID");
         colMap.payeeName       = resolveColumn(headerIndexMap, COL_PAYEE_NAME,       msgMap.get("EXPENSE_TEMPLATE_COL_PAYEE_NAME"),       "Payee Name");
         colMap.payeePhone      = resolveColumn(headerIndexMap, COL_PAYEE_PHONE,      msgMap.get("EXPENSE_TEMPLATE_COL_PAYEE_PHONE"),      "Payee Phone Number");
@@ -172,18 +172,18 @@ public class BillDetailExcelParser {
         colMap.beneficiaryCode = resolveColumn(headerIndexMap, COL_BENEFICIARY_CODE, msgMap.get("EXPENSE_TEMPLATE_COL_BENEFICIARY_CODE"), "Beneficiary Code");
         colMap.totalAttendance = resolveColumn(headerIndexMap, COL_TOTAL_ATTENDANCE, msgMap.get("EXPENSE_TEMPLATE_COL_TOTAL_ATTENDANCE"), "Total Attendance");
 
-        // workerId is required for all roles
         if (colMap.workerId == -1)
             throw new CustomException(ERR_TEMPLATE_INVALID_HEADER,
                     "Required column 'workerId' not found in uploaded template. "
                     + "Ensure the file was downloaded from this system.");
 
-        // Head code columns and totalAttendance are required for PAYMENT_REVIEWER
         if (isReviewer) {
             List<String> missingHeadCodes = new ArrayList<>();
             for (String headCode : headCodes) {
-                String locKey = "EXPENSE_TEMPLATE_COL_WAGE_" + headCode;
-                int idx = resolveColumn(headerIndexMap, headCode, msgMap.get(locKey), headCode + " Per Day Wage");
+                String locKey = resolveHeadCodeLocKey(headCode, fcCtx);
+                String defaultLabel = resolveHeadCodeDefault(headCode, fcCtx);
+                int idx = resolveColumn(headerIndexMap, headCode,
+                        msgMap.get(locKey), defaultLabel);
                 if (idx == -1) {
                     missingHeadCodes.add(headCode);
                 } else {
@@ -209,12 +209,24 @@ public class BillDetailExcelParser {
         return colMap;
     }
 
-    /**
-     * Resolves a column index by checking the headerIndexMap against any of:
-     * the raw key, the localized label (from msgMap), and the default English label.
-     * Returns -1 if none match.
-     */
-    private int resolveColumn(Map<String, Integer> headerIndexMap, String key, String localizedLabel, String defaultLabel) {
+    private String resolveHeadCodeLocKey(String headCode, BillDetailExcelGenerator.FieldConfigContext fcCtx) {
+        if (fcCtx.hasConfig()) {
+            RateFieldConfig fc = fcCtx.byHeadCode.get(headCode);
+            if (fc != null && fc.getColumnLabelKey() != null) return fc.getColumnLabelKey();
+        }
+        return "EXPENSE_TEMPLATE_COL_WAGE_" + headCode;
+    }
+
+    private String resolveHeadCodeDefault(String headCode, BillDetailExcelGenerator.FieldConfigContext fcCtx) {
+        if (fcCtx.hasConfig()) {
+            RateFieldConfig fc = fcCtx.byHeadCode.get(headCode);
+            if (fc != null && fc.getColumnLabelKey() != null) return fc.getColumnLabelKey();
+        }
+        return headCode;
+    }
+
+    private int resolveColumn(Map<String, Integer> headerIndexMap, String key,
+                               String localizedLabel, String defaultLabel) {
         Set<String> candidates = new LinkedHashSet<>();
         if (key != null)            candidates.add(key.trim().toLowerCase());
         if (localizedLabel != null) candidates.add(localizedLabel.trim().toLowerCase());
@@ -248,42 +260,84 @@ public class BillDetailExcelParser {
         return builder.build();
     }
 
+    /**
+     * Builds updated line items from the uploaded row.
+     *
+     * When fieldConfig is present, processes fields in fieldConfig.order:
+     *   PER_DAY      → newAmount = enteredRate * attendance
+     *   ONE_TIME     → newAmount = enteredValue
+     *   PER_PERIOD   → newAmount = enteredValue
+     *   PERCENTAGE   → newAmount = enteredPct * Σ(component runningAmounts) / 100
+     *
+     * Falls back to (enteredValue * attendance) for all fields when no fieldConfig.
+     */
     private List<LineItem> buildLineItems(Row row, List<String> headCodes,
                                           BillDetail source, BigDecimal totalAttendance,
-                                          ColumnMap colMap) {
+                                          ColumnMap colMap,
+                                          BillDetailExcelGenerator.FieldConfigContext fcCtx) {
         Map<String, LineItem> existingByHeadCode = new HashMap<>();
         for (LineItem item : getPayableItems(source))
             existingByHeadCode.put(item.getHeadCode(), item);
 
+        // Running map of headCode → computed amount (updated as we process each field in order)
+        Map<String, BigDecimal> runningAmounts = new LinkedHashMap<>();
+
         List<LineItem> result = new ArrayList<>();
 
-        for (String headCode : headCodes) {
-            Integer colIdx = colMap.headCodeCols.get(headCode);
-            if (colIdx == null) continue; // validated earlier — won't happen for reviewer
+        if (!fcCtx.hasConfig()) {
+            // Legacy: all fields treated as PER_DAY
+            for (String headCode : headCodes) {
+                Integer colIdx = colMap.headCodeCols.get(headCode);
+                if (colIdx == null) continue;
+                BigDecimal entered = readBigDecimal(row, colIdx);
+                if (entered == null) entered = BigDecimal.ZERO;
+                BigDecimal newAmount = entered.multiply(totalAttendance).setScale(2, RoundingMode.HALF_UP);
+                LineItem sourceItem = existingByHeadCode.get(headCode);
+                if (sourceItem != null) result.add(cloneWithAmount(sourceItem, newAmount));
+            }
+        } else {
+            // Process in fieldConfig.order — PERCENTAGE fields see already-computed component amounts
+            for (RateFieldConfig fc : fcCtx.fieldConfigs) {
+                if (!Boolean.TRUE.equals(fc.getIsPayable())) continue;
+                String hc = fcCtx.resolveHeadCode(fc.getFieldKey());
+                Integer colIdx = colMap.headCodeCols.get(hc);
+                if (colIdx == null) continue;
 
-            BigDecimal perDayWage = readBigDecimal(row, colIdx);
-            if (perDayWage == null) perDayWage = BigDecimal.ZERO;
+                BigDecimal entered = readBigDecimal(row, colIdx);
+                if (entered == null) entered = BigDecimal.ZERO;
 
-            BigDecimal newAmount = perDayWage.multiply(totalAttendance).setScale(2, RoundingMode.HALF_UP);
+                BigDecimal newAmount;
+                if (VALUE_TYPE_PERCENTAGE.equals(fc.getValueType())) {
+                    BigDecimal componentSum = sumRunningComponents(fc, fcCtx, runningAmounts);
+                    newAmount = componentSum.multiply(entered)
+                            .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+                } else if (PAYMENT_TYPE_PER_DAY.equals(fc.getPaymentType())) {
+                    newAmount = entered.multiply(totalAttendance).setScale(2, RoundingMode.HALF_UP);
+                } else {
+                    // ONE_TIME / PER_PERIOD — entered value IS the amount
+                    newAmount = entered.setScale(2, RoundingMode.HALF_UP);
+                }
 
-            LineItem sourceItem = existingByHeadCode.get(headCode);
-            if (sourceItem != null) {
-                result.add(LineItem.builder()
-                        .id(sourceItem.getId())
-                        .billDetailId(sourceItem.getBillDetailId())
-                        .tenantId(sourceItem.getTenantId())
-                        .headCode(sourceItem.getHeadCode())
-                        .type(sourceItem.getType())
-                        .amount(newAmount)
-                        .paidAmount(sourceItem.getPaidAmount())
-                        .status(sourceItem.getStatus())
-                        .paymentStatus(sourceItem.getPaymentStatus())
-                        .additionalDetails(sourceItem.getAdditionalDetails())
-                        .auditDetails(sourceItem.getAuditDetails())
-                        .build());
+                runningAmounts.put(hc, newAmount);
+
+                LineItem sourceItem = existingByHeadCode.get(hc);
+                if (sourceItem != null) result.add(cloneWithAmount(sourceItem, newAmount));
+            }
+
+            // Safety net for head codes not in fieldConfig
+            for (String hc : headCodes) {
+                if (fcCtx.byHeadCode.containsKey(hc)) continue;
+                Integer colIdx = colMap.headCodeCols.get(hc);
+                if (colIdx == null) continue;
+                BigDecimal entered = readBigDecimal(row, colIdx);
+                if (entered == null) entered = BigDecimal.ZERO;
+                BigDecimal newAmount = entered.multiply(totalAttendance).setScale(2, RoundingMode.HALF_UP);
+                LineItem sourceItem = existingByHeadCode.get(hc);
+                if (sourceItem != null) result.add(cloneWithAmount(sourceItem, newAmount));
             }
         }
 
+        // Preserve existing deduction line items unchanged
         if (source.getLineItems() != null) {
             source.getLineItems().stream()
                     .filter(li -> li.getType() == LineItemType.DEDUCTION)
@@ -291,6 +345,44 @@ public class BillDetailExcelParser {
         }
 
         return result;
+    }
+
+    private BigDecimal sumRunningComponents(RateFieldConfig fc,
+                                             BillDetailExcelGenerator.FieldConfigContext fcCtx,
+                                             Map<String, BigDecimal> runningAmounts) {
+        if (fc.getComponents() == null || fc.getComponents().isEmpty()) return BigDecimal.ZERO;
+        BigDecimal sum = BigDecimal.ZERO;
+        for (String componentFieldKey : fc.getComponents()) {
+            String componentHc = fcCtx.resolveHeadCode(componentFieldKey);
+            sum = sum.add(runningAmounts.getOrDefault(componentHc, BigDecimal.ZERO));
+        }
+        return sum;
+    }
+
+    private LineItem cloneWithAmount(LineItem source, BigDecimal newAmount) {
+        return LineItem.builder()
+                .id(source.getId())
+                .billDetailId(source.getBillDetailId())
+                .tenantId(source.getTenantId())
+                .headCode(source.getHeadCode())
+                .type(source.getType())
+                .amount(newAmount)
+                .paidAmount(source.getPaidAmount())
+                .status(source.getStatus())
+                .paymentStatus(source.getPaymentStatus())
+                .additionalDetails(source.getAdditionalDetails())
+                .auditDetails(source.getAuditDetails())
+                .build();
+    }
+
+    private List<LineItem> getPayableItems(BillDetail detail) {
+        if (detail.getLineItems() != null && !detail.getLineItems().isEmpty()) {
+            return detail.getLineItems().stream()
+                    .filter(li -> li.getType() == LineItemType.PAYABLE)
+                    .collect(Collectors.toList());
+        }
+        if (detail.getPayableLineItems() != null) return detail.getPayableLineItems();
+        return Collections.emptyList();
     }
 
     private BigDecimal computeTotalAmount(List<LineItem> lineItems) {

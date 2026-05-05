@@ -1,5 +1,7 @@
 package org.egov.digit.expense.util;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
@@ -18,14 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.egov.digit.expense.config.Constants.*;
@@ -47,6 +42,10 @@ public class BillDetailExcelGenerator {
     static final String COL_TOTAL_ATTENDANCE  = "totalAttendance";
     static final String COL_TOTAL_AMOUNT      = "totalAmount";
 
+    // Snapshot keys — imported from Constants
+    static final String FIELD_CONFIG_KEY  = RATE_FIELD_CONFIG_SNAPSHOT_KEY;
+    static final String HEAD_CODE_MAP_KEY = HEAD_CODE_MAPPING_KEY;
+
     // [columnKey, localizationKey, defaultHeader]
     private static final String[][] STATIC_COLS = {
         {COL_WORKER_ID,        "EXPENSE_TEMPLATE_COL_WORKER_ID",        "Worker ID"},
@@ -66,19 +65,24 @@ public class BillDetailExcelGenerator {
     private final LocalizationUtil localizationUtil;
     private final IndividualUtil individualUtil;
     private final Configuration config;
+    private final ObjectMapper objectMapper;
+    private final MdmsUtil mdmsUtil;
 
     @Autowired
     public BillDetailExcelGenerator(LocalizationUtil localizationUtil, IndividualUtil individualUtil,
-                                     Configuration config) {
+                                     Configuration config, ObjectMapper objectMapper, MdmsUtil mdmsUtil) {
         this.localizationUtil = localizationUtil;
         this.individualUtil = individualUtil;
         this.config = config;
+        this.objectMapper = objectMapper;
+        this.mdmsUtil = mdmsUtil;
     }
 
     public byte[] generateTemplate(Bill bill, Set<String> userRoles, RequestInfo requestInfo) {
         log.info("BillDetailExcelGenerator::generateTemplate billId={} roles={}", bill.getId(), userRoles);
 
-        List<String> payableHeadCodes = collectPayableHeadCodes(bill);
+        FieldConfigContext fcCtx = buildFieldConfigContext(bill, requestInfo);
+        List<String> headCodes = resolveOrderedHeadCodes(bill, fcCtx);
         Map<String, String> msgMap = resolveLocalization(bill, requestInfo);
 
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
@@ -91,13 +95,13 @@ public class BillDetailExcelGenerator {
 
             XSSFSheet sheet = workbook.createSheet("Bill Details");
 
-            writeHeaderRow(sheet, lockedHeaderStyle, payableHeadCodes, msgMap);
+            writeHeaderRow(sheet, lockedHeaderStyle, headCodes, fcCtx, msgMap);
             sheet.createFreezePane(0, 1);
 
-            writeDataRows(sheet, bill, payableHeadCodes, userRoles, requestInfo, msgMap,
+            writeDataRows(sheet, bill, headCodes, fcCtx, userRoles, requestInfo, msgMap,
                     lockedDataStyle, editableDataStyle, lockedNumStyle, editableNumStyle);
 
-            setColumnWidths(sheet, payableHeadCodes.size());
+            setColumnWidths(sheet, headCodes.size());
             sheet.protectSheet(config.getExcelSheetProtectPassword());
             workbook.setForceFormulaRecalculation(true);
 
@@ -109,29 +113,189 @@ public class BillDetailExcelGenerator {
         }
     }
 
+    // -------------------------------------------------------------------------
+    // FieldConfig context helpers
+    // -------------------------------------------------------------------------
+
+    /**
+     * Parsed fieldConfig from bill.additionalDetails. Null fieldConfigs means
+     * no health-context config is present — fall back to legacy behaviour.
+     */
+    static class FieldConfigContext {
+        List<RateFieldConfig> fieldConfigs;      // null when not present (legacy)
+        Map<String, String> headCodeMapping;     // fieldKey → headCode (from WorkerMdms.headCodeMapping)
+        Map<String, String> reverseMapping;      // headCode → fieldKey
+        Map<String, RateFieldConfig> byHeadCode; // headCode → config
+        Map<String, String> fieldKeyToHeadCode;  // fieldKey → resolved headCode (fc.headCode preferred)
+
+        boolean hasConfig() { return fieldConfigs != null && !fieldConfigs.isEmpty(); }
+
+        /** Resolves the headCode for a given fieldKey, preferring fc.headCode over headCodeMapping. */
+        String resolveHeadCode(String fieldKey) {
+            if (fieldKeyToHeadCode != null && fieldKeyToHeadCode.containsKey(fieldKey))
+                return fieldKeyToHeadCode.get(fieldKey);
+            return fieldKey;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    FieldConfigContext buildFieldConfigContext(Bill bill, RequestInfo requestInfo) {
+        FieldConfigContext ctx = new FieldConfigContext();
+        ctx.headCodeMapping   = Collections.emptyMap();
+        ctx.reverseMapping    = Collections.emptyMap();
+        ctx.byHeadCode        = Collections.emptyMap();
+        ctx.fieldKeyToHeadCode = Collections.emptyMap();
+
+        Object additionalDetails = bill.getAdditionalDetails();
+
+        if (additionalDetails != null) {
+            try {
+                Map<String, Object> adMap = objectMapper.convertValue(additionalDetails,
+                        new TypeReference<Map<String, Object>>() {});
+
+                Object fcRaw = adMap.get(FIELD_CONFIG_KEY);
+                if (fcRaw != null) {
+                    ctx.fieldConfigs = objectMapper.convertValue(fcRaw,
+                            new TypeReference<List<RateFieldConfig>>() {});
+                    if (ctx.fieldConfigs != null) {
+                        ctx.fieldConfigs.sort(Comparator.comparingInt(
+                                f -> Optional.ofNullable(f.getOrder()).orElse(99)));
+                        log.info("Loaded {} fieldConfigs from bill.additionalDetails snapshot", ctx.fieldConfigs.size());
+                    }
+                }
+
+                Object hcmRaw = adMap.get(HEAD_CODE_MAP_KEY);
+                if (hcmRaw != null) {
+                    ctx.headCodeMapping = objectMapper.convertValue(hcmRaw,
+                            new TypeReference<Map<String, String>>() {});
+                }
+            } catch (Exception e) {
+                log.warn("Could not parse fieldConfig from bill.additionalDetails: {}", e.getMessage());
+                ctx.fieldConfigs = null;
+            }
+        }
+
+        // No snapshot — fetch from MDMS using parent project ID derived from bill.referenceId
+        // bill.referenceId = project.getProjectHierarchy() (e.g. "parentId.childId"), and
+        // MDMS WorkerMdms.campaignId is keyed by the root parent project ID.
+        if (ctx.fieldConfigs == null && config.isHealthContextEnabled()) {
+            String billReferenceId = bill.getReferenceId();
+            String campaignId = null;
+            if (billReferenceId != null && !billReferenceId.isBlank()) {
+                campaignId = billReferenceId.contains(".")
+                        ? billReferenceId.split("\\.")[0]
+                        : billReferenceId;
+            }
+
+            if (campaignId != null && !campaignId.isBlank()) {
+                log.info("No workerRatesSnapshot — fetching fieldConfig from MDMS for campaignId={}", campaignId);
+                List<RateFieldConfig> fetched = mdmsUtil.fetchWorkerRateFieldConfig(
+                        requestInfo, bill.getTenantId(), campaignId);
+                if (!fetched.isEmpty()) {
+                    ctx.fieldConfigs = fetched;
+                    log.info("Fetched {} fieldConfigs from MDMS for campaignId={}", fetched.size(), campaignId);
+                }
+            }
+
+            if (ctx.fieldConfigs == null) {
+                log.info("No MDMS fieldConfig available — using DEFAULT_FIELD_CONFIGS");
+                ctx.fieldConfigs = new ArrayList<>(RateFieldConfig.DEFAULT_FIELD_CONFIGS);
+            }
+        }
+
+        if (ctx.fieldConfigs != null) {
+            ctx.reverseMapping     = new HashMap<>();
+            ctx.byHeadCode         = new LinkedHashMap<>();
+            ctx.fieldKeyToHeadCode = new HashMap<>();
+            for (RateFieldConfig fc : ctx.fieldConfigs) {
+                // Prefer headCode set directly on the config; fall back to headCodeMapping, then fieldKey
+                String headCode = fc.getHeadCode() != null && !fc.getHeadCode().isBlank()
+                        ? fc.getHeadCode()
+                        : ctx.headCodeMapping.getOrDefault(fc.getFieldKey(), fc.getFieldKey());
+                ctx.reverseMapping.put(headCode, fc.getFieldKey());
+                ctx.byHeadCode.put(headCode, fc);
+                ctx.fieldKeyToHeadCode.put(fc.getFieldKey(), headCode);
+            }
+            log.info("FieldConfigContext built: headCodes={}", ctx.byHeadCode.keySet());
+        }
+
+        return ctx;
+    }
+
+    /**
+     * Returns ordered head codes for the template columns.
+     * If fieldConfig is present, order follows fieldConfig.order (payable only, intersected
+     * with head codes actually present in bill line items).
+     * Falls back to insertion order from line items.
+     */
+    static List<String> resolveOrderedHeadCodes(Bill bill, FieldConfigContext fcCtx) {
+        Set<String> billHeadCodes = new LinkedHashSet<>(collectPayableHeadCodes(bill));
+        if (!fcCtx.hasConfig()) return new ArrayList<>(billHeadCodes);
+
+        List<String> ordered = new ArrayList<>();
+        for (RateFieldConfig fc : fcCtx.fieldConfigs) {
+            if (!Boolean.TRUE.equals(fc.getIsPayable())) continue;
+            String hc = fcCtx.resolveHeadCode(fc.getFieldKey());
+            if (billHeadCodes.contains(hc)) ordered.add(hc);
+        }
+        // append any head codes present in the bill but not in fieldConfig (safety net)
+        for (String hc : billHeadCodes) {
+            if (!ordered.contains(hc)) ordered.add(hc);
+        }
+        return ordered;
+    }
+
+    // -------------------------------------------------------------------------
+    // Header row
+    // -------------------------------------------------------------------------
+
     private void writeHeaderRow(XSSFSheet sheet, XSSFCellStyle style,
-                                 List<String> headCodes, Map<String, String> msgMap) {
+                                 List<String> headCodes, FieldConfigContext fcCtx,
+                                 Map<String, String> msgMap) {
         Row row = sheet.createRow(0);
         int col = 0;
         for (String[] def : STATIC_COLS) {
             createCell(row, col++, msgMap.getOrDefault(def[1], def[2]), style);
         }
         for (String headCode : headCodes) {
-            String key = "EXPENSE_TEMPLATE_COL_WAGE_" + headCode;
-            String def = headCode + " Per Day Wage";
-            createCell(row, col++, msgMap.getOrDefault(key, def), style);
+            String header = resolveHeadCodeHeader(headCode, fcCtx, msgMap);
+            createCell(row, col++, header, style);
         }
         createCell(row, col++, msgMap.getOrDefault("EXPENSE_TEMPLATE_COL_TOTAL_ATTENDANCE", "Total Attendance"), style);
         createCell(row, col,   msgMap.getOrDefault("EXPENSE_TEMPLATE_COL_TOTAL_AMOUNT",     "Total Amount"),     style);
     }
 
+    private String resolveHeadCodeHeader(String headCode, FieldConfigContext fcCtx, Map<String, String> msgMap) {
+        if (fcCtx.hasConfig()) {
+            RateFieldConfig fc = fcCtx.byHeadCode.get(headCode);
+            if (fc != null && fc.getColumnLabelKey() != null) {
+                // Try localization lookup; fall back to the columnLabelKey itself (descriptive key)
+                String localized = msgMap.get(fc.getColumnLabelKey());
+                return localized != null ? localized : fc.getColumnLabelKey();
+            }
+        }
+        // Legacy: try EXPENSE_TEMPLATE_COL_WAGE_ key, then plain headCode
+        String legacyKey = "EXPENSE_TEMPLATE_COL_WAGE_" + headCode;
+        String legacyLoc = msgMap.get(legacyKey);
+        return legacyLoc != null ? legacyLoc : headCode;
+    }
+
+    // -------------------------------------------------------------------------
+    // Data rows
+    // -------------------------------------------------------------------------
+
     private void writeDataRows(XSSFSheet sheet, Bill bill, List<String> headCodes,
+                                FieldConfigContext fcCtx,
                                 Set<String> userRoles, RequestInfo requestInfo, Map<String, String> msgMap,
                                 XSSFCellStyle lockedStr, XSSFCellStyle editableStr,
                                 XSSFCellStyle lockedNum, XSSFCellStyle editableNum) {
         boolean isEditor   = userRoles.contains(ROLE_PAYMENT_EDITOR);
         boolean isReviewer = userRoles.contains(ROLE_PAYMENT_REVIEWER);
         boolean canEditWages = isEditor || isReviewer;
+
+        // headCode → column index (0-based from start of dynamic columns)
+        Map<String, Integer> headCodeColIdx = new LinkedHashMap<>();
+        for (int i = 0; i < headCodes.size(); i++) headCodeColIdx.put(headCodes.get(i), i);
 
         int rowNum = 1;
         List<BillDetail> sortedDetails = bill.getBillDetails().stream()
@@ -140,6 +304,7 @@ public class BillDetailExcelGenerator {
                                 ? d.getPayee().getPayeeName() : "",
                         String.CASE_INSENSITIVE_ORDER))
                 .collect(Collectors.toList());
+
         for (BillDetail detail : sortedDetails) {
             Row row = sheet.createRow(rowNum++);
             Party payee = detail.getPayee() != null ? detail.getPayee() : new Party();
@@ -159,62 +324,221 @@ public class BillDetailExcelGenerator {
             createCell(row, col++, safeStr(payee.getBankCode()),        isEditor ? editableStr : lockedStr);
             createCell(row, col++, safeStr(payee.getBeneficiaryCode()), isEditor ? editableStr : lockedStr);
 
-            // Col 9: role — localized (first role from list)
+            // Col 9: role — localized
             String rawRole = (individual != null && individual.getRoles() != null && !individual.getRoles().isEmpty())
                     ? individual.getRoles().get(0) : safeStr(detail.getWfStatus());
             String roleKey = "EXPENSE_TEMPLATE_ROLE_" + rawRole.toUpperCase().replace(" ", "_");
             createCell(row, col++, msgMap.getOrDefault(roleKey, rawRole), lockedStr);
 
-            // Dynamic per-day wage columns — editable for EDITOR or REVIEWER
-            Map<String, BigDecimal> perDayWages = computePerDayWages(detail, headCodes);
+            // Dynamic rate columns
+            Map<String, BigDecimal> displayValues = computeDisplayValues(detail, headCodes, fcCtx);
             for (String headCode : headCodes) {
-                BigDecimal wage = perDayWages.getOrDefault(headCode, BigDecimal.ZERO);
-                createNumericCell(row, col++, wage, canEditWages ? editableNum : lockedNum);
+                BigDecimal val = displayValues.getOrDefault(headCode, BigDecimal.ZERO);
+                createNumericCell(row, col++, val, canEditWages ? editableNum : lockedNum);
             }
 
-            // totalAttendance — editable for EDITOR or REVIEWER
+            // totalAttendance
             BigDecimal attendance = detail.getTotalAttendance() != null ? detail.getTotalAttendance() : BigDecimal.ZERO;
             createNumericCell(row, col++, attendance, canEditWages ? editableNum : lockedNum);
 
-            // totalAmount — locked, formula: sum(wage_cols) * attendance_col
+            // totalAmount — locked formula
             int excelRow = row.getRowNum() + 1;
             int attendanceColIdx = STATIC_COL_COUNT + headCodes.size();
-            String attendanceRef = CellReference.convertNumToColString(attendanceColIdx) + excelRow;
-            String totalAmountFormula;
-            if (!headCodes.isEmpty()) {
-                StringBuilder sb = new StringBuilder("(");
-                for (int i = 0; i < headCodes.size(); i++) {
-                    if (i > 0) sb.append("+");
-                    sb.append(CellReference.convertNumToColString(STATIC_COL_COUNT + i)).append(excelRow);
-                }
-                sb.append(")*").append(attendanceRef);
-                totalAmountFormula = sb.toString();
-            } else {
-                totalAmountFormula = "0";
-            }
-            createFormulaCell(row, col, totalAmountFormula, lockedNum);
+            String totalFormula = buildTotalFormula(headCodes, headCodeColIdx, fcCtx, attendanceColIdx, excelRow);
+            createFormulaCell(row, col, totalFormula, lockedNum);
         }
     }
 
-    private Map<String, BigDecimal> computePerDayWages(BillDetail detail, List<String> headCodes) {
-        Map<String, BigDecimal> result = new HashMap<>();
-        List<LineItem> payableItems = getPayableItems(detail);
-        if (payableItems.isEmpty()) return result;
+    // -------------------------------------------------------------------------
+    // Display value computation (generator)
+    // -------------------------------------------------------------------------
 
+    /**
+     * Computes the display value for each head code column.
+     * Processes fieldConfigs in order so PERCENTAGE fields can use already-computed
+     * stored amounts of their components.
+     *
+     * PER_DAY      → storedAmount / attendance
+     * ONE_TIME      → storedAmount
+     * PER_PERIOD   → storedAmount
+     * PERCENTAGE   → storedAmount * 100 / Σ(component storedAmounts)
+     *
+     * Falls back to (amount / attendance) for all fields when no fieldConfig is present.
+     */
+    Map<String, BigDecimal> computeDisplayValues(BillDetail detail, List<String> headCodes,
+                                                  FieldConfigContext fcCtx) {
+        Map<String, BigDecimal> storedAmounts = buildStoredAmountMap(detail);
         BigDecimal attendance = detail.getTotalAttendance();
 
-        for (LineItem item : payableItems) {
-            if (!headCodes.contains(item.getHeadCode())) continue;
-            BigDecimal amount = item.getAmount() != null ? item.getAmount() : BigDecimal.ZERO;
-            if (attendance != null && attendance.compareTo(BigDecimal.ZERO) > 0) {
-                result.put(item.getHeadCode(), amount.divide(attendance, 4, RoundingMode.HALF_UP));
+        Map<String, BigDecimal> displayValues = new LinkedHashMap<>();
+
+        if (!fcCtx.hasConfig()) {
+            // Legacy: divide by attendance for all columns
+            for (String hc : headCodes) {
+                BigDecimal amount = storedAmounts.getOrDefault(hc, BigDecimal.ZERO);
+                displayValues.put(hc, divideByAttendance(amount, attendance));
+            }
+            return displayValues;
+        }
+
+        // Process in fieldConfig order to allow PERCENTAGE to reference earlier fields
+        for (RateFieldConfig fc : fcCtx.fieldConfigs) {
+            if (!Boolean.TRUE.equals(fc.getIsPayable())) continue;
+            String hc = fcCtx.resolveHeadCode(fc.getFieldKey());
+            if (!headCodes.contains(hc)) continue;
+
+            BigDecimal stored = storedAmounts.getOrDefault(hc, BigDecimal.ZERO);
+            BigDecimal displayVal;
+
+            if (VALUE_TYPE_PERCENTAGE.equals(fc.getValueType())) {
+                BigDecimal componentSum = sumComponentAmounts(fc, fcCtx, storedAmounts);
+                if (componentSum.compareTo(BigDecimal.ZERO) == 0) {
+                    displayVal = BigDecimal.ZERO;
+                } else {
+                    // Reverse: pct = storedAmount * 100 / Σ(component stored amounts)
+                    displayVal = stored.multiply(BigDecimal.valueOf(100))
+                            .divide(componentSum, 4, RoundingMode.HALF_UP);
+                }
+            } else if (PAYMENT_TYPE_PER_DAY.equals(fc.getPaymentType())) {
+                displayVal = divideByAttendance(stored, attendance);
             } else {
-                // attendance unknown — store full amount as per-day so user can see and correct
-                result.put(item.getHeadCode(), amount);
+                // ONE_TIME / PER_PERIOD — stored amount IS the rate
+                displayVal = stored;
+            }
+
+            displayValues.put(hc, displayVal);
+        }
+
+        // Safety net: any head code not in fieldConfig
+        for (String hc : headCodes) {
+            if (!displayValues.containsKey(hc)) {
+                BigDecimal amount = storedAmounts.getOrDefault(hc, BigDecimal.ZERO);
+                displayValues.put(hc, divideByAttendance(amount, attendance));
             }
         }
-        return result;
+
+        return displayValues;
     }
+
+    private BigDecimal sumComponentAmounts(RateFieldConfig fc, FieldConfigContext fcCtx,
+                                            Map<String, BigDecimal> storedAmounts) {
+        if (fc.getComponents() == null || fc.getComponents().isEmpty()) return BigDecimal.ZERO;
+        BigDecimal sum = BigDecimal.ZERO;
+        for (String componentFieldKey : fc.getComponents()) {
+            String componentHc = fcCtx.resolveHeadCode(componentFieldKey);
+            sum = sum.add(storedAmounts.getOrDefault(componentHc, BigDecimal.ZERO));
+        }
+        return sum;
+    }
+
+    private BigDecimal divideByAttendance(BigDecimal amount, BigDecimal attendance) {
+        if (attendance != null && attendance.compareTo(BigDecimal.ZERO) > 0) {
+            return amount.divide(attendance, 4, RoundingMode.HALF_UP);
+        }
+        return amount;
+    }
+
+    /** headCode → stored line item amount from bill detail */
+    private Map<String, BigDecimal> buildStoredAmountMap(BillDetail detail) {
+        Map<String, BigDecimal> map = new HashMap<>();
+        for (LineItem item : getPayableItems(detail)) {
+            if (item.getHeadCode() != null) {
+                map.put(item.getHeadCode(), item.getAmount() != null ? item.getAmount() : BigDecimal.ZERO);
+            }
+        }
+        return map;
+    }
+
+    // -------------------------------------------------------------------------
+    // Total amount Excel formula
+    // -------------------------------------------------------------------------
+
+    /**
+     * Builds a formula for the total amount column.
+     * If fieldConfig is present, each field contributes based on its paymentType:
+     *   PER_DAY    → +colRef * attendanceRef
+     *   ONE_TIME   → +colRef
+     *   PER_PERIOD → +colRef
+     *   PERCENTAGE (paymentType=PER_DAY)  → +(Σ componentColRefs) * attendanceRef * pctColRef / 100
+     *   PERCENTAGE (paymentType=ONE_TIME) → +(Σ componentColRefs) * pctColRef / 100
+     * Falls back to sum(all cols) * attendance when no fieldConfig.
+     */
+    String buildTotalFormula(List<String> headCodes, Map<String, Integer> headCodeColIdx,
+                              FieldConfigContext fcCtx, int attendanceColIdx, int excelRow) {
+        if (headCodes.isEmpty()) return "0";
+
+        String attendanceRef = CellReference.convertNumToColString(attendanceColIdx) + excelRow;
+
+        if (!fcCtx.hasConfig()) {
+            // Legacy: sum(all wage cols) * attendance
+            StringBuilder sb = new StringBuilder("(");
+            for (int i = 0; i < headCodes.size(); i++) {
+                if (i > 0) sb.append("+");
+                sb.append(CellReference.convertNumToColString(STATIC_COL_COUNT + i)).append(excelRow);
+            }
+            sb.append(")*").append(attendanceRef);
+            return sb.toString();
+        }
+
+        StringBuilder formula = new StringBuilder();
+
+        for (RateFieldConfig fc : fcCtx.fieldConfigs) {
+            if (!Boolean.TRUE.equals(fc.getIsPayable())) continue;
+            String hc = fcCtx.resolveHeadCode(fc.getFieldKey());
+            Integer colOffset = headCodeColIdx.get(hc);
+            if (colOffset == null) continue;
+
+            String colRef = CellReference.convertNumToColString(STATIC_COL_COUNT + colOffset) + excelRow;
+
+            if (VALUE_TYPE_PERCENTAGE.equals(fc.getValueType())) {
+                String componentSum = buildComponentSumRef(fc, fcCtx, headCodeColIdx, excelRow);
+                if (componentSum.isEmpty()) continue;
+                if (PAYMENT_TYPE_PER_DAY.equals(fc.getPaymentType())) {
+                    formula.append("+").append("(").append(componentSum).append(")")
+                           .append("*").append(attendanceRef)
+                           .append("*").append(colRef).append("/100");
+                } else {
+                    formula.append("+").append("(").append(componentSum).append(")")
+                           .append("*").append(colRef).append("/100");
+                }
+            } else if (PAYMENT_TYPE_PER_DAY.equals(fc.getPaymentType())) {
+                formula.append("+").append(colRef).append("*").append(attendanceRef);
+            } else {
+                // ONE_TIME / PER_PERIOD
+                formula.append("+").append(colRef);
+            }
+        }
+
+        // Safety net for head codes not covered by fieldConfig
+        for (String hc : headCodes) {
+            if (fcCtx.byHeadCode.containsKey(hc)) continue;
+            Integer colOffset = headCodeColIdx.get(hc);
+            if (colOffset == null) continue;
+            String colRef = CellReference.convertNumToColString(STATIC_COL_COUNT + colOffset) + excelRow;
+            formula.append("+").append(colRef).append("*").append(attendanceRef);
+        }
+
+        String result = formula.toString();
+        return result.startsWith("+") ? result.substring(1) : (result.isEmpty() ? "0" : result);
+    }
+
+    private String buildComponentSumRef(RateFieldConfig fc, FieldConfigContext fcCtx,
+                                         Map<String, Integer> headCodeColIdx, int excelRow) {
+        if (fc.getComponents() == null || fc.getComponents().isEmpty()) return "";
+        List<String> refs = new ArrayList<>();
+        for (String componentFieldKey : fc.getComponents()) {
+            String hc = fcCtx.resolveHeadCode(componentFieldKey);
+            Integer colOffset = headCodeColIdx.get(hc);
+            if (colOffset != null) {
+                refs.add(CellReference.convertNumToColString(STATIC_COL_COUNT + colOffset) + excelRow);
+            }
+        }
+        return String.join("+", refs);
+    }
+
+    // -------------------------------------------------------------------------
+    // Existing helpers (unchanged)
+    // -------------------------------------------------------------------------
 
     static List<String> collectPayableHeadCodes(Bill bill) {
         LinkedHashSet<String> codes = new LinkedHashSet<>();
@@ -227,7 +551,6 @@ public class BillDetailExcelGenerator {
         return new ArrayList<>(codes);
     }
 
-    // Check lineItems first (PAYABLE filter), fall back to payableLineItems
     static List<LineItem> getPayableItems(BillDetail detail) {
         if (detail.getLineItems() != null && !detail.getLineItems().isEmpty()) {
             return detail.getLineItems().stream()
@@ -364,7 +687,6 @@ public class BillDetailExcelGenerator {
         for (int i = 0; i < headCodeCount; i++) {
             sheet.setColumnWidth(STATIC_COL_COUNT + i, 6000);
         }
-        // totalAttendance + totalAmount
         sheet.setColumnWidth(STATIC_COL_COUNT + headCodeCount,     4500);
         sheet.setColumnWidth(STATIC_COL_COUNT + headCodeCount + 1, 5000);
     }

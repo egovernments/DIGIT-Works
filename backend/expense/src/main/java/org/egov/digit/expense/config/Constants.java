@@ -307,4 +307,25 @@ public class Constants {
 	public static final String MSG_BILL_DETAIL_LOCKED_SENDING_FOR_REVIEW = "Bill detail is locked while bill is being sent for review";
 	public static final String MSG_BILL_DETAIL_LOCKED_REVIEW_IN_PROGRESS = "Bill detail is locked while bill review is in progress";
 	public static final String MSG_WF_STATE_SEARCH_FAILED                = "Failed to fetch current workflow state after transition failure";
+
+	// Rate field config — paymentType values (mirror of health-expense-calculator RateFieldConfigConstants)
+	public static final String PAYMENT_TYPE_PER_DAY   = "PER_DAY";
+	public static final String PAYMENT_TYPE_ONE_TIME   = "ONE_TIME";
+	public static final String PAYMENT_TYPE_PER_PERIOD = "PER_PERIOD";
+
+	// Rate field config — valueType values
+	public static final String VALUE_TYPE_FLAT       = "FLAT";
+	public static final String VALUE_TYPE_PERCENTAGE = "PERCENTAGE";
+
+	// Keys used in bill.additionalDetails by health-expense-calculator
+	public static final String RATE_FIELD_CONFIG_SNAPSHOT_KEY = "workerRatesSnapshot";
+	public static final String HEAD_CODE_MAPPING_KEY           = "headCodeMapping";
+	public static final String CAMPAIGN_NUMBER_KEY             = "campaignNumber";
+
+	// MDMS constants for HCM worker rates lookup
+	public static final String HCM_MODULE_NAME      = "HCM";
+	public static final String WORKER_RATES_MASTER  = "WORKER_RATES";
+	public static final String HCM_WORKER_RATES_JSON_PATH = "$.MdmsRes.HCM.WORKER_RATES";
+	public static final String WORKER_RATES_CAMPAIGN_ID_FILTER_PREFIX = "[?(@.campaignId=='";
+	public static final String WORKER_RATES_CAMPAIGN_ID_FILTER_SUFFIX = "')]";
 }
