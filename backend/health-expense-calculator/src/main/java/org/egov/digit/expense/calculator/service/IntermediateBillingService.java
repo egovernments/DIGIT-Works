@@ -1199,10 +1199,13 @@ public class IntermediateBillingService {
         additionalDetails.put(NO_OF_REGISTERS, registerCount);
         additionalDetails.put(NO_OF_BILL_DETAILS, bill.getBillDetails().size());
 
-        // Campaign number (for MDMS lookup)
+        // Campaign number (for MDMS lookup) and campaign name
         String campaignNumber = extractCampaignNumber(project);
         if (campaignNumber != null) {
             additionalDetails.put("campaignNumber", campaignNumber);
+        }
+        if (project.getName() != null) {
+            additionalDetails.put("campaignName", project.getName());
         }
 
         // Store computed amount breakup under a dedicated key — expense service may not persist dynamic
@@ -1594,7 +1597,7 @@ public class IntermediateBillingService {
                 aggregateBill.getTotalAmount());
 
         // STEP 8: Override metadata to mark as FINAL_AGGREGATE
-        enrichAggregateMetadata(aggregateBill, allPeriods, campaignNumber);
+        enrichAggregateMetadata(aggregateBill, allPeriods, campaignNumber, project.getName());
         log.info("✓ Enriched aggregate metadata");
 
         // STEP 9: Submit aggregate bill
@@ -2001,7 +2004,8 @@ public class IntermediateBillingService {
      */
     private void enrichAggregateMetadata(Bill bill,
                                         List<BillingPeriod> allPeriods,
-                                        String campaignNumber) {
+                                        String campaignNumber,
+                                        String campaignName) {
         Map<String, Object> additionalDetails = bill.getAdditionalDetails() != null ?
                 (Map<String, Object>) bill.getAdditionalDetails() : new HashMap<>();
 
@@ -2018,6 +2022,9 @@ public class IntermediateBillingService {
                 .map(BillingPeriod::getPeriodNumber)
                 .collect(Collectors.toList()));
         additionalDetails.put("campaignNumber", campaignNumber);
+        if (campaignName != null) {
+            additionalDetails.put("campaignName", campaignName);
+        }
         additionalDetails.put("periodStartDate", allPeriods.get(0).getPeriodStartDate());
         additionalDetails.put("periodEndDate", allPeriods.get(allPeriods.size() - 1).getPeriodEndDate());
 
