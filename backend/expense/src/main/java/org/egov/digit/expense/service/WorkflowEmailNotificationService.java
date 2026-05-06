@@ -1,5 +1,7 @@
 package org.egov.digit.expense.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.config.Configuration;
@@ -19,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -40,6 +43,7 @@ public class WorkflowEmailNotificationService {
     private final LocalizationUtil localizationUtil;
     private final ExpenseProducer expenseProducer;
     private final Configuration config;
+    private final ObjectMapper objectMapper;
 
     @Autowired
     public WorkflowEmailNotificationService(IndividualUtil individualUtil,
@@ -47,13 +51,15 @@ public class WorkflowEmailNotificationService {
                                              EmailTemplateUtil emailTemplateUtil,
                                              LocalizationUtil localizationUtil,
                                              ExpenseProducer expenseProducer,
-                                             Configuration config) {
+                                             Configuration config,
+                                             ObjectMapper objectMapper) {
         this.individualUtil = individualUtil;
         this.projectStaffUtil = projectStaffUtil;
         this.emailTemplateUtil = emailTemplateUtil;
         this.localizationUtil = localizationUtil;
         this.expenseProducer = expenseProducer;
         this.config = config;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -88,6 +94,7 @@ public class WorkflowEmailNotificationService {
         String locale = resolveLocale(requestInfo);
         Map<String, String> locMap = resolveLocalizationMap(requestInfo, tenantId, locale);
         int billCount = 1;
+        String campaignName = extractCampaignName(bill);
 
         List<IndividualDetails> recipients = resolveRecipientsForBillRoles(bill, tenantId, requestInfo, type);
         if (CollectionUtils.isEmpty(recipients)) {
@@ -96,7 +103,7 @@ public class WorkflowEmailNotificationService {
         }
 
         for (IndividualDetails recipient : recipients) {
-            sendEmailDirect(recipient.getEmail(), recipient.getName(), tenantId, requestInfo, template, locMap, billCount, type);
+            sendEmailDirect(recipient.getEmail(), recipient.getName(), tenantId, requestInfo, template, locMap, billCount, campaignName, type);
         }
     }
 
@@ -106,9 +113,10 @@ public class WorkflowEmailNotificationService {
                                   WorkflowEmailTemplate template,
                                   Map<String, String> locMap,
                                   int billCount,
+                                  String campaignName,
                                   WorkflowNotificationType type) {
-        String subject = emailTemplateUtil.renderSubject(template, locMap, billCount);
-        String body    = emailTemplateUtil.renderHtmlBody(template, locMap, name, billCount);
+        String subject = emailTemplateUtil.renderSubject(template, locMap, billCount, campaignName);
+        String body    = emailTemplateUtil.renderHtmlBody(template, locMap, name, billCount, campaignName);
 
         EmailRequest emailRequest = EmailRequest.builder()
                 .requestInfo(requestInfo)
@@ -203,10 +211,26 @@ public class WorkflowEmailNotificationService {
             return;
         }
 
+        String campaignName = bills.stream()
+                .map(this::extractCampaignName)
+                .filter(Objects::nonNull)
+                .findFirst().orElse("");
+
         candidates.stream()
                 .filter(i -> matched.contains(i.getUserUuid()))
                 .forEach(r -> sendEmailDirect(r.getEmail(), r.getName(), tenantId, requestInfo,
-                        template, locMap, billCount, type));
+                        template, locMap, billCount, campaignName, type));
+    }
+
+    private String extractCampaignName(Bill bill) {
+        try {
+            if (bill.getAdditionalDetails() == null) return null;
+            JsonNode node = objectMapper.valueToTree(bill.getAdditionalDetails());
+            String value = node.path("campaignName").asText(null);
+            return (value != null && !value.isBlank()) ? value : null;
+        } catch (Exception ignored) {
+            return null;
+        }
     }
 
     /** Extracts locale from RequestInfo msgId (format: "msgId|locale"), defaults to configured locale. */

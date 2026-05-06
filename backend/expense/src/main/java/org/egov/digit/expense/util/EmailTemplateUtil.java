@@ -86,34 +86,47 @@ public class EmailTemplateUtil {
      * Renders the full HTML email body.
      *
      * <p>Pass 1 — replaces {@code {{KEY}}} placeholders with localized values from {@code locMap}.
-     * Pass 2 — replaces {@code {userName}} and {@code {billCount}} runtime tokens.
+     * Pass 2 — replaces runtime tokens {@code {userName}}, {@code {billCount}}, {@code {campaignName}}.
+     * For {@code {campaignName}}, the value is first looked up in {@code locMap}; the raw value is used as fallback.
      */
     public String renderHtmlBody(WorkflowEmailTemplate template,
                                  Map<String, String> locMap,
                                  String userName,
-                                 int billCount) {
+                                 int billCount,
+                                 String campaignName) {
         String html = template.getHtmlBody();
         html = replacePlaceholders(html, locMap);
         if (userName != null) html = html.replace("{userName}", userName);
         html = html.replace("{billCount}", String.valueOf(billCount));
+        html = html.replace("{campaignName}", resolveLocalizedValue(locMap, campaignName));
         return html;
     }
 
     /**
      * Renders the email subject line.
      *
-     * <p>Pass 1 — replaces {@code {{KEY}}} placeholders. Pass 2 — replaces {@code {billCount}}.
+     * <p>Pass 1 — replaces {@code {{KEY}}} placeholders. Pass 2 — replaces {@code {billCount}} and {@code {campaignName}}.
+     * For {@code {campaignName}}, the value is first looked up in {@code locMap}; the raw value is used as fallback.
      */
     public String renderSubject(WorkflowEmailTemplate template,
                                 Map<String, String> locMap,
-                                int billCount) {
+                                int billCount,
+                                String campaignName) {
         String subject = template.getSubject();
         subject = replacePlaceholders(subject, locMap);
         subject = subject.replace("{billCount}", String.valueOf(billCount));
+        subject = subject.replace("{campaignName}", resolveLocalizedValue(locMap, campaignName));
         return subject;
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
+
+    /** Looks up {@code value} as a localization key; returns the localized string if found, otherwise {@code value} itself. */
+    private String resolveLocalizedValue(Map<String, String> locMap, String value) {
+        if (value == null) return "";
+        if (locMap != null && locMap.containsKey(value)) return locMap.get(value);
+        return value;
+    }
 
     /** Replaces every {@code {{KEY}}} occurrence in {@code text} with the value from {@code locMap}. */
     private String replacePlaceholders(String text, Map<String, String> locMap) {
