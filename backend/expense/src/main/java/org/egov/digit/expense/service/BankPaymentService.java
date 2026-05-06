@@ -94,17 +94,14 @@ public class BankPaymentService implements PaymentProviderService {
                 .requestInfo(taskRequest.getRequestInfo())
                 .bill(billFromSearch)
                 .build();
-        try {
-            verify(billRequest);
-            // Push the updated bill so the persister writes the new detail statuses to DB.
-            // The handler re-fetches from DB after executeTask returns, so without this
-            // the details remain VERIFICATION_IN_PROGRESS in the DB indefinitely.
-            billCacheService.put(billFromSearch);
-            expenseProducer.push(billFromSearch.getTenantId(), config.getBillUpdateTopic(), billRequest);
-        } finally {
-            task.setStatus(Status.DONE);
-            expenseProducer.push(billFromSearch.getTenantId(), config.getTaskUpdateTopic(), task);
-        }
+        // No finally: task DONE is only pushed after the bill update is persisted to Kafka.
+        // If verify() throws, the exception propagates cleanly and the scheduler returns RETRY.
+        // For the Kafka-consumer path, TaskConsumer.markTaskDone() handles the DONE push.
+        verify(billRequest);
+        billCacheService.put(billFromSearch);
+        expenseProducer.push(billFromSearch.getTenantId(), config.getBillUpdateTopic(), billRequest);
+        task.setStatus(Status.DONE);
+        expenseProducer.push(billFromSearch.getTenantId(), config.getTaskUpdateTopic(), task);
     }
 
     /**
@@ -225,7 +222,29 @@ public class BankPaymentService implements PaymentProviderService {
                     workflowUtil.prepareWorkflowRequestForBillDetail(billDetailRequest), billDetailRequest);
             billDetail.setStatus(Status.fromValue(wfState.getApplicationStatus()));
         } catch (Exception e) {
-            log.error("Bank WF transition failed for billDetail={} action={}: {}", billDetail.getId(), workflow.getAction(), e.getMessage());
+            // INVALID_ACTION means the WF write-side already applied this transition.
+            // Fetch the WF read-side state to reconcile. NOTE: the WF service has no cache
+            // and can lag behind its own write-side — if it returns the same (old) status,
+            // the read-side hasn't caught up yet; throw so the scheduler retries later.
+            if (workflowUtil.isRetryableWfError(e)) {
+                State actual = workflowUtil.searchCurrentWfState(
+                        billDetail.getId(), billDetail.getTenantId(), requestInfo);
+                if (actual != null) {
+                    Status wfStatus = Status.fromValue(actual.getApplicationStatus());
+                    if (wfStatus != billDetail.getStatus()) {
+                        // WF read shows a different (newer) state — reconciliation succeeded.
+                        billDetail.setStatus(wfStatus);
+                        log.warn("Bank setBillDetailStatus: reconciled billDetail={} to status={} after INVALID_ACTION",
+                                billDetail.getId(), billDetail.getStatus());
+                        return;
+                    }
+                    // WF read returned the same old state — likely read lag; let scheduler retry.
+                    log.warn("Bank setBillDetailStatus: INVALID_ACTION but WF read still shows {} for billDetail={}" +
+                            " — possible WF read lag, will retry", billDetail.getStatus(), billDetail.getId());
+                }
+            }
+            log.error("Bank WF transition failed for billDetail={} action={}: {}",
+                    billDetail.getId(), workflow.getAction(), e.getMessage());
             throw e;
         }
     }

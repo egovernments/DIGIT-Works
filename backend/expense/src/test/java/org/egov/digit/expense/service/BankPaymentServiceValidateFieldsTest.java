@@ -25,6 +25,7 @@ import java.util.Map;
 import static org.egov.digit.expense.TestDataBuilder.*;
 import static org.junit.jupiter.api.Assertions.*;
 import org.egov.digit.expense.web.models.BillDetailRequest;
+import org.egov.common.contract.workflow.State;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -302,6 +303,62 @@ class BankPaymentServiceValidateFieldsTest {
         stubWorkflowToVerified(bill);
 
         assertNull(runVerifyAndGetReason(bill));
+    }
+
+    // ── INVALID_ACTION reconciliation ──────────────────────────────────────────
+
+    @Test
+    void verify_invalidActionOnVerificationSuccess_reconcilesToVerified() {
+        // WF already applied VERIFICATION_SUCCESS (WF=VERIFIED) but DB still shows
+        // VERIFICATION_IN_PROGRESS. The second callWorkFlow call throws INVALID_ACTION.
+        // setBillDetailStatus must reconcile via searchCurrentWfState and NOT rethrow.
+        Bill bill = buildBankBill(Status.PENDING_VERIFICATION);
+
+        org.egov.common.contract.workflow.State inProgress = new org.egov.common.contract.workflow.State();
+        inProgress.setApplicationStatus(Status.VERIFICATION_IN_PROGRESS.toString());
+
+        org.egov.common.contract.workflow.State verified = new org.egov.common.contract.workflow.State();
+        verified.setApplicationStatus(Status.VERIFIED.toString());
+
+        RuntimeException invalidAction = new RuntimeException("INVALID ACTION: VERIFICATION_SUCCESS not found");
+        when(workflowUtil.callWorkFlow(any(), any(BillDetailRequest.class)))
+                .thenReturn(inProgress)        // step 1: VERIFY → VERIFICATION_IN_PROGRESS
+                .thenThrow(invalidAction);     // step 2: VERIFICATION_SUCCESS → WF already VERIFIED
+        when(workflowUtil.prepareWorkflowRequestForBillDetail(any())).thenReturn(null);
+        when(workflowUtil.isRetryableWfError(invalidAction)).thenReturn(true);
+        when(workflowUtil.searchCurrentWfState(any(), any(), any())).thenReturn(verified);
+
+        // Must not throw; detail must be reconciled to VERIFIED
+        BillRequest billRequest = BillRequest.builder()
+                .bill(bill)
+                .requestInfo(buildRequestInfo("PAYMENT_EDITOR"))
+                .build();
+        assertDoesNotThrow(() -> service.verify(billRequest));
+        assertEquals(Status.VERIFIED, bill.getBillDetails().get(0).getStatus());
+    }
+
+    @Test
+    void verify_invalidActionReconciliation_wfSearchFails_rethrows() {
+        // If searchCurrentWfState returns null (WF search itself fails), setBillDetailStatus
+        // must rethrow so the scheduler returns RETRY rather than silently swallowing the error.
+        Bill bill = buildBankBill(Status.PENDING_VERIFICATION);
+
+        org.egov.common.contract.workflow.State inProgress = new org.egov.common.contract.workflow.State();
+        inProgress.setApplicationStatus(Status.VERIFICATION_IN_PROGRESS.toString());
+
+        RuntimeException invalidAction = new RuntimeException("INVALID ACTION");
+        when(workflowUtil.callWorkFlow(any(), any(BillDetailRequest.class)))
+                .thenReturn(inProgress)
+                .thenThrow(invalidAction);
+        when(workflowUtil.prepareWorkflowRequestForBillDetail(any())).thenReturn(null);
+        when(workflowUtil.isRetryableWfError(invalidAction)).thenReturn(true);
+        when(workflowUtil.searchCurrentWfState(any(), any(), any())).thenReturn(null); // search failed
+
+        BillRequest billRequest = BillRequest.builder()
+                .bill(bill)
+                .requestInfo(buildRequestInfo("PAYMENT_EDITOR"))
+                .build();
+        assertThrows(RuntimeException.class, () -> service.verify(billRequest));
     }
 
     // ─── helpers ───────────────────────────────────────────────────────────────

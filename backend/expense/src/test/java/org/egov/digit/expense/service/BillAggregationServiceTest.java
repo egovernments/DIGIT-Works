@@ -205,13 +205,12 @@ public class BillAggregationServiceTest {
     // ── Error handling ────────────────────────────────────────────────────────
 
     @Test
-    public void invalidAction_treatedAsIdempotent_noPushBillUpdate() {
+    public void billAlreadyPastIntermediateState_skipsTransition() {
+        // Bill is already FULLY_VERIFIED — pre-check should skip without calling WF at all
         Bill bill = buildBill(Status.FULLY_VERIFIED, Status.VERIFIED, 2);
         when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
-        doThrow(new RuntimeException("INVALID ACTION - No valid action"))
-                .when(pws).transitionBill(any(), any(), any(RequestInfo.class));
-        when(workflowUtil.isRetryableWfError(any())).thenReturn(true);
         svc.checkAndAggregateBill(BILL_ID, TENANT_ID, POLL_PHASE_VERIFICATION, ri);
+        verify(pws, never()).transitionBill(any(), any(), any(RequestInfo.class));
         verify(pws, never()).pushBillUpdate(any(), any());
     }
 

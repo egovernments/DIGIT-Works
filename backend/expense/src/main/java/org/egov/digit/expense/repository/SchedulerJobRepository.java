@@ -145,8 +145,10 @@ public class SchedulerJobRepository {
     public int recoverStuck(String tenantId, long stuckThresholdMs) {
         try {
             String sql = queryBuilder.recoverStuck(tenantId);
-            long stuckCutoff = System.currentTimeMillis() - stuckThresholdMs;
-            int count = jdbcTemplate.update(sql, System.currentTimeMillis(), stuckCutoff);
+            long now = System.currentTimeMillis();
+            long stuckCutoff = now - stuckThresholdMs;
+            long nextCheckAt = now + (stuckThresholdMs / 2);
+            int count = jdbcTemplate.update(sql, nextCheckAt, now, stuckCutoff);
             if (count > 0) log.warn("Recovered {} stuck scheduler jobs for tenant {}", count, tenantId);
             return count;
         } catch (InvalidTenantIdException e) {

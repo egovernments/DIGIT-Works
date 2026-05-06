@@ -120,7 +120,18 @@ public class SchedulerService {
         // RC-8: update each job's status immediately after processing so that a pod crash
         // leaves at most 1 job in PROCESSING state — stuck-recovery resets it within threshold.
         for (SchedulerJob job : claimed) {
-            SchedulerJob updated = processJob(job);
+            SchedulerJob updated;
+            try {
+                updated = processJob(job);
+            } catch (Exception e) {
+                // Defensive: processJob has its own catch-alls so this should never fire,
+                // but if it does (e.g. Error promoted to Exception), fall back to RETRY
+                // so the loop continues and the remaining jobs in the batch are not orphaned.
+                log.error("Unexpected error in processJob for job={} type={} — scheduling retry",
+                        job.getId(), job.getJobType(), e);
+                updated = retrying(job, job.getAttemptCount() + 1,
+                        System.currentTimeMillis() + config.getSchedulerBackoffBaseMs());
+            }
             try {
                 jobRepository.updateStatus(updated, tenantId);
             } catch (Exception e) {

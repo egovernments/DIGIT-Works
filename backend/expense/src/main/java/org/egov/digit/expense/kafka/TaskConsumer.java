@@ -167,7 +167,9 @@ public class TaskConsumer {
             log.error("VerificationVerify: service failure for bill={} detail={} — scheduling BILL_DETAILS_TASK_VERIFY_CHECK retry",
                     billId, detail.getId(), e);
         } finally {
-            if (serviceFailure) {
+            if (serviceFailure
+                    && (detail.getStatus() == Status.VERIFICATION_IN_PROGRESS
+                            || detail.getStatus() == Status.PENDING_VERIFICATION)) {
                 paymentWorkflowService.insertBillDetailsTaskVerifyCheckJob(
                         taskRequest.getBill(), detail, taskRequest.getRequestInfo());
             }

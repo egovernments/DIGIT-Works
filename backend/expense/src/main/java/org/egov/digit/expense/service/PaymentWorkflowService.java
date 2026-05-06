@@ -412,21 +412,36 @@ public class PaymentWorkflowService {
         if (actual == null) {
             throw new CustomException(ERR_WF_STATE_SEARCH_FAILED, MSG_WF_STATE_SEARCH_FAILED + " bill=" + bill.getId());
         }
-        bill.setStatus(Status.fromValue(actual.getApplicationStatus()));
+        Status wfStatus = Status.fromValue(actual.getApplicationStatus());
+        if (wfStatus == bill.getStatus()) {
+            // WF read lag: read-side hasn't caught up with write-side yet; caller should retry.
+            throw new CustomException(ERR_WF_STATE_SEARCH_FAILED,
+                    "WF read lag: bill=" + bill.getId() + " read status=" + wfStatus + " same as current — retry");
+        }
+        bill.setStatus(wfStatus);
         log.warn("Bill {} reconciled from WF after INVALID_ACTION — status={}", bill.getId(), bill.getStatus());
     }
 
     /**
      * On INVALID_ACTION for a bill detail: searches the WF service for the actual current state
      * and updates the in-memory detail status to match.
-     * Throws if the WF search itself fails — caller should treat as RETRY.
+     * Throws if the WF search fails or if WF read still shows the same old status (read lag).
+     * Caller should treat either throw as RETRY.
      */
     private void reconcileDetailFromWf(BillDetail detail, RequestInfo requestInfo) {
         State actual = workflowUtil.searchCurrentWfState(detail.getId(), detail.getTenantId(), requestInfo);
         if (actual == null) {
             throw new CustomException(ERR_WF_STATE_SEARCH_FAILED, MSG_WF_STATE_SEARCH_FAILED + " detail=" + detail.getId());
         }
-        detail.setStatus(Status.fromValue(actual.getApplicationStatus()));
+        Status wfStatus = Status.fromValue(actual.getApplicationStatus());
+        if (wfStatus == detail.getStatus()) {
+            // WF read side returned the same old status — the write-side applied the transition
+            // but the read-side hasn't caught up yet (WF has no cache). Throw so the scheduler
+            // retries later when the read-side is consistent.
+            throw new CustomException(ERR_WF_STATE_SEARCH_FAILED,
+                    "WF read lag: detail=" + detail.getId() + " read status=" + wfStatus + " same as current — retry");
+        }
+        detail.setStatus(wfStatus);
         log.warn("BillDetail {} reconciled from WF after INVALID_ACTION — status={}", detail.getId(), detail.getStatus());
     }
 

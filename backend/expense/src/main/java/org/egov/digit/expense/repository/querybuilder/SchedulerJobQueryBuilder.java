@@ -43,20 +43,22 @@ public class SchedulerJobQueryBuilder {
 
     /**
      * Update scheduler state fields for a single job after processing.
+     * Only updates rows still in PROCESSING — prevents a late pod from overwriting
+     * a status already set by recovery + a different pod (batch-tail race).
      * Parameters: schedulerStatus, nextCheckAt, attemptCount, updatedAt, id
      */
     static final String UPDATE_STATUS =
             "UPDATE " + TABLE +
             " SET scheduler_status = ?, next_check_at = ?, attempt_count = ?, updated_at = ?" +
-            " WHERE id = ?";
+            " WHERE id = ? AND scheduler_status = 'PROCESSING'";
 
     /**
      * Reset PROCESSING → PENDING for jobs stuck longer than the threshold (crash recovery).
-     * Parameters: updatedAt (now), stuckCutoff (updatedAt threshold)
+     * Parameters: nextCheckAt (now + backoff), updatedAt (now), stuckCutoff (updatedAt threshold)
      */
     static final String RECOVER_STUCK =
             "UPDATE " + TABLE +
-            " SET scheduler_status = 'PENDING', next_check_at = NULL, updated_at = ?" +
+            " SET scheduler_status = 'PENDING', next_check_at = ?, updated_at = ?" +
             " WHERE scheduler_status = 'PROCESSING'" +
             "   AND updated_at < ?";
 

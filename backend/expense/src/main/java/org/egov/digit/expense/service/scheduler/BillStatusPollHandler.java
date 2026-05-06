@@ -227,8 +227,12 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
             // RC-9: re-fetch before commit
             Bill fresh = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
             if (fresh == null) { log.warn("Bill {} vanished before IGNORE_ERRORS transition — retrying", billId); return SchedulerJobResult.RETRY; }
-            paymentWorkflowService.transitionBill(fresh, Actions.COMPLETE, requestInfo);
-            paymentWorkflowService.pushBillUpdate(fresh, requestInfo);
+            if (fresh.getStatus() == Status.IGNORING_ERRORS_IN_PROGRESS) {
+                paymentWorkflowService.transitionBill(fresh, Actions.COMPLETE, requestInfo);
+                paymentWorkflowService.pushBillUpdate(fresh, requestInfo);
+            } else {
+                log.info("Bill {} already past IGNORING_ERRORS_IN_PROGRESS (now={}) — skipping transition", billId, fresh.getStatus());
+            }
             return SchedulerJobResult.DONE;
         }
         return SchedulerJobResult.RETRY;
@@ -260,6 +264,10 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
             // RC-9: re-fetch before commit
             Bill fresh = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
             if (fresh == null) { log.warn("Bill {} vanished before SEND_FOR_REVIEW transition — retrying", billId); return SchedulerJobResult.RETRY; }
+            if (fresh.getStatus() != Status.SENDING_FOR_REVIEW) {
+                log.info("Bill {} already past SENDING_FOR_REVIEW (now={}) — skipping transition", billId, fresh.getStatus());
+                return SchedulerJobResult.DONE;
+            }
             paymentWorkflowService.transitionBill(fresh, Actions.COMPLETE, requestInfo);
             paymentWorkflowService.pushBillUpdate(fresh, requestInfo);
             if (batchId == null) {
@@ -296,10 +304,14 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
 
         boolean allReviewed = bill.getBillDetails().stream()
                 .allMatch(d -> isAtOrBeyondReviewed(d.getStatus()));
-        if (allReviewed && bill.getStatus() != Status.REVIEWED) {
+        if (allReviewed) {
             // RC-9: re-fetch before commit
             Bill fresh = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
             if (fresh == null) { log.warn("Bill {} vanished before REVIEW transition — retrying", billId); return SchedulerJobResult.RETRY; }
+            if (fresh.getStatus() != Status.REVIEW_IN_PROGRESS) {
+                log.info("Bill {} already past REVIEW_IN_PROGRESS (now={}) — skipping transition", billId, fresh.getStatus());
+                return SchedulerJobResult.DONE;
+            }
             paymentWorkflowService.transitionBill(fresh, Actions.COMPLETE, requestInfo);
             paymentWorkflowService.pushBillUpdate(fresh, requestInfo);
             if (batchId == null) {
@@ -309,8 +321,6 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
             } else {
                 log.debug("Bill {} settled REVIEWED — batch email coordinator will handle notify (batchId={})", billId, batchId);
             }
-            return SchedulerJobResult.DONE;
-        } else if (bill.getStatus() == Status.REVIEWED) {
             return SchedulerJobResult.DONE;
         }
         return SchedulerJobResult.RETRY;

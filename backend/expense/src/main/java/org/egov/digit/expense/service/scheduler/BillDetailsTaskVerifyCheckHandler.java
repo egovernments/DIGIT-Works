@@ -124,17 +124,35 @@ public class BillDetailsTaskVerifyCheckHandler implements SchedulerJobHandler {
                     .build();
 
             Set<String> providers = extractProviders(singleDetailBill);
-            paymentProviderServices.stream()
-                    .filter(s -> providers.stream().anyMatch(s::supports))
-                    .forEach(s -> {
-                        try {
-                            s.executeTask(taskRequest);
-                        } catch (Exception e) {
-                            log.error("BILL_DETAILS_TASK_VERIFY_CHECK: provider {} failed for detail={} bill={}",
-                                    s.getClass().getSimpleName(), billDetailId, billId, e);
-                            throw new RuntimeException(e);
-                        }
-                    });
+            try {
+                paymentProviderServices.stream()
+                        .filter(s -> providers.stream().anyMatch(s::supports))
+                        .forEach(s -> {
+                            try {
+                                s.executeTask(taskRequest);
+                            } catch (Exception e) {
+                                log.error("BILL_DETAILS_TASK_VERIFY_CHECK: provider {} failed for detail={} bill={}",
+                                        s.getClass().getSimpleName(), billDetailId, billId, e);
+                                throw new RuntimeException(e);
+                            }
+                        });
+            } catch (Exception providerEx) {
+                // Defence: even on provider exception, re-check DB — reconciliation in
+                // setBillDetailStatus (Fix 1) may have already settled the detail.
+                Bill postEx = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
+                if (postEx != null) {
+                    BillDetail postDetail = findDetail(postEx, billDetailId);
+                    if (postDetail != null && isVerifySettled(postDetail.getStatus())) {
+                        log.info("BILL_DETAILS_TASK_VERIFY_CHECK: detail={} settled ({}) after provider exception — done",
+                                billDetailId, postDetail.getStatus());
+                        billAggregationService.checkAndAggregateBill(billId, tenantId, POLL_PHASE_VERIFICATION, requestInfo);
+                        return SchedulerJobResult.DONE;
+                    }
+                }
+                log.error("BILL_DETAILS_TASK_VERIFY_CHECK: provider error for detail={} bill={}, will retry",
+                        billDetailId, billId, providerEx);
+                return SchedulerJobResult.RETRY;
+            }
 
             // Re-fetch from DB (bypass cache) to check if detail settled
             Bill refreshed = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
@@ -200,7 +218,20 @@ public class BillDetailsTaskVerifyCheckHandler implements SchedulerJobHandler {
     // ─────────────────────────────────────────────────────────────────────────
 
     private boolean isVerifySettled(Status status) {
-        return status == Status.VERIFIED || status == Status.VERIFICATION_FAILED;
+        // Settled = verification conclusively done, including any state downstream of VERIFIED.
+        // Prevents re-processing details that have already moved into the payment phase.
+        return status == Status.VERIFIED
+                || status == Status.VERIFICATION_FAILED
+                || status == Status.UNDER_REVIEW
+                || status == Status.REVIEW_IN_PROGRESS
+                || status == Status.REVIEWED
+                || status == Status.PAYMENT_IN_PROGRESS
+                || status == Status.PAID
+                || status == Status.FULLY_PAID
+                || status == Status.PARTIALLY_PAID
+                || status == Status.PAYMENT_FAILED
+                || status == Status.CANCELLED
+                || status == Status.INACTIVE;
     }
 
     private BillDetail findDetail(Bill bill, String billDetailId) {
