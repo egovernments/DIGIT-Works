@@ -1,5 +1,6 @@
 package org.egov.digit.expense.web.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,6 +36,7 @@ public class EmailRequest {
 
         private String tenantId;
 
+        @JsonProperty("isHTML")
         private boolean isHTML;
     }
 }
