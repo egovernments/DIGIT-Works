@@ -14,6 +14,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -37,7 +38,7 @@ public class BillCacheServiceTest {
     public void setUp() {
         objectMapper = new ObjectMapper();
         billCacheService = new BillCacheService(redisTemplate, objectMapper);
-        ReflectionTestUtils.setField(billCacheService, "cacheTtlSeconds", 60L);
+        ReflectionTestUtils.setField(billCacheService, "cacheTtlSeconds", 300L);
         when(redisTemplate.opsForValue()).thenReturn(valueOps);
     }
 
@@ -47,10 +48,32 @@ public class BillCacheServiceTest {
 
         billCacheService.put(bill);
 
+        // Key format: {tenantId}:bill:{billId}
         verify(valueOps).set(
-                argThat(key -> key.contains(BILL_ID) && key.contains(TENANT_ID)),
-                anyString(), eq(60L), any()
+                argThat(key -> key.equals(TENANT_ID + ":bill:" + BILL_ID)),
+                anyString(), eq(300L), any()
         );
+    }
+
+    @Test
+    public void put_stripsDetailsBeforeCaching_restoresAfter() throws Exception {
+        Bill bill = buildBill(Status.VERIFICATION_IN_PROGRESS, Status.PENDING_VERIFICATION, 2);
+        assertNotNull(bill.getBillDetails());
+
+        // Capture the JSON written to Redis
+        org.mockito.ArgumentCaptor<String> jsonCaptor = org.mockito.ArgumentCaptor.forClass(String.class);
+        billCacheService.put(bill);
+        verify(valueOps).set(anyString(), jsonCaptor.capture(), anyLong(), any());
+
+        // Cached JSON must not contain billDetails
+        String cached = jsonCaptor.getValue();
+        Bill deserialized = objectMapper.readValue(cached, Bill.class);
+        assertTrue(deserialized.getBillDetails() == null || deserialized.getBillDetails().isEmpty(),
+                "Cached bill must have no billDetails");
+
+        // In-memory bill must still have its original details after put()
+        assertNotNull(bill.getBillDetails());
+        assertFalse(bill.getBillDetails().isEmpty());
     }
 
     @Test

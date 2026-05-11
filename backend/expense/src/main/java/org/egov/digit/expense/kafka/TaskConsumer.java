@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.service.BillAggregationService;
-import org.egov.digit.expense.service.BillCacheService;
 import org.egov.digit.expense.service.PaymentProviderService;
 import org.egov.digit.expense.service.PaymentWorkflowService;
 import org.egov.digit.expense.service.TaskCacheService;
@@ -37,7 +36,6 @@ public class TaskConsumer {
     private final List<PaymentProviderService> paymentProviderServices;
     private final PaymentWorkflowService paymentWorkflowService;
     private final BillAggregationService billAggregationService;
-    private final BillCacheService billCacheService;
     private final TaskCacheService taskCacheService;
     private final Configuration config;
     private final ExpenseProducer expenseProducer;
@@ -47,7 +45,6 @@ public class TaskConsumer {
                         List<PaymentProviderService> paymentProviderServices,
                         PaymentWorkflowService paymentWorkflowService,
                         BillAggregationService billAggregationService,
-                        BillCacheService billCacheService,
                         TaskCacheService taskCacheService,
                         Configuration config,
                         ExpenseProducer expenseProducer) {
@@ -55,7 +52,6 @@ public class TaskConsumer {
         this.paymentProviderServices = paymentProviderServices;
         this.paymentWorkflowService = paymentWorkflowService;
         this.billAggregationService = billAggregationService;
-        this.billCacheService = billCacheService;
         this.taskCacheService = taskCacheService;
         this.config = config;
         this.expenseProducer = expenseProducer;
@@ -121,8 +117,9 @@ public class TaskConsumer {
             // Clear any error from a prior failed attempt as soon as the detail re-enters
             // VERIFICATION_IN_PROGRESS so the DB is clean before any provider or aggregation push.
             clearErrorDetails(detail);
-            billCacheService.put(bill);  // EC-1: cache full bill before Kafka
-            paymentWorkflowService.pushBillUpdate(bill, taskRequest.getRequestInfo());
+            // Push to detail topic (not bill topic) — only one detail status changed; pushing the
+            // full bill update topic here overwrites concurrent detail transitions in persister.
+            paymentWorkflowService.pushBillDetailUpdate(bill, detail);
             // Immediately push VerificationVerify so MTN call happens via next Kafka message,
             // not after the BILL_STARTED_CHECK scheduler delay (~17–30 s).
             paymentWorkflowService.pushVerificationVerifyTask(bill, detail, taskRequest.getRequestInfo());
@@ -145,6 +142,7 @@ public class TaskConsumer {
         Task task = taskRequest.getTask();
         BillDetail detail = taskRequest.getBill().getBillDetails().get(0);
         String billId = task.getBillId();
+        String tenantId = task.getTenantId();
         boolean serviceFailure = false;
         try {
             if (detail.getStatus() != Status.VERIFICATION_IN_PROGRESS) {
@@ -152,8 +150,8 @@ public class TaskConsumer {
                         detail.getId(), detail.getStatus());
                 return;
             }
-            // Execute MTN call. Business failures (inactive account) are handled inside
-            // executeTask() and result in VERIFICATION_FAILED — no exception is thrown.
+            // Execute verify call. Business failures (invalid bank account, missing payee name)
+            // are handled inside executeTask() and result in VERIFICATION_FAILED — no exception thrown.
             Set<String> providers = extractProviders(taskRequest.getBill());
             paymentProviderServices.stream()
                     .filter(s -> providers.stream().anyMatch(s::supports))
@@ -161,6 +159,18 @@ public class TaskConsumer {
 
             taskCacheService.put(task);  // EC-5: cache task so verify-check handler can find it
             log.info("VerificationVerify: completed for bill={} detail={}", billId, detail.getId());
+
+            // If verify concluded immediately (BANK: always synchronous), aggregate now without
+            // waiting for BILL_STATUS_POLL. VERIFICATION_IN_PROGRESS means async (e.g., MTN) —
+            // scheduler polls and aggregates later via BILL_DETAILS_TASK_VERIFY_CHECK.
+            Bill refreshed = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, taskRequest.getRequestInfo(), false);
+            BillDetail refreshedDetail = findDetail(refreshed, detail.getId());
+            if (refreshedDetail != null && refreshedDetail.getStatus() != Status.VERIFICATION_IN_PROGRESS
+                    && refreshedDetail.getStatus() != Status.PENDING_VERIFICATION) {
+                billAggregationService.checkAndAggregateBill(billId, tenantId, POLL_PHASE_VERIFICATION, taskRequest.getRequestInfo());
+                log.info("VerificationVerify: detail={} settled ({}) — aggregated immediately",
+                        detail.getId(), refreshedDetail.getStatus());
+            }
         } catch (Exception e) {
             // Service failure (network, WF error) — schedule a retry via scheduler.
             serviceFailure = true;
@@ -177,7 +187,7 @@ public class TaskConsumer {
         }
     }
 
-    /**
+/**
      * Transitions bill detail → PAYMENT_IN_PROGRESS; persists task record.
      * Single WF attempt — fast first try. On failure, BILL_STARTED_CHECK retries via scheduler.
      * Caches full bill in Redis BEFORE Kafka push (EC-1 Fix B).
@@ -195,8 +205,7 @@ public class TaskConsumer {
             }
             // Single attempt — transitionBillDetail reconciles INVALID_ACTION internally
             paymentWorkflowService.transitionBillDetail(detail, Actions.PAYMENT_INITIATION, taskRequest.getRequestInfo());
-            billCacheService.put(bill);  // EC-1: cache full bill before Kafka
-            paymentWorkflowService.pushBillUpdate(bill, taskRequest.getRequestInfo());
+            paymentWorkflowService.pushBillDetailUpdate(bill, detail);
             log.info("PaymentInitiationStart: detail={} → PAYMENT_IN_PROGRESS for bill={}", detail.getId(), billId);
         } catch (Exception e) {
             log.warn("PaymentInitiationStart failed for bill={} detail={} — BILL_STARTED_CHECK will retry: {}",
@@ -285,8 +294,7 @@ public class TaskConsumer {
 
             // Single attempt — transitionBillDetail reconciles INVALID_ACTION internally
             paymentWorkflowService.transitionBillDetail(detail, action, taskRequest.getRequestInfo());
-            billCacheService.put(bill);  // EC-1: cache full bill before Kafka
-            paymentWorkflowService.pushBillUpdate(bill, taskRequest.getRequestInfo());
+            paymentWorkflowService.pushBillDetailUpdate(bill, detail);
             billAggregationService.checkAndAggregateBill(billId, tenantId, phase, taskRequest.getRequestInfo());
 
         } catch (Exception e) {
@@ -329,6 +337,13 @@ public class TaskConsumer {
             updated.remove("errorDetails");
             detail.setAdditionalDetails(updated.isEmpty() ? null : updated);
         }
+    }
+
+    private BillDetail findDetail(Bill bill, String detailId) {
+        if (bill == null || CollectionUtils.isEmpty(bill.getBillDetails())) return null;
+        return bill.getBillDetails().stream()
+                .filter(d -> detailId.equals(d.getId()))
+                .findFirst().orElse(null);
     }
 
     private Set<String> extractProviders(Bill bill) {

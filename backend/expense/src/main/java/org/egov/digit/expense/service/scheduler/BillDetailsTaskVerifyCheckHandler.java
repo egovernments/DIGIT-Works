@@ -78,7 +78,10 @@ public class BillDetailsTaskVerifyCheckHandler implements SchedulerJobHandler {
             String billId = ctx.getBillId();
             RequestInfo requestInfo = ctx.getRequestInfo();
 
-            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
+            // Cache-first (bypassCache=false): the detail cache holds the settled status written
+            // immediately after WF transition, so the isVerifySettled idempotency guard below
+            // catches details already completed by the fast-path, preventing re-verification.
+            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, false);
             if (bill == null) {
                 log.warn("BILL_DETAILS_TASK_VERIFY_CHECK: bill={} not found — marking FAILED", billId);
                 return SchedulerJobResult.FAILED;
@@ -137,9 +140,10 @@ public class BillDetailsTaskVerifyCheckHandler implements SchedulerJobHandler {
                             }
                         });
             } catch (Exception providerEx) {
-                // Defence: even on provider exception, re-check DB — reconciliation in
-                // setBillDetailStatus (Fix 1) may have already settled the detail.
-                Bill postEx = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
+                // Defence: even on provider exception, re-check via cache — the provider may have
+                // partially settled the detail (e.g. WF transition succeeded before the throw).
+                // A business-logic failure that settled the detail should return DONE, not RETRY.
+                Bill postEx = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, false);
                 if (postEx != null) {
                     BillDetail postDetail = findDetail(postEx, billDetailId);
                     if (postDetail != null && isVerifySettled(postDetail.getStatus())) {
@@ -154,8 +158,11 @@ public class BillDetailsTaskVerifyCheckHandler implements SchedulerJobHandler {
                 return SchedulerJobResult.RETRY;
             }
 
-            // Re-fetch from DB (bypass cache) to check if detail settled
-            Bill refreshed = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
+            // Cache-first re-fetch: the provider (e.g. BANK) writes settled status to the detail
+            // cache before pushing to Kafka, so bypassCache=false reflects the outcome immediately
+            // without waiting for the persister. Business-logic failures (VERIFICATION_FAILED) are
+            // considered completed — no further retries needed.
+            Bill refreshed = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, false);
             if (refreshed != null) {
                 BillDetail refreshedDetail = findDetail(refreshed, billDetailId);
                 if (refreshedDetail != null && isVerifySettled(refreshedDetail.getStatus())) {
@@ -193,10 +200,7 @@ public class BillDetailsTaskVerifyCheckHandler implements SchedulerJobHandler {
             if (!isVerifySettled(detail.getStatus())) {
                 try {
                     paymentWorkflowService.transitionBillDetail(detail, Actions.FAILED, requestInfo);
-                    // Push only this detail to avoid overwriting concurrent detail transitions.
-                    // Each per-detail job fetches a stale full-bill snapshot; pushing the full bill
-                    // causes last-writer-wins races that revert earlier detail transitions in the DB.
-                    paymentWorkflowService.pushBillUpdate(buildSingleDetailBill(bill, detail), requestInfo, false);
+                    paymentWorkflowService.pushBillDetailUpdate(bill, detail);
                     log.warn("BILL_DETAILS_TASK_VERIFY_CHECK: forced detail={} to VERIFICATION_FAILED", billDetailId);
                 } catch (Exception ex) {
                     if (workflowUtil.isRetryableWfError(ex)) {
@@ -227,8 +231,6 @@ public class BillDetailsTaskVerifyCheckHandler implements SchedulerJobHandler {
                 || status == Status.REVIEWED
                 || status == Status.PAYMENT_IN_PROGRESS
                 || status == Status.PAID
-                || status == Status.FULLY_PAID
-                || status == Status.PARTIALLY_PAID
                 || status == Status.PAYMENT_FAILED
                 || status == Status.CANCELLED
                 || status == Status.INACTIVE;

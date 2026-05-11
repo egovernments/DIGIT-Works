@@ -72,6 +72,8 @@ public class MTNService implements PaymentProviderService {
 
     private final BillCacheService billCacheService;
 
+    private final BillDetailService billDetailService;
+
     @Autowired
     public MTNService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator,
                       WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil,
@@ -80,7 +82,8 @@ public class MTNService implements PaymentProviderService {
                       SchedulerJobRepository schedulerJobRepository, SchedulerJobRegistry schedulerJobRegistry,
                       ObjectMapper objectMapper,
                       BillAggregationService billAggregationService,
-                      BillCacheService billCacheService) {
+                      BillCacheService billCacheService,
+                      BillDetailService billDetailService) {
         this.expenseProducer = expenseProducer;
         this.config = config;
         this.validator = validator;
@@ -95,6 +98,7 @@ public class MTNService implements PaymentProviderService {
         this.objectMapper = objectMapper;
         this.billAggregationService = billAggregationService;
         this.billCacheService = billCacheService;
+        this.billDetailService = billDetailService;
     }
 
     private Task fetchOrCreateTask(BillTaskRequest billTaskRequest, Task.Type type) {
@@ -285,14 +289,9 @@ public class MTNService implements PaymentProviderService {
                     additionalDetails = new HashMap<>();
                 }
 
-                ErrorDetails errorDetails = ErrorDetails.builder()
-                        .reasonForFailure(taskDetails.getReasonForFailure())
-                        .responseMessage(taskDetails.getResponseMessage())
-                        .response(taskDetails.getAdditionalDetails()).build();
-                additionalDetails.put("errorDetails", errorDetails);
-                billDetail.setAdditionalDetails(additionalDetails);
-
                 if (verificationSucceeded) {
+                    // Clear any prior errorDetails on success so stale failure info is not persisted.
+                    additionalDetails.remove("errorDetails");
                     Workflow successWorkflow = Workflow.builder()
                             .action(Actions.VERIFICATION_SUCCESS.toString())
                             .build();
@@ -302,6 +301,11 @@ public class MTNService implements PaymentProviderService {
                                 billDetail.getId(), billFromSearch.getBillNumber());
                     }
                 } else {
+                    ErrorDetails errorDetails = ErrorDetails.builder()
+                            .reasonForFailure(taskDetails.getReasonForFailure())
+                            .responseMessage(taskDetails.getResponseMessage())
+                            .response(taskDetails.getAdditionalDetails()).build();
+                    additionalDetails.put("errorDetails", errorDetails);
                     Workflow failedWorkflow = Workflow.builder()
                             .action(Actions.FAILED.toString())
                             .build();
@@ -311,14 +315,16 @@ public class MTNService implements PaymentProviderService {
                                 billDetail.getId(), billFromSearch.getBillNumber());
                     }
                 }
+                billDetail.setAdditionalDetails(additionalDetails.isEmpty() ? null : additionalDetails);
             }
-            // Push ONLY the details processed by this task — not the full bill.
-            // Each task handles a single detail; pushing all details with stale DB reads
+            // Push processed details independently via the detail topic (scoped to detail tables only).
+            // Each task handles a single detail; pushing all details from a stale full-bill read
             // from the other concurrent tasks would overwrite their VERIFIED statuses (lost-update).
             List<BillDetail> processedDetails = billDetailsToBeUpdatedById.values().stream()
                     .filter(java.util.Objects::nonNull)
                     .collect(java.util.stream.Collectors.toList());
-            billFromSearch.setBillDetails(processedDetails);
+            billDetailService.update(processedDetails, billFromSearch.getTenantId());
+
             BillRequest billUpdateRequest = BillRequest.builder()
                     .bill(billFromSearch)
                     .requestInfo(taskRequest.getRequestInfo())
@@ -326,7 +332,7 @@ public class MTNService implements PaymentProviderService {
             updateBillWfStatus(billUpdateRequest, false);
 
             if (billFromSearch.getStatus() == Status.VERIFICATION_IN_PROGRESS) {
-                log.info("Bill {} — pushed {} updated detail(s) to Kafka, bill number: {}",
+                log.info("Bill {} — pushed {} updated detail(s) to detail topic, bill number: {}",
                         billFromSearch.getId(), processedDetails.size(), billFromSearch.getBillNumber());
             } else {
                 log.warn("Bill {} has unexpected status {} during verify task — detail(s) still persisted",
@@ -599,7 +605,11 @@ public class MTNService implements PaymentProviderService {
         }
         if (!isWorkflowChange || wfSucceeded) {
             billCacheService.put(bill);
+            // Push bill without details — expense-bill-update persister only touches eg_expense_bill
+            List<BillDetail> originalDetails = bill.getBillDetails();
+            bill.setBillDetails(null);
             expenseProducer.push(bill.getTenantId(), config.getBillUpdateTopic(), billRequest);
+            bill.setBillDetails(originalDetails);
         }
     }
 
@@ -681,6 +691,11 @@ public class MTNService implements PaymentProviderService {
                             }
                         }
                 );
+        // Push updated details independently via the detail topic
+        if (!updatedBillDetails.isEmpty()) {
+            billDetailService.update(updatedBillDetails, billFromSearch.getTenantId());
+        }
+
         BillRequest billUpdateRequest
                 = BillRequest
                 .builder()
@@ -731,6 +746,9 @@ public class MTNService implements PaymentProviderService {
 
     private boolean isStatusMoreAdvanced(Status requestStatus, Status dbStatus) {
         return requestStatus == Status.VERIFICATION_IN_PROGRESS && dbStatus == Status.PENDING_VERIFICATION
+                // Re-verify: VERIFICATION_FAILED detail re-enters VERIFICATION_IN_PROGRESS;
+                // the request (cache) is ahead of a stale DB that still shows VERIFICATION_FAILED.
+                || requestStatus == Status.VERIFICATION_IN_PROGRESS && dbStatus == Status.VERIFICATION_FAILED
                 || requestStatus == Status.PAYMENT_IN_PROGRESS && dbStatus == Status.REVIEWED;
     }
 
@@ -745,6 +763,7 @@ public class MTNService implements PaymentProviderService {
                 .collect(Collectors.toMap(BillDetail::getId, billDetail -> billDetail));
 
         List<TaskDetails> taskDetails = taskRepository.searchTaskDetailsByTaskId(task.getId(), billFromSearch.getTenantId());
+        List<BillDetail> updatedBillDetails = new ArrayList<>();
         for (TaskDetails taskDetail : taskDetails) {
             boolean isUpdateWorkflow = true;
             BillDetail billDetail = billDetailsById.get(taskDetail.getBillDetailsId());
@@ -820,15 +839,27 @@ public class MTNService implements PaymentProviderService {
                     additionalDetails = new HashMap<>();
                 }
 
-                ErrorDetails errorDetails = ErrorDetails.builder()
-                        .reasonForFailure(taskDetail.getReasonForFailure())
-                        .responseMessage(taskDetail.getResponseMessage())
-                        .response(taskDetail.getAdditionalDetails()).build();
-                additionalDetails.put("errorDetails", errorDetails);
-                billDetail.setAdditionalDetails(additionalDetails);
+                if (Actions.PAY.toString().equals(billDetailWorkflow.getAction())) {
+                    // Clear prior errorDetails on successful payment.
+                    additionalDetails.remove("errorDetails");
+                } else {
+                    ErrorDetails errorDetails = ErrorDetails.builder()
+                            .reasonForFailure(taskDetail.getReasonForFailure())
+                            .responseMessage(taskDetail.getResponseMessage())
+                            .response(taskDetail.getAdditionalDetails()).build();
+                    additionalDetails.put("errorDetails", errorDetails);
+                }
+                billDetail.setAdditionalDetails(additionalDetails.isEmpty() ? null : additionalDetails);
                 // setBillDetailStatus catches HttpClientErrorException internally — no outer try-catch needed.
                 setBillDetailStatus(billDetail, billDetailWorkflow, taskRequest.getRequestInfo(), isUpdateWorkflow);
+                if (isUpdateWorkflow) {
+                    updatedBillDetails.add(billDetail);
+                }
             }
+        }
+        // Push all updated details via the detail topic (scoped to detail tables only)
+        if (!updatedBillDetails.isEmpty()) {
+            billDetailService.update(updatedBillDetails, billFromSearch.getTenantId());
         }
         // Also check PARTIALLY_PAID: when concurrent task completions race past each other,
         // the bill may already be PARTIALLY_PAID by the time we evaluate. We must still drive

@@ -13,6 +13,7 @@ import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillDetail;
 import org.egov.digit.expense.web.models.BillDetailRequest;
 import org.egov.digit.expense.web.models.BillRequest;
+import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -157,6 +158,19 @@ public class WorkflowUtil {
         Bill bill = billRequest.getBill();
         ProcessInstance pi = workflowRequest.getProcessInstances().get(0);
 
+        // Fetch actual WF state. If WF already differs from in-memory the transition was applied
+        // by another thread/task — sync the status and return without re-calling the action.
+        State currentWfState = searchCurrentWfState(pi.getBusinessId(), pi.getTenantId(), billRequest.getRequestInfo());
+        if (currentWfState != null) {
+            Status actualStatus = Status.fromValue(currentWfState.getApplicationStatus());
+            if (actualStatus != bill.getStatus()) {
+                log.info("WF_STATE_RECONCILE | entity=BILL | billId={} | inMemory={} | actual={} | action={} — returning reconciled state without transition",
+                        bill.getId(), bill.getStatus(), actualStatus, pi.getAction());
+                bill.setStatus(actualStatus);
+                return currentWfState;
+            }
+        }
+
         log.info("WF_TRANSITION | BEFORE | entity=BILL | billId={} | businessId={} | businessService={} | tenantId={} | action={} | currentStatus={}",
                 bill.getId(), pi.getBusinessId(), pi.getBusinessService(), pi.getTenantId(), pi.getAction(), bill.getStatus());
 
@@ -175,6 +189,19 @@ public class WorkflowUtil {
     public State callWorkFlow(ProcessInstanceRequest workflowRequest, BillDetailRequest billDetailRequest) {
         BillDetail detail = billDetailRequest.getBillDetail();
         ProcessInstance pi = workflowRequest.getProcessInstances().get(0);
+
+        // Fetch actual WF state. If WF already differs from in-memory the transition was applied
+        // by another thread/task — sync the status and return without re-calling the action.
+        State currentWfState = searchCurrentWfState(detail.getId(), detail.getTenantId(), billDetailRequest.getRequestInfo());
+        if (currentWfState != null) {
+            Status actualStatus = Status.fromValue(currentWfState.getApplicationStatus());
+            if (actualStatus != detail.getStatus()) {
+                log.info("WF_STATE_RECONCILE | entity=BILL_DETAIL | detailId={} | inMemory={} | actual={} | action={} — returning reconciled state without transition",
+                        detail.getId(), detail.getStatus(), actualStatus, pi.getAction());
+                detail.setStatus(actualStatus);
+                return currentWfState;
+            }
+        }
 
         log.info("WF_TRANSITION | BEFORE | entity=BILL_DETAIL | detailId={} | businessId={} | businessService={} | tenantId={} | action={} | currentStatus={}",
                 detail.getId(), pi.getBusinessId(), pi.getBusinessService(), pi.getTenantId(), pi.getAction(), detail.getStatus());

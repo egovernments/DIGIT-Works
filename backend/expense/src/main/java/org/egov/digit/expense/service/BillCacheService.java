@@ -18,26 +18,35 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static org.egov.digit.expense.config.Constants.BILL_CACHE_KEY_PREFIX;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class BillCacheService {
 
-    private static final String KEY_PREFIX = "bill:";
-
     private final RedisTemplate<String, String> redisTemplate;
     private final ObjectMapper objectMapper;
 
-    @Value("${expense.bill.cache.ttl.seconds:60}")
+    @Value("${expense.bill.cache.ttl.seconds:300}")
     private long cacheTtlSeconds;
 
+    /**
+     * Caches bill-level data only (no billDetails).
+     * Strips billDetails before caching to prevent stale partial-detail contamination.
+     * Key: {tenantId}:bill:{billId}
+     */
     public void put(Bill bill) {
         if (bill == null || bill.getId() == null || bill.getTenantId() == null) return;
         try {
+            // Strip details — cache stores bill-level fields only
+            List<?> originalDetails = bill.getBillDetails();
+            bill.setBillDetails(null);
             String key = buildKey(bill.getTenantId(), bill.getId());
             String json = objectMapper.writeValueAsString(bill);
             redisTemplate.opsForValue().set(key, json, cacheTtlSeconds, TimeUnit.SECONDS);
-            log.debug("Cached bill id={} tenantId={} ttl={}s", bill.getId(), bill.getTenantId(), cacheTtlSeconds);
+            log.debug("Cached bill id={} tenantId={} ttl={}s (details stripped)", bill.getId(), bill.getTenantId(), cacheTtlSeconds);
+            bill.setBillDetails((List) originalDetails);
         } catch (Exception e) {
             log.warn("Failed to cache bill id={}: {}", bill.getId(), e.getMessage());
         }
@@ -83,6 +92,6 @@ public class BillCacheService {
     }
 
     private String buildKey(String tenantId, String billId) {
-        return KEY_PREFIX + tenantId + ":" + billId;
+        return tenantId + ":" + BILL_CACHE_KEY_PREFIX + billId;
     }
 }

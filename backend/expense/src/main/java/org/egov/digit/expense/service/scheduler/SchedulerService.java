@@ -18,8 +18,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Adaptive DB-backed scheduler.
@@ -49,6 +51,10 @@ public class SchedulerService {
             });
 
     private final AtomicLong currentIntervalMs = new AtomicLong(0);
+    private final AtomicReference<ScheduledFuture<?>> nextCycle = new AtomicReference<>();
+
+    /** Result from one tenant poll cycle: whether any work was done and the earliest RETRY job's nextCheckAt. */
+    private record TenantPollResult(boolean hadWork, long earliestNextCheckAt) {}
 
     @Autowired
     public SchedulerService(Configuration config,
@@ -76,7 +82,7 @@ public class SchedulerService {
             log.info("SchedulerService: bootstrapped tenant {} from configuration", tenantId);
         });
         currentIntervalMs.set(config.getSchedulerMinIntervalMs());
-        executor.schedule(this::runCycle, config.getSchedulerInitialDelayMs(), TimeUnit.MILLISECONDS);
+        scheduleNextCycle(config.getSchedulerInitialDelayMs());
         log.info("SchedulerService started — initial delay {}ms, {} bootstrap tenant(s)",
                 config.getSchedulerInitialDelayMs(), config.getSchedulerBootstrapTenants().size());
     }
@@ -91,31 +97,44 @@ public class SchedulerService {
 
     private void runCycle() {
         boolean anyWork = false;
+        long earliestRetryMs = Long.MAX_VALUE;
         try {
             for (String tenantId : registry.getActiveTenants()) {
-                int count = processForTenant(tenantId);
-                if (count > 0) anyWork = true;
+                TenantPollResult result = processForTenant(tenantId);
+                if (result.hadWork()) anyWork = true;
+                if (result.earliestNextCheckAt() < earliestRetryMs) {
+                    earliestRetryMs = result.earliestNextCheckAt();
+                }
             }
         } catch (Exception e) {
             log.error("Unexpected error in scheduler poll cycle", e);
         } finally {
-            long nextInterval = anyWork
-                    ? config.getSchedulerMinIntervalMs()
-                    : Math.min((long) (currentIntervalMs.get() * 1.5), config.getSchedulerMaxIntervalMs());
+            long nextInterval;
+            if (anyWork) {
+                long nowMs = System.currentTimeMillis();
+                long retryDelay = earliestRetryMs == Long.MAX_VALUE
+                        ? config.getSchedulerMinIntervalMs()
+                        : Math.max(0L, earliestRetryMs - nowMs);
+                nextInterval = Math.min(config.getSchedulerMinIntervalMs(), retryDelay);
+            } else {
+                nextInterval = Math.min((long) (currentIntervalMs.get() * 1.5), config.getSchedulerMaxIntervalMs());
+            }
             currentIntervalMs.set(nextInterval);
             try {
-                executor.schedule(this::runCycle, nextInterval, TimeUnit.MILLISECONDS);
+                scheduleNextCycle(nextInterval);
             } catch (java.util.concurrent.RejectedExecutionException ignored) {
                 log.info("Scheduler executor shut down — stopping poll loop");
             }
         }
     }
 
-    private int processForTenant(String tenantId) {
+    private TenantPollResult processForTenant(String tenantId) {
         List<SchedulerJob> claimed = jobRepository.claimBatch(
                 tenantId, config.getSchedulerBatchSize(), System.currentTimeMillis());
 
-        if (claimed.isEmpty()) return 0;
+        if (claimed.isEmpty()) return new TenantPollResult(false, Long.MAX_VALUE);
+
+        long earliestRetryAt = Long.MAX_VALUE;
 
         // RC-8: update each job's status immediately after processing so that a pod crash
         // leaves at most 1 job in PROCESSING state — stuck-recovery resets it within threshold.
@@ -132,6 +151,11 @@ public class SchedulerService {
                 updated = retrying(job, job.getAttemptCount() + 1,
                         System.currentTimeMillis() + config.getSchedulerBackoffBaseMs());
             }
+            if (updated.getSchedulerStatus() == SchedulerJobStatus.PENDING
+                    && updated.getNextCheckAt() != null
+                    && updated.getNextCheckAt() < earliestRetryAt) {
+                earliestRetryAt = updated.getNextCheckAt();
+            }
             try {
                 jobRepository.updateStatus(updated, tenantId);
             } catch (Exception e) {
@@ -140,7 +164,34 @@ public class SchedulerService {
             }
         }
 
-        return claimed.size();
+        return new TenantPollResult(true, earliestRetryAt);
+    }
+
+    /**
+     * Schedules the next poll cycle, replacing (cancelling) any previously queued cycle.
+     * Safe to call from any thread. If cancel arrives after the old cycle has already started,
+     * it is a no-op and both cycles run sequentially — harmless due to SKIP LOCKED on claimBatch.
+     */
+    private void scheduleNextCycle(long delayMs) {
+        ScheduledFuture<?> f = executor.schedule(this::runCycle, Math.max(0L, delayMs), TimeUnit.MILLISECONDS);
+        ScheduledFuture<?> old = nextCycle.getAndSet(f);
+        if (old != null) old.cancel(false);
+    }
+
+    /**
+     * Triggers an early poll cycle for the given tenant if the requested wake-up time is
+     * meaningfully sooner than the currently queued cycle (>200ms gap).
+     * Safe to call from any thread (API thread, Kafka consumer, scheduler handlers).
+     */
+    public void wakeUp(String tenantId, long delayMs) {
+        registry.register(tenantId);
+        ScheduledFuture<?> cur = nextCycle.get();
+        long remaining = (cur != null && !cur.isDone() && !cur.isCancelled())
+                ? Math.max(0L, cur.getDelay(TimeUnit.MILLISECONDS))
+                : Long.MAX_VALUE;
+        if (delayMs + 200 < remaining) {
+            scheduleNextCycle(delayMs);
+        }
     }
 
     private SchedulerJob processJob(SchedulerJob job) {

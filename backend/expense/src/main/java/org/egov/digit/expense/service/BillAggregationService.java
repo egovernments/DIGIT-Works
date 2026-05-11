@@ -62,7 +62,9 @@ public class BillAggregationService {
      * @param requestInfo actor context for the WF call
      */
     public void checkAndAggregateBill(String billId, String tenantId, String phase, RequestInfo requestInfo) {
-        Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
+        // Cache-first (bypassCache=false): detail cache holds settled statuses written before each
+        // Kafka push, so inline aggregation sees current detail states without waiting for persister.
+        Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, false);
         if (bill == null) {
             log.warn("BillAggregationService: bill={} not found for phase={} — skipping aggregation", billId, phase);
             return;

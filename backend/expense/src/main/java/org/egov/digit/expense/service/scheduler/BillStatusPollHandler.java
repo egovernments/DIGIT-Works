@@ -68,7 +68,11 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
             String phase = ctx.getPhase();
             String batchId = ctx.getBatchId(); // null for single-bill; coordinator owns email when set
 
-            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
+            // Cache-first (bypassCache=false): detail cache holds the post-WF status written before
+            // each Kafka push, so it is always ahead of DB during persister lag.  Using bypassCache=true
+            // here would see stale VERIFICATION_IN_PROGRESS entries and dispatch spurious
+            // BILL_DETAILS_TASK_VERIFY_CHECK retry jobs for details the fast-path already settled.
+            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, false);
             if (bill == null) {
                 log.warn("Bill {} not found for tenant {} — marking job FAILED", billId, tenantId);
                 return SchedulerJobResult.FAILED;
@@ -365,7 +369,7 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
                 return;
             }
 
-            long paid  = countDetailsInState(fresh, Status.PAID) + countDetailsInState(fresh, Status.FULLY_PAID);
+            long paid  = countDetailsInState(fresh, Status.PAID);
             long total = fresh.getBillDetails().size();
             Actions action = (paid == total) ? Actions.FULLY_PAY
                            : (paid > 0)      ? Actions.PARTIALLY_PAY
@@ -386,12 +390,12 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
     private boolean isAtOrBeyondUnderReview(Status s) {
         return s == Status.UNDER_REVIEW || s == Status.REVIEWED
                 || s == Status.PAYMENT_IN_PROGRESS || s == Status.PAYMENT_FAILED
-                || s == Status.PAID || s == Status.FULLY_PAID;
+                || s == Status.PAID;
     }
 
     private boolean isAtOrBeyondReviewed(Status s) {
         return s == Status.REVIEWED || s == Status.PAYMENT_IN_PROGRESS
-                || s == Status.PAYMENT_FAILED || s == Status.PAID || s == Status.FULLY_PAID;
+                || s == Status.PAYMENT_FAILED || s == Status.PAID;
     }
 
     /**
@@ -400,9 +404,9 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
      * bill-level transition if the DB persister hasn't committed earlier tasks' updates in time.
      *
      * <pre>
-     * All PAID/FULLY_PAID      → FULLY_PAY   → FULLY_PAID
-     * Some PAID, some FAILED   → PARTIALLY_PAY → PARTIALLY_PAID
-     * All PAYMENT_FAILED       → FAILED      → (terminal)
+     * All PAID              → FULLY_PAY    → FULLY_PAID
+     * Some PAID, some FAILED → PARTIALLY_PAY → PARTIALLY_PAID
+     * All PAYMENT_FAILED    → FAILED       → (terminal)
      * </pre>
      */
     private SchedulerJobResult handlePaymentPoll(String billId, String tenantId, Bill bill, RequestInfo requestInfo) {
@@ -419,7 +423,7 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
             return SchedulerJobResult.RETRY;
         }
 
-        long paid  = countDetailsInState(bill, Status.PAID) + countDetailsInState(bill, Status.FULLY_PAID);
+        long paid  = countDetailsInState(bill, Status.PAID);
         long total = bill.getBillDetails().size();
 
         Actions action = (paid == total) ? Actions.FULLY_PAY

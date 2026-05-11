@@ -44,6 +44,9 @@ public class BillServiceTest {
     @Mock private NotificationService notificationService;
     @Mock private CalculatorUtil calculatorUtil;
     @Mock private PaymentWorkflowService paymentWorkflowService;
+    @Mock private BillDetailService billDetailService;
+    @Mock private BillCacheService billCacheService;
+    @Mock private BillDetailCacheService billDetailCacheService;
     @Mock private com.fasterxml.jackson.databind.ObjectMapper objectMapper;
 
     @InjectMocks

@@ -297,6 +297,37 @@ public class Constants {
 	// Cache key prefixes
 	public static final String BILL_CACHE_KEY_PREFIX = "bill:";
 	public static final String TASK_CACHE_KEY_PREFIX = "task:";
+	public static final String BILL_DETAIL_IDS_CACHE_SUFFIX = ":billDetailIds";
+	public static final String BILL_DETAIL_CACHE_INFIX = ":billDetail:";
+
+	public static final String BILL_ONLY_QUERY = "SELECT "
+			+ " bill.id as b_id, bill.tenantid as b_tenantid, bill.localitycode as b_localitycode, billdate, duedate, bill.totalamount as b_totalamount, bill.totalpaidamount as b_totalpaidamount, "
+			+ " businessservice, bill.referenceid as b_referenceid, billnumber, bill.fromperiod as b_fromperiod, bill.toperiod as b_toperiod, bill.status as b_status, "
+			+ " bill.paymentstatus as b_paymentstatus, bill.createdby as b_createdby, bill.createdtime as b_createdtime, bill.lastmodifiedby as b_lastmodifiedby,"
+			+ " bill.lastmodifiedtime as b_lastmodifiedtime, bill.additionaldetails as b_additionaldetails,"
+			+ " payer.id as payer_id, payer.tenantid as payer_tenantid, payer.type as payer_type, payer.identifier as payer_identifier, payer.parentid as payer_parentid, "
+			+ " payer.createdby as payer_createdby, payer.createdtime as payer_createdtime, payer.lastmodifiedby as payer_lastmodifiedby, "
+			+ " payer.lastmodifiedtime as payer_lastmodifiedtime, payer.additionaldetails as payer_additionaldetails, payer.status as payer_status "
+			+ "FROM " + SCHEMA_REPLACE_STRING + ".eg_expense_bill bill "
+			+ "LEFT JOIN " + SCHEMA_REPLACE_STRING + ".EG_EXPENSE_PARTY PAYER ON bill.id = payer.parentid AND bill.tenantid = payer.tenantid ";
+
+	public static final String BILL_DETAIL_QUERY = "SELECT "
+			+ " bd.id as bd_id, bd.tenantid as bd_tenantid, bd.totalamount as bd_totalamount, bd.totalpaidamount as bd_totalpaidamount, "
+			+ " bd.referenceid as bd_referenceid, bd.billid as billid, bd.paymentstatus as bd_paymentstatus, bd.status as bd_status, bd.fromperiod as bd_fromperiod, "
+			+ " bd.toperiod as bd_toperiod, bd.workerid as bd_workerid, bd.totalattendance as bd_totalattendance, "
+			+ " bd.createdby as bd_createdby, bd.createdtime as bd_createdtime, bd.lastmodifiedby as bd_lastmodifiedby,"
+			+ " bd.lastmodifiedtime as bd_lastmodifiedtime, bd.additionaldetails as bd_additionaldetails,"
+			+ " li.id as line_id, li.billdetailid as line_billdetailid, li.tenantid as line_tenantid, li.paymentstatus as li_paymentstatus,"
+			+ " headcode, amount, paidamount, li.type as line_type, li.status as line_status, islineitempayable, li.createdby as line_createdby, li.createdtime as line_createdtime,"
+			+ " li.lastmodifiedby as line_lastmodifiedby, li.lastmodifiedtime as line_lastmodifiedtime, li.additionaldetails as line_additionaldetails, "
+			+ " payee.id as payee_id, payee.tenantid as payee_tenantid, payee.type as payee_type, payee.identifier as payee_identifier, payee.parentid as payee_parentid, "
+			+ " payee.paymentprovider as payee_paymentprovider, payee.payeename as payee_payeename, payee.payeephonenumber as payee_payeephonenumber, "
+			+ " payee.bankaccount as payee_bankaccount, payee.bankcode as payee_bankcode, payee.beneficiarycode as payee_beneficiarycode, "
+			+ " payee.createdby as payee_createdby, payee.createdtime as payee_createdtime, payee.lastmodifiedby as payee_lastmodifiedby,"
+			+ " payee.lastmodifiedtime as payee_lastmodifiedtime, payee.additionaldetails as payee_additionaldetails, payee.status as payee_status "
+			+ "FROM " + SCHEMA_REPLACE_STRING + ".EG_EXPENSE_BILLDETAIL BD "
+			+ "LEFT JOIN " + SCHEMA_REPLACE_STRING + ".EG_EXPENSE_LINEITEM LI ON bd.id = li.billdetailid AND bd.tenantid = li.tenantid "
+			+ "LEFT JOIN " + SCHEMA_REPLACE_STRING + ".EG_EXPENSE_PARTY PAYEE ON bd.id = payee.parentid AND bd.tenantid = payee.tenantid ";
 
 	// WF error detection strings
 	public static final String WF_INVALID_ACTION_MSG_1 = "INVALID ACTION";

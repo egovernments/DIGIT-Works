@@ -40,7 +40,7 @@ public class BankPaymentService implements PaymentProviderService {
     private final BillRepository billRepository;
     private final WorkflowUtil workflowUtil;
     private final ExpenseProducer expenseProducer;
-    private final BillCacheService billCacheService;
+    private final BillDetailService billDetailService;
     private final ObjectMapper objectMapper;
 
     @Autowired
@@ -48,13 +48,13 @@ public class BankPaymentService implements PaymentProviderService {
                                BillRepository billRepository,
                                WorkflowUtil workflowUtil,
                                ExpenseProducer expenseProducer,
-                               BillCacheService billCacheService,
+                               BillDetailService billDetailService,
                                ObjectMapper objectMapper) {
         this.config = config;
         this.billRepository = billRepository;
         this.workflowUtil = workflowUtil;
         this.expenseProducer = expenseProducer;
-        this.billCacheService = billCacheService;
+        this.billDetailService = billDetailService;
         this.objectMapper = objectMapper;
     }
 
@@ -74,12 +74,15 @@ public class BankPaymentService implements PaymentProviderService {
     }
 
     /**
-     * Placeholder for bank task-status polling. Bank does not use async status checks;
-     * all tasks are considered resolved immediately — returns false (no details in-progress).
+     * Retry entry-point called by BILL_DETAILS_TASK_PAYMENT_STATUS_CHECK when a previous
+     * PaymentInitiationPay attempt did not conclude the detail. For BANK, transfer is
+     * synchronous — re-run transferFromTask so the scheduler retries from the transfer step,
+     * not from the beginning of the payment flow. Always returns false (BANK is never async).
      */
     public boolean updatePaymentTaskStatusAndFinalize(TaskRequest taskRequest) {
-        log.info("Bank updatePaymentTaskStatusAndFinalize placeholder — task {} treated as resolved",
-                taskRequest.getTask().getId());
+        log.info("Bank updatePaymentTaskStatusAndFinalize: retrying transfer for task={} detail={}",
+                taskRequest.getTask().getId(), taskRequest.getTask().getBillDetailId());
+        transferFromTask(taskRequest);
         return false;
     }
 
@@ -90,16 +93,35 @@ public class BankPaymentService implements PaymentProviderService {
     private void verifyFromTask(TaskRequest taskRequest) {
         Task task = taskRequest.getTask();
         Bill billFromSearch = getBillFromSearch(taskRequest.getBill(), taskRequest.getRequestInfo());
+        // Scope to the single detail this task targets. Processing all eligible details causes
+        // concurrent tasks to overwrite each other's cache entries with stale DB statuses when
+        // the WF read side lags behind after INVALID_ACTION reconciliation.
+        String targetDetailId = task.getBillDetailId();
+        List<BillDetail> eligibleDetails = billFromSearch.getBillDetails().stream()
+                .filter(d -> targetDetailId.equals(d.getId()))
+                .filter(d -> d.getStatus() == Status.PENDING_VERIFICATION
+                        || d.getStatus() == Status.VERIFICATION_FAILED
+                        || d.getStatus() == Status.VERIFICATION_IN_PROGRESS)
+                .toList();
+        if (eligibleDetails.isEmpty()) {
+            // Detail already settled by a concurrent task — idempotent.
+            task.setStatus(Status.DONE);
+            expenseProducer.push(billFromSearch.getTenantId(), config.getTaskUpdateTopic(), task);
+            return;
+        }
+        billFromSearch.setBillDetails(eligibleDetails);
         BillRequest billRequest = BillRequest.builder()
                 .requestInfo(taskRequest.getRequestInfo())
                 .bill(billFromSearch)
                 .build();
-        // No finally: task DONE is only pushed after the bill update is persisted to Kafka.
+        // No finally: task DONE is only pushed after details are persisted to Kafka.
         // If verify() throws, the exception propagates cleanly and the scheduler returns RETRY.
         // For the Kafka-consumer path, TaskConsumer.markTaskDone() handles the DONE push.
         verify(billRequest);
-        billCacheService.put(billFromSearch);
-        expenseProducer.push(billFromSearch.getTenantId(), config.getBillUpdateTopic(), billRequest);
+        // Push only the target detail (already modified in-place by verify()).
+        // Do not push a bill update — verify() only transitions detail WF states; the bill's
+        // own WF transition (FULLY_VERIFIED/PARTIALLY_VERIFIED) happens in BillAggregationService.
+        billDetailService.update(eligibleDetails, billFromSearch.getTenantId());
         task.setStatus(Status.DONE);
         expenseProducer.push(billFromSearch.getTenantId(), config.getTaskUpdateTopic(), task);
     }
@@ -171,8 +193,13 @@ public class BankPaymentService implements PaymentProviderService {
                 .requestInfo(taskRequest.getRequestInfo())
                 .bill(billFromSearch)
                 .build();
+        List<BillDetail> eligibleDetails = billFromSearch.getBillDetails().stream()
+                .filter(d -> d.getStatus() == Status.PAYMENT_IN_PROGRESS)
+                .toList();
         try {
             transfer(billRequest);
+            // Push only PAYMENT_IN_PROGRESS details that transfer() may have modified
+            billDetailService.update(eligibleDetails, billFromSearch.getTenantId());
         } finally {
             task.setStatus(Status.DONE);
             expenseProducer.push(billFromSearch.getTenantId(), config.getTaskUpdateTopic(), task);
@@ -250,6 +277,35 @@ public class BankPaymentService implements PaymentProviderService {
     }
 
     private void forceBillDetailFailed(BillDetail billDetail, RequestInfo requestInfo) {
+        // Read actual WF state before attempting FAILED transition. DB can lag behind WF (persister
+        // delay), and a concurrent task may have already applied the transition.
+        State currentWfState = workflowUtil.searchCurrentWfState(
+                billDetail.getId(), billDetail.getTenantId(), requestInfo);
+        if (currentWfState != null) {
+            Status currentWfStatus = Status.fromValue(currentWfState.getApplicationStatus());
+            if (currentWfStatus == Status.PAID) {
+                // PAID is the only terminal state for bill detail — sync and done.
+                billDetail.setStatus(currentWfStatus);
+                log.warn("BANK forceBillDetailFailed: billDetail={} already PAID — skipping FAILED action",
+                        billDetail.getId());
+                return;
+            }
+            if (currentWfStatus == Status.PAYMENT_FAILED) {
+                // FAILED was already applied by a concurrent or previous task — sync and done.
+                billDetail.setStatus(currentWfStatus);
+                log.warn("BANK forceBillDetailFailed: billDetail={} already PAYMENT_FAILED — skipping",
+                        billDetail.getId());
+                return;
+            }
+            if (currentWfStatus != Status.PAYMENT_IN_PROGRESS) {
+                // WF is not yet at PAYMENT_IN_PROGRESS (e.g., still REVIEWED) — FAILED action would
+                // be invalid. Do NOT update billDetail.setStatus() so the cache keeps PAYMENT_IN_PROGRESS
+                // and the scheduler's next retry will try again when WF is ready.
+                log.warn("BANK forceBillDetailFailed: billDetail={} WF is in {} (not PAYMENT_IN_PROGRESS) — skipping, scheduler will retry",
+                        billDetail.getId(), currentWfStatus);
+                return;
+            }
+        }
         try {
             BillDetailRequest billDetailRequest = BillDetailRequest.builder()
                     .billDetail(billDetail)
@@ -260,8 +316,19 @@ public class BankPaymentService implements PaymentProviderService {
             State wfState = workflowUtil.callWorkFlow(
                     workflowUtil.prepareWorkflowRequestForBillDetail(billDetailRequest), billDetailRequest);
             billDetail.setStatus(Status.fromValue(wfState.getApplicationStatus()));
-            log.info("Forced BANK billDetail {} to FAILED status via WF", billDetail.getId());
+            log.info("Forced BANK billDetail {} to PAYMENT_FAILED via WF", billDetail.getId());
         } catch (Exception ex) {
+            if (workflowUtil.isRetryableWfError(ex)) {
+                // WF write-side already applied this transition — reconcile from read-side.
+                State actual = workflowUtil.searchCurrentWfState(
+                        billDetail.getId(), billDetail.getTenantId(), requestInfo);
+                if (actual != null) {
+                    billDetail.setStatus(Status.fromValue(actual.getApplicationStatus()));
+                    log.warn("BANK forceBillDetailFailed: reconciled billDetail={} to {} after INVALID_ACTION",
+                            billDetail.getId(), billDetail.getStatus());
+                    return;
+                }
+            }
             log.error("CRITICAL: failed to force BANK billDetail {} to FAILED — manual intervention required",
                     billDetail.getId(), ex);
         }
@@ -312,7 +379,9 @@ public class BankPaymentService implements PaymentProviderService {
                 .requestInfo(requestInfo)
                 .billCriteria(billCriteria)
                 .build();
-        List<Bill> bills = billRepository.search(billSearchRequest, false);
+        // bypassCache=true: must see the current persisted status, not a stale bill-level cache
+        // entry from a previous verification cycle that still shows VERIFIED.
+        List<Bill> bills = billRepository.search(billSearchRequest, true);
         if (bills == null || bills.isEmpty()) {
             throw new org.egov.tracer.model.CustomException(Constants.BILL_NOT_FOUND_ERR_CODE,
                     "Bill not found for id: " + billFromRequest.getId());

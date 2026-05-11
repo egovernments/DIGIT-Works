@@ -44,13 +44,15 @@ class BankPaymentServiceValidateFieldsTest {
     @Mock private WorkflowUtil workflowUtil;
     @Mock private ExpenseProducer expenseProducer;
     @Mock private BillCacheService billCacheService;
+    @Mock private BillDetailService billDetailService;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private BankPaymentService service;
 
     @BeforeEach
     void setUp() {
-        service = new BankPaymentService(config, billRepository, workflowUtil, expenseProducer, billCacheService, objectMapper);
+        service = new BankPaymentService(config, billRepository, workflowUtil, expenseProducer, billCacheService,
+                billDetailService, objectMapper);
         when(billRepository.search(any(), any(Boolean.class))).thenReturn(List.of(buildBankBill(Status.PENDING_VERIFICATION)));
         when(config.getBillDetailBusinessService()).thenReturn("PAYMENTS.BILLDETAILS");
         when(config.getBillUpdateTopic()).thenReturn("expense-bill-update");

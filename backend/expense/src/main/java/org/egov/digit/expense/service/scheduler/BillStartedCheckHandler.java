@@ -61,7 +61,11 @@ public class BillStartedCheckHandler implements SchedulerJobHandler {
             RequestInfo requestInfo = ctx.getRequestInfo();
             String phase = ctx.getPhase();
 
-            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
+            // Cache-first (bypassCache=false): detail cache holds the post-WF-transition status written
+            // immediately before each Kafka push, so it is always ahead of DB during persister lag.
+            // bypassCache=true would see stale VERIFICATION_IN_PROGRESS / PAYMENT_IN_PROGRESS entries
+            // and re-push tasks for details the fast-path already completed.
+            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, false);
             if (bill == null) {
                 log.warn("BILL_STARTED_CHECK: bill={} not found for tenant={} — marking FAILED", billId, tenantId);
                 return SchedulerJobResult.FAILED;
@@ -118,15 +122,17 @@ public class BillStartedCheckHandler implements SchedulerJobHandler {
         Status s = bill.getStatus();
         if (STARTED_CHECK_PHASE_VERIFY.equals(phase)) {
             // Past verification-started: any state beyond VERIFICATION_IN_PROGRESS
-            return s == Status.FULLY_VERIFIED || s == Status.IGNORING_ERRORS_IN_PROGRESS
+            return s == Status.FULLY_VERIFIED || s == Status.PARTIALLY_VERIFIED
+                    || s == Status.IGNORING_ERRORS_IN_PROGRESS
                     || s == Status.SENDING_FOR_REVIEW || s == Status.UNDER_REVIEW
                     || s == Status.REVIEW_IN_PROGRESS || s == Status.REVIEWED
                     || s == Status.PAYMENT_IN_PROGRESS || s == Status.PAYMENT_FAILED
-                    || s == Status.PAID || s == Status.FULLY_PAID;
+                    || s == Status.PAID || s == Status.FULLY_PAID || s == Status.PARTIALLY_PAID;
         }
         if (STARTED_CHECK_PHASE_PAYMENT.equals(phase)) {
             // Past payment-started: any settled state
-            return s == Status.PAID || s == Status.FULLY_PAID || s == Status.PAYMENT_FAILED;
+            return s == Status.PAID || s == Status.FULLY_PAID || s == Status.PARTIALLY_PAID
+                    || s == Status.PAYMENT_FAILED;
         }
         return false;
     }
@@ -140,12 +146,15 @@ public class BillStartedCheckHandler implements SchedulerJobHandler {
         List<BillDetail> details = bill.getBillDetails();
 
         // Check if any eligible detail is still not yet in-progress
+        // Only PENDING_VERIFICATION means "VerificationStart not yet consumed".
+        // VERIFICATION_FAILED is a settled outcome (either pre-start not yet consumed for re-verify,
+        // or the fast-path VerificationVerify already completed with failure) — treating it as
+        // pending would cause infinite RETRY in re-verify scenarios.
         boolean anyStillPending = details.stream()
-                .anyMatch(d -> d.getStatus() == Status.PENDING_VERIFICATION
-                            || d.getStatus() == Status.VERIFICATION_FAILED);
+                .anyMatch(d -> d.getStatus() == Status.PENDING_VERIFICATION);
 
         if (anyStillPending) {
-            log.debug("BILL_STARTED_CHECK(VERIFY): bill={} still has PENDING_VERIFICATION or VERIFICATION_FAILED details — retrying",
+            log.debug("BILL_STARTED_CHECK(VERIFY): bill={} still has PENDING_VERIFICATION details — retrying",
                     billId);
             return SchedulerJobResult.RETRY;
         }
@@ -175,9 +184,11 @@ public class BillStartedCheckHandler implements SchedulerJobHandler {
                     || detail.getStatus() == Status.VERIFICATION_FAILED) {
                 try {
                     paymentWorkflowService.transitionBillDetail(detail, Actions.FAILED, requestInfo);
+                    paymentWorkflowService.pushBillDetailUpdate(bill, detail);
                 } catch (Exception ex) {
                     if (workflowUtil.isRetryableWfError(ex)) {
                         log.info("BILL_STARTED_CHECK: detail={} already in terminal state (idempotent)", detail.getId());
+                        paymentWorkflowService.pushBillDetailUpdate(bill, detail);
                     } else {
                         log.error("CRITICAL: BILL_STARTED_CHECK force-fail VERIFY detail={} bill={} failed",
                                 detail.getId(), bill.getId(), ex);
@@ -185,7 +196,6 @@ public class BillStartedCheckHandler implements SchedulerJobHandler {
                 }
             }
         }
-        paymentWorkflowService.pushBillUpdate(bill, requestInfo);
         log.warn("BILL_STARTED_CHECK: forced stuck PENDING_VERIFICATION/VERIFICATION_FAILED details to VERIFICATION_FAILED for bill={}",
                 bill.getId());
     }
@@ -198,13 +208,16 @@ public class BillStartedCheckHandler implements SchedulerJobHandler {
         String billId = bill.getId();
         List<BillDetail> details = bill.getBillDetails();
 
-        // Check if any eligible detail is still not yet in-progress
+        // Only REVIEWED means "PaymentInitiationStart not yet consumed".
+        // PAYMENT_FAILED is a settled business-logic outcome — the detail has already been
+        // processed (PaymentInitiationPay ran and failed). Treating it as pending here would
+        // cause this handler to push duplicate PaymentInitiationPay tasks in the same cycle.
+        // Retry-for-failed is handled by BILL_STATUS_POLL in the next scheduler cycle.
         boolean anyStillPending = details.stream()
-                .anyMatch(d -> d.getStatus() == Status.REVIEWED
-                            || d.getStatus() == Status.PAYMENT_FAILED);
+                .anyMatch(d -> d.getStatus() == Status.REVIEWED);
 
         if (anyStillPending) {
-            log.debug("BILL_STARTED_CHECK(PAYMENT): bill={} still has REVIEWED or PAYMENT_FAILED details — retrying",
+            log.debug("BILL_STARTED_CHECK(PAYMENT): bill={} still has REVIEWED details — retrying",
                     billId);
             return SchedulerJobResult.RETRY;
         }
@@ -234,9 +247,11 @@ public class BillStartedCheckHandler implements SchedulerJobHandler {
                     || detail.getStatus() == Status.PAYMENT_FAILED) {
                 try {
                     paymentWorkflowService.transitionBillDetail(detail, Actions.FAILED, requestInfo);
+                    paymentWorkflowService.pushBillDetailUpdate(bill, detail);
                 } catch (Exception ex) {
                     if (workflowUtil.isRetryableWfError(ex)) {
                         log.info("BILL_STARTED_CHECK: detail={} already in terminal state (idempotent)", detail.getId());
+                        paymentWorkflowService.pushBillDetailUpdate(bill, detail);
                     } else {
                         log.error("CRITICAL: BILL_STARTED_CHECK force-fail PAYMENT detail={} bill={} failed",
                                 detail.getId(), bill.getId(), ex);
@@ -244,7 +259,6 @@ public class BillStartedCheckHandler implements SchedulerJobHandler {
                 }
             }
         }
-        paymentWorkflowService.pushBillUpdate(bill, requestInfo);
         log.warn("BILL_STARTED_CHECK: forced stuck REVIEWED/PAYMENT_FAILED details to PAYMENT_FAILED for bill={}",
                 bill.getId());
     }

@@ -75,7 +75,10 @@ public class BillDetailsTaskPaymentStatusCheckHandler implements SchedulerJobHan
             String billId = ctx.getBillId();
             RequestInfo requestInfo = ctx.getRequestInfo();
 
-            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
+        // Cache-first: detail cache holds settled statuses written before each Kafka push,
+            // so idempotency guard below catches business-logic outcomes (PAYMENT_FAILED, PAID)
+            // already written by the fast-path without waiting for the persister.
+            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, false);
             if (bill == null) {
                 log.warn("BILL_DETAILS_TASK_PAYMENT_STATUS_CHECK: bill={} not found — marking FAILED", billId);
                 return SchedulerJobResult.FAILED;
@@ -127,8 +130,9 @@ public class BillDetailsTaskPaymentStatusCheckHandler implements SchedulerJobHan
                 return SchedulerJobResult.RETRY;
             }
 
-            // Re-fetch to check settled status and trigger aggregation
-            Bill refreshed = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
+            // Cache-first re-fetch: PAYMENT_FAILED / PAID written to cache by the transfer handler
+            // before Kafka push, so business-logic failures are visible without persister lag.
+            Bill refreshed = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, false);
             if (refreshed != null) {
                 BillDetail refreshedDetail = findDetail(refreshed, billDetailId);
                 if (refreshedDetail != null && isPaymentSettled(refreshedDetail.getStatus())) {
@@ -165,7 +169,7 @@ public class BillDetailsTaskPaymentStatusCheckHandler implements SchedulerJobHan
             if (!isPaymentSettled(detail.getStatus())) {
                 try {
                     paymentWorkflowService.transitionBillDetail(detail, Actions.FAILED, requestInfo);
-                    paymentWorkflowService.pushBillUpdate(bill, requestInfo);
+                    paymentWorkflowService.pushBillDetailUpdate(bill, detail);
                     log.warn("BILL_DETAILS_TASK_PAYMENT_STATUS_CHECK: forced detail={} to PAYMENT_FAILED", billDetailId);
                 } catch (Exception ex) {
                     if (workflowUtil.isRetryableWfError(ex)) {
@@ -188,7 +192,7 @@ public class BillDetailsTaskPaymentStatusCheckHandler implements SchedulerJobHan
     // ─────────────────────────────────────────────────────────────────────────
 
     private boolean isPaymentSettled(Status status) {
-        return status == Status.PAID || status == Status.FULLY_PAID || status == Status.PAYMENT_FAILED;
+        return status == Status.PAID || status == Status.PAYMENT_FAILED;
     }
 
     private BillDetail findDetail(Bill bill, String billDetailId) {

@@ -45,13 +45,15 @@ public class PaymentWorkflowServiceTest {
     @Mock private Configuration config;
     @Mock private ExpenseProducer expenseProducer;
     @Mock private BillCacheService billCacheService;
+    @Mock private BillDetailService billDetailService;
 
     private PaymentWorkflowService pws;
 
     @BeforeEach
     public void setUp() {
         pws = new PaymentWorkflowService(workflowUtil, billRepository, taskRepository,
-                schedulerJobRepository, schedulerJobRegistry, config, expenseProducer, billCacheService);
+                schedulerJobRepository, schedulerJobRegistry, config, expenseProducer, billCacheService,
+                billDetailService);
         when(config.getBillDetailBusinessService()).thenReturn("PAYMENTS.BILLDETAILS");
         when(config.getBillUpdateTopic()).thenReturn("expense-bill-update");
         when(workflowUtil.prepareWorkflowRequestForBill(any(BillRequest.class))).thenReturn(null);

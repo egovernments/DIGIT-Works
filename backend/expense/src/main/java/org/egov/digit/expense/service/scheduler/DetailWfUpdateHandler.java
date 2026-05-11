@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.service.BillAggregationService;
-import org.egov.digit.expense.service.BillCacheService;
 import org.egov.digit.expense.service.PaymentWorkflowService;
 import org.egov.digit.expense.util.WorkflowUtil;
 import org.egov.digit.expense.web.models.*;
@@ -34,19 +33,16 @@ public class DetailWfUpdateHandler implements SchedulerJobHandler {
     private final PaymentWorkflowService paymentWorkflowService;
     private final BillAggregationService billAggregationService;
     private final WorkflowUtil workflowUtil;
-    private final BillCacheService billCacheService;
     private final ObjectMapper objectMapper;
 
     @Autowired
     public DetailWfUpdateHandler(PaymentWorkflowService paymentWorkflowService,
                                   BillAggregationService billAggregationService,
                                   WorkflowUtil workflowUtil,
-                                  BillCacheService billCacheService,
                                   ObjectMapper objectMapper) {
         this.paymentWorkflowService = paymentWorkflowService;
         this.billAggregationService = billAggregationService;
         this.workflowUtil = workflowUtil;
-        this.billCacheService = billCacheService;
         this.objectMapper = objectMapper;
     }
 
@@ -66,7 +62,9 @@ public class DetailWfUpdateHandler implements SchedulerJobHandler {
             String phase = ctx.getPhase();
             RequestInfo requestInfo = ctx.getRequestInfo();
 
-            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
+            // Cache-first (bypassCache=false): detail cache holds the post-WF status so the
+            // isAlreadyTransitioned idempotency guard catches details settled by the fast-path.
+            Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, false);
             if (bill == null) {
                 log.warn("DETAIL_WF_UPDATE: bill={} not found tenant={} — marking FAILED", billId, tenantId);
                 return SchedulerJobResult.FAILED;
@@ -94,16 +92,15 @@ public class DetailWfUpdateHandler implements SchedulerJobHandler {
 
             try {
                 paymentWorkflowService.transitionBillDetail(detail, action, requestInfo);
-                // Cache the full bill (with updated detail status) BEFORE Kafka push (EC-1 Fix B+C)
-                billCacheService.put(bill);
-                paymentWorkflowService.pushBillUpdate(buildSingleDetailBill(bill, detail), requestInfo, false);
+                // Push to the detail topic so eg_expense_billdetail is updated, not the bill topic.
+                paymentWorkflowService.pushBillDetailUpdate(bill, detail);
                 log.info("DETAIL_WF_UPDATE: detail={} transitioned via {} → {}", billDetailId, action, detail.getStatus());
             } catch (Exception e) {
                 log.error("DETAIL_WF_UPDATE: WF transition failed for detail={} phase={}: {}", billDetailId, phase, e.getMessage());
                 if (workflowUtil.isRetryableWfError(e)) {
-                    // WF already applied this transition — treat as idempotent DONE
+                    // WF already applied this transition — reconcile detail status and persist it.
                     log.info("DETAIL_WF_UPDATE: retryable WF error for detail={} — treating as already transitioned", billDetailId);
-                    billCacheService.put(bill);
+                    paymentWorkflowService.pushBillDetailUpdate(bill, detail);
                     aggregate(bill, billId, tenantId, phase, requestInfo);
                     return SchedulerJobResult.DONE;
                 }
@@ -202,17 +199,17 @@ public class DetailWfUpdateHandler implements SchedulerJobHandler {
     private boolean isAtOrBeyondVerified(Status s) {
         return s == Status.UNDER_REVIEW || s == Status.REVIEWED
                 || s == Status.PAYMENT_IN_PROGRESS || s == Status.PAYMENT_FAILED
-                || s == Status.PAID || s == Status.FULLY_PAID;
+                || s == Status.PAID;
     }
 
     private boolean isAtOrBeyondUnderReview(Status s) {
         return s == Status.REVIEWED || s == Status.PAYMENT_IN_PROGRESS
-                || s == Status.PAYMENT_FAILED || s == Status.PAID || s == Status.FULLY_PAID;
+                || s == Status.PAYMENT_FAILED || s == Status.PAID;
     }
 
     private boolean isAtOrBeyondReviewed(Status s) {
         return s == Status.PAYMENT_IN_PROGRESS || s == Status.PAYMENT_FAILED
-                || s == Status.PAID || s == Status.FULLY_PAID;
+                || s == Status.PAID;
     }
 
     private BillDetail findDetail(Bill bill, String billDetailId) {
@@ -222,27 +219,4 @@ public class DetailWfUpdateHandler implements SchedulerJobHandler {
                 .findFirst().orElse(null);
     }
 
-    private Bill buildSingleDetailBill(Bill bill, BillDetail detail) {
-        return Bill.builder()
-                .id(bill.getId())
-                .tenantId(bill.getTenantId())
-                .localityCode(bill.getLocalityCode())
-                .billDate(bill.getBillDate())
-                .dueDate(bill.getDueDate())
-                .totalAmount(bill.getTotalAmount())
-                .amountBreakup(new java.util.LinkedHashMap<>(bill.getAmountBreakup()))
-                .totalPaidAmount(bill.getTotalPaidAmount())
-                .businessService(bill.getBusinessService())
-                .referenceId(bill.getReferenceId())
-                .fromPeriod(bill.getFromPeriod())
-                .toPeriod(bill.getToPeriod())
-                .paymentStatus(bill.getPaymentStatus())
-                .status(bill.getStatus())
-                .billNumber(bill.getBillNumber())
-                .payer(bill.getPayer())
-                .additionalDetails(bill.getAdditionalDetails())
-                .auditDetails(bill.getAuditDetails())
-                .billDetails(java.util.Collections.singletonList(detail))
-                .build();
-    }
 }

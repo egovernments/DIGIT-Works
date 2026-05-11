@@ -38,7 +38,7 @@ public class BillQueryBuilder {
         if(isCountRequired) {
             query = new StringBuilder(Constants.BILL_COUNT_QUERY);
         } else {
-            query = new StringBuilder(Constants.BILL_QUERY);
+            query = new StringBuilder(Constants.BILL_ONLY_QUERY);
         }
 
         Set<String> billNumbers = criteria.getBillNumbers();

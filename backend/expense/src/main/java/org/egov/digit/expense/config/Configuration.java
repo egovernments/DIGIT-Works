@@ -33,6 +33,12 @@ public class Configuration {
 	@Value("${expense.billing.bill.update}")
 	private String billUpdateTopic;
 
+	@Value("${expense.billing.bill.detail.create}")
+	private String billDetailCreateTopic;
+
+	@Value("${expense.billing.bill.detail.update}")
+	private String billDetailUpdateTopic;
+
 	@Value("${expense.billing.payment.create}")
 	private String paymentCreateTopic;
 
@@ -379,6 +385,9 @@ public class Configuration {
 	 */
 	@Value("${task.scheduler.safety.net.delay.ms:60000}")
 	private long schedulerSafetyNetDelayMs;
+
+	@Value("${bill.started.check.initial.delay.ms:2000}")
+	private long billStartedCheckInitialDelayMs;
 
 
 	public List<String> getSchedulerBootstrapTenants() {

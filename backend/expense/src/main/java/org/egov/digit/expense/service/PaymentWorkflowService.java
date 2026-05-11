@@ -10,6 +10,7 @@ import org.egov.digit.expense.repository.BillRepository;
 import org.egov.digit.expense.repository.SchedulerJobRepository;
 import org.egov.digit.expense.repository.TaskRepository;
 import org.egov.digit.expense.service.scheduler.SchedulerJobRegistry;
+import org.egov.digit.expense.service.scheduler.SchedulerService;
 import org.egov.digit.expense.util.WorkflowUtil;
 import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.BillBatchEmailContext;
@@ -19,6 +20,7 @@ import org.egov.digit.expense.web.models.enums.SchedulerJobType;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -51,9 +53,11 @@ public class PaymentWorkflowService {
     private final TaskRepository taskRepository;
     private final SchedulerJobRepository schedulerJobRepository;
     private final SchedulerJobRegistry schedulerJobRegistry;
+    private final SchedulerService schedulerService;
     private final Configuration config;
     private final ExpenseProducer expenseProducer;
     private final BillCacheService billCacheService;
+    private final BillDetailService billDetailService;
 
     @Autowired
     public PaymentWorkflowService(WorkflowUtil workflowUtil,
@@ -61,17 +65,21 @@ public class PaymentWorkflowService {
                                    TaskRepository taskRepository,
                                    SchedulerJobRepository schedulerJobRepository,
                                    SchedulerJobRegistry schedulerJobRegistry,
+                                   @Lazy SchedulerService schedulerService,
                                    Configuration config,
                                    ExpenseProducer expenseProducer,
-                                   BillCacheService billCacheService) {
+                                   BillCacheService billCacheService,
+                                   BillDetailService billDetailService) {
         this.workflowUtil = workflowUtil;
         this.billRepository = billRepository;
         this.taskRepository = taskRepository;
         this.schedulerJobRepository = schedulerJobRepository;
         this.schedulerJobRegistry = schedulerJobRegistry;
+        this.schedulerService = schedulerService;
         this.config = config;
         this.expenseProducer = expenseProducer;
         this.billCacheService = billCacheService;
+        this.billDetailService = billDetailService;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -313,7 +321,16 @@ public class PaymentWorkflowService {
         if (bills.isEmpty()) return null;
         Bill dbBill = bills.get(0);
         if (bypassCache) return dbBill;
-        return billCacheService.get(tenantId, billId).orElse(dbBill);
+        // Overlay bill-level fields from cache (fresh status/amounts), then re-attach details from DB
+        Bill result = billCacheService.get(tenantId, billId).map(cached -> {
+            cached.setBillDetails(dbBill.getBillDetails());
+            return cached;
+        }).orElse(dbBill);
+        // Overlay individual detail cache entries for freshest status/amounts per detail
+        List<BillDetail> enrichedDetails = billDetailService.searchByBillIds(
+                Collections.singletonList(billId), tenantId);
+        result.setBillDetails(enrichedDetails.isEmpty() ? result.getBillDetails() : enrichedDetails);
+        return result;
     }
 
     /**
@@ -327,6 +344,10 @@ public class PaymentWorkflowService {
             try {
                 schedulerJobRepository.insert(job);
                 schedulerJobRegistry.register(job.getTenantId());
+                long delay = job.getNextCheckAt() == null
+                        ? 0L
+                        : Math.max(0L, job.getNextCheckAt() - System.currentTimeMillis());
+                schedulerService.wakeUp(job.getTenantId(), delay);
                 return;
             } catch (Exception e) {
                 if (attempt == 3) {
@@ -455,6 +476,15 @@ public class PaymentWorkflowService {
     }
 
     /**
+     * Pushes a single bill detail to the Kafka bill-detail-update topic so the persister
+     * writes the new status to eg_expense_billdetail and eg_expense_lineitem.
+     * Must be called after every transitionBillDetail() to keep the DB in sync with WF state.
+     */
+    public void pushBillDetailUpdate(Bill bill, BillDetail detail) {
+        billDetailService.update(Collections.singletonList(detail), bill.getTenantId());
+    }
+
+    /**
      * Pushes the full bill (with updated in-memory statuses) to the Kafka bill-update topic
      * so the persister writes the new status values to eg_expense_bill / eg_expense_billdetail.
      */
@@ -463,14 +493,18 @@ public class PaymentWorkflowService {
     }
 
     public void pushBillUpdate(Bill bill, RequestInfo requestInfo, boolean cache) {
+        if (cache) {
+            billCacheService.put(bill);
+        }
+        // Push bill without details — expense-bill-update persister only touches eg_expense_bill
+        List<BillDetail> originalDetails = bill.getBillDetails();
+        bill.setBillDetails(null);
         BillRequest billRequest = BillRequest.builder()
                 .requestInfo(requestInfo)
                 .bill(bill)
                 .build();
-        if (cache) {
-            billCacheService.put(bill);
-        }
         expenseProducer.push(bill.getTenantId(), config.getBillUpdateTopic(), billRequest);
+        bill.setBillDetails(originalDetails);
         log.info("Pushed bill update to Kafka for bill id={} status={}", bill.getId(), bill.getStatus());
     }
 
@@ -650,7 +684,7 @@ public class PaymentWorkflowService {
                 .jobType(SchedulerJobType.BILL_STARTED_CHECK)
                 .referenceId(bill.getId())
                 .schedulerStatus(SchedulerJobStatus.PENDING)
-                .nextCheckAt(null)
+                .nextCheckAt(now + config.getBillStartedCheckInitialDelayMs())
                 .attemptCount(0)
                 .maxAttempts(config.getSchedulerMaxAttempts())
                 .context(context)

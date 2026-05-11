@@ -1,7 +1,6 @@
 package org.egov.digit.expense.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
@@ -31,33 +30,29 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class BillService {
-	
+
 	private final ExpenseProducer expenseProducer;
-	
 	private final Configuration config;
-	
 	private final BillValidator validator;
-	
 	private final WorkflowUtil workflowUtil;
-	
 	private final BillRepository billRepository;
-	
 	private final EnrichmentUtil enrichmentUtil;
-	
 	private final ResponseInfoFactory responseInfoFactory;
-
 	private final NotificationService notificationService;
-
 	private final CalculatorUtil calculatorUtil;
-
 	private final PaymentWorkflowService paymentWorkflowService;
-
 	private final ObjectMapper objectMapper;
-
 	private final BillCacheService billCacheService;
+	private final BillDetailService billDetailService;
+	private final BillDetailCacheService billDetailCacheService;
 
 	@Autowired
-	public BillService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator, WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil, ResponseInfoFactory responseInfoFactory, NotificationService notificationService, CalculatorUtil calculatorUtil, PaymentWorkflowService paymentWorkflowService, ObjectMapper objectMapper, BillCacheService billCacheService) {
+	public BillService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator,
+	                   WorkflowUtil workflowUtil, BillRepository billRepository, EnrichmentUtil enrichmentUtil,
+	                   ResponseInfoFactory responseInfoFactory, NotificationService notificationService,
+	                   CalculatorUtil calculatorUtil, PaymentWorkflowService paymentWorkflowService,
+	                   ObjectMapper objectMapper, BillCacheService billCacheService,
+	                   BillDetailService billDetailService, BillDetailCacheService billDetailCacheService) {
 		this.expenseProducer = expenseProducer;
 		this.config = config;
 		this.validator = validator;
@@ -70,30 +65,22 @@ public class BillService {
 		this.paymentWorkflowService = paymentWorkflowService;
 		this.objectMapper = objectMapper;
 		this.billCacheService = billCacheService;
-    }
+		this.billDetailService = billDetailService;
+		this.billDetailCacheService = billDetailCacheService;
+	}
 
-	/**
-	 * Validates the Bill Request and sends to repository for create
-	 * 
-	 * @param billRequest
-	 * @return
-	 */
 	public BillResponse create(BillRequest billRequest) {
-
 		Bill bill = billRequest.getBill();
 		String tenantId = bill.getTenantId();
 		RequestInfo requestInfo = billRequest.getRequestInfo();
-		BillResponse response = null;
 
 		validator.validateCreateRequest(billRequest);
 		enrichmentUtil.encrichBillForCreate(billRequest);
-		
-		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
 
+		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
 			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
 			bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
 
-			// Create PAYMENTS.BILLDETAILS process instances for each detail when PAYMENTS.BILL is created
 			if (config.getBillBusinessService().equalsIgnoreCase(bill.getBusinessService())) {
 				paymentWorkflowService.createBillDetailProcessInstances(billRequest);
 			}
@@ -101,37 +88,29 @@ public class BillService {
 			try {
 				if (billRequest.getBill().getBusinessService().equalsIgnoreCase("EXPENSE.SUPERVISION"))
 					notificationService.sendNotificationForSupervisionBill(billRequest);
-			}catch (Exception e){
+			} catch (Exception e) {
 				log.error("Exception while sending notification: " + e);
 			}
 		} else {
 			bill.setStatus(Status.ACTIVE);
 		}
-		if (config.isBillBreakdownEnabled() && bill.getBillDetails().size() > config.getBillBreakdownSize()) {
-			/* For bills with high number of bill details, break down of billDetails into batches is done.
-			* Every bill will have a batch of billDetails; it will not create a insert error because of
-			* ON CONFLICT DO NOTHING change in persister config */
-			// produce full bill to different topic if indexing is required
-			produceBillsBatchWise(billRequest, config.getBillCreateTopic());
-		} else {
-			expenseProducer.push(tenantId, config.getBillCreateTopic(), billRequest);
-		}
-		
-		response = BillResponse.builder()
-				.bills(Arrays.asList(billRequest.getBill()))
-				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo,true))
-				.build();
-		
-		return response;
-	}
-	
-	/**
-	 * 
-	 * @param billRequest
-	 * @return
-	 */
-	public BillResponse update(BillRequest billRequest) {
 
+		// Push bill (without details) to bill-create topic
+		List<BillDetail> allDetails = bill.getBillDetails();
+		bill.setBillDetails(null);
+		expenseProducer.push(tenantId, config.getBillCreateTopic(), billRequest);
+		bill.setBillDetails(allDetails);
+
+		// Push each detail to bill-detail-create topic
+		billDetailService.create(allDetails, tenantId);
+
+		return BillResponse.builder()
+				.bills(Arrays.asList(bill))
+				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true))
+				.build();
+	}
+
+	public BillResponse update(BillRequest billRequest) {
 		Bill bill = billRequest.getBill();
 		String tenantId = bill.getTenantId();
 		RequestInfo requestInfo = billRequest.getRequestInfo();
@@ -145,12 +124,8 @@ public class BillService {
 				State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
 				bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
 			}
-			billCacheService.put(bill);
-			if (config.isBillBreakdownEnabled() && bill.getBillDetails().size() > config.getBillBreakdownSize()) {
-				produceBillsBatchWise(billRequest, config.getBillUpdateTopic());
-			} else {
-				expenseProducer.push(tenantId, config.getBillUpdateTopic(), billRequest);
-			}
+			billCacheService.put(bill);  // strips details automatically
+			pushBillAndDetails(bill, tenantId, billRequest, config.getBillUpdateTopic());
 		}
 
 		try {
@@ -167,46 +142,76 @@ public class BillService {
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true))
 				.build();
 	}
-	
-	/**
-	 * method to search bills from DB based on bill search criteria
-	 * @param billSearchRequest
-	 * @return
-	 */
-	public BillResponse search(BillSearchRequest billSearchRequest, boolean isWfEncrichRequired) {
-		
-		BillCriteria billCriteria=billSearchRequest.getBillCriteria();
 
-		log.info("Validate billCriteria Parameters BillCriteria : "+billCriteria);
+	public BillResponse search(BillSearchRequest billSearchRequest, boolean isWfEncrichRequired) {
+		BillCriteria billCriteria = billSearchRequest.getBillCriteria();
+		String tenantId = billCriteria.getTenantId();
+
+		log.info("Validate billCriteria Parameters BillCriteria : " + billCriteria);
 		validator.validateSearchRequest(billSearchRequest);
 
 		log.info("Enrich billCriteria");
 		enrichmentUtil.enrichSearchBillRequest(billSearchRequest);
 
 		log.info("Search repository using billCriteria");
+		// BillRepository.search() returns bills with details from DB (two-step SQL internally)
 		List<Bill> bills = billRepository.search(billSearchRequest, false);
 		Integer totalBills = billRepository.searchCount(billSearchRequest);
 		billSearchRequest.getPagination().setTotalCount(totalBills);
 		Map<String, Integer> statusCount = billRepository.searchStatusCount(billSearchRequest);
 
 		if (bills != null && !bills.isEmpty()) {
+			// Overlay bill cache for freshest bill-level status/amounts
 			Set<String> billIds = bills.stream().map(Bill::getId).collect(Collectors.toSet());
-			Map<String, Bill> cached = billCacheService.getMultiple(billCriteria.getTenantId(), billIds);
-			if (!cached.isEmpty()) {
+			Map<String, Bill> cachedBills = billCacheService.getMultiple(tenantId, billIds);
+
+			if (!cachedBills.isEmpty()) {
 				bills = bills.stream()
-						.map(b -> cached.getOrDefault(b.getId(), b))
+						.map(dbBill -> {
+							Bill cached = cachedBills.get(dbBill.getId());
+							if (cached != null) {
+								// Use cached bill fields but restore DB details
+								List<BillDetail> dbDetails = dbBill.getBillDetails();
+								cached.setBillDetails(dbDetails);
+								return cached;
+							}
+							return dbBill;
+						})
 						.collect(Collectors.toList());
+			}
+
+			// Overlay detail cache for freshest detail-level status/data
+			for (Bill bill : bills) {
+				if (bill.getBillDetails() != null && !bill.getBillDetails().isEmpty()) {
+					List<BillDetail> enriched = bill.getBillDetails().stream()
+							.map(d -> billDetailCacheService.getDetail(bill.getId(), d.getId(), tenantId).orElse(d))
+							.collect(Collectors.toList());
+					bill.setBillDetails(enriched);
+
+					// Restore amountBreakup from payableLineItems if not already populated
+					if (bill.getAmountBreakup().isEmpty()) {
+						for (BillDetail d : enriched) {
+							if (d.getPayableLineItems() != null) {
+								for (LineItem li : d.getPayableLineItems()) {
+									if (li.getHeadCode() != null && li.getAmount() != null) {
+										bill.getAmountBreakup().merge(li.getHeadCode(), li.getAmount(), BigDecimal::add);
+									}
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 
-		ResponseInfo responseInfo = responseInfoFactory.
-		createResponseInfoFromRequestInfo(billSearchRequest.getRequestInfo(),true);
+		ResponseInfo responseInfo = responseInfoFactory
+				.createResponseInfoFromRequestInfo(billSearchRequest.getRequestInfo(), true);
 
-		if (!config.isHealthContextEnabled() && isWfEncrichRequired  && bills != null && !bills.isEmpty())
-			enrichWfstatusForBills(bills, billCriteria.getTenantId(), billSearchRequest.getRequestInfo());
+		if (!config.isHealthContextEnabled() && isWfEncrichRequired && bills != null && !bills.isEmpty())
+			enrichWfstatusForBills(bills, tenantId, billSearchRequest.getRequestInfo());
 
 		if (config.isHealthContextEnabled() && !StringUtils.isEmpty(billCriteria.getLocalityCode())) {
-			bills.stream().forEach(bill -> bill.setLocalityCode(billCriteria.getLocalityCode()));
+			bills.forEach(bill -> bill.setLocalityCode(billCriteria.getLocalityCode()));
 		}
 
 		return BillResponse.builder()
@@ -218,10 +223,8 @@ public class BillService {
 	}
 
 	private void enrichWfstatusForBills(List<Bill> bills, String tenantId, RequestInfo requestInfo) {
-
 		List<String> billNumbers = bills.stream().map(Bill::getBillNumber).collect(Collectors.toList());
-		ProcessInstanceResponse response = workflowUtil.searchWorkflowForBusinessIds(billNumbers, tenantId,
-				requestInfo);
+		ProcessInstanceResponse response = workflowUtil.searchWorkflowForBusinessIds(billNumbers, tenantId, requestInfo);
 
 		Map<String, String> busnessIdToWfStatus = response.getProcessInstances().stream().collect(Collectors
 				.toMap(ProcessInstance::getBusinessId, processInstance -> processInstance.getState().getApplicationStatus()));
@@ -229,31 +232,20 @@ public class BillService {
 			bill.setWfStatus(busnessIdToWfStatus.get(bill.getBillNumber()));
 		}
 	}
-	/**
-	 * Breakdown the billDetails into batches and push to kafka. This is needed
-	 * to avoid large payload in kafka.
-	 *
-	 * @param billRequest The bill request object
-	 */
-	private void produceBillsBatchWise(BillRequest billRequest, String topic) {
-		Bill bill = billRequest.getBill();
-		String tenantId = bill.getTenantId();
-		List<BillDetail> allBillDetails = new ArrayList<>(bill.getBillDetails());
-		// Breakdown the billDetails into batches and push to kafka
-		for (int i = 0; i < allBillDetails.size(); i += config.getBillBreakdownSize()) {
-			// Breakdown bill details into batches and push to kafka topic
-			List<BillDetail> currBatchBillDetails = allBillDetails.subList(i, Math.min(i + config.getBillBreakdownSize(), allBillDetails.size()));
-			bill.setBillDetails(currBatchBillDetails);
-			expenseProducer.push(tenantId, topic, billRequest);
-		}
-		bill.setBillDetails(allBillDetails);
-		log.info("All bill details pushed to kafka");
-	}
 
 	/**
-	 * Publishes a report regeneration trigger to health-expense-calculator.
-	 * forceRegenerate=true bypasses the calculator's Redis dedup cache so the report is refreshed.
+	 * Pushes bill (without details) to bill topic and each detail to bill-detail topic.
 	 */
+	private void pushBillAndDetails(Bill bill, String tenantId, BillRequest billRequest, String billTopic) {
+		List<BillDetail> allDetails = bill.getBillDetails();
+		bill.setBillDetails(null);
+		expenseProducer.push(tenantId, billTopic, billRequest);
+		bill.setBillDetails(allDetails);
+		if (allDetails != null && !allDetails.isEmpty()) {
+			billDetailService.update(allDetails, tenantId);
+		}
+	}
+
 	private void pushReportRegenerationTrigger(Bill bill, RequestInfo requestInfo) {
 		int detailCount = (bill.getBillDetails() != null) ? bill.getBillDetails().size() : 0;
 		ReportRegenerationTrigger trigger = ReportRegenerationTrigger.builder()
@@ -265,25 +257,21 @@ public class BillService {
 				.forceRegenerate(true)
 				.build();
 		expenseProducer.push(bill.getTenantId(), config.getReportRegenerationTriggerTopic(), trigger);
-		log.info("Pushed report regeneration trigger for billId: {}, billDetails: {}",
-				bill.getId(), detailCount);
+		log.info("Pushed report regeneration trigger for billId: {}, billDetails: {}", bill.getId(), detailCount);
 	}
 
 	public BillResponse searchCalculatedBills(BillSearchRequest billSearchRequest, boolean isWfEncrichRequired) {
-		BillResponse billResponse = search(billSearchRequest,isWfEncrichRequired);
+		BillResponse billResponse = search(billSearchRequest, isWfEncrichRequired);
 		List<Bill> billsFromSearch = billResponse.getBills();
-		if(billsFromSearch.isEmpty()){
-			return billResponse;
-		}
-		List<Bill> calculatedBills = new ArrayList<>();
-		billsFromSearch.stream().forEach(bill -> {
-			boolean isBillBusinessServiceUpdated = bill.getBusinessService().equals(config.getBillBusinessService());
+		if (billsFromSearch.isEmpty()) return billResponse;
 
-			if(isBillBusinessServiceUpdated){
+		List<Bill> calculatedBills = new ArrayList<>();
+		billsFromSearch.forEach(bill -> {
+			boolean isBillBusinessServiceUpdated = bill.getBusinessService().equals(config.getBillBusinessService());
+			if (isBillBusinessServiceUpdated) {
 				calculatedBills.add(bill);
 			} else {
-				boolean isBillCalculationComplete = isBillCalculationComplete(bill, billSearchRequest.getRequestInfo());
-				if (isBillCalculationComplete){
+				if (isBillCalculationComplete(bill, billSearchRequest.getRequestInfo())) {
 					calculatedBills.add(bill);
 				}
 			}
@@ -292,29 +280,21 @@ public class BillService {
 		billResponse.setBills(calculatedBills);
 		return billResponse;
 	}
-	private Boolean isBillCalculationComplete(Bill bill, RequestInfo requestInfo){
-		Boolean isBillCalculationComplete = false;
+
+	private Boolean isBillCalculationComplete(Bill bill, RequestInfo requestInfo) {
 		String[] referenceIds = bill.getReferenceId().split("\\.");
 		String projectReferenceId = referenceIds[referenceIds.length - 1];
-		BillCalculationCriteria criteria =
-				BillCalculationCriteria
-						.builder()
-						.tenantId(bill.getTenantId())
-						.localityCode(bill.getLocalityCode())
-						.referenceId(projectReferenceId)
-						.build();
-
-		BillCalculationRequest request =
-				BillCalculationRequest
-						.builder()
-						.requestInfo(requestInfo)
-						.criteria(criteria)
-						.build();
+		BillCalculationCriteria criteria = BillCalculationCriteria.builder()
+				.tenantId(bill.getTenantId())
+				.localityCode(bill.getLocalityCode())
+				.referenceId(projectReferenceId)
+				.build();
+		BillCalculationRequest request = BillCalculationRequest.builder()
+				.requestInfo(requestInfo)
+				.criteria(criteria)
+				.build();
 		BillCalculationResponse response = calculatorUtil.getBills(request);
-		if (response.getStatusCode() == BillCalculationResponse.StatusCode.SUCCESSFUL){
-			isBillCalculationComplete = true;
-		}
-		return isBillCalculationComplete;
+		return response.getStatusCode() == BillCalculationResponse.StatusCode.SUCCESSFUL;
 	}
 
 	public BulkBillStatusUpdateResponse bulkUpdateStatus(BulkBillStatusUpdateRequest bulkRequest) {
@@ -377,7 +357,6 @@ public class BillService {
 						.build();
 
 				updateBillStatus(billToUpdate, workflow, requestInfo, batchId);
-
 				successfulBills.add(billToUpdate);
 
 			} catch (Exception e) {
@@ -391,8 +370,7 @@ public class BillService {
 		}
 
 		if (isNotificationAction && !successfulBills.isEmpty()) {
-			List<String> successfulBillIds = successfulBills.stream()
-					.map(Bill::getId).collect(Collectors.toList());
+			List<String> successfulBillIds = successfulBills.stream().map(Bill::getId).collect(Collectors.toList());
 			try {
 				paymentWorkflowService.insertBillBatchEmailJob(
 						bulkRequest.getTenantId(), batchId, successfulBillIds, action, requestInfo);
@@ -425,10 +403,6 @@ public class BillService {
 
 		List<Bill> billsFromSearch = validator.validateUpdateRequest(billRequest);
 		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
-
-		// Reset status to current DB state so PaymentWorkflowService state validation passes.
-		// (bulkUpdateStatus sets bill.status = target newStatus from request, but PW service
-		//  validates the *current* state before transitioning.)
 		bill.setStatus(billsFromSearch.get(0).getStatus());
 
 		if (Actions.VERIFY.toString().equals(action)) {
@@ -453,31 +427,25 @@ public class BillService {
 				bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
 			}
 			billCacheService.put(bill);
+			// Only bill status changed — no detail push needed
+			List<BillDetail> details = bill.getBillDetails();
+			bill.setBillDetails(null);
 			expenseProducer.push(tenantId, config.getBillUpdateTopic(), billRequest);
+			bill.setBillDetails(details);
 		}
 	}
 
-	/**
-	 * Partially updates one or more bill details under a single bill.
-	 * Only the fields provided in each {@link PartialBillDetail} are updated;
-	 * null fields are preserved from the database.
-	 * Immutable fields (id, tenantId, billId, referenceId) are always taken from DB.
-	 */
 	public BillDetailUpdateResponse partialUpdateBillDetails(BillDetailUpdateRequest request) {
 		RequestInfo requestInfo = request.getRequestInfo();
 		String tenantId = request.getTenantId();
 		String updatedBy = requestInfo.getUserInfo().getUuid();
 
-		// 1. Validate — strips blocked fields in-place, collects warnings
 		BillValidator.BillDetailValidationResult validationResult = validator.validateBillDetailUpdateRequest(request);
 		Bill billFromSearch = validationResult.bill;
 		List<BillDetailUpdateError> warnings = validationResult.warnings;
 
-		// 2. Enrich — applies full null protection, returns only the requested details (merged)
 		List<BillDetail> mergedDetails = enrichmentUtil.enrichPartialBillDetails(request, billFromSearch, updatedBy);
 
-		// 3. Rebuild full bill for Kafka: replace only the updated details in the DB snapshot;
-		//    non-requested details are passed through unchanged to avoid clobbering the bill header.
 		Map<String, BillDetail> mergedMap = mergedDetails.stream()
 				.collect(Collectors.toMap(BillDetail::getId, Function.identity()));
 
@@ -487,27 +455,26 @@ public class BillService {
 
 		billFromSearch.setBillDetails(allDetails);
 
-		// Recalculate bill-level totalAmount as sum of all active BillDetail totals
 		BigDecimal recalculatedTotal = allDetails.stream()
 				.filter(d -> d.getStatus() != Status.INACTIVE)
 				.map(d -> d.getTotalAmount() != null ? d.getTotalAmount() : BigDecimal.ZERO)
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 		billFromSearch.setTotalAmount(recalculatedTotal);
 
-		// 4. Push to the existing bill update topic — no persister changes required
 		BillRequest billRequest = BillRequest.builder()
 				.requestInfo(requestInfo)
 				.bill(billFromSearch)
 				.build();
 
-		billCacheService.put(billFromSearch);
-		if (config.isBillBreakdownEnabled() && allDetails.size() > config.getBillBreakdownSize()) {
-			produceBillsBatchWise(billRequest, config.getBillUpdateTopic());
-		} else {
-			expenseProducer.push(tenantId, config.getBillUpdateTopic(), billRequest);
-		}
+		billCacheService.put(billFromSearch);  // strips details automatically
+		// Push bill (no details) to bill-update
+		List<BillDetail> savedDetails = billFromSearch.getBillDetails();
+		billFromSearch.setBillDetails(null);
+		expenseProducer.push(tenantId, config.getBillUpdateTopic(), billRequest);
+		billFromSearch.setBillDetails(savedDetails);
+		// Push merged details to bill-detail-update
+		billDetailService.update(mergedDetails, tenantId);
 
-		// Always trigger report regeneration — health-expense-calculator never calls this endpoint
 		pushReportRegenerationTrigger(billFromSearch, requestInfo);
 
 		return BillDetailUpdateResponse.builder()
@@ -518,12 +485,6 @@ public class BillService {
 				.build();
 	}
 
-	/**
-	 * Persists report metadata (file IDs, status) into bill.additionalDetails.reportDetails.
-	 * Does NOT call the workflow engine and does NOT trigger report regeneration — safe for
-	 * all bill states including terminal ones (FULLY_PAID, PAID).
-	 * Called exclusively by health-expense-calculator after async Excel/PDF generation.
-	 */
 	public BillResponse updateReportMeta(ReportMetaUpdateRequest request) {
 		RequestInfo requestInfo = request.getRequestInfo();
 
@@ -572,7 +533,11 @@ public class BillService {
 				.build();
 
 		billCacheService.put(bill);
+		// Push bill (no details) to bill-update
+		List<BillDetail> savedDetails = bill.getBillDetails();
+		bill.setBillDetails(null);
 		expenseProducer.push(bill.getTenantId(), config.getBillUpdateTopic(), billRequest);
+		bill.setBillDetails(savedDetails);
 
 		log.info("Report metadata updated for billId: {}, status: {}",
 				bill.getId(), request.getReportDetails().get("status"));
