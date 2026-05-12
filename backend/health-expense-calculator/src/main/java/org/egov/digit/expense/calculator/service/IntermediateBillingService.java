@@ -1207,6 +1207,9 @@ public class IntermediateBillingService {
         if (project.getName() != null) {
             additionalDetails.put("campaignName", project.getName());
         }
+        if (project.getProjectType() != null) {
+            additionalDetails.put("projectType", project.getProjectType());
+        }
 
         // Store computed amount breakup under a dedicated key — expense service may not persist dynamic
         // top-level fields, but additionalDetails IS preserved as a JSON blob.
@@ -1597,7 +1600,7 @@ public class IntermediateBillingService {
                 aggregateBill.getTotalAmount());
 
         // STEP 8: Override metadata to mark as FINAL_AGGREGATE
-        enrichAggregateMetadata(aggregateBill, allPeriods, campaignNumber, project.getName());
+        enrichAggregateMetadata(aggregateBill, allPeriods, campaignNumber, project.getName(), project.getProjectType());
         log.info("✓ Enriched aggregate metadata");
 
         // STEP 9: Submit aggregate bill
@@ -2005,7 +2008,8 @@ public class IntermediateBillingService {
     private void enrichAggregateMetadata(Bill bill,
                                         List<BillingPeriod> allPeriods,
                                         String campaignNumber,
-                                        String campaignName) {
+                                        String campaignName,
+                                        String projectType) {
         Map<String, Object> additionalDetails = bill.getAdditionalDetails() != null ?
                 (Map<String, Object>) bill.getAdditionalDetails() : new HashMap<>();
 
@@ -2024,6 +2028,9 @@ public class IntermediateBillingService {
         additionalDetails.put("campaignNumber", campaignNumber);
         if (campaignName != null) {
             additionalDetails.put("campaignName", campaignName);
+        }
+        if (projectType != null) {
+            additionalDetails.put("projectType", projectType);
         }
         additionalDetails.put("periodStartDate", allPeriods.get(0).getPeriodStartDate());
         additionalDetails.put("periodEndDate", allPeriods.get(allPeriods.size() - 1).getPeriodEndDate());
