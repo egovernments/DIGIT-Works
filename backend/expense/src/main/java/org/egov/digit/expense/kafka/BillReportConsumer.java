@@ -3,23 +3,19 @@ package org.egov.digit.expense.kafka;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.digit.expense.config.Configuration;
-import org.egov.digit.expense.repository.BillRepository;
+import org.egov.digit.expense.service.PaymentWorkflowService;
 import org.egov.digit.expense.util.FilestoreUtil;
 import org.egov.digit.expense.util.PaymentAdvisoryExcelGenerator;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.digit.expense.web.models.Bill;
-import org.egov.digit.expense.web.models.BillCriteria;
 import org.egov.digit.expense.web.models.BillReport;
 import org.egov.digit.expense.web.models.BillReportRequest;
-import org.egov.digit.expense.web.models.BillSearchRequest;
 import org.egov.digit.expense.web.models.enums.ReportStatus;
 import org.egov.digit.expense.web.models.enums.ReportType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -29,7 +25,7 @@ public class BillReportConsumer {
     private final ObjectMapper objectMapper;
     private final ExpenseProducer producer;
     private final Configuration config;
-    private final BillRepository billRepository;
+    private final PaymentWorkflowService paymentWorkflowService;
     private final PaymentAdvisoryExcelGenerator excelGenerator;
     private final FilestoreUtil filestoreUtil;
 
@@ -37,13 +33,13 @@ public class BillReportConsumer {
     public BillReportConsumer(ObjectMapper objectMapper,
                               ExpenseProducer producer,
                               Configuration config,
-                              BillRepository billRepository,
+                              PaymentWorkflowService paymentWorkflowService,
                               PaymentAdvisoryExcelGenerator excelGenerator,
                               FilestoreUtil filestoreUtil) {
         this.objectMapper = objectMapper;
         this.producer = producer;
         this.config = config;
-        this.billRepository = billRepository;
+        this.paymentWorkflowService = paymentWorkflowService;
         this.excelGenerator = excelGenerator;
         this.filestoreUtil = filestoreUtil;
     }
@@ -101,19 +97,12 @@ public class BillReportConsumer {
     }
 
     private Bill fetchBill(String billId, String tenantId, org.egov.common.contract.request.RequestInfo requestInfo) {
-        BillSearchRequest searchRequest = BillSearchRequest.builder()
-                .requestInfo(requestInfo)
-                .billCriteria(BillCriteria.builder()
-                        .ids(Collections.singleton(billId))
-                        .tenantId(tenantId)
-                        .build())
-                .build();
-
-        List<Bill> bills = billRepository.search(searchRequest, false);
-        if (bills.isEmpty()) {
-            throw new RuntimeException("Bill not found for billId=" + billId);
+        Bill bill = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, requestInfo, true);
+        if (bill == null) {
+            log.error("Bill not found in DB or cache: billId={} tenantId={}", billId, tenantId);
+            throw new RuntimeException("Bill not found for billId=" + billId + " tenantId=" + tenantId);
         }
-        return bills.get(0);
+        return bill;
     }
 
     private void updateAuditDetails(BillReport report, BillReportRequest request) {
