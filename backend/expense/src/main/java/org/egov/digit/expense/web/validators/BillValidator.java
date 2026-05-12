@@ -127,6 +127,17 @@ public class BillValidator {
 
 		validatePaymentFieldUpdate(bill, billsFromSearch.get(0));
 
+		if (hasPayableAmountChanges(bill, billsFromSearch.get(0))) {
+			String projectType = extractProjectType(billsFromSearch.get(0));
+			if (projectType == null) projectType = extractProjectType(bill);
+			if (projectType != null) {
+				Map<String, BigDecimal> limits = mdmsUtil.fetchCampaignRateLimits(
+						billRequest.getRequestInfo(), bill.getTenantId(), projectType);
+				if (!limits.isEmpty())
+					validateBillUpdateRateLimits(bill, billsFromSearch.get(0), limits);
+			}
+		}
+
 		Map<String, Map<String, JSONArray>> mdmsData = getMasterDataForValidation(billRequest, bill);
 		validateTenantId(billRequest,mdmsData);
 
@@ -1123,6 +1134,103 @@ public class BillValidator {
 		if (attendance != null && attendance.compareTo(BigDecimal.ZERO) > 0)
 			return amount.divide(attendance, 4, java.math.RoundingMode.HALF_UP);
 		return amount;
+	}
+
+	/**
+	 * Returns true if any payable line item amount in the update request differs from
+	 * the stored value. Used to skip the MDMS rate-limit call on pure workflow transitions.
+	 */
+	private boolean hasPayableAmountChanges(Bill updatedBill, Bill existingBill) {
+		if (updatedBill.getBillDetails() == null) return false;
+
+		Map<String, LineItem> existingPayableMap = existingBill.getBillDetails().stream()
+				.flatMap(d -> d.getPayableLineItems().stream())
+				.filter(li -> li.getId() != null)
+				.collect(Collectors.toMap(LineItem::getId, Function.identity(), (a, b) -> a));
+
+		for (BillDetail detail : updatedBill.getBillDetails()) {
+			if (detail.getPayableLineItems() == null) continue;
+			for (LineItem item : detail.getPayableLineItems()) {
+				if (item.getAmount() == null) continue;
+				LineItem existing = item.getId() != null ? existingPayableMap.get(item.getId()) : null;
+				if (existing == null) return true; // new item
+				if (item.getAmount().compareTo(existing.getAmount() != null ? existing.getAmount() : BigDecimal.ZERO) != 0)
+					return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Validates rate limits for the regular bill _update path.
+	 * Iterates BillDetail objects from the update request and validates each payable line item's
+	 * display value against the fieldKey limits fetched from MDMS.
+	 * Uses the existing bill from DB to resolve headCode→fieldKey via workerRatesSnapshot.
+	 */
+	private void validateBillUpdateRateLimits(Bill updatedBill, Bill existingBill,
+	                                            Map<String, BigDecimal> fieldKeyMaxLimits) {
+		Map<String, RateFieldConfig> headCodeToConfig = buildHeadCodeToConfigMap(existingBill);
+		if (headCodeToConfig.isEmpty()) return;
+
+		Map<String, String> fieldKeyToHeadCode = new HashMap<>();
+		headCodeToConfig.forEach((hc, fc) -> {
+			if (fc.getFieldKey() != null) fieldKeyToHeadCode.put(fc.getFieldKey(), hc);
+		});
+
+		List<BillDetailUpdateError> errors = new ArrayList<>();
+
+		for (BillDetail detail : updatedBill.getBillDetails()) {
+			if (detail == null) continue;
+			List<LineItem> payableItems = BillDetailExcelGenerator.getPayableItems(detail);
+			if (payableItems.isEmpty()) continue;
+
+			BigDecimal attendance = detail.getTotalAttendance();
+
+			Map<String, BigDecimal> storedAmounts = new HashMap<>();
+			for (LineItem item : payableItems) {
+				if (item.getHeadCode() != null && item.getAmount() != null)
+					storedAmounts.put(item.getHeadCode(), item.getAmount());
+			}
+
+			for (LineItem item : payableItems) {
+				if (item.getHeadCode() == null || item.getAmount() == null) continue;
+
+				RateFieldConfig fc = headCodeToConfig.get(item.getHeadCode());
+				String fieldKey    = fc != null ? fc.getFieldKey() : null;
+				BigDecimal limit   = fieldKey != null ? fieldKeyMaxLimits.get(fieldKey) : null;
+
+				if (limit == null && fc != null && VALUE_TYPE_PERCENTAGE.equals(fc.getValueType()))
+					limit = BigDecimal.valueOf(100);
+				if (limit == null) continue;
+
+				if (fc != null && PAYMENT_TYPE_PER_DAY.equals(fc.getPaymentType())
+						&& (attendance == null || attendance.compareTo(BigDecimal.ZERO) == 0)) {
+					log.warn("Skipping rate limit check for headCode={} in detail={}: attendance zero/null",
+							item.getHeadCode(), detail.getId());
+					continue;
+				}
+
+				BigDecimal displayValue = computeDisplayValue(
+						item.getAmount(), fc, attendance, storedAmounts, fieldKeyToHeadCode);
+
+				if (displayValue.compareTo(limit) > 0) {
+					errors.add(BillDetailUpdateError.builder()
+							.billDetailId(detail.getId())
+							.code(ERR_RATE_LIMIT_EXCEEDED)
+							.message("Rate for '" + item.getHeadCode() + "' is "
+									+ displayValue.setScale(2, java.math.RoundingMode.HALF_UP)
+									+ " which exceeds the maximum allowed value of " + limit)
+							.build());
+				}
+			}
+		}
+
+		if (!errors.isEmpty()) {
+			String msg = errors.stream()
+					.map(BillDetailUpdateError::getMessage)
+					.collect(Collectors.joining("; "));
+			throw new CustomException(ERR_RATE_LIMIT_EXCEEDED, msg);
+		}
 	}
 
 	/**
