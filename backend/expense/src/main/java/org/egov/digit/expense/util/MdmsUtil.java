@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.*;
 
@@ -154,6 +155,73 @@ public class MdmsUtil {
 			log.warn("Failed to fetch worker rate fieldConfig from MDMS for campaignId={}: {}",
 					campaignId, e.getMessage());
 			return Collections.emptyList();
+		}
+	}
+
+	/**
+	 * Fetches rateMaxLimitSchema for a given campaignType (projectType) from MDMS master
+	 * HCM-BILLING-CONFIG-PAYMENT-SETUP/CampaignTypeSkills.
+	 *
+	 * Returns Map&lt;fieldKey, maxDisplayValue&gt; — keys are fieldKeys (e.g. PER_DAY, FOOD, TRAVEL).
+	 * Callers resolve fieldKey → headCode via bill.additionalDetails.workerRatesSnapshot.
+	 *
+	 * Returns an empty map when projectType is not found in MDMS or on any error.
+	 */
+	public Map<String, BigDecimal> fetchCampaignRateLimits(RequestInfo requestInfo,
+	                                                        String tenantId,
+	                                                        String projectType) {
+		try {
+			String filter = CAMPAIGN_TYPE_SKILLS_FILTER_PREFIX + projectType + CAMPAIGN_TYPE_SKILLS_FILTER_SUFFIX;
+			String rootTenantId = tenantId.contains(".") ? tenantId.split("\\.")[0] : tenantId;
+
+			MdmsCriteria criteria = MdmsCriteria.builder()
+					.tenantId(rootTenantId)
+					.moduleDetails(Collections.singletonList(ModuleDetail.builder()
+							.moduleName(HCM_BILLING_CONFIG_MODULE)
+							.masterDetails(Collections.singletonList(MasterDetail.builder()
+									.name(CAMPAIGN_TYPE_SKILLS_MASTER)
+									.filter(filter)
+									.build()))
+							.build()))
+					.build();
+
+			String url = configs.getMdmsV2Host() + configs.getMdmsV2EndPoint();
+			Object response = restTemplate.postForObject(url,
+					MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(criteria).build(),
+					Object.class);
+
+			String responseJson = mapper.writeValueAsString(response);
+			String jsonPath = "$.MdmsRes." + HCM_BILLING_CONFIG_MODULE + "." + CAMPAIGN_TYPE_SKILLS_MASTER;
+			List<Object> skillsList = JsonPath.read(responseJson, jsonPath);
+
+			if (skillsList == null || skillsList.isEmpty()) {
+				log.info("No CampaignTypeSkills MDMS entry for projectType={}", projectType);
+				return Collections.emptyMap();
+			}
+
+			Map<String, Object> skillsEntry = mapper.convertValue(skillsList.get(0),
+					new TypeReference<Map<String, Object>>() {});
+
+			Object limitsRaw = skillsEntry.get(RATE_MAX_LIMIT_SCHEMA_KEY);
+			if (limitsRaw == null) return Collections.emptyMap();
+
+			Map<String, Object> rateMaxLimitSchema = mapper.convertValue(limitsRaw,
+					new TypeReference<Map<String, Object>>() {});
+
+			// Keys in rateMaxLimitSchema are fieldKeys (e.g. "FOOD", "TRAVEL", "PER_DAY")
+			// — resolved to actual headCodes at validation/generation time via bill.additionalDetails
+			Map<String, BigDecimal> fieldKeyToMaxLimit = new HashMap<>();
+			for (Map.Entry<String, Object> entry : rateMaxLimitSchema.entrySet()) {
+				if (entry.getValue() != null) {
+					fieldKeyToMaxLimit.put(entry.getKey(), new BigDecimal(entry.getValue().toString()));
+				}
+			}
+			log.info("Fetched rate limits for projectType={}: {}", projectType, fieldKeyToMaxLimit);
+			return fieldKeyToMaxLimit;
+
+		} catch (Exception e) {
+			log.warn("Failed to fetch campaign rate limits for projectType={}: {}", projectType, e.getMessage());
+			return Collections.emptyMap();
 		}
 	}
 

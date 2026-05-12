@@ -18,24 +18,32 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.Role;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.repository.BillRepository;
+import org.egov.digit.expense.util.BillDetailExcelGenerator;
 import org.egov.digit.expense.util.MdmsUtil;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillCriteria;
 import org.egov.digit.expense.web.models.BillDetail;
+import org.egov.digit.expense.web.models.BillDetailUpdateError;
+import org.egov.digit.expense.web.models.BillDetailUpdateRequest;
 import org.egov.digit.expense.web.models.BillRequest;
 import org.egov.digit.expense.web.models.BillSearchRequest;
 import org.egov.digit.expense.web.models.BulkBillStatusUpdateRequest;
 import org.egov.digit.expense.web.models.BulkUpdateError;
 import org.egov.digit.expense.web.models.LineItem;
 import org.egov.digit.expense.web.models.Party;
+import org.egov.digit.expense.web.models.PartialBillDetail;
+import org.egov.digit.expense.web.models.RateFieldConfig;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.tracer.model.CustomException;
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +53,7 @@ import org.springframework.util.StringUtils;
 import com.jayway.jsonpath.JsonPath;
 
 @Service
+@Slf4j
 public class BillValidator {
 
 	public static final String BILL_DETAIL_ID_IS_INVALID_FOR_THE_GIVEN_IDS_OF_UPDATE_REQUEST = "bill detail id is Invalid for the given ids of update request : ";
@@ -54,11 +63,15 @@ public class BillValidator {
 
 	private final BillRepository billRepository;
 
+	private final ObjectMapper objectMapper;
+
 	@Autowired
-	public BillValidator(MdmsUtil mdmsUtil, Configuration configs, BillRepository billRepository) {
+	public BillValidator(MdmsUtil mdmsUtil, Configuration configs, BillRepository billRepository,
+	                     ObjectMapper objectMapper) {
 		this.mdmsUtil = mdmsUtil;
 		this.configs = configs;
 		this.billRepository = billRepository;
+		this.objectMapper = objectMapper;
 	}
 
 	public void validateCreateRequest(BillRequest billRequest) {
@@ -808,14 +821,14 @@ public class BillValidator {
 	 */
 	public static class BillDetailValidationResult {
 		public final Bill bill;
-		public final List<org.egov.digit.expense.web.models.BillDetailUpdateError> warnings;
-		public BillDetailValidationResult(Bill bill, List<org.egov.digit.expense.web.models.BillDetailUpdateError> warnings) {
+		public final List<BillDetailUpdateError> warnings;
+		public BillDetailValidationResult(Bill bill, List<BillDetailUpdateError> warnings) {
 			this.bill = bill;
 			this.warnings = warnings;
 		}
 	}
 
-	public BillDetailValidationResult validateBillDetailUpdateRequest(org.egov.digit.expense.web.models.BillDetailUpdateRequest request) {
+	public BillDetailValidationResult validateBillDetailUpdateRequest(BillDetailUpdateRequest request) {
 
 		// 1. Fetch bill from DB
 		Bill billFromSearch = getBillById(request.getBillId(), request.getTenantId(), request.getRequestInfo());
@@ -828,7 +841,7 @@ public class BillValidator {
 				.collect(Collectors.toMap(BillDetail::getId, Function.identity()));
 
 		List<String> invalidIds = request.getBillDetails().stream()
-				.map(org.egov.digit.expense.web.models.PartialBillDetail::getId)
+				.map(PartialBillDetail::getId)
 				.filter(id -> !searchDetailMap.containsKey(id))
 				.collect(Collectors.toList());
 
@@ -837,8 +850,25 @@ public class BillValidator {
 					"BillDetail ids not found under bill " + request.getBillId() + ": " + invalidIds);
 
 		// 3. Role-based field access — strips blocked fields in-place, returns warnings
-		List<org.egov.digit.expense.web.models.BillDetailUpdateError> warnings =
+		List<BillDetailUpdateError> warnings =
 				stripAndWarnBlockedFields(request, billFromSearch, searchDetailMap);
+
+		// 4. Rate limit validation — only when bill has a projectType in additionalDetails
+		String projectType = extractProjectType(billFromSearch);
+		if (projectType != null) {
+			Map<String, BigDecimal> headCodeMaxLimits = mdmsUtil.fetchCampaignRateLimits(
+					request.getRequestInfo(), request.getTenantId(), projectType);
+			if (!headCodeMaxLimits.isEmpty()) {
+				List<BillDetailUpdateError> rateErrors = validatePayableLineLimits(
+						billFromSearch, request.getBillDetails(), headCodeMaxLimits);
+				if (!rateErrors.isEmpty()) {
+					String msg = rateErrors.stream()
+							.map(BillDetailUpdateError::getMessage)
+							.collect(Collectors.joining("; "));
+					throw new CustomException(ERR_RATE_LIMIT_EXCEEDED, msg);
+				}
+			}
+		}
 
 		return new BillDetailValidationResult(billFromSearch, warnings);
 	}
@@ -854,8 +884,8 @@ public class BillValidator {
 	 * PAYMENT_REVIEWER: may update amount/calculation fields only (totalAmount, totalPaidAmount,
 	 *   totalAttendance, lineItems, payableLineItems). Strips payee and workerId fields.
 	 */
-	private List<org.egov.digit.expense.web.models.BillDetailUpdateError> stripAndWarnBlockedFields(
-			org.egov.digit.expense.web.models.BillDetailUpdateRequest request,
+	private List<BillDetailUpdateError> stripAndWarnBlockedFields(
+			BillDetailUpdateRequest request,
 			Bill billFromSearch,
 			Map<String, BillDetail> searchDetailMap) {
 
@@ -877,17 +907,17 @@ public class BillValidator {
 		boolean editorStatusMatch   = STATUS_PENDING_VERIFICATION.equals(billStatus) || STATUS_PARTIALLY_VERIFIED.equals(billStatus);
 		boolean reviewerStatusMatch = STATUS_UNDER_REVIEW.equals(billStatus);
 
-		List<org.egov.digit.expense.web.models.BillDetailUpdateError> warnings = new ArrayList<>();
+		List<BillDetailUpdateError> warnings = new ArrayList<>();
 
 		if (hasPaymentEditor && editorStatusMatch) {
 			Set<String> allowedDetailStatuses = Set.of(STATUS_PENDING_VERIFICATION, STATUS_VERIFICATION_FAILED);
-			Iterator<org.egov.digit.expense.web.models.PartialBillDetail> editorIter = request.getBillDetails().iterator();
+			Iterator<PartialBillDetail> editorIter = request.getBillDetails().iterator();
 			while (editorIter.hasNext()) {
-				org.egov.digit.expense.web.models.PartialBillDetail pd = editorIter.next();
+				PartialBillDetail pd = editorIter.next();
 				BillDetail db = searchDetailMap.get(pd.getId());
 				String detailStatus = db.getStatus() != null ? db.getStatus().toString() : null;
 				if (detailStatus != null && !allowedDetailStatuses.contains(detailStatus)) {
-					warnings.add(org.egov.digit.expense.web.models.BillDetailUpdateError.builder()
+					warnings.add(BillDetailUpdateError.builder()
 							.code(ERR_DETAIL_STATUS_SKIPPED_EDITOR)
 							.message("Bill detail " + pd.getId() + " cannot be updated at its current stage.")
 							.build());
@@ -900,13 +930,13 @@ public class BillValidator {
 		}
 
 		if (hasPaymentReviewer && reviewerStatusMatch) {
-			Iterator<org.egov.digit.expense.web.models.PartialBillDetail> reviewerIter = request.getBillDetails().iterator();
+			Iterator<PartialBillDetail> reviewerIter = request.getBillDetails().iterator();
 			while (reviewerIter.hasNext()) {
-				org.egov.digit.expense.web.models.PartialBillDetail pd = reviewerIter.next();
+				PartialBillDetail pd = reviewerIter.next();
 				BillDetail db = searchDetailMap.get(pd.getId());
 				String detailStatus = db.getStatus() != null ? db.getStatus().toString() : null;
 				if (!STATUS_UNDER_REVIEW.equals(detailStatus)) {
-					warnings.add(org.egov.digit.expense.web.models.BillDetailUpdateError.builder()
+					warnings.add(BillDetailUpdateError.builder()
 							.code(ERR_DETAIL_STATUS_SKIPPED_REVIEWER)
 							.message("Bill detail " + pd.getId() + " is not available for review at its current stage.")
 							.build());
@@ -924,9 +954,9 @@ public class BillValidator {
 
 	/** Strips amount/attendance/lineItem fields blocked for PAYMENT_EDITOR. */
 	private void stripAmountFields(
-			org.egov.digit.expense.web.models.PartialBillDetail pd,
+			PartialBillDetail pd,
 			BillDetail db,
-			List<org.egov.digit.expense.web.models.BillDetailUpdateError> warnings) {
+			List<BillDetailUpdateError> warnings) {
 
 		List<String> stripped = new ArrayList<>();
 
@@ -953,7 +983,7 @@ public class BillValidator {
 		}
 
 		if (!stripped.isEmpty())
-			warnings.add(org.egov.digit.expense.web.models.BillDetailUpdateError.builder()
+			warnings.add(BillDetailUpdateError.builder()
 					.billDetailId(pd.getId())
 					.code(ERR_FIELD_STRIPPED_EDITOR)
 					.message("Some fields on bill detail " + pd.getId() + " are not editable at this stage and have been ignored.")
@@ -962,9 +992,9 @@ public class BillValidator {
 
 	/** Strips payee/workerId fields blocked for PAYMENT_REVIEWER. */
 	private void stripPayeeFields(
-			org.egov.digit.expense.web.models.PartialBillDetail pd,
+			PartialBillDetail pd,
 			BillDetail db,
-			List<org.egov.digit.expense.web.models.BillDetailUpdateError> warnings) {
+			List<BillDetailUpdateError> warnings) {
 
 		List<String> stripped = new ArrayList<>();
 
@@ -996,11 +1026,186 @@ public class BillValidator {
 		}
 
 		if (!stripped.isEmpty())
-			warnings.add(org.egov.digit.expense.web.models.BillDetailUpdateError.builder()
+			warnings.add(BillDetailUpdateError.builder()
 					.billDetailId(pd.getId())
 					.code(ERR_FIELD_STRIPPED_REVIEWER)
 					.message("Some fields on bill detail " + pd.getId() + " cannot be changed at this stage and have been ignored.")
 					.build());
+	}
+
+	// -------------------------------------------------------------------------
+	// Rate limit validation helpers
+	// -------------------------------------------------------------------------
+
+	private String extractProjectType(Bill bill) {
+		if (bill.getAdditionalDetails() == null) return null;
+		try {
+			Map<String, Object> adMap = objectMapper.convertValue(bill.getAdditionalDetails(),
+					new TypeReference<Map<String, Object>>() {});
+			Object val = adMap.get(PROJECT_TYPE_ADDITIONAL_DETAIL_KEY);
+			return val instanceof String ? (String) val : null;
+		} catch (Exception e) {
+			log.warn("Could not extract projectType from bill.additionalDetails billId={}: {}", bill.getId(), e.getMessage());
+			return null;
+		}
+	}
+
+	private Map<String, RateFieldConfig> buildHeadCodeToConfigMap(Bill bill) {
+		if (bill.getAdditionalDetails() == null) return Collections.emptyMap();
+		try {
+			Map<String, Object> adMap = objectMapper.convertValue(bill.getAdditionalDetails(),
+					new TypeReference<Map<String, Object>>() {});
+
+			Object fcRaw = adMap.get(RATE_FIELD_CONFIG_SNAPSHOT_KEY);
+			if (fcRaw == null) return Collections.emptyMap();
+			List<RateFieldConfig> fieldConfigs = objectMapper.convertValue(fcRaw,
+					new TypeReference<List<RateFieldConfig>>() {});
+			if (fieldConfigs == null || fieldConfigs.isEmpty()) return Collections.emptyMap();
+
+			Object hcmRaw = adMap.get(HEAD_CODE_MAPPING_KEY);
+			Map<String, String> headCodeMapping = hcmRaw != null
+					? objectMapper.convertValue(hcmRaw, new TypeReference<Map<String, String>>() {})
+					: Collections.emptyMap();
+
+			Map<String, RateFieldConfig> result = new HashMap<>();
+			for (RateFieldConfig fc : fieldConfigs) {
+				String headCode = fc.getHeadCode() != null && !fc.getHeadCode().isBlank()
+						? fc.getHeadCode()
+						: headCodeMapping.getOrDefault(fc.getFieldKey(), fc.getFieldKey());
+				result.put(headCode, fc);
+			}
+			return result;
+		} catch (Exception e) {
+			log.warn("Could not build headCode→config map for billId={}: {}", bill.getId(), e.getMessage());
+			return Collections.emptyMap();
+		}
+	}
+
+	/**
+	 * Computes the display value for a payable line item — the value a PAYMENT_REVIEWER
+	 * would enter in the Excel cell, or equivalently the value to compare against
+	 * rateMaxLimitSchema limits.
+	 *
+	 * PER_DAY     → storedAmount / attendance  (per-day rate)
+	 * ONE_TIME/PER_PERIOD → storedAmount       (total flat amount)
+	 * PERCENTAGE  → storedAmount × 100 / Σ(component stored amounts)
+	 * No config   → storedAmount / attendance  (legacy fallback)
+	 */
+	private BigDecimal computeDisplayValue(BigDecimal storedAmount, RateFieldConfig fc,
+	                                        BigDecimal attendance,
+	                                        Map<String, BigDecimal> storedAmountsByHeadCode,
+	                                        Map<String, String> fieldKeyToHeadCode) {
+		if (storedAmount == null || storedAmount.compareTo(BigDecimal.ZERO) == 0) return BigDecimal.ZERO;
+
+		if (fc == null || fc.getPaymentType() == null) {
+			return safeDivide(storedAmount, attendance);
+		}
+
+		if (VALUE_TYPE_PERCENTAGE.equals(fc.getValueType())) {
+			BigDecimal componentSum = BigDecimal.ZERO;
+			if (fc.getComponents() != null) {
+				for (String compFieldKey : fc.getComponents()) {
+					String compHc = fieldKeyToHeadCode.getOrDefault(compFieldKey, compFieldKey);
+					componentSum = componentSum.add(storedAmountsByHeadCode.getOrDefault(compHc, BigDecimal.ZERO));
+				}
+			}
+			if (componentSum.compareTo(BigDecimal.ZERO) == 0) return BigDecimal.ZERO;
+			return storedAmount.multiply(BigDecimal.valueOf(100))
+					.divide(componentSum, 4, java.math.RoundingMode.HALF_UP);
+		} else if (PAYMENT_TYPE_PER_DAY.equals(fc.getPaymentType())) {
+			return safeDivide(storedAmount, attendance);
+		} else {
+			return storedAmount;
+		}
+	}
+
+	private BigDecimal safeDivide(BigDecimal amount, BigDecimal attendance) {
+		if (attendance != null && attendance.compareTo(BigDecimal.ZERO) > 0)
+			return amount.divide(attendance, 4, java.math.RoundingMode.HALF_UP);
+		return amount;
+	}
+
+	/**
+	 * For each partial bill detail, checks that the display value of every payable line item
+	 * does not exceed the corresponding max limit from MDMS. Returns a list of errors
+	 * (one per violation). An empty list means all items are within limits.
+	 */
+	private List<BillDetailUpdateError> validatePayableLineLimits(
+			Bill existingBill,
+			List<PartialBillDetail> partials,
+			Map<String, BigDecimal> headCodeMaxLimits) {
+
+		Map<String, RateFieldConfig> headCodeToConfig = buildHeadCodeToConfigMap(existingBill);
+		Map<String, String> fieldKeyToHeadCode = new HashMap<>();
+		headCodeToConfig.forEach((hc, fc) -> {
+			if (fc.getFieldKey() != null) fieldKeyToHeadCode.put(fc.getFieldKey(), hc);
+		});
+
+		Map<String, BillDetail> existingDetailMap = existingBill.getBillDetails().stream()
+				.collect(Collectors.toMap(BillDetail::getId, Function.identity()));
+
+		List<BillDetailUpdateError> errors = new ArrayList<>();
+
+		for (PartialBillDetail partial : partials) {
+			if (partial.getPayableLineItems() == null || partial.getPayableLineItems().isEmpty()) continue;
+
+			BillDetail existing = existingDetailMap.get(partial.getId());
+			BigDecimal attendance = partial.getTotalAttendance() != null
+					? partial.getTotalAttendance()
+					: (existing != null ? existing.getTotalAttendance() : null);
+
+			// Build headCode → storedAmount from the partial update
+			Map<String, BigDecimal> storedAmounts = new HashMap<>();
+			for (LineItem item : partial.getPayableLineItems()) {
+				if (item.getHeadCode() != null && item.getAmount() != null)
+					storedAmounts.put(item.getHeadCode(), item.getAmount());
+			}
+			// Fill remaining from existing detail (needed for PERCENTAGE component sums)
+			if (existing != null) {
+				for (LineItem item : BillDetailExcelGenerator.getPayableItems(existing)) {
+					if (item.getHeadCode() != null && !storedAmounts.containsKey(item.getHeadCode()))
+						storedAmounts.put(item.getHeadCode(),
+								item.getAmount() != null ? item.getAmount() : BigDecimal.ZERO);
+				}
+			}
+
+			for (LineItem item : partial.getPayableLineItems()) {
+				if (item.getHeadCode() == null || item.getAmount() == null) continue;
+
+				// Resolve headCode → fieldKey → limit
+				RateFieldConfig fc = headCodeToConfig.get(item.getHeadCode());
+				String fieldKey    = fc != null ? fc.getFieldKey() : null;
+				BigDecimal limit   = fieldKey != null ? headCodeMaxLimits.get(fieldKey) : null;
+
+				// PERCENTAGE fields default to 100 when no explicit MDMS limit is defined
+				if (limit == null && fc != null && VALUE_TYPE_PERCENTAGE.equals(fc.getValueType()))
+					limit = BigDecimal.valueOf(100);
+				if (limit == null) continue;
+
+				// Skip PER_DAY validation when attendance is unavailable — cannot compute rate
+				if (fc != null && PAYMENT_TYPE_PER_DAY.equals(fc.getPaymentType())
+						&& (attendance == null || attendance.compareTo(BigDecimal.ZERO) == 0)) {
+					log.warn("Skipping rate limit check for headCode={} in detail={}: attendance is zero/null",
+							item.getHeadCode(), partial.getId());
+					continue;
+				}
+
+				BigDecimal displayValue = computeDisplayValue(
+						item.getAmount(), fc, attendance, storedAmounts, fieldKeyToHeadCode);
+
+				if (displayValue.compareTo(limit) > 0) {
+					errors.add(BillDetailUpdateError.builder()
+							.billDetailId(partial.getId())
+							.code(ERR_RATE_LIMIT_EXCEEDED)
+							.message("Rate for '" + item.getHeadCode() + "' is "
+									+ displayValue.setScale(2, java.math.RoundingMode.HALF_UP)
+									+ " which exceeds the maximum allowed value of " + limit)
+							.build());
+				}
+			}
+		}
+
+		return errors;
 	}
 
 	private Bill getBillById(String billId, String tenantId, org.egov.common.contract.request.RequestInfo requestInfo) {

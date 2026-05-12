@@ -1,5 +1,7 @@
 package org.egov.digit.expense.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
@@ -7,11 +9,13 @@ import org.egov.digit.expense.repository.BillRepository;
 import org.egov.digit.expense.util.BillDetailExcelGenerator;
 import org.egov.digit.expense.util.BillDetailExcelParser;
 import org.egov.digit.expense.util.FilestoreUtil;
+import org.egov.digit.expense.util.MdmsUtil;
 import org.egov.digit.expense.web.models.*;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,18 +31,24 @@ public class BillDetailTemplateService {
     private final BillDetailExcelParser excelParser;
     private final BillService billService;
     private final FilestoreUtil filestoreUtil;
+    private final MdmsUtil mdmsUtil;
+    private final ObjectMapper objectMapper;
 
     @Autowired
     public BillDetailTemplateService(BillRepository billRepository,
                                      BillDetailExcelGenerator excelGenerator,
                                      BillDetailExcelParser excelParser,
                                      BillService billService,
-                                     FilestoreUtil filestoreUtil) {
+                                     FilestoreUtil filestoreUtil,
+                                     MdmsUtil mdmsUtil,
+                                     ObjectMapper objectMapper) {
         this.billRepository  = billRepository;
         this.excelGenerator  = excelGenerator;
         this.excelParser     = excelParser;
         this.billService     = billService;
         this.filestoreUtil   = filestoreUtil;
+        this.mdmsUtil        = mdmsUtil;
+        this.objectMapper    = objectMapper;
     }
 
     public byte[] generateTemplateBytes(BillTemplateRequest request) {
@@ -47,7 +57,14 @@ public class BillDetailTemplateService {
         Set<String> roles = extractRoles(requestInfo);
         log.info("BillDetailTemplateService::generateTemplateBytes billId={} roles={}", request.getBillId(), roles);
         validateRoleAndBillStatus(roles, bill, "generate template");
-        return excelGenerator.generateTemplate(bill, roles, requestInfo);
+
+        Map<String, BigDecimal> headCodeMaxLimits = Collections.emptyMap();
+        String projectType = extractProjectType(bill);
+        if (projectType != null) {
+            headCodeMaxLimits = mdmsUtil.fetchCampaignRateLimits(requestInfo, bill.getTenantId(), projectType);
+        }
+
+        return excelGenerator.generateTemplate(bill, roles, requestInfo, headCodeMaxLimits);
     }
 
     public BillDetailUpdateResponse processUpload(BillTemplateUploadRequest request) {
@@ -130,5 +147,19 @@ public class BillDetailTemplateService {
                 .filter(r -> r != null && r.getCode() != null)
                 .map(Role::getCode)
                 .collect(Collectors.toSet());
+    }
+
+    private String extractProjectType(Bill bill) {
+        if (bill.getAdditionalDetails() == null) return null;
+        try {
+            Map<String, Object> adMap = objectMapper.convertValue(bill.getAdditionalDetails(),
+                    new TypeReference<Map<String, Object>>() {});
+            Object val = adMap.get(PROJECT_TYPE_ADDITIONAL_DETAIL_KEY);
+            return val instanceof String ? (String) val : null;
+        } catch (Exception e) {
+            log.warn("Could not extract projectType from bill.additionalDetails for billId={}: {}",
+                    bill.getId(), e.getMessage());
+            return null;
+        }
     }
 }

@@ -1,9 +1,11 @@
 package org.egov.digit.expense.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.digit.expense.repository.BillRepository;
 import org.egov.digit.expense.util.BillDetailExcelGenerator;
 import org.egov.digit.expense.util.BillDetailExcelParser;
 import org.egov.digit.expense.util.FilestoreUtil;
+import org.egov.digit.expense.util.MdmsUtil;
 import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.tracer.model.CustomException;
@@ -33,6 +35,8 @@ public class BillDetailTemplateServiceErrorMessageTest {
     @Mock private BillDetailExcelParser excelParser;
     @Mock private BillService billService;
     @Mock private FilestoreUtil filestoreUtil;
+    @Mock private MdmsUtil mdmsUtil;
+    @Mock private ObjectMapper objectMapper;
 
     private BillDetailTemplateService service;
 
@@ -43,7 +47,8 @@ public class BillDetailTemplateServiceErrorMessageTest {
 
     @BeforeEach
     public void setUp() {
-        service = new BillDetailTemplateService(billRepository, excelGenerator, excelParser, billService, filestoreUtil);
+        service = new BillDetailTemplateService(billRepository, excelGenerator, excelParser,
+                billService, filestoreUtil, mdmsUtil, objectMapper);
     }
 
     // ── ERR_UNAUTHORIZED ──────────────────────────────────────────────────────

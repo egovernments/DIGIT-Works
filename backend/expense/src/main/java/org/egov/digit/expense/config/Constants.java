@@ -364,4 +364,16 @@ public class Constants {
 	public static final String HCM_WORKER_RATES_JSON_PATH = "$.MdmsRes.HCM.WORKER_RATES";
 	public static final String WORKER_RATES_CAMPAIGN_ID_FILTER_PREFIX = "[?(@.campaignId=='";
 	public static final String WORKER_RATES_CAMPAIGN_ID_FILTER_SUFFIX = "')]";
+
+	// MDMS constants for HCM billing config — rate max limits per campaign type
+	public static final String HCM_BILLING_CONFIG_MODULE          = "HCM-BILLING-CONFIG-PAYMENT-SETUP";
+	public static final String CAMPAIGN_TYPE_SKILLS_MASTER        = "CampaignTypeSkills";
+	public static final String CAMPAIGN_TYPE_SKILLS_FILTER_PREFIX = "[?(@.campaignType=='";
+	public static final String CAMPAIGN_TYPE_SKILLS_FILTER_SUFFIX = "')]";
+	public static final String RATE_MAX_LIMIT_SCHEMA_KEY          = "rateMaxLimitSchema";
+	public static final String RATE_BREAKUP_SCHEMA_KEY            = "rateBreakupSchema";
+	public static final String PROJECT_TYPE_ADDITIONAL_DETAIL_KEY = "projectType";
+
+	// Error code for rate limit validation
+	public static final String ERR_RATE_LIMIT_EXCEEDED = "ERR_RATE_LIMIT_EXCEEDED";
 }

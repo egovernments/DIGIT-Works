@@ -14,7 +14,11 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
+import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -79,7 +83,13 @@ public class BillDetailExcelGenerator {
     }
 
     public byte[] generateTemplate(Bill bill, Set<String> userRoles, RequestInfo requestInfo) {
-        log.info("BillDetailExcelGenerator::generateTemplate billId={} roles={}", bill.getId(), userRoles);
+        return generateTemplate(bill, userRoles, requestInfo, Collections.emptyMap());
+    }
+
+    public byte[] generateTemplate(Bill bill, Set<String> userRoles, RequestInfo requestInfo,
+                                    Map<String, BigDecimal> headCodeMaxLimits) {
+        log.info("BillDetailExcelGenerator::generateTemplate billId={} roles={} limitsPresent={}",
+                bill.getId(), userRoles, !headCodeMaxLimits.isEmpty());
 
         FieldConfigContext fcCtx = buildFieldConfigContext(bill, requestInfo);
         List<String> headCodes = resolveOrderedHeadCodes(bill, fcCtx);
@@ -101,6 +111,10 @@ public class BillDetailExcelGenerator {
             writeDataRows(sheet, bill, headCodes, fcCtx, userRoles, requestInfo, msgMap,
                     lockedDataStyle, editableDataStyle, lockedNumStyle, editableNumStyle);
 
+            if (!headCodeMaxLimits.isEmpty()) {
+                addRateLimitValidations(sheet, headCodes, headCodeMaxLimits, fcCtx);
+            }
+
             setColumnWidths(sheet, headCodes.size());
             sheet.protectSheet(config.getExcelSheetProtectPassword());
             workbook.setForceFormulaRecalculation(true);
@@ -110,6 +124,55 @@ public class BillDetailExcelGenerator {
             return out.toByteArray();
         } catch (IOException e) {
             throw new CustomException(ERR_TEMPLATE_GENERATE_ERROR, MSG_TEMPLATE_GENERATE_ERROR + ": " + e.getMessage());
+        }
+    }
+
+    /**
+     * Adds stop-error data validation to each editable headCode column.
+     * fieldKeyMaxLimits keys are fieldKeys (e.g. PER_DAY, FOOD) — resolved to headCodes
+     * via fcCtx.reverseMapping. For PERCENTAGE columns not in the limits map, a default
+     * cap of 100 is applied. Other columns with no limit entry are left unconstrained.
+     */
+    private void addRateLimitValidations(XSSFSheet sheet, List<String> headCodes,
+                                          Map<String, BigDecimal> fieldKeyMaxLimits,
+                                          FieldConfigContext fcCtx) {
+        int lastRow = sheet.getLastRowNum();
+        if (lastRow < 1) return;
+
+        XSSFDataValidationHelper dvHelper = new XSSFDataValidationHelper(sheet);
+
+        for (int i = 0; i < headCodes.size(); i++) {
+            String headCode = headCodes.get(i);
+
+            // Resolve headCode → fieldKey → limit
+            String fieldKey = fcCtx.reverseMapping.get(headCode);
+            BigDecimal limit = fieldKey != null ? fieldKeyMaxLimits.get(fieldKey) : null;
+
+            // PERCENTAGE fields default to 100 when no explicit limit is defined
+            if (limit == null) {
+                RateFieldConfig fc = fcCtx.byHeadCode.get(headCode);
+                if (fc != null && VALUE_TYPE_PERCENTAGE.equals(fc.getValueType()))
+                    limit = BigDecimal.valueOf(100);
+            }
+            if (limit == null) continue;
+
+            int colIdx = STATIC_COL_COUNT + i;
+            CellRangeAddressList range = new CellRangeAddressList(1, lastRow, colIdx, colIdx);
+
+            DataValidationConstraint constraint = dvHelper.createNumericConstraint(
+                    DataValidationConstraint.ValidationType.DECIMAL,
+                    DataValidationConstraint.OperatorType.BETWEEN,
+                    "0",
+                    limit.stripTrailingZeros().toPlainString());
+
+            DataValidation dv = dvHelper.createValidation(constraint, range);
+            dv.setShowErrorBox(true);
+            dv.setErrorStyle(DataValidation.ErrorStyle.STOP);
+            dv.createErrorBox("Limit Exceeded",
+                    "Maximum allowed value for this field is " + limit.stripTrailingZeros().toPlainString());
+            sheet.addValidationData(dv);
+            log.debug("Added rate limit validation: headCode={} fieldKey={} limit={} col={}",
+                    headCode, fieldKey, limit, colIdx);
         }
     }
 
@@ -551,7 +614,7 @@ public class BillDetailExcelGenerator {
         return new ArrayList<>(codes);
     }
 
-    static List<LineItem> getPayableItems(BillDetail detail) {
+    public static List<LineItem> getPayableItems(BillDetail detail) {
         if (detail.getLineItems() != null && !detail.getLineItems().isEmpty()) {
             return detail.getLineItems().stream()
                     .filter(li -> li.getType() == LineItemType.PAYABLE)
