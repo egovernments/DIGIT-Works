@@ -1,6 +1,7 @@
 package org.egov.digit.expense.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.digit.expense.web.models.Bill;
@@ -39,14 +40,12 @@ public class BillCacheService {
     public void put(Bill bill) {
         if (bill == null || bill.getId() == null || bill.getTenantId() == null) return;
         try {
-            // Strip details — cache stores bill-level fields only
-            List<?> originalDetails = bill.getBillDetails();
-            bill.setBillDetails(null);
             String key = buildKey(bill.getTenantId(), bill.getId());
-            String json = objectMapper.writeValueAsString(bill);
+            ObjectNode node = objectMapper.valueToTree(bill);
+            node.remove("billDetails");
+            String json = objectMapper.writeValueAsString(node);
             redisTemplate.opsForValue().set(key, json, cacheTtlSeconds, TimeUnit.SECONDS);
             log.debug("Cached bill id={} tenantId={} ttl={}s (details stripped)", bill.getId(), bill.getTenantId(), cacheTtlSeconds);
-            bill.setBillDetails((List) originalDetails);
         } catch (Exception e) {
             log.warn("Failed to cache bill id={}: {}", bill.getId(), e.getMessage());
         }

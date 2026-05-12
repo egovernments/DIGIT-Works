@@ -103,7 +103,7 @@ public class BillDetailsTaskVerifyCheckHandler implements SchedulerJobHandler {
             }
 
             // Poll payment provider for verification status
-            Bill singleDetailBill = buildSingleDetailBill(bill, detail);
+            Bill singleDetailBill = Bill.singleDetailView(bill, detail);
             // EC-5: fetch persisted Verify task from cache first, then DB, then fall back to synthetic
             Task task = taskCacheService.get(tenantId, billDetailId, Task.Type.Verify)
                     .orElseGet(() -> {
@@ -241,30 +241,6 @@ public class BillDetailsTaskVerifyCheckHandler implements SchedulerJobHandler {
         return bill.getBillDetails().stream()
                 .filter(d -> billDetailId.equals(d.getId()))
                 .findFirst().orElse(null);
-    }
-
-    private Bill buildSingleDetailBill(Bill bill, BillDetail detail) {
-        return Bill.builder()
-                .id(bill.getId())
-                .tenantId(bill.getTenantId())
-                .localityCode(bill.getLocalityCode())
-                .billDate(bill.getBillDate())
-                .dueDate(bill.getDueDate())
-                .totalAmount(bill.getTotalAmount())
-                .amountBreakup(new java.util.LinkedHashMap<>(bill.getAmountBreakup()))
-                .totalPaidAmount(bill.getTotalPaidAmount())
-                .businessService(bill.getBusinessService())
-                .referenceId(bill.getReferenceId())
-                .fromPeriod(bill.getFromPeriod())
-                .toPeriod(bill.getToPeriod())
-                .paymentStatus(bill.getPaymentStatus())
-                .status(bill.getStatus())
-                .billNumber(bill.getBillNumber())
-                .payer(bill.getPayer())
-                .additionalDetails(bill.getAdditionalDetails())
-                .auditDetails(bill.getAuditDetails())
-                .billDetails(Collections.singletonList(detail))
-                .build();
     }
 
     private Set<String> extractProviders(Bill bill) {

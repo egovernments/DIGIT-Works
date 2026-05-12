@@ -188,12 +188,17 @@ public class DetailWfUpdateHandler implements SchedulerJobHandler {
 
     /** Returns true if the detail is already in or past the target state for the given phase. */
     private boolean isAlreadyTransitioned(Status status, String phase) {
+        if (isTerminalDetailStatus(status)) return true;
         return switch (phase) {
             case POLL_PHASE_IGNORE_ERRORS      -> status == Status.VERIFIED || isAtOrBeyondVerified(status);
             case POLL_PHASE_SEND_FOR_REVIEW    -> status == Status.UNDER_REVIEW || isAtOrBeyondUnderReview(status);
             case POLL_PHASE_SEND_FOR_APPROVAL  -> status == Status.REVIEWED || isAtOrBeyondReviewed(status);
             default -> false;
         };
+    }
+
+    private boolean isTerminalDetailStatus(Status s) {
+        return s == Status.FULLY_PAID || s == Status.FULLY_VERIFIED || s == Status.PARTIALLY_PAID;
     }
 
     private boolean isAtOrBeyondVerified(Status s) {

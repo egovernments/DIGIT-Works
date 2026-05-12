@@ -178,12 +178,13 @@ public class BillStatusPollHandler implements SchedulerJobHandler {
         long inProgress = countDetailsInState(bill, Status.VERIFICATION_IN_PROGRESS);
 
         if (pending > 0 || inProgress > 0) {
-            // Dispatch BILL_DETAILS_TASK_VERIFY_CHECK retry jobs for each unsettled detail
+            // Re-attempt via Kafka first — the task consumer calls the provider, settles immediately
+            // if synchronous (BANK), or creates BILL_DETAILS_TASK_VERIFY_CHECK only if still async-pending (MTN).
             bill.getBillDetails().stream()
                     .filter(d -> d.getStatus() == Status.PENDING_VERIFICATION
                               || d.getStatus() == Status.VERIFICATION_IN_PROGRESS)
-                    .forEach(d -> paymentWorkflowService.insertBillDetailsTaskVerifyCheckJob(bill, d, requestInfo));
-            log.debug("Bill {} VERIFICATION: {} pending, {} in-progress — dispatched retry jobs",
+                    .forEach(d -> paymentWorkflowService.pushVerificationVerifyTask(bill, d, requestInfo));
+            log.debug("Bill {} VERIFICATION: {} pending, {} in-progress — re-pushed VerificationVerify tasks",
                     bill.getId(), pending, inProgress);
             return SchedulerJobResult.RETRY;
         }

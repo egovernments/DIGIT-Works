@@ -26,18 +26,38 @@ public class BillDetailCacheService {
     private final RedisTemplate<String, String> redisTemplate;
     private final ObjectMapper objectMapper;
 
-    @Value("${expense.bill.cache.ttl.seconds:300}")
-    private long cacheTtlSeconds;
+    @Value("${expense.bill.detail.ids.cache.ttl.seconds:3600}")
+    private long detailIdsTtlSeconds;
+
+    @Value("${expense.bill.detail.cache.ttl.seconds:300}")
+    private long detailTtlSeconds;
 
     public void putDetail(BillDetail detail, String tenantId) {
         if (detail == null || detail.getId() == null || detail.getBillId() == null || tenantId == null) return;
         try {
             String key = detailKey(tenantId, detail.getBillId(), detail.getId());
             String json = objectMapper.writeValueAsString(detail);
-            redisTemplate.opsForValue().set(key, json, cacheTtlSeconds, TimeUnit.SECONDS);
+            redisTemplate.opsForValue().set(key, json, detailTtlSeconds, TimeUnit.SECONDS);
             log.debug("Cached detail id={} billId={} tenantId={}", detail.getId(), detail.getBillId(), tenantId);
         } catch (Exception e) {
             log.warn("Failed to cache detail id={}: {}", detail.getId(), e.getMessage());
+        }
+    }
+
+    /**
+     * Writes the detail to cache only if the key does not already exist (Redis SET NX EX).
+     * Use in DB-fallback read paths so a fresher authoritative write (from billDetailService.update)
+     * is never overwritten by stale data from a lagging DB read.
+     */
+    public void putDetailIfAbsent(BillDetail detail, String tenantId) {
+        if (detail == null || detail.getId() == null || detail.getBillId() == null || tenantId == null) return;
+        try {
+            String key = detailKey(tenantId, detail.getBillId(), detail.getId());
+            String json = objectMapper.writeValueAsString(detail);
+            redisTemplate.opsForValue().setIfAbsent(key, json, detailTtlSeconds, TimeUnit.SECONDS);
+            log.debug("Cached detail (NX) id={} billId={} tenantId={}", detail.getId(), detail.getBillId(), tenantId);
+        } catch (Exception e) {
+            log.warn("Failed to cache detail (NX) id={}: {}", detail.getId(), e.getMessage());
         }
     }
 
@@ -58,7 +78,7 @@ public class BillDetailCacheService {
         try {
             String key = detailIdsKey(tenantId, billId);
             String json = objectMapper.writeValueAsString(detailIds);
-            redisTemplate.opsForValue().set(key, json, cacheTtlSeconds, TimeUnit.SECONDS);
+            redisTemplate.opsForValue().set(key, json, detailIdsTtlSeconds, TimeUnit.SECONDS);
             log.debug("Cached detailIds billId={} tenantId={} count={}", billId, tenantId, detailIds.size());
         } catch (Exception e) {
             log.warn("Failed to cache detailIds for billId={}: {}", billId, e.getMessage());

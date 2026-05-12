@@ -127,7 +127,7 @@ public class BillDetailServiceTest {
 
         assertFalse(result.isEmpty());
         assertEquals(DETAIL_ID_1, result.get(0).getId());
-        verify(cacheService).putDetail(d1, TENANT_ID);
+        verify(cacheService).putDetailIfAbsent(d1, TENANT_ID);
         verify(cacheService).putDetailIds(eq(BILL_ID), eq(TENANT_ID), anyList());
     }
 

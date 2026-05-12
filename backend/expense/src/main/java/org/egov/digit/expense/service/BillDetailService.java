@@ -90,7 +90,9 @@ public class BillDetailService {
                 }
                 if (!uncachedDetailIds.isEmpty()) {
                     List<BillDetail> fromDb = repository.searchByDetailIds(uncachedDetailIds, tenantId);
-                    fromDb.forEach(d -> cacheService.putDetail(d, tenantId));
+                    // SET NX: don't overwrite a fresher authoritative status (e.g. VERIFIED) with a
+                    // stale DB read (e.g. VERIFICATION_IN_PROGRESS) due to persister lag.
+                    fromDb.forEach(d -> cacheService.putDetailIfAbsent(d, tenantId));
                     result.addAll(fromDb);
                 }
             } else {
@@ -102,7 +104,8 @@ public class BillDetailService {
             List<BillDetail> fromDb = repository.searchByBillIds(new ArrayList<>(billIdsNeedingDb), tenantId);
             Map<String, List<String>> idsByBill = new HashMap<>();
             for (BillDetail d : fromDb) {
-                cacheService.putDetail(d, tenantId);
+                // SET NX: don't overwrite a fresher authoritative status written by billDetailService.update().
+                cacheService.putDetailIfAbsent(d, tenantId);
                 idsByBill.computeIfAbsent(d.getBillId(), k -> new ArrayList<>()).add(d.getId());
             }
             for (String billId : billIdsNeedingDb) {

@@ -3,7 +3,6 @@ package org.egov.digit.expense.service.scheduler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.service.BillAggregationService;
-import org.egov.digit.expense.service.BillCacheService;
 import org.egov.digit.expense.service.PaymentWorkflowService;
 import org.egov.digit.expense.util.WorkflowUtil;
 import org.egov.digit.expense.web.models.Bill;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -39,13 +37,12 @@ public class DetailWfUpdateHandlerTest {
     @Mock private PaymentWorkflowService pws;
     @Mock private BillAggregationService agg;
     @Mock private WorkflowUtil workflowUtil;
-    @Mock private BillCacheService billCacheService;
 
     private DetailWfUpdateHandler handler;
 
     @BeforeEach
     public void setUp() {
-        handler = new DetailWfUpdateHandler(pws, agg, workflowUtil, billCacheService, new ObjectMapper());
+        handler = new DetailWfUpdateHandler(pws, agg, workflowUtil, new ObjectMapper());
     }
 
     // ── Phase happy paths ─────────────────────────────────────────────────────
@@ -60,10 +57,7 @@ public class DetailWfUpdateHandlerTest {
 
         assertEquals(SchedulerJobResult.DONE, result);
         verify(pws).transitionBillDetail(eq(detail), eq(Actions.IGNORE_ERRORS_AND_VERIFY), any());
-        ArgumentCaptor<Bill> captor = ArgumentCaptor.forClass(Bill.class);
-        verify(pws).pushBillUpdate(captor.capture(), any(), eq(false));
-        assertEquals(1, captor.getValue().getBillDetails().size());
-        assertEquals(DETAIL_ID_1, captor.getValue().getBillDetails().get(0).getId());
+        verify(pws).pushBillDetailUpdate(any(Bill.class), eq(detail));
         verify(agg).checkAndAggregateBill(eq(BILL_ID), eq(TENANT_ID), eq(POLL_PHASE_IGNORE_ERRORS), any());
     }
 
@@ -164,10 +158,9 @@ public class DetailWfUpdateHandlerTest {
 
         handler.handle(buildDetailWfUpdateJob(BILL_ID, "d3", POLL_PHASE_SEND_FOR_REVIEW));
 
-        ArgumentCaptor<Bill> captor = ArgumentCaptor.forClass(Bill.class);
-        verify(pws).pushBillUpdate(captor.capture(), any(), eq(false));
-        assertEquals(1, captor.getValue().getBillDetails().size());
-        assertEquals("d3", captor.getValue().getBillDetails().get(0).getId());
+        ArgumentCaptor<BillDetail> captor = ArgumentCaptor.forClass(BillDetail.class);
+        verify(pws).pushBillDetailUpdate(any(Bill.class), captor.capture());
+        assertEquals("d3", captor.getValue().getId());
     }
 
     // ── Missing data ──────────────────────────────────────────────────────────
@@ -226,16 +219,14 @@ public class DetailWfUpdateHandlerTest {
     // ── EC-1: full bill cache before single-detail Kafka push ─────────────────
 
     @Test
-    public void handle_success_cachesBillBeforeKafkaPush() {
+    public void handle_success_pushesDetailUpdate() {
         BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFIED);
         Bill bill = buildBillWithDetails(Status.SENDING_FOR_REVIEW, List.of(detail));
         when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
 
         handler.handle(buildDetailWfUpdateJob(BILL_ID, DETAIL_ID_1, POLL_PHASE_SEND_FOR_REVIEW));
 
-        InOrder order = inOrder(billCacheService, pws);
-        order.verify(billCacheService).put(same(bill));       // full bill cached
-        order.verify(pws).pushBillUpdate(any(), any(), eq(false));  // single-detail Kafka push after
+        verify(pws).pushBillDetailUpdate(any(Bill.class), eq(detail));
     }
 
     // ── EC-8: compensation skipped when bill already past intermediate state ──

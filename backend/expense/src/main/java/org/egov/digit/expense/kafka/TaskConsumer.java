@@ -16,6 +16,7 @@ import org.egov.digit.expense.web.models.enums.Actions;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -58,22 +59,26 @@ public class TaskConsumer {
     }
 
     @KafkaListener(topicPattern = "(${expense.kafka.tenant.id.pattern})${expense.bill.task}")
-    public void listen(final Map<String, Object> message) {
-        log.info("Consuming message from kafka task topic");
-        TaskRequest taskRequest = objectMapper.convertValue(message, TaskRequest.class);
+    public void listen(final Map<String, Object> message, Acknowledgment ack) {
+        try {
+            log.info("Consuming message from kafka task topic");
+            TaskRequest taskRequest = objectMapper.convertValue(message, TaskRequest.class);
 
-        if (taskRequest.getTask() == null) {
-            log.warn("Received task message with null task — skipping");
-            return;
-        }
+            if (taskRequest.getTask() == null) {
+                log.warn("Received task message with null task — skipping");
+                return;
+            }
 
-        switch (taskRequest.getTask().getType()) {
-            case WfUpdate             -> handleWfUpdateTask(taskRequest);
-            case VerificationStart    -> handleVerificationStartTask(taskRequest);
-            case VerificationVerify   -> handleVerificationVerifyTask(taskRequest);
-            case PaymentInitiationStart -> handlePaymentInitiationStartTask(taskRequest);
-            case PaymentInitiationPay   -> handlePaymentInitiationPayTask(taskRequest);
-            default                   -> handleProviderTask(taskRequest);  // Verify / Transfer (legacy)
+            switch (taskRequest.getTask().getType()) {
+                case WfUpdate             -> handleWfUpdateTask(taskRequest);
+                case VerificationStart    -> handleVerificationStartTask(taskRequest);
+                case VerificationVerify   -> handleVerificationVerifyTask(taskRequest);
+                case PaymentInitiationStart -> handlePaymentInitiationStartTask(taskRequest);
+                case PaymentInitiationPay   -> handlePaymentInitiationPayTask(taskRequest);
+                default                   -> handleProviderTask(taskRequest);  // Verify / Transfer (legacy)
+            }
+        } finally {
+            ack.acknowledge();
         }
     }
 
@@ -160,16 +165,19 @@ public class TaskConsumer {
             taskCacheService.put(task);  // EC-5: cache task so verify-check handler can find it
             log.info("VerificationVerify: completed for bill={} detail={}", billId, detail.getId());
 
-            // If verify concluded immediately (BANK: always synchronous), aggregate now without
-            // waiting for BILL_STATUS_POLL. VERIFICATION_IN_PROGRESS means async (e.g., MTN) —
-            // scheduler polls and aggregates later via BILL_DETAILS_TASK_VERIFY_CHECK.
-            Bill refreshed = paymentWorkflowService.fetchBillWithDetails(billId, tenantId, taskRequest.getRequestInfo(), false);
-            BillDetail refreshedDetail = findDetail(refreshed, detail.getId());
-            if (refreshedDetail != null && refreshedDetail.getStatus() != Status.VERIFICATION_IN_PROGRESS
-                    && refreshedDetail.getStatus() != Status.PENDING_VERIFICATION) {
+            // executeTask() syncs settled statuses back into taskRequest.getBill() via syncStatusToRequest().
+            // For sync providers (BANK, MTN), detail.getStatus() now reflects VERIFIED/VERIFICATION_FAILED.
+            // For async providers, it remains VERIFICATION_IN_PROGRESS — schedule a polling job.
+            if (detail.getStatus() != Status.VERIFICATION_IN_PROGRESS
+                    && detail.getStatus() != Status.PENDING_VERIFICATION) {
                 billAggregationService.checkAndAggregateBill(billId, tenantId, POLL_PHASE_VERIFICATION, taskRequest.getRequestInfo());
                 log.info("VerificationVerify: detail={} settled ({}) — aggregated immediately",
-                        detail.getId(), refreshedDetail.getStatus());
+                        detail.getId(), detail.getStatus());
+            } else {
+                paymentWorkflowService.insertBillDetailsTaskVerifyCheckJob(
+                        taskRequest.getBill(), detail, taskRequest.getRequestInfo());
+                log.info("VerificationVerify: detail={} still pending — BILL_DETAILS_TASK_VERIFY_CHECK scheduled",
+                        detail.getId());
             }
         } catch (Exception e) {
             // Service failure (network, WF error) — schedule a retry via scheduler.

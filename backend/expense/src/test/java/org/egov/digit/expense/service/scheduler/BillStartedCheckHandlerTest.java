@@ -71,14 +71,16 @@ public class BillStartedCheckHandlerTest {
     }
 
     @Test
-    public void handle_verifyPhase_verificationFailedDetail_retries() {
+    public void handle_verifyPhase_verificationFailedDetail_returnsDone() {
+        // VERIFICATION_FAILED is treated as settled (not pending) — handler proceeds to insert
+        // poll job and returns DONE so the scheduler does not spin on a failed detail.
         BillDetail d1 = buildDetail(DETAIL_ID_1, Status.VERIFICATION_FAILED);
         Bill bill = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS, List.of(d1));
         when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
 
         SchedulerJobResult result = handler.handle(buildBillStartedCheckJob(BILL_ID, STARTED_CHECK_PHASE_VERIFY));
 
-        assertEquals(SchedulerJobResult.RETRY, result);
+        assertEquals(SchedulerJobResult.DONE, result);
     }
 
     @Test

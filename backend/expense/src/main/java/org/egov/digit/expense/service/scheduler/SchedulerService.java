@@ -9,6 +9,7 @@ import org.egov.digit.expense.web.models.SchedulerJob;
 import org.egov.digit.expense.web.models.enums.SchedulerJobStatus;
 import org.egov.digit.expense.web.models.enums.SchedulerJobType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -183,6 +184,11 @@ public class SchedulerService {
      * meaningfully sooner than the currently queued cycle (>200ms gap).
      * Safe to call from any thread (API thread, Kafka consumer, scheduler handlers).
      */
+    @EventListener
+    public void onSchedulerWakeup(SchedulerWakeupEvent event) {
+        wakeUp(event.getTenantId(), event.getDelayMs());
+    }
+
     public void wakeUp(String tenantId, long delayMs) {
         registry.register(tenantId);
         ScheduledFuture<?> cur = nextCycle.get();
@@ -190,7 +196,17 @@ public class SchedulerService {
                 ? Math.max(0L, cur.getDelay(TimeUnit.MILLISECONDS))
                 : Long.MAX_VALUE;
         if (delayMs + 200 < remaining) {
-            scheduleNextCycle(delayMs);
+            // Schedule directly on the executor — do NOT call scheduleNextCycle() here.
+            // scheduleNextCycle() stores the future in nextCycle; the running cycle's finally
+            // block also calls scheduleNextCycle(backoff), which atomically cancels whatever
+            // is in nextCycle — including the wake-up task we just scheduled.
+            // A standalone executor.schedule() is invisible to that swap.
+            // Double-execution is safe: claimBatch uses FOR UPDATE SKIP LOCKED.
+            try {
+                executor.schedule(this::runCycle, Math.max(0L, delayMs), TimeUnit.MILLISECONDS);
+            } catch (java.util.concurrent.RejectedExecutionException e) {
+                log.debug("wakeUp ignored for tenant={} — scheduler executor shutting down", tenantId);
+            }
         }
     }
 
@@ -247,7 +263,9 @@ public class SchedulerService {
     }
 
     private long computeBackoffMs(int attempt) {
-        return config.getSchedulerBackoffBaseMs();
+        double multiplier = Math.pow(1.5, attempt - 1);
+        long backoff = (long) (config.getSchedulerBackoffBaseMs() * multiplier);
+        return Math.min(backoff, config.getSchedulerMaxIntervalMs());
     }
 
     private SchedulerJob finalized(SchedulerJob job, SchedulerJobStatus status,

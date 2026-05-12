@@ -38,6 +38,7 @@ import java.util.stream.Stream;
 
 import static org.egov.digit.expense.config.Constants.ERROR;
 import static org.egov.digit.expense.config.Constants.EXCEPTION;
+import static org.egov.digit.expense.config.Constants.POLL_PHASE_PAYMENT;
 import static org.egov.digit.expense.config.Constants.POLL_PHASE_VERIFICATION;
 
 @Service
@@ -163,10 +164,10 @@ public class MTNService implements PaymentProviderService {
     @Override
     public void executeTask(TaskRequest taskRequest) {
         Task task = taskRequest.getTask();
-        if (task.getType() == Task.Type.Verify) {
-            verify(taskRequest);
-        } else if (task.getType() == Task.Type.Transfer) {
-            transfer(taskRequest);
+        switch (task.getType()) {
+            case Verify, VerificationVerify -> verify(taskRequest);
+            case Transfer                   -> transfer(taskRequest);
+            default -> log.debug("MTNService: no handler for task type={}", task.getType());
         }
     }
 
@@ -280,7 +281,7 @@ public class MTNService implements PaymentProviderService {
                 Object additionalDetailsObj = billDetail.getAdditionalDetails();
                 Map<String, Object> additionalDetails;
                 try {
-                    additionalDetails = new ObjectMapper().convertValue(
+                    additionalDetails = objectMapper.convertValue(
                             additionalDetailsObj,
                             new TypeReference<>() {
                             }
@@ -324,6 +325,9 @@ public class MTNService implements PaymentProviderService {
                     .filter(java.util.Objects::nonNull)
                     .collect(java.util.stream.Collectors.toList());
             billDetailService.update(processedDetails, billFromSearch.getTenantId());
+            // Sync settled statuses back to the task request so the VerificationVerify consumer
+            // can check detail.getStatus() directly without a redundant fetchBillWithDetails call.
+            syncStatusToRequest(taskRequest, processedDetails);
 
             BillRequest billUpdateRequest = BillRequest.builder()
                     .bill(billFromSearch)
@@ -348,6 +352,19 @@ public class MTNService implements PaymentProviderService {
         } finally {
             task.setStatus(Status.DONE);
             expenseProducer.push(billFromRequest.getTenantId(), config.getTaskUpdateTopic(), task);
+        }
+    }
+
+    private void syncStatusToRequest(TaskRequest taskRequest, List<BillDetail> settled) {
+        if (taskRequest.getBill() == null || settled == null || settled.isEmpty()) return;
+        Map<String, Status> statusById = settled.stream()
+                .collect(Collectors.toMap(BillDetail::getId, BillDetail::getStatus));
+        List<BillDetail> requestDetails = taskRequest.getBill().getBillDetails();
+        if (requestDetails != null) {
+            requestDetails.forEach(d -> {
+                Status s = statusById.get(d.getId());
+                if (s != null) d.setStatus(s);
+            });
         }
     }
 
@@ -830,7 +847,7 @@ public class MTNService implements PaymentProviderService {
                 Map<String, Object> additionalDetails;
 
                 try {
-                    additionalDetails = new ObjectMapper().convertValue(
+                    additionalDetails = objectMapper.convertValue(
                             additionalDetailsObj,
                             new TypeReference<>() {
                             }
@@ -861,46 +878,9 @@ public class MTNService implements PaymentProviderService {
         if (!updatedBillDetails.isEmpty()) {
             billDetailService.update(updatedBillDetails, billFromSearch.getTenantId());
         }
-        // Also check PARTIALLY_PAID: when concurrent task completions race past each other,
-        // the bill may already be PARTIALLY_PAID by the time we evaluate. We must still drive
-        // it to FULLY_PAY once all details settle.
-        Status billStatus = billFromSearch.getStatus();
-        if (billStatus == Status.PAYMENT_IN_PROGRESS || billStatus == Status.PARTIALLY_PAID) {
-
-            List<BillDetail> paidBillDetails = new ArrayList<>();
-            List<BillDetail> declinedBillDetails = new ArrayList<>();
-            billFromSearch
-                    .getBillDetails().forEach(billDetail -> {
-                        if (billDetail.getStatus() == Status.PAID) {
-                            paidBillDetails.add(billDetail);
-                        } else if (billDetail.getStatus() == Status.PAYMENT_FAILED) {
-                            declinedBillDetails.add(billDetail);
-                        }
-                    });
-
-            Workflow workflow = Workflow.builder().build();
-            boolean isWorkflowChange = true;
-            int totalDetails = billFromSearch.getBillDetails().size();
-
-            if (paidBillDetails.size() == totalDetails) {
-                workflow.setAction(Actions.FULLY_PAY.toString());
-            } else if (!paidBillDetails.isEmpty() && billStatus == Status.PAYMENT_IN_PROGRESS) {
-                // PARTIALLY_PAY is only valid from PAYMENT_IN_PROGRESS; skip if already PARTIALLY_PAID
-                workflow.setAction(Actions.PARTIALLY_PAY.toString());
-            } else if (declinedBillDetails.size() == totalDetails && billStatus == Status.PAYMENT_IN_PROGRESS) {
-                workflow.setAction(Actions.FAILED.toString());
-            } else {
-                log.info("no workflow state change for bill number : {}, task id: {}", billFromSearch.getBillNumber(), task.getId());
-                isWorkflowChange = false;
-            }
-            BillRequest billRequest = BillRequest
-                    .builder()
-                    .bill(billFromSearch)
-                    .workflow(workflow)
-                    .requestInfo(taskRequest.getRequestInfo())
-                    .build();
-            updateBillWfStatus(billRequest, isWorkflowChange);
-        }
+        billAggregationService.checkAndAggregateBill(
+                billFromSearch.getId(), billFromSearch.getTenantId(),
+                POLL_PHASE_PAYMENT, taskRequest.getRequestInfo());
 
         log.info("finished updating payment status for task {}, bill number {}", task.getId(), billFromSearch.getBillNumber());
         return taskDetails;

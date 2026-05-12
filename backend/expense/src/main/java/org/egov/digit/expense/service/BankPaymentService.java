@@ -42,6 +42,7 @@ public class BankPaymentService implements PaymentProviderService {
     private final ExpenseProducer expenseProducer;
     private final BillDetailService billDetailService;
     private final ObjectMapper objectMapper;
+    private final PaymentWorkflowService paymentWorkflowService;
 
     @Autowired
     public BankPaymentService(Configuration config,
@@ -49,13 +50,15 @@ public class BankPaymentService implements PaymentProviderService {
                                WorkflowUtil workflowUtil,
                                ExpenseProducer expenseProducer,
                                BillDetailService billDetailService,
-                               ObjectMapper objectMapper) {
+                               ObjectMapper objectMapper,
+                               PaymentWorkflowService paymentWorkflowService) {
         this.config = config;
         this.billRepository = billRepository;
         this.workflowUtil = workflowUtil;
         this.expenseProducer = expenseProducer;
         this.billDetailService = billDetailService;
         this.objectMapper = objectMapper;
+        this.paymentWorkflowService = paymentWorkflowService;
     }
 
     @Override
@@ -66,10 +69,10 @@ public class BankPaymentService implements PaymentProviderService {
     @Override
     public void executeTask(TaskRequest taskRequest) {
         Task task = taskRequest.getTask();
-        if (task.getType() == Task.Type.Verify) {
-            verifyFromTask(taskRequest);
-        } else if (task.getType() == Task.Type.Transfer) {
-            transferFromTask(taskRequest);
+        switch (task.getType()) {
+            case Verify, VerificationVerify -> verifyFromTask(taskRequest);
+            case Transfer                   -> transferFromTask(taskRequest);
+            default -> log.debug("BankPaymentService: no handler for task type={}", task.getType());
         }
     }
 
@@ -104,7 +107,9 @@ public class BankPaymentService implements PaymentProviderService {
                         || d.getStatus() == Status.VERIFICATION_IN_PROGRESS)
                 .toList();
         if (eligibleDetails.isEmpty()) {
-            // Detail already settled by a concurrent task — idempotent.
+            // Detail already settled by a concurrent task — sync actual status back so the
+            // VerificationVerify consumer can aggregate without a redundant fetchBillWithDetails.
+            syncStatusToRequest(taskRequest, billFromSearch.getBillDetails());
             task.setStatus(Status.DONE);
             expenseProducer.push(billFromSearch.getTenantId(), config.getTaskUpdateTopic(), task);
             return;
@@ -122,6 +127,9 @@ public class BankPaymentService implements PaymentProviderService {
         // Do not push a bill update — verify() only transitions detail WF states; the bill's
         // own WF transition (FULLY_VERIFIED/PARTIALLY_VERIFIED) happens in BillAggregationService.
         billDetailService.update(eligibleDetails, billFromSearch.getTenantId());
+        // Sync settled statuses back to the task request so the VerificationVerify consumer
+        // can check detail.getStatus() directly without a redundant fetchBillWithDetails call.
+        syncStatusToRequest(taskRequest, eligibleDetails);
         task.setStatus(Status.DONE);
         expenseProducer.push(billFromSearch.getTenantId(), config.getTaskUpdateTopic(), task);
     }
@@ -387,6 +395,24 @@ public class BankPaymentService implements PaymentProviderService {
                     "Bill not found for id: " + billFromRequest.getId());
         }
         return bills.get(0);
+    }
+
+    /**
+     * Syncs settled statuses from {@code settled} back to the bill details in {@code taskRequest}.
+     * Called after verify/transfer so the Kafka consumer can check detail.getStatus() directly
+     * without a redundant fetchBillWithDetails round-trip.
+     */
+    private void syncStatusToRequest(TaskRequest taskRequest, List<BillDetail> settled) {
+        if (taskRequest.getBill() == null || settled == null || settled.isEmpty()) return;
+        Map<String, Status> statusById = settled.stream()
+                .collect(Collectors.toMap(BillDetail::getId, BillDetail::getStatus));
+        List<BillDetail> requestDetails = taskRequest.getBill().getBillDetails();
+        if (requestDetails != null) {
+            requestDetails.forEach(d -> {
+                Status s = statusById.get(d.getId());
+                if (s != null) d.setStatus(s);
+            });
+        }
     }
 
     /**

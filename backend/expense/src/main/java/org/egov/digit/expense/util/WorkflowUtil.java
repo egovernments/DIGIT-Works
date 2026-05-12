@@ -22,7 +22,9 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.egov.digit.expense.config.Constants.*;
 
@@ -232,7 +234,35 @@ public class WorkflowUtil {
     	Object optional = repository.fetchResult(url, infoWrapper);
     	return mapper.convertValue(optional, ProcessInstanceResponse.class);
     }
-    
+
+    public Map<String, State> callWorkFlowBatch(RequestInfo requestInfo, String tenantId,
+                                                 String businessService, String action,
+                                                 List<String> businessIds) {
+        List<ProcessInstance> processInstances = businessIds.stream()
+                .map(id -> ProcessInstance.builder()
+                        .moduleName(configs.getExpenseWorkflowModuleName())
+                        .businessService(businessService)
+                        .action(action)
+                        .businessId(id)
+                        .tenantId(tenantId)
+                        .assignes(Collections.emptyList())
+                        .build())
+                .collect(Collectors.toList());
+        ProcessInstanceRequest batchRequest = ProcessInstanceRequest.builder()
+                .requestInfo(requestInfo)
+                .processInstances(processInstances)
+                .build();
+        StringBuilder url = new StringBuilder(configs.getWfHost().concat(configs.getWfTransitionPath()));
+        Object result = repository.fetchResult(url, batchRequest);
+        ProcessInstanceResponse response = mapper.convertValue(result, ProcessInstanceResponse.class);
+        return response.getProcessInstances().stream()
+                .filter(pi -> pi.getState() != null && pi.getBusinessId() != null)
+                .collect(Collectors.toMap(
+                        ProcessInstance::getBusinessId,
+                        ProcessInstance::getState,
+                        (a, b) -> b));
+    }
+
     public ProcessInstanceRequest prepareWorkflowRequestForBill(BillRequest billRequest) {
     	
     	Bill bill = billRequest.getBill();

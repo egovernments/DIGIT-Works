@@ -10,7 +10,7 @@ import org.egov.digit.expense.repository.BillRepository;
 import org.egov.digit.expense.repository.SchedulerJobRepository;
 import org.egov.digit.expense.repository.TaskRepository;
 import org.egov.digit.expense.service.scheduler.SchedulerJobRegistry;
-import org.egov.digit.expense.service.scheduler.SchedulerService;
+import org.egov.digit.expense.service.scheduler.SchedulerWakeupEvent;
 import org.egov.digit.expense.util.WorkflowUtil;
 import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.BillBatchEmailContext;
@@ -20,13 +20,16 @@ import org.egov.digit.expense.web.models.enums.SchedulerJobType;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static org.egov.digit.expense.config.Constants.*;
 
@@ -53,7 +56,7 @@ public class PaymentWorkflowService {
     private final TaskRepository taskRepository;
     private final SchedulerJobRepository schedulerJobRepository;
     private final SchedulerJobRegistry schedulerJobRegistry;
-    private final SchedulerService schedulerService;
+    private final ApplicationEventPublisher eventPublisher;
     private final Configuration config;
     private final ExpenseProducer expenseProducer;
     private final BillCacheService billCacheService;
@@ -65,7 +68,7 @@ public class PaymentWorkflowService {
                                    TaskRepository taskRepository,
                                    SchedulerJobRepository schedulerJobRepository,
                                    SchedulerJobRegistry schedulerJobRegistry,
-                                   @Lazy SchedulerService schedulerService,
+                                   ApplicationEventPublisher eventPublisher,
                                    Configuration config,
                                    ExpenseProducer expenseProducer,
                                    BillCacheService billCacheService,
@@ -75,7 +78,7 @@ public class PaymentWorkflowService {
         this.taskRepository = taskRepository;
         this.schedulerJobRepository = schedulerJobRepository;
         this.schedulerJobRegistry = schedulerJobRegistry;
-        this.schedulerService = schedulerService;
+        this.eventPublisher = eventPublisher;
         this.config = config;
         this.expenseProducer = expenseProducer;
         this.billCacheService = billCacheService;
@@ -93,22 +96,28 @@ public class PaymentWorkflowService {
      */
     public void createBillDetailProcessInstances(BillRequest billRequest) {
         Bill bill = billRequest.getBill();
-        RequestInfo requestInfo = billRequest.getRequestInfo();
+        List<BillDetail> details = bill.getBillDetails();
+        if (details == null || details.isEmpty()) return;
 
-        for (BillDetail detail : bill.getBillDetails()) {
+        int batchSize = config.getWfProcessInstanceBatchSize();
+        List<String> detailIds = details.stream().map(BillDetail::getId).collect(Collectors.toList());
+
+        for (int i = 0; i < detailIds.size(); i += batchSize) {
+            List<String> batch = detailIds.subList(i, Math.min(i + batchSize, detailIds.size()));
             try {
-                BillDetailRequest detailRequest = BillDetailRequest.builder()
-                        .billDetail(detail)
-                        .businessService(config.getBillDetailBusinessService())
-                        .workflow(Workflow.builder().action(Actions.CREATE.toString()).build())
-                        .requestInfo(requestInfo)
-                        .build();
-                State wfState = workflowUtil.callWorkFlow(
-                        workflowUtil.prepareWorkflowRequestForBillDetail(detailRequest), detailRequest);
-                detail.setStatus(Status.fromValue(wfState.getApplicationStatus()));
+                Map<String, State> stateByBusinessId =
+                        workflowUtil.callWorkFlowBatch(
+                                billRequest.getRequestInfo(), bill.getTenantId(),
+                                config.getBillDetailBusinessService(), Actions.CREATE.toString(), batch);
+                details.stream()
+                        .filter(d -> batch.contains(d.getId()))
+                        .forEach(d -> {
+                            State s = stateByBusinessId.get(d.getId());
+                            if (s != null) d.setStatus(Status.fromValue(s.getApplicationStatus()));
+                        });
             } catch (Exception e) {
-                log.warn("Failed to create PAYMENTS.BILLDETAILS process instance for detail id={}: {}",
-                        detail.getId(), e.getMessage());
+                log.warn("Batch WF CREATE failed for {} detail(s) in bill={}: {}",
+                        batch.size(), bill.getId(), e.getMessage());
             }
         }
     }
@@ -309,6 +318,22 @@ public class PaymentWorkflowService {
     }
 
     public Bill fetchBillWithDetails(String billId, String tenantId, RequestInfo requestInfo, boolean bypassCache) {
+        if (!bypassCache) {
+            // True cache-first: skip the DB entirely when both bill and detail caches are warm.
+            // Authoritative writes (billDetailService.update, billCacheService.put) always go through
+            // the cache — so a warm cache is always at least as fresh as the DB persister lag.
+            Optional<Bill> cachedBill = billCacheService.get(tenantId, billId);
+            if (cachedBill.isPresent()) {
+                List<BillDetail> cachedDetails = billDetailService.searchByBillIds(
+                        Collections.singletonList(billId), tenantId);
+                if (!cachedDetails.isEmpty()) {
+                    Bill result = cachedBill.get();
+                    result.setBillDetails(cachedDetails);
+                    return result;
+                }
+            }
+        }
+        // DB fallback: cache miss or bypassCache=true
         BillSearchRequest searchRequest = BillSearchRequest.builder()
                 .requestInfo(requestInfo)
                 .billCriteria(BillCriteria.builder()
@@ -321,12 +346,11 @@ public class PaymentWorkflowService {
         if (bills.isEmpty()) return null;
         Bill dbBill = bills.get(0);
         if (bypassCache) return dbBill;
-        // Overlay bill-level fields from cache (fresh status/amounts), then re-attach details from DB
+        // Partial cache hit: overlay bill-level fields from cache, then overlay per-detail cache
         Bill result = billCacheService.get(tenantId, billId).map(cached -> {
             cached.setBillDetails(dbBill.getBillDetails());
             return cached;
         }).orElse(dbBill);
-        // Overlay individual detail cache entries for freshest status/amounts per detail
         List<BillDetail> enrichedDetails = billDetailService.searchByBillIds(
                 Collections.singletonList(billId), tenantId);
         result.setBillDetails(enrichedDetails.isEmpty() ? result.getBillDetails() : enrichedDetails);
@@ -347,7 +371,7 @@ public class PaymentWorkflowService {
                 long delay = job.getNextCheckAt() == null
                         ? 0L
                         : Math.max(0L, job.getNextCheckAt() - System.currentTimeMillis());
-                schedulerService.wakeUp(job.getTenantId(), delay);
+                eventPublisher.publishEvent(new SchedulerWakeupEvent(this, job.getTenantId(), delay));
                 return;
             } catch (Exception e) {
                 if (attempt == 3) {
@@ -530,7 +554,7 @@ public class PaymentWorkflowService {
                     .build();
             TaskRequest req = TaskRequest.builder()
                     .task(task)
-                    .bill(buildSingleDetailBill(bill, detail))
+                    .bill(Bill.singleDetailView(bill, detail))
                     .requestInfo(requestInfo)
                     .build();
             expenseProducer.push(bill.getTenantId(), config.getBillTaskTopic(), req);
@@ -564,29 +588,6 @@ public class PaymentWorkflowService {
         log.info("Inserted DETAIL_WF_UPDATE retry job for bill={} detail={} phase={}", bill.getId(), detail.getId(), phase);
     }
 
-    private Bill buildSingleDetailBill(Bill bill, BillDetail detail) {
-        return Bill.builder()
-                .id(bill.getId())
-                .tenantId(bill.getTenantId())
-                .localityCode(bill.getLocalityCode())
-                .billDate(bill.getBillDate())
-                .dueDate(bill.getDueDate())
-                .totalAmount(bill.getTotalAmount())
-                .amountBreakup(new java.util.LinkedHashMap<>(bill.getAmountBreakup()))
-                .totalPaidAmount(bill.getTotalPaidAmount())
-                .businessService(bill.getBusinessService())
-                .referenceId(bill.getReferenceId())
-                .fromPeriod(bill.getFromPeriod())
-                .toPeriod(bill.getToPeriod())
-                .paymentStatus(bill.getPaymentStatus())
-                .status(bill.getStatus())
-                .billNumber(bill.getBillNumber())
-                .payer(bill.getPayer())
-                .additionalDetails(bill.getAdditionalDetails())
-                .auditDetails(bill.getAuditDetails())
-                .billDetails(Collections.singletonList(detail))
-                .build();
-    }
 
 
 
@@ -716,7 +717,7 @@ public class PaymentWorkflowService {
                     .build();
             TaskRequest req = TaskRequest.builder()
                     .task(task)
-                    .bill(buildSingleDetailBill(bill, detail))
+                    .bill(Bill.singleDetailView(bill, detail))
                     .requestInfo(requestInfo)
                     .build();
             expenseProducer.push(bill.getTenantId(), config.getBillTaskTopic(), req);
@@ -748,7 +749,7 @@ public class PaymentWorkflowService {
                     .build();
             TaskRequest req = TaskRequest.builder()
                     .task(task)
-                    .bill(buildSingleDetailBill(bill, detail))
+                    .bill(Bill.singleDetailView(bill, detail))
                     .requestInfo(requestInfo)
                     .build();
             expenseProducer.push(bill.getTenantId(), config.getBillTaskTopic(), req);
@@ -772,7 +773,7 @@ public class PaymentWorkflowService {
                 .build();
         TaskRequest req = TaskRequest.builder()
                 .task(task)
-                .bill(buildSingleDetailBill(bill, detail))
+                .bill(Bill.singleDetailView(bill, detail))
                 .requestInfo(requestInfo)
                 .build();
         expenseProducer.push(bill.getTenantId(), config.getBillTaskTopic(), req);
@@ -795,7 +796,7 @@ public class PaymentWorkflowService {
                 .build();
         TaskRequest req = TaskRequest.builder()
                 .task(task)
-                .bill(buildSingleDetailBill(bill, detail))
+                .bill(Bill.singleDetailView(bill, detail))
                 .requestInfo(requestInfo)
                 .build();
         expenseProducer.push(bill.getTenantId(), config.getBillTaskTopic(), req);

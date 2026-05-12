@@ -7,6 +7,7 @@ import org.egov.digit.expense.repository.SchedulerJobRepository;
 import org.egov.digit.expense.repository.TaskRepository;
 import org.egov.digit.expense.service.scheduler.SchedulerJobRegistry;
 import org.egov.digit.expense.util.WorkflowUtil;
+import org.springframework.context.ApplicationEventPublisher;
 import org.egov.digit.expense.service.BillCacheService;
 import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.enums.Status;
@@ -37,6 +38,7 @@ public class PaymentWorkflowServiceErrorMessageTest {
     @Mock private ExpenseProducer expenseProducer;
     @Mock private BillCacheService billCacheService;
     @Mock private BillDetailService billDetailService;
+    @Mock private ApplicationEventPublisher eventPublisher;
 
     private PaymentWorkflowService service;
 
@@ -48,8 +50,8 @@ public class PaymentWorkflowServiceErrorMessageTest {
     @BeforeEach
     public void setUp() {
         service = new PaymentWorkflowService(workflowUtil, billRepository, taskRepository,
-                schedulerJobRepository, schedulerJobRegistry, config, expenseProducer, billCacheService,
-                billDetailService);
+                schedulerJobRepository, schedulerJobRegistry, eventPublisher, config, expenseProducer,
+                billCacheService, billDetailService);
     }
 
     // ── IGNORE_ERRORS_VALIDATION ──────────────────────────────────────────────

@@ -10,6 +10,7 @@ import org.egov.digit.expense.repository.SchedulerJobRepository;
 import org.egov.digit.expense.repository.TaskRepository;
 import org.egov.digit.expense.service.scheduler.SchedulerJobRegistry;
 import org.egov.digit.expense.util.WorkflowUtil;
+import org.springframework.context.ApplicationEventPublisher;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillDetail;
 import org.egov.digit.expense.web.models.BillSearchRequest;
@@ -46,14 +47,15 @@ public class PaymentWorkflowServiceTest {
     @Mock private ExpenseProducer expenseProducer;
     @Mock private BillCacheService billCacheService;
     @Mock private BillDetailService billDetailService;
+    @Mock private ApplicationEventPublisher eventPublisher;
 
     private PaymentWorkflowService pws;
 
     @BeforeEach
     public void setUp() {
         pws = new PaymentWorkflowService(workflowUtil, billRepository, taskRepository,
-                schedulerJobRepository, schedulerJobRegistry, config, expenseProducer, billCacheService,
-                billDetailService);
+                schedulerJobRepository, schedulerJobRegistry, eventPublisher, config, expenseProducer,
+                billCacheService, billDetailService);
         when(config.getBillDetailBusinessService()).thenReturn("PAYMENTS.BILLDETAILS");
         when(config.getBillUpdateTopic()).thenReturn("expense-bill-update");
         when(workflowUtil.prepareWorkflowRequestForBill(any(BillRequest.class))).thenReturn(null);

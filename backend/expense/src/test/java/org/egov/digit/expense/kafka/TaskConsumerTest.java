@@ -6,12 +6,12 @@ import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.service.BillAggregationService;
 import org.egov.digit.expense.service.BillCacheService;
 import org.egov.digit.expense.service.PaymentProviderService;
+import org.springframework.kafka.support.Acknowledgment;
 import org.egov.digit.expense.service.PaymentWorkflowService;
 import org.egov.digit.expense.service.TaskCacheService;
 import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.enums.Actions;
 import org.egov.digit.expense.web.models.enums.Status;
-import org.egov.digit.expense.web.models.enums.Actions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,6 +42,7 @@ public class TaskConsumerTest {
     @Mock private Configuration config;
     @Mock private BillCacheService billCacheService;
     @Mock private TaskCacheService taskCacheService;
+    @Mock private Acknowledgment ack;
 
     private TaskConsumer consumer;
     private ObjectMapper objectMapper;
@@ -50,7 +51,7 @@ public class TaskConsumerTest {
     public void setUp() {
         objectMapper = new ObjectMapper();
         when(config.getTaskUpdateTopic()).thenReturn("expense-task-status-update");
-        consumer = new TaskConsumer(objectMapper, List.of(mtnService), pws, agg, billCacheService, taskCacheService, config, producer);
+        consumer = new TaskConsumer(objectMapper, List.of(mtnService), pws, agg, taskCacheService, config, producer);
         when(mtnService.supports(any())).thenReturn(true);
     }
 
@@ -62,7 +63,7 @@ public class TaskConsumerTest {
         Bill bill = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS, List.of(detail));
         TaskRequest req = buildVerifyTaskRequest(bill, detail);
 
-        consumer.listen(toMap(req));
+        consumer.listen(toMap(req), ack);
 
         verify(mtnService).executeTask(any(TaskRequest.class));
         verify(pws, never()).transitionBillDetail(any(), any(), any());
@@ -88,7 +89,7 @@ public class TaskConsumerTest {
                 .requestInfo(buildRequestInfo("PAYMENT_EDITOR")).build();
         when(mtnService.supports(null)).thenReturn(true);
 
-        consumer.listen(toMap(req));
+        consumer.listen(toMap(req), ack);
 
         verify(mtnService).executeTask(any());
     }
@@ -101,12 +102,12 @@ public class TaskConsumerTest {
         Bill bill = buildBillWithDetails(Status.IGNORING_ERRORS_IN_PROGRESS, List.of(detail));
         TaskRequest req = buildWfUpdateTaskRequest(bill, detail, POLL_PHASE_IGNORE_ERRORS);
 
-        consumer.listen(toMap(req));
+        consumer.listen(toMap(req), ack);
 
         verify(pws).transitionBillDetail(
                 argThat(d -> d.getId().equals(DETAIL_ID_1)),
                 eq(Actions.IGNORE_ERRORS_AND_VERIFY), any());
-        verify(pws).pushBillUpdate(argThat(b -> b.getBillDetails().size() == 1), any());
+        verify(pws).pushBillDetailUpdate(any(Bill.class), any(BillDetail.class));
         verify(agg).checkAndAggregateBill(eq(BILL_ID), eq(TENANT_ID), eq(POLL_PHASE_IGNORE_ERRORS), any());
         verify(producer).push(eq(TENANT_ID), eq("expense-task-status-update"),
                 argThat(t -> ((Task) t).getStatus() == Status.DONE));
@@ -118,7 +119,7 @@ public class TaskConsumerTest {
         Bill bill = buildBillWithDetails(Status.SENDING_FOR_REVIEW, List.of(detail));
         TaskRequest req = buildWfUpdateTaskRequest(bill, detail, POLL_PHASE_SEND_FOR_REVIEW);
 
-        consumer.listen(toMap(req));
+        consumer.listen(toMap(req), ack);
 
         verify(pws).transitionBillDetail(any(), eq(Actions.SEND_FOR_REVIEW), any());
         verify(agg).checkAndAggregateBill(eq(BILL_ID), eq(TENANT_ID), eq(POLL_PHASE_SEND_FOR_REVIEW), any());
@@ -132,7 +133,7 @@ public class TaskConsumerTest {
         Bill bill = buildBillWithDetails(Status.REVIEW_IN_PROGRESS, List.of(detail));
         TaskRequest req = buildWfUpdateTaskRequest(bill, detail, POLL_PHASE_SEND_FOR_APPROVAL);
 
-        consumer.listen(toMap(req));
+        consumer.listen(toMap(req), ack);
 
         verify(pws).transitionBillDetail(any(), eq(Actions.SEND_FOR_APPROVAL), any());
         verify(agg).checkAndAggregateBill(eq(BILL_ID), eq(TENANT_ID), eq(POLL_PHASE_SEND_FOR_APPROVAL), any());
@@ -147,7 +148,7 @@ public class TaskConsumerTest {
         TaskRequest req = buildWfUpdateTaskRequest(bill, detail, POLL_PHASE_SEND_FOR_REVIEW);
         doThrow(new RuntimeException("INVALID ACTION")).when(pws).transitionBillDetail(any(), any(), any());
 
-        consumer.listen(toMap(req));
+        consumer.listen(toMap(req), ack);
 
         verify(producer).push(any(), eq("expense-task-status-update"),
                 argThat(t -> ((Task) t).getStatus() == Status.DONE));
@@ -160,7 +161,7 @@ public class TaskConsumerTest {
         TaskRequest req = buildWfUpdateTaskRequest(bill, detail, POLL_PHASE_SEND_FOR_REVIEW);
         doThrow(new RuntimeException("DB error")).when(pws).transitionBillDetail(any(), any(), any());
 
-        consumer.listen(toMap(req));
+        consumer.listen(toMap(req), ack);
 
         verify(producer).push(any(), eq("expense-task-status-update"),
                 argThat(t -> ((Task) t).getStatus() == Status.DONE));
@@ -172,7 +173,7 @@ public class TaskConsumerTest {
         Bill bill = buildBillWithDetails(Status.SENDING_FOR_REVIEW, List.of(detail));
         TaskRequest req = buildWfUpdateTaskRequest(bill, detail, "UNKNOWN_PHASE");
 
-        consumer.listen(toMap(req));
+        consumer.listen(toMap(req), ack);
 
         verify(pws, never()).transitionBillDetail(any(), any(), any());
         verify(producer, atLeastOnce()).push(any(), eq("expense-task-status-update"),
@@ -186,7 +187,7 @@ public class TaskConsumerTest {
         TaskRequest req = buildWfUpdateTaskRequest(bill, detail, POLL_PHASE_SEND_FOR_REVIEW);
         doThrow(new RuntimeException("unexpected")).when(pws).transitionBillDetail(any(), any(), any());
 
-        consumer.listen(toMap(req));
+        consumer.listen(toMap(req), ack);
 
         verify(producer).push(any(), eq("expense-task-status-update"),
                 argThat(t -> ((Task) t).getStatus() == Status.DONE));
@@ -202,22 +203,20 @@ public class TaskConsumerTest {
         doThrow(new RuntimeException("MTN timeout")).when(mtnService).executeTask(any());
 
         // Should not throw — exception is caught per-service
-        consumer.listen(toMap(req));
+        consumer.listen(toMap(req), ack);
     }
 
     // ── EC-1/EC-6: Cache-before-Kafka ordering ───────────────────────────────
 
     @Test
-    public void listen_wfUpdate_success_cachesBillBeforeKafkaPush() {
+    public void listen_wfUpdate_success_pushesDetailUpdate() {
         BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFIED);
         Bill bill = buildBillWithDetails(Status.SENDING_FOR_REVIEW, List.of(detail));
         TaskRequest req = buildWfUpdateTaskRequest(bill, detail, POLL_PHASE_SEND_FOR_REVIEW);
 
-        consumer.listen(toMap(req));
+        consumer.listen(toMap(req), ack);
 
-        InOrder order = inOrder(billCacheService, pws);
-        order.verify(billCacheService).put(any(Bill.class));
-        order.verify(pws).pushBillUpdate(any(Bill.class), any());
+        verify(pws).pushBillDetailUpdate(any(Bill.class), any(BillDetail.class));
     }
 
     @Test
@@ -226,7 +225,7 @@ public class TaskConsumerTest {
         Bill bill = buildBillWithDetails(Status.SENDING_FOR_REVIEW, List.of(detail));
         TaskRequest req = buildWfUpdateTaskRequest(bill, detail, POLL_PHASE_SEND_FOR_REVIEW);
 
-        consumer.listen(toMap(req));
+        consumer.listen(toMap(req), ack);
 
         InOrder order = inOrder(taskCacheService, producer);
         order.verify(taskCacheService).put(argThat(t -> t.getStatus() == Status.DONE));
@@ -240,7 +239,7 @@ public class TaskConsumerTest {
         TaskRequest req = buildWfUpdateTaskRequest(bill, detail, POLL_PHASE_SEND_FOR_REVIEW);
         doThrow(new RuntimeException("WF error")).when(pws).transitionBillDetail(any(), any(), any());
 
-        consumer.listen(toMap(req));
+        consumer.listen(toMap(req), ack);
 
         InOrder order = inOrder(taskCacheService, producer);
         order.verify(taskCacheService).put(argThat(t -> t.getStatus() == Status.DONE));
@@ -260,12 +259,10 @@ public class TaskConsumerTest {
         TaskRequest req = TaskRequest.builder().task(task).bill(bill)
                 .requestInfo(buildRequestInfo("PAYMENT_EDITOR")).build();
 
-        consumer.listen(toMap(req));
+        consumer.listen(toMap(req), ack);
 
         verify(pws).transitionBillDetail(any(), eq(Actions.VERIFY), any());
-        InOrder order = inOrder(billCacheService, pws);
-        order.verify(billCacheService).put(any(Bill.class));
-        order.verify(pws).pushBillUpdate(any(Bill.class), any());
+        verify(pws).pushBillDetailUpdate(any(Bill.class), any(BillDetail.class));
     }
 
     @Test
@@ -278,7 +275,7 @@ public class TaskConsumerTest {
         TaskRequest req = TaskRequest.builder().task(task).bill(bill)
                 .requestInfo(buildRequestInfo("PAYMENT_EDITOR")).build();
 
-        consumer.listen(toMap(req));
+        consumer.listen(toMap(req), ack);
 
         verify(pws, never()).transitionBillDetail(any(), any(), any());
         verify(producer).push(any(), any(), argThat(t -> ((Task) t).getStatus() == Status.DONE));
@@ -295,7 +292,7 @@ public class TaskConsumerTest {
                 .requestInfo(buildRequestInfo("PAYMENT_EDITOR")).build();
         doThrow(new RuntimeException("WF timeout")).when(pws).transitionBillDetail(any(), any(), any());
 
-        consumer.listen(toMap(req));  // must not throw
+        consumer.listen(toMap(req), ack);  // must not throw
 
         verify(producer).push(any(), any(), argThat(t -> ((Task) t).getStatus() == Status.DONE));
     }
@@ -312,12 +309,10 @@ public class TaskConsumerTest {
         TaskRequest req = TaskRequest.builder().task(task).bill(bill)
                 .requestInfo(buildRequestInfo("PAYMENT_EDITOR")).build();
 
-        consumer.listen(toMap(req));
+        consumer.listen(toMap(req), ack);
 
         verify(pws).transitionBillDetail(any(), eq(Actions.PAYMENT_INITIATION), any());
-        InOrder order = inOrder(billCacheService, pws);
-        order.verify(billCacheService).put(any(Bill.class));
-        order.verify(pws).pushBillUpdate(any(Bill.class), any());
+        verify(pws).pushBillDetailUpdate(any(Bill.class), any(BillDetail.class));
     }
 
     @Test
@@ -331,7 +326,7 @@ public class TaskConsumerTest {
                 .requestInfo(buildRequestInfo("PAYMENT_EDITOR")).build();
         doThrow(new RuntimeException("WF error")).when(pws).transitionBillDetail(any(), any(), any());
 
-        consumer.listen(toMap(req));  // must not throw
+        consumer.listen(toMap(req), ack);  // must not throw
 
         verify(producer).push(any(), any(), argThat(t -> ((Task) t).getStatus() == Status.DONE));
     }
@@ -344,7 +339,7 @@ public class TaskConsumerTest {
         Bill bill = buildBillWithDetails(Status.SENDING_FOR_REVIEW, List.of(detail));
         TaskRequest req = buildWfUpdateTaskRequest(bill, detail, POLL_PHASE_SEND_FOR_REVIEW);
 
-        consumer.listen(toMap(req));
+        consumer.listen(toMap(req), ack);
 
         InOrder order = inOrder(taskCacheService, producer);
         order.verify(taskCacheService).put(argThat(t -> t.getStatus() == Status.DONE));

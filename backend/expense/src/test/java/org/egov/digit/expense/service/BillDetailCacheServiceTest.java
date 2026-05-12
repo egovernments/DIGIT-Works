@@ -41,7 +41,8 @@ public class BillDetailCacheServiceTest {
     public void setUp() {
         objectMapper = new ObjectMapper();
         cacheService = new BillDetailCacheService(redisTemplate, objectMapper);
-        ReflectionTestUtils.setField(cacheService, "cacheTtlSeconds", 300L);
+        ReflectionTestUtils.setField(cacheService, "detailTtlSeconds", 300L);
+        ReflectionTestUtils.setField(cacheService, "detailIdsTtlSeconds", 3600L);
         when(redisTemplate.opsForValue()).thenReturn(valueOps);
     }
 
@@ -107,13 +108,13 @@ public class BillDetailCacheServiceTest {
     @Test
     public void putDetailIds_validIds_writesToRedisWithCorrectKeyAndTtl() {
         cacheService.putDetailIds(BILL_ID, TENANT_ID, List.of(DETAIL_ID_1, DETAIL_ID_2));
-        verify(valueOps).set(eq(EXPECTED_IDS_KEY), anyString(), eq(300L), any());
+        verify(valueOps).set(eq(EXPECTED_IDS_KEY), anyString(), eq(3600L), any());
     }
 
     @Test
     public void putDetailIds_emptyList_stillWrites() {
         cacheService.putDetailIds(BILL_ID, TENANT_ID, List.of());
-        verify(valueOps).set(eq(EXPECTED_IDS_KEY), anyString(), eq(300L), any());
+        verify(valueOps).set(eq(EXPECTED_IDS_KEY), anyString(), eq(3600L), any());
     }
 
     // ── getDetailIds ───────────────────────────────────────────────────────────

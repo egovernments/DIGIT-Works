@@ -307,6 +307,9 @@ public class Configuration {
 	@Value("${bill.detail.business.service}")
 	private String billDetailBusinessService;
 
+	@Value("${egov.workflow.process.instance.batch.size:100}")
+	private int wfProcessInstanceBatchSize;
+
 
 	@Value("${expense.calculator.host}")
 	private String calculatorHost;

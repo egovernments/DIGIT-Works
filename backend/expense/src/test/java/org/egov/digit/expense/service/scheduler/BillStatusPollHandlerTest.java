@@ -6,6 +6,7 @@ import org.egov.digit.expense.service.PaymentWorkflowService;
 import org.egov.digit.expense.service.WorkflowEmailNotificationService;
 import org.egov.digit.expense.util.WorkflowUtil;
 import org.egov.digit.expense.web.models.Bill;
+import org.egov.digit.expense.web.models.BillDetail;
 import org.egov.digit.expense.web.models.SchedulerJob;
 import org.egov.digit.expense.web.models.enums.Actions;
 import org.egov.digit.expense.web.models.enums.Status;
@@ -58,7 +59,7 @@ public class BillStatusPollHandlerTest {
         SchedulerJobResult result = handler.handle(job);
 
         assertEquals(SchedulerJobResult.RETRY, result);
-        verify(pws, times(2)).insertBillDetailsTaskVerifyCheckJob(eq(bill), any(), any());
+        verify(pws, times(2)).pushVerificationVerifyTask(eq(bill), any(BillDetail.class), any());
         verify(pws, never()).transitionBill(any(), any(), any(RequestInfo.class));
     }
 

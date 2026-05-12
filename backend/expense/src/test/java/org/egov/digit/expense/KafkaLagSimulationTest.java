@@ -9,6 +9,7 @@ import org.egov.digit.expense.repository.TaskRepository;
 import org.egov.digit.expense.service.BillAggregationService;
 import org.egov.digit.expense.service.BillCacheService;
 import org.egov.digit.expense.service.PaymentProviderService;
+import org.springframework.kafka.support.Acknowledgment;
 import org.egov.digit.expense.service.PaymentWorkflowService;
 import org.egov.digit.expense.service.TaskCacheService;
 import org.egov.digit.expense.service.scheduler.*;
@@ -56,6 +57,7 @@ public class KafkaLagSimulationTest {
     @Mock private PaymentProviderService mtnService;
     @Mock private ExpenseProducer producer;
     @Mock private Configuration config;
+    @Mock private Acknowledgment ack;
 
     private TaskConsumer taskConsumer;
     private DetailWfUpdateHandler detailWfUpdateHandler;
@@ -74,8 +76,8 @@ public class KafkaLagSimulationTest {
         when(taskRepository.searchTask(any())).thenReturn(null);
 
         taskConsumer = new TaskConsumer(objectMapper, List.of(mtnService), pws, agg,
-                billCacheService, taskCacheService, config, producer);
-        detailWfUpdateHandler = new DetailWfUpdateHandler(pws, agg, workflowUtil, billCacheService, objectMapper);
+                taskCacheService, config, producer);
+        detailWfUpdateHandler = new DetailWfUpdateHandler(pws, agg, workflowUtil, objectMapper);
         billStartedCheckHandler = new BillStartedCheckHandler(pws, workflowUtil, objectMapper);
         verifyCheckHandler = new BillDetailsTaskVerifyCheckHandler(pws, agg, workflowUtil, List.of(mtnService),
                 taskCacheService, taskRepository, objectMapper);
@@ -97,10 +99,10 @@ public class KafkaLagSimulationTest {
         TaskRequest req = buildWfUpdateTaskRequest(freshBill, detail, POLL_PHASE_SEND_FOR_REVIEW);
 
         // Redis has current state (simulated via fetchBillWithDetails returning fresh bill)
-        taskConsumer.listen(toMap(req));
+        taskConsumer.listen(toMap(req), ack);
 
         verify(pws).transitionBillDetail(any(), eq(Actions.SEND_FOR_REVIEW), any());
-        verify(billCacheService).put(any(Bill.class));  // cached after transition
+        verify(pws).pushBillDetailUpdate(any(Bill.class), any(BillDetail.class));
     }
 
     /**
@@ -202,7 +204,7 @@ public class KafkaLagSimulationTest {
         Bill bill = buildBillWithDetails(Status.SENDING_FOR_REVIEW, List.of(detail));
         TaskRequest req = buildWfUpdateTaskRequest(bill, detail, POLL_PHASE_SEND_FOR_REVIEW);
 
-        taskConsumer.listen(toMap(req));
+        taskConsumer.listen(toMap(req), ack);
 
         // Verify task cached (DONE) before producer push
         var inOrder = inOrder(taskCacheService, producer);

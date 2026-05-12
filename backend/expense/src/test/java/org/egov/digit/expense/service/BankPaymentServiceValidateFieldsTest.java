@@ -7,6 +7,7 @@ import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.kafka.ExpenseProducer;
 import org.egov.digit.expense.repository.BillRepository;
 import org.egov.digit.expense.util.WorkflowUtil;
+import org.egov.digit.expense.service.PaymentWorkflowService;
 import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,16 +44,16 @@ class BankPaymentServiceValidateFieldsTest {
     @Mock private BillRepository billRepository;
     @Mock private WorkflowUtil workflowUtil;
     @Mock private ExpenseProducer expenseProducer;
-    @Mock private BillCacheService billCacheService;
     @Mock private BillDetailService billDetailService;
+    @Mock private PaymentWorkflowService paymentWorkflowService;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private BankPaymentService service;
 
     @BeforeEach
     void setUp() {
-        service = new BankPaymentService(config, billRepository, workflowUtil, expenseProducer, billCacheService,
-                billDetailService, objectMapper);
+        service = new BankPaymentService(config, billRepository, workflowUtil, expenseProducer,
+                billDetailService, objectMapper, paymentWorkflowService);
         when(billRepository.search(any(), any(Boolean.class))).thenReturn(List.of(buildBankBill(Status.PENDING_VERIFICATION)));
         when(config.getBillDetailBusinessService()).thenReturn("PAYMENTS.BILLDETAILS");
         when(config.getBillUpdateTopic()).thenReturn("expense-bill-update");

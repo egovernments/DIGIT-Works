@@ -79,10 +79,9 @@ public class BillAggregationService {
         // Skip if bill has already exited the expected intermediate state for this phase.
         // Prevents spurious INVALID_ACTION errors when a concurrent handler or BILL_STATUS_POLL
         // already applied the transition before this call.
-        Status expectedIntermediate = resolveExpectedIntermediateStatus(phase);
-        if (expectedIntermediate != null && bill.getStatus() != expectedIntermediate) {
-            log.info("BillAggregationService: bill={} phase={} — already past {} (now={}) — skipping",
-                    billId, phase, expectedIntermediate, bill.getStatus());
+        if (!isBillEligibleForAggregation(bill, phase)) {
+            log.info("BillAggregationService: bill={} phase={} — not eligible (status={}) — skipping",
+                    billId, phase, bill.getStatus());
             return;
         }
 
@@ -168,6 +167,15 @@ public class BillAggregationService {
                 yield null;
             }
         };
+    }
+
+    private boolean isBillEligibleForAggregation(Bill bill, String phase) {
+        Status s = bill.getStatus();
+        if (POLL_PHASE_PAYMENT.equals(phase)) {
+            return s == Status.PAYMENT_IN_PROGRESS || s == Status.PARTIALLY_PAID;
+        }
+        Status expected = resolveExpectedIntermediateStatus(phase);
+        return expected == null || s == expected;
     }
 
     private Status resolveExpectedIntermediateStatus(String phase) {
