@@ -116,7 +116,19 @@ public class BillService {
 		RequestInfo requestInfo = billRequest.getRequestInfo();
 
 		if ("PAYMENTS.BILL".equalsIgnoreCase(bill.getBusinessService()) && billRequest.getWorkflow() != null) {
-			updateBillStatus(bill, billRequest.getWorkflow(), requestInfo);
+			String action = billRequest.getWorkflow().getAction();
+			boolean isNotificationAction = Actions.SEND_FOR_REVIEW.toString().equals(action)
+					|| Actions.SEND_FOR_APPROVAL.toString().equals(action);
+			String batchId = isNotificationAction ? UUID.randomUUID().toString() : null;
+			updateBillStatus(bill, billRequest.getWorkflow(), requestInfo, batchId);
+			if (isNotificationAction) {
+				try {
+					paymentWorkflowService.insertBillBatchEmailJob(
+							tenantId, batchId, List.of(bill.getId()), action, requestInfo);
+				} catch (Exception e) {
+					log.error("Failed to insert BILL_BATCH_EMAIL for bill={} batchId={}: {}", bill.getId(), batchId, e.getMessage(), e);
+				}
+			}
 		} else {
 			List<Bill> billsFromSearch = validator.validateUpdateRequest(billRequest);
 			enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
