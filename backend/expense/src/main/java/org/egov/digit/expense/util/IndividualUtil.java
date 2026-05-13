@@ -143,6 +143,7 @@ public class IndividualUtil {
             }
         } catch (Exception e) {
             log.warn("IndividualUtil: failed to search individuals by roleCodes={}: {}", roleCodes, e.getMessage());
+            throw e;
         }
         return result;
     }

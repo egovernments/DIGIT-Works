@@ -12,13 +12,13 @@ public class SchedulerJobQueryBuilder {
 
     private static final String TABLE = SCHEMA_REPLACE_STRING + ".eg_expense_scheduler_job";
 
-    /** Insert a new scheduler job row. Duplicate jobs (same tenant+type+reference) are silently ignored. */
+    /** Insert a new scheduler job row. Duplicate jobs (same tenant+type+reference+phase) are silently ignored. */
     static final String INSERT =
             "INSERT INTO " + TABLE +
             " (id, tenant_id, job_type, reference_id, scheduler_status, next_check_at," +
             "  attempt_count, max_attempts, context, created_at, updated_at)" +
             " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" +
-            " ON CONFLICT (tenant_id, job_type, reference_id)" +
+            " ON CONFLICT (tenant_id, job_type, reference_id, (COALESCE(context->>'phase', '')))" +
             " WHERE scheduler_status IN ('PENDING', 'PROCESSING')" +
             " DO NOTHING";
 
