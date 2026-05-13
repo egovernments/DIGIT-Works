@@ -22,9 +22,10 @@ import static org.egov.digit.expense.config.Constants.POLL_PHASE_SEND_FOR_REVIEW
 /**
  * Coordinator job that fires ONE email after all BILL_STATUS_POLL jobs in a bulk request settle.
  *
- * <p>Triggered by {@code BILL_BATCH_EMAIL} jobs created in {@code BillService.bulkUpdateStatus()}.
- * Retries until all sibling BILL_STATUS_POLL jobs (same batchId) are DONE or FAILED,
- * then sends one email with billCount = number of successful (DONE) bills.
+ * <p>Retries until all sibling BILL_STATUS_POLL jobs (same batchId) are DONE or FAILED,
+ * then fetches the batch bills, filters to those in the expected workflow status
+ * (UNDER_REVIEW for REVIEW notifications, REVIEWED for APPROVAL notifications),
+ * and sends one email with the eligible bill count.
  */
 @Component
 @Slf4j
@@ -84,19 +85,34 @@ public class BillBatchEmailHandler implements SchedulerJobHandler {
                 return SchedulerJobResult.DONE;
             }
 
-            WorkflowNotificationType type = POLL_PHASE_SEND_FOR_REVIEW.equals(ctx.getPhase())
-                    ? WorkflowNotificationType.REVIEW
-                    : WorkflowNotificationType.APPROVAL;
+            // Prefer notificationType set at creation time; fall back to phase for pre-existing rows
+            WorkflowNotificationType type = ctx.getNotificationType() != null
+                    ? ctx.getNotificationType()
+                    : (POLL_PHASE_SEND_FOR_REVIEW.equals(ctx.getPhase())
+                            ? WorkflowNotificationType.REVIEW
+                            : WorkflowNotificationType.APPROVAL);
 
             List<Bill> bills = fetchBills(ctx.getBillIds(), tenantId, requestInfo);
             if (bills.isEmpty()) {
-                log.warn("BILL_BATCH_EMAIL batchId={}: could not fetch bills for recipient resolution", batchId);
+                log.warn("BILL_BATCH_EMAIL batchId={}: could not fetch bills — no email sent", batchId);
                 return SchedulerJobResult.DONE;
             }
 
-            workflowEmailNotificationService.notifyBatch(bills, tenantId, requestInfo, type, (int) doneCount);
-            log.info("BILL_BATCH_EMAIL batchId={}: email sent type={} doneCount={} totalJobs={}",
-                    batchId, type, doneCount, batchJobs.size());
+            // Only notify for bills that actually reached the expected status
+            String expectedStatus = (type == WorkflowNotificationType.REVIEW) ? "UNDER_REVIEW" : "REVIEWED";
+            List<Bill> eligibleBills = bills.stream()
+                    .filter(b -> b.getStatus() != null && expectedStatus.equals(b.getStatus().toString()))
+                    .collect(Collectors.toList());
+
+            if (eligibleBills.isEmpty()) {
+                log.warn("BILL_BATCH_EMAIL batchId={} type={}: no bills in status {} — no email sent",
+                        batchId, type, expectedStatus);
+                return SchedulerJobResult.DONE;
+            }
+
+            workflowEmailNotificationService.notifyBatch(eligibleBills, tenantId, requestInfo, type, eligibleBills.size());
+            log.info("BILL_BATCH_EMAIL batchId={}: email sent type={} eligibleBills={} totalJobs={}",
+                    batchId, type, eligibleBills.size(), batchJobs.size());
 
             return SchedulerJobResult.DONE;
 

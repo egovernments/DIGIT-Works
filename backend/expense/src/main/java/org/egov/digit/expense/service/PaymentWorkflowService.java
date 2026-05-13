@@ -18,6 +18,7 @@ import org.egov.digit.expense.web.models.enums.Actions;
 import org.egov.digit.expense.web.models.enums.SchedulerJobStatus;
 import org.egov.digit.expense.web.models.enums.SchedulerJobType;
 import org.egov.digit.expense.web.models.enums.Status;
+import org.egov.digit.expense.web.models.enums.WorkflowNotificationType;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -636,10 +637,13 @@ public class PaymentWorkflowService {
                                          String action, RequestInfo requestInfo) {
         String phase = Actions.SEND_FOR_REVIEW.toString().equals(action)
                 ? POLL_PHASE_SEND_FOR_REVIEW : POLL_PHASE_SEND_FOR_APPROVAL;
+        WorkflowNotificationType notificationType = Actions.SEND_FOR_REVIEW.toString().equals(action)
+                ? WorkflowNotificationType.REVIEW : WorkflowNotificationType.APPROVAL;
         long now = System.currentTimeMillis();
         BillBatchEmailContext context = BillBatchEmailContext.builder()
                 .batchId(batchId)
                 .phase(phase)
+                .notificationType(notificationType)
                 .billIds(billIds)
                 .requestInfo(requestInfo)
                 .build();
@@ -649,7 +653,7 @@ public class PaymentWorkflowService {
                 .jobType(SchedulerJobType.BILL_BATCH_EMAIL)
                 .referenceId(batchId)
                 .schedulerStatus(SchedulerJobStatus.PENDING)
-                .nextCheckAt(null)
+                .nextCheckAt(now + 10_000L)
                 .attemptCount(0)
                 .maxAttempts(config.getSchedulerMaxAttempts())
                 .context(context)
@@ -657,7 +661,7 @@ public class PaymentWorkflowService {
                 .updatedAt(now)
                 .build();
         insertWithRetry(job, "BILL_BATCH_EMAIL batchId=" + batchId + " bills=" + billIds.size());
-        log.info("Inserted BILL_BATCH_EMAIL coordinator job batchId={} billCount={}", batchId, billIds.size());
+        log.info("Inserted BILL_BATCH_EMAIL coordinator job batchId={} type={} billCount={}", batchId, notificationType, billIds.size());
     }
 
     // ─────────────────────────────────────────────────────────────────────────

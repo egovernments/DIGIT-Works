@@ -242,6 +242,9 @@ public class SchedulerService {
             return finalized(job, SchedulerJobStatus.FAILED, nextAttempt, null);
         }
 
+        log.info("Handling job={} type={} referenceId={} tenantId={} attempt={}/{}",
+                job.getId(), job.getJobType(), job.getReferenceId(), job.getTenantId(),
+                job.getAttemptCount(), job.getMaxAttempts());
         SchedulerJobResult result = handler.handle(job);
 
         return switch (result) {

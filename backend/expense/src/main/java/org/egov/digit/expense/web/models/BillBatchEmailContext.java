@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.digit.expense.web.models.enums.WorkflowNotificationType;
 
 import java.util.List;
 
@@ -21,8 +22,11 @@ public class BillBatchEmailContext {
     /** Shared batch identifier — used to query all sibling BILL_STATUS_POLL jobs. */
     private String batchId;
 
-    /** POLL_PHASE_SEND_FOR_REVIEW or POLL_PHASE_SEND_FOR_APPROVAL — determines WorkflowNotificationType. */
+    /** POLL_PHASE_SEND_FOR_REVIEW or POLL_PHASE_SEND_FOR_APPROVAL — kept for backward compatibility. */
     private String phase;
+
+    /** Notification type determined at job creation time (REVIEW or APPROVAL). */
+    private WorkflowNotificationType notificationType;
 
     /**
      * Bill IDs that successfully reached the job-creation step.
