@@ -1,6 +1,7 @@
 package org.egov.digit.expense;
 
 import org.egov.digit.expense.service.BillCacheService;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -33,5 +34,7 @@ public class TestConfiguration {
     @Bean
     public BillCacheService billCacheService() {
         return mock(BillCacheService.class);
+    public RestTemplateBuilder restTemplateBuilder() {
+        return new RestTemplateBuilder();
     }
 }

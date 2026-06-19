@@ -1,6 +1,13 @@
 
 All notable changes to this module will be documented in this file.
 
+## 2.0.1 - 2026-03-03
+
+### Changes
+
+- Upgraded tracer library version; new tracer handles `DataAccessException` errors via `ExceptionAdvise`.
+- Added OpenTelemetry BOM and Instrumentation BOM dependency management.
+
 ## 2.0.0 - 2025-11-24
 
 - Added Payments V2 period-aware bill search fields (`billingPeriodIds`, `billingType`, `reportStatus`, `isAggregate`) with backward compatibility.
