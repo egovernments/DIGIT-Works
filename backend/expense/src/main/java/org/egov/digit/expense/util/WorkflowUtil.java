@@ -9,6 +9,8 @@ import org.egov.common.contract.workflow.*;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.repository.ServiceRequestRepository;
 import org.egov.digit.expense.web.models.Bill;
+import org.egov.digit.expense.web.models.BillDetail;
+import org.egov.digit.expense.web.models.BillDetailRequest;
 import org.egov.digit.expense.web.models.BillRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,6 +94,16 @@ public class WorkflowUtil {
         billRequest.getBill().setProcessInstance(response.getProcessInstances().get(0));
         return response.getProcessInstances().get(0).getState();
     }
+
+    public State callWorkFlow(ProcessInstanceRequest workflowRequest, BillDetailRequest billDetailRequest) {
+
+        ProcessInstanceResponse response;
+        StringBuilder url = new StringBuilder(configs.getWfHost().concat(configs.getWfTransitionPath()));
+        Object optional = repository.fetchResult(url, workflowRequest);
+        response = mapper.convertValue(optional, ProcessInstanceResponse.class);
+        billDetailRequest.getBillDetail().setProcessInstance(response.getProcessInstances().get(0));
+        return response.getProcessInstances().get(0).getState();
+    }
     
 	public ProcessInstanceResponse searchWorkflowForBusinessIds(List<String> businessIds, String tenantId, RequestInfo requestInfo) {
     	
@@ -141,5 +153,39 @@ public class WorkflowUtil {
     			.processInstances(Collections.singletonList(processInstance))
     			.requestInfo(billRequest.getRequestInfo())
     			.build();
+    }
+
+    public ProcessInstanceRequest prepareWorkflowRequestForBillDetail(BillDetailRequest billDetailRequest) {
+
+        BillDetail billDetail = billDetailRequest.getBillDetail();
+        Workflow workflowFromRequest = billDetailRequest.getWorkflow();
+        List<User> assignes = new ArrayList<>();
+
+        if (!CollectionUtils.isEmpty(workflowFromRequest.getAssignes()) && !workflowFromRequest.getAssignes().isEmpty())
+            for (String userId : workflowFromRequest.getAssignes()) {
+
+                User user = User.builder()
+                        .tenantId(billDetail.getTenantId())
+                        .uuid(userId)
+                        .build();
+
+                assignes.add(user);
+            }
+
+        ProcessInstance processInstance = ProcessInstance.builder()
+                .documents(workflowFromRequest.getDocuments())
+                .moduleName(configs.getExpenseWorkflowModuleName())
+                .businessService(billDetailRequest.getBusinessService())
+                .comment(workflowFromRequest.getComments())
+                .action(workflowFromRequest.getAction())
+                .businessId(billDetail.getId())
+                .tenantId(billDetail.getTenantId())
+                .assignes(assignes)
+                .build();
+
+        return ProcessInstanceRequest.builder()
+                .processInstances(Collections.singletonList(processInstance))
+                .requestInfo(billDetailRequest.getRequestInfo())
+                .build();
     }
 }

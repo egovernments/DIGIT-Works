@@ -122,7 +122,7 @@ public class EnrichmentUtil {
         bill.setAuditDetails(updateAudit);
 
         Party payer = bill.getPayer();
-        if (payer.getId() == null)
+        if (null == payer.getId())
             payer.setId(billFromSearch.getPayer().getId());
         payer.setAuditDetails(updateAudit);
 
