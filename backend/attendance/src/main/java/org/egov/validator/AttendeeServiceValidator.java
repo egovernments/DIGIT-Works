@@ -487,40 +487,41 @@ public class AttendeeServiceValidator {
                                          List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
 
         List<IndividualEntry> attendeeListFromRequest = attendeeDeleteRequest.getAttendees();
+        BigDecimal currentDate = new BigDecimal(System.currentTimeMillis());
 
-
-        //attendee de-enrollment date, if present in request should be before end date and after start date of register
-        log.info("verifying attendee de-enrollment date, if present in request should be before end date and after start date of register");
-        for (AttendanceRegister attendanceRegister : attendanceRegisterListFromDB) {
-            for (IndividualEntry attendeeFromRequest : attendeeListFromRequest) {
-                if (attendeeFromRequest.getDenrollmentDate() != null) {
-                    int startDateCompare = attendeeFromRequest.getDenrollmentDate().compareTo(attendanceRegister.getStartDate());
-                    int endDateCompare = attendanceRegister.getEndDate().compareTo(attendeeFromRequest.getDenrollmentDate());
-                    if (startDateCompare < 0 || endDateCompare < 0) {
-                        throw new CustomException("DE ENROLLMENT_DATE"
-                                , "De enrollment date for attendee : " + attendeeFromRequest.getIndividualId() + " must be between start date and end date of the register");
-                    }
-                }
-            }
-        }
-
-        //check if attendee is already de-enrolled from the register
-        log.info("checking if attendee is already de-enrolled from the register");
-        boolean attendeeDeEnrolled = true;
+        log.info("validating attendee de-enrollment: existence in register and de-enrollment date bounds");
         for (IndividualEntry attendeeFromRequest : attendeeListFromRequest) {
-            for (IndividualEntry attendeeFromDB : attendeeListFromDB) {
-                if (attendeeFromRequest.getRegisterId().equals(attendeeFromDB.getRegisterId()) && attendeeFromDB.getIndividualId().equals(attendeeFromRequest.getIndividualId())) { //attendee present in db
-                    if (attendeeFromDB.getDenrollmentDate() == null) {
-                        attendeeDeEnrolled = false;
-                        break;
-                    }
-                }
+            IndividualEntry attendeeFromDB = attendeeListFromDB.stream()
+                    .filter(a -> a.getRegisterId().equals(attendeeFromRequest.getRegisterId())
+                            && a.getIndividualId().equals(attendeeFromRequest.getIndividualId()))
+                    .findFirst().orElse(null);
+            if (attendeeFromDB == null) {
+                throw new CustomException("INDIVIDUAL_ID", "Attendee " + attendeeFromRequest.getIndividualId() + " is not enrolled in the register " + attendeeFromRequest.getRegisterId());
             }
-            if (attendeeDeEnrolled) {
-                throw new CustomException("INDIVIDUAL_ID", "Attendee " + attendeeFromRequest.getIndividualId() + " is already de enrolled from the register " + attendeeFromRequest.getRegisterId());
+
+            AttendanceRegister register = attendanceRegisterListFromDB.stream()
+                    .filter(r -> r.getId().equals(attendeeFromRequest.getRegisterId()))
+                    .findFirst().orElse(null);
+            if (register == null) {
+                continue;
+            }
+
+            BigDecimal enrollmentDate = attendeeFromDB.getEnrollmentDate();
+            BigDecimal defaultDate = (enrollmentDate != null && enrollmentDate.compareTo(currentDate) > 0)
+                    ? enrollmentDate : currentDate;
+            BigDecimal denrollmentDate = attendeeFromRequest.getDenrollmentDate() != null
+                    ? attendeeFromRequest.getDenrollmentDate() : defaultDate;
+
+            if (denrollmentDate.compareTo(register.getStartDate()) < 0 || register.getEndDate().compareTo(denrollmentDate) < 0) {
+                throw new CustomException("DE ENROLLMENT_DATE"
+                        , "De enrollment date for attendee : " + attendeeFromRequest.getIndividualId() + " must be between start date and end date of the register");
+            }
+
+            if (enrollmentDate != null && denrollmentDate.compareTo(enrollmentDate) < 0) {
+                throw new CustomException("DE ENROLLMENT_DATE"
+                        , "De enrollment date for attendee : " + attendeeFromRequest.getIndividualId() + " cannot be before its enrollment date");
             }
         }
-
     }
 
     private void validateRequestInfo(RequestInfo requestInfo, Map<String, String> errorMap) {

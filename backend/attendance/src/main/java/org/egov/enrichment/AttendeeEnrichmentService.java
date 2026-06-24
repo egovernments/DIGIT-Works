@@ -102,7 +102,10 @@ public class AttendeeEnrichmentService {
 
 
                     if (attendee.getDenrollmentDate() == null) {
-                        BigDecimal deEnrollmentDate = new BigDecimal(System.currentTimeMillis());
+                        BigDecimal now = new BigDecimal(System.currentTimeMillis());
+                        BigDecimal enrollmentDate = attendeeFromDB.getEnrollmentDate();
+                        BigDecimal deEnrollmentDate = (enrollmentDate != null && enrollmentDate.compareTo(now) > 0)
+                                ? enrollmentDate : now;
                         attendee.setDenrollmentDate(deEnrollmentDate);
                     }
                 }
