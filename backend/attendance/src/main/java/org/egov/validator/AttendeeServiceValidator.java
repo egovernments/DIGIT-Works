@@ -438,6 +438,26 @@ public class AttendeeServiceValidator {
                                     , "Enrollment date for attendee '" + individualName + "' must be within start and end date of the register '" + registerName + "'");
                         }
                     }
+
+                    if (attendeeFromRequest.getDenrollmentDate() != null) {
+                        String individualName = individualIdToNameMap.getOrDefault(attendeeFromRequest.getIndividualId(), attendeeFromRequest.getIndividualId());
+                        String registerName = registerIdToNameMap.getOrDefault(attendeeFromRequest.getRegisterId(), attendeeFromRequest.getRegisterId());
+
+                        int denrollStartCompare = attendeeFromRequest.getDenrollmentDate().compareTo(attendanceRegister.getStartDate());
+                        int denrollEndCompare = attendanceRegister.getEndDate().compareTo(attendeeFromRequest.getDenrollmentDate());
+                        if (denrollStartCompare < 0 || denrollEndCompare < 0) {
+                            throw new CustomException("DENROLLMENT_DATE"
+                                    , "De-enrollment date for attendee '" + individualName + "' must be within start and end date of the register '" + registerName + "'");
+                        }
+
+                        BigDecimal effectiveEnrollmentDate = attendeeFromRequest.getEnrollmentDate() != null
+                                ? attendeeFromRequest.getEnrollmentDate()
+                                : currentDate;
+                        if (attendeeFromRequest.getDenrollmentDate().compareTo(effectiveEnrollmentDate) < 0) {
+                            throw new CustomException("DENROLLMENT_DATE"
+                                    , "De-enrollment date for attendee '" + individualName + "' cannot be before its enrollment date");
+                        }
+                    }
                 }
             }
         }
