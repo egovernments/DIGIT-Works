@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.web.models.MusterRoll;
 
 @Data
 @Builder
@@ -30,4 +31,7 @@ public class ReportGenerationRequest {
 
     @JsonProperty("timestamp")
     private Long timestamp;
+
+    @JsonProperty("musterRoll")
+    private MusterRoll musterRoll;
 }

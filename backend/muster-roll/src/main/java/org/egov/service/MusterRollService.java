@@ -215,7 +215,8 @@ public class MusterRollService {
         musterRollProducer.push(musterRoll.getTenantId(), serviceConfiguration.getSaveMusterRollTopic(), musterRollRequest);
 
         // Trigger report generation for all configured types (independent, async)
-        triggerReportGeneration(musterRoll.getId(), musterRoll.getTenantId(), musterRollRequest.getRequestInfo());
+        triggerReportGeneration(musterRoll.getId(), musterRoll.getTenantId(), musterRollRequest.getRequestInfo(),
+                musterRollRequest.getMusterRoll());
 
         log.info("MusterRollService::createMusterRoll - Created muster roll {} with status {}",
             musterRoll.getId(), musterRoll.getMusterRollStatus());
@@ -454,7 +455,8 @@ public class MusterRollService {
         musterRollProducer.push(tenantId, serviceConfiguration.getUpdateMusterRollTopic(), musterRollRequest);
 
         // Trigger report generation for all configured types (independent, async)
-        triggerReportGeneration(musterRollRequest.getMusterRoll().getId(), tenantId, musterRollRequest.getRequestInfo());
+        triggerReportGeneration(musterRollRequest.getMusterRoll().getId(), tenantId, musterRollRequest.getRequestInfo(),
+                musterRollRequest.getMusterRoll());
 
         try {
             notificationService.sendNotificationToCBO(musterRollRequest);
@@ -825,8 +827,10 @@ public class MusterRollService {
      * @param musterRollId ID of the muster roll
      * @param tenantId tenant ID
      * @param requestInfo request context
+     * @param musterRoll in-memory muster roll to build the report from (avoids a stale DB re-read race)
      */
-    private void triggerReportGeneration(String musterRollId, String tenantId, RequestInfo requestInfo) {
+    private void triggerReportGeneration(String musterRollId, String tenantId, RequestInfo requestInfo,
+                                         MusterRoll musterRoll) {
         for (String[] combo : AttendanceReportConstants.DEFAULT_AUTO_GENERATE_REPORTS) {
             try {
                 ReportGenerationRequest reportRequest = ReportGenerationRequest.builder()
@@ -836,6 +840,7 @@ public class MusterRollService {
                         .reportFormat(combo[1])
                         .requestInfo(requestInfo)
                         .timestamp(System.currentTimeMillis())
+                        .musterRoll(musterRoll)
                         .build();
 
                 // 1-arg push (no tenant prefix) — matches how consumer listens
