@@ -2,6 +2,7 @@ package org.egov.digit.expense.web.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.validation.Valid;
 
@@ -37,6 +38,9 @@ public class BillResponse {
 	@JsonProperty("pagination")
 	@Valid
 	private Pagination pagination;
+
+	@JsonProperty("statusCount")
+	private Map<String, Integer> statusCount;
 
 	public BillResponse addBillItem(Bill billItem) {
 		if (this.bills == null) {

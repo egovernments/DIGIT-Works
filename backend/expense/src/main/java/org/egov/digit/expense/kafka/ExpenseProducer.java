@@ -16,7 +16,8 @@ public class ExpenseProducer {
     private final MultiStateInstanceUtil multiStateInstanceUtil;
 
     @Autowired
-    public ExpenseProducer(CustomKafkaTemplate<String, Object> kafkaTemplate, MultiStateInstanceUtil multiStateInstanceUtil) {
+    public ExpenseProducer(CustomKafkaTemplate<String, Object> kafkaTemplate,
+                           MultiStateInstanceUtil multiStateInstanceUtil) {
         this.kafkaTemplate = kafkaTemplate;
         this.multiStateInstanceUtil = multiStateInstanceUtil;
     }
@@ -33,4 +34,10 @@ public class ExpenseProducer {
         log.info("The Kafka topic for the tenantId : {} is : {}", tenantId, updatedTopic);
         this.kafkaTemplate.send(updatedTopic, value);
     }
+
+    public void push(String topic, Object value) {
+        log.info("Sending message to topic: {}", topic);
+        this.kafkaTemplate.send(topic, value);
+    }
+
 }

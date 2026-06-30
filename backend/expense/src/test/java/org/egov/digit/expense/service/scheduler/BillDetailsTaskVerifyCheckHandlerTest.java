@@ -1,0 +1,278 @@
+package org.egov.digit.expense.service.scheduler;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.egov.digit.expense.repository.TaskRepository;
+import org.egov.digit.expense.service.BillAggregationService;
+import org.egov.digit.expense.service.PaymentProviderService;
+import org.egov.digit.expense.service.PaymentWorkflowService;
+import org.egov.digit.expense.service.TaskCacheService;
+import org.egov.digit.expense.util.WorkflowUtil;
+import org.egov.digit.expense.web.models.Task;
+import org.egov.digit.expense.web.models.Bill;
+import org.egov.digit.expense.web.models.BillDetail;
+import org.egov.digit.expense.web.models.TaskRequest;
+import org.egov.digit.expense.web.models.enums.Status;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static org.egov.digit.expense.TestDataBuilder.*;
+import static org.egov.digit.expense.config.Constants.POLL_PHASE_VERIFICATION;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+public class BillDetailsTaskVerifyCheckHandlerTest {
+
+    @Mock private PaymentWorkflowService pws;
+    @Mock private BillAggregationService agg;
+    @Mock private WorkflowUtil workflowUtil;
+    @Mock private PaymentProviderService mtnService;
+    @Mock private TaskCacheService taskCacheService;
+    @Mock private TaskRepository taskRepository;
+
+    private BillDetailsTaskVerifyCheckHandler handler;
+
+    @BeforeEach
+    public void setUp() {
+        handler = new BillDetailsTaskVerifyCheckHandler(pws, agg, workflowUtil, List.of(mtnService),
+                taskCacheService, taskRepository, new ObjectMapper());
+        when(mtnService.supports(any())).thenReturn(true);
+        when(taskCacheService.get(any(), any(), any())).thenReturn(Optional.empty());
+        when(taskRepository.searchTask(any())).thenReturn(null);
+    }
+
+    @Test
+    public void handle_mtnActive_detailVerified_callsAggregation() {
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.PENDING_VERIFICATION);
+        Bill bill = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS, List.of(detail));
+        Bill refreshed = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS,
+                List.of(buildDetail(DETAIL_ID_1, Status.VERIFIED)));
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean()))
+                .thenReturn(bill).thenReturn(refreshed);
+
+        SchedulerJobResult result = handler.handle(buildDetailVerifyJob(BILL_ID, DETAIL_ID_1));
+
+        assertEquals(SchedulerJobResult.DONE, result);
+        verify(mtnService).executeTask(any(TaskRequest.class));
+        verify(agg).checkAndAggregateBill(eq(BILL_ID), eq(TENANT_ID), eq(POLL_PHASE_VERIFICATION), any());
+    }
+
+    @Test
+    public void handle_mtnActive_detailFailed_callsAggregation() {
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.PENDING_VERIFICATION);
+        Bill bill = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS, List.of(detail));
+        Bill refreshed = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS,
+                List.of(buildDetail(DETAIL_ID_1, Status.VERIFICATION_FAILED)));
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean()))
+                .thenReturn(bill).thenReturn(refreshed);
+
+        SchedulerJobResult result = handler.handle(buildDetailVerifyJob(BILL_ID, DETAIL_ID_1));
+
+        assertEquals(SchedulerJobResult.DONE, result);
+        verify(agg).checkAndAggregateBill(eq(BILL_ID), eq(TENANT_ID), eq(POLL_PHASE_VERIFICATION), any());
+    }
+
+    @Test
+    public void handle_alreadyVerified_idempotent_noExecuteTask() {
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFIED);
+        Bill bill = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS, List.of(detail));
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
+
+        SchedulerJobResult result = handler.handle(buildDetailVerifyJob(BILL_ID, DETAIL_ID_1));
+
+        assertEquals(SchedulerJobResult.DONE, result);
+        verify(mtnService, never()).executeTask(any());
+        verify(agg).checkAndAggregateBill(eq(BILL_ID), any(), eq(POLL_PHASE_VERIFICATION), any());
+    }
+
+    @Test
+    public void handle_alreadyVerificationFailed_idempotent_callsAggregation() {
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFICATION_FAILED);
+        Bill bill = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS, List.of(detail));
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
+
+        SchedulerJobResult result = handler.handle(buildDetailVerifyJob(BILL_ID, DETAIL_ID_1));
+
+        assertEquals(SchedulerJobResult.DONE, result);
+        verify(mtnService, never()).executeTask(any());
+        verify(agg).checkAndAggregateBill(any(), any(), eq(POLL_PHASE_VERIFICATION), any());
+    }
+
+    @Test
+    public void handle_stillInProgressAfterExecute_returnsRetry() {
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFICATION_IN_PROGRESS);
+        Bill billSame = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS, List.of(detail));
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean()))
+                .thenReturn(billSame).thenReturn(billSame);
+
+        SchedulerJobResult result = handler.handle(buildDetailVerifyJob(BILL_ID, DETAIL_ID_1));
+
+        assertEquals(SchedulerJobResult.RETRY, result);
+    }
+
+    @Test
+    public void handle_executeTaskThrows_returnsRetry() {
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.PENDING_VERIFICATION);
+        Bill bill = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS, List.of(detail));
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
+        doThrow(new RuntimeException("MTN timeout")).when(mtnService).executeTask(any());
+
+        SchedulerJobResult result = handler.handle(buildDetailVerifyJob(BILL_ID, DETAIL_ID_1));
+
+        assertEquals(SchedulerJobResult.RETRY, result);
+    }
+
+    @Test
+    public void handle_billNotFound_returnsFailed() {
+        when(pws.fetchBillWithDetails(any(), any(), any(), anyBoolean())).thenReturn(null);
+        assertEquals(SchedulerJobResult.FAILED, handler.handle(buildDetailVerifyJob(BILL_ID, DETAIL_ID_1)));
+    }
+
+    @Test
+    public void handle_detailNotInBill_returnsFailed() {
+        Bill bill = buildBill(Status.VERIFICATION_IN_PROGRESS, Status.PENDING_VERIFICATION, 1);
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean())).thenReturn(bill);
+        assertEquals(SchedulerJobResult.FAILED, handler.handle(buildDetailVerifyJob(BILL_ID, "NON_EXISTENT")));
+    }
+
+    // ── EC-5: task cache-first fetch ──────────────────────────────────────────
+
+    @Test
+    public void handle_taskFoundInCache_doesNotQueryDb() {
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFICATION_IN_PROGRESS);
+        Bill bill = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS, List.of(detail));
+        Bill refreshed = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS,
+                List.of(buildDetail(DETAIL_ID_1, Status.VERIFIED)));
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean()))
+                .thenReturn(bill).thenReturn(refreshed);
+        Task cachedTask = Task.builder().id(TASK_ID).tenantId(TENANT_ID).billId(BILL_ID)
+                .billDetailId(DETAIL_ID_1).type(Task.Type.Verify).status(Status.IN_PROGRESS).build();
+        when(taskCacheService.get(eq(TENANT_ID), eq(DETAIL_ID_1), eq(Task.Type.Verify)))
+                .thenReturn(Optional.of(cachedTask));
+
+        handler.handle(buildDetailVerifyJob(BILL_ID, DETAIL_ID_1));
+
+        verify(taskRepository, never()).searchTask(any());
+        verify(mtnService).executeTask(argThat(req -> req.getTask().getId().equals(TASK_ID)));
+    }
+
+    @Test
+    public void handle_taskCacheMiss_fallsBackToDb() {
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFICATION_IN_PROGRESS);
+        Bill bill = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS, List.of(detail));
+        Bill refreshed = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS,
+                List.of(buildDetail(DETAIL_ID_1, Status.VERIFIED)));
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean()))
+                .thenReturn(bill).thenReturn(refreshed);
+        Task dbTask = Task.builder().id("db-task-id").tenantId(TENANT_ID).billId(BILL_ID)
+                .billDetailId(DETAIL_ID_1).type(Task.Type.Verify).status(Status.IN_PROGRESS).build();
+        when(taskCacheService.get(any(), any(), any())).thenReturn(Optional.empty());
+        when(taskRepository.searchTask(any())).thenReturn(dbTask);
+
+        handler.handle(buildDetailVerifyJob(BILL_ID, DETAIL_ID_1));
+
+        verify(taskRepository).searchTask(any());
+        verify(mtnService).executeTask(argThat(req -> req.getTask().getId().equals("db-task-id")));
+    }
+
+    @Test
+    public void handle_passesOnlySingleDetailToProvider() {
+        List<BillDetail> details = Arrays.asList(
+                buildDetail("d1", Status.PENDING_VERIFICATION),
+                buildDetail("d2", Status.PENDING_VERIFICATION));
+        Bill bill = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS, details);
+        Bill refreshed = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS,
+                List.of(buildDetail("d1", Status.VERIFIED), buildDetail("d2", Status.PENDING_VERIFICATION)));
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean()))
+                .thenReturn(bill).thenReturn(refreshed);
+
+        handler.handle(buildDetailVerifyJob(BILL_ID, "d1"));
+
+        ArgumentCaptor<TaskRequest> captor = ArgumentCaptor.forClass(TaskRequest.class);
+        verify(mtnService).executeTask(captor.capture());
+        assertEquals(1, captor.getValue().getBill().getBillDetails().size());
+        assertEquals("d1", captor.getValue().getBill().getBillDetails().get(0).getId());
+    }
+
+    @Test
+    public void handle_detailAlreadyInPaymentPhase_returnsDoneWithoutCallingProvider() {
+        // Detail has already moved past verification into PAYMENT_IN_PROGRESS.
+        // isVerifySettled must catch this early — no provider call should happen.
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.PAYMENT_IN_PROGRESS);
+        Bill bill = buildBillWithDetails(Status.PAYMENT_IN_PROGRESS, List.of(detail));
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean()))
+                .thenReturn(bill);
+
+        SchedulerJobResult result = handler.handle(buildDetailVerifyJob(BILL_ID, DETAIL_ID_1));
+
+        assertEquals(SchedulerJobResult.DONE, result);
+        verify(mtnService, never()).executeTask(any());
+        verify(agg).checkAndAggregateBill(eq(BILL_ID), eq(TENANT_ID), eq(POLL_PHASE_VERIFICATION), any());
+    }
+
+    @Test
+    public void handle_detailAlreadyReviewed_returnsDoneWithoutCallingProvider() {
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.REVIEWED);
+        Bill bill = buildBillWithDetails(Status.REVIEWED, List.of(detail));
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean()))
+                .thenReturn(bill);
+
+        SchedulerJobResult result = handler.handle(buildDetailVerifyJob(BILL_ID, DETAIL_ID_1));
+
+        assertEquals(SchedulerJobResult.DONE, result);
+        verify(mtnService, never()).executeTask(any());
+    }
+
+    @Test
+    public void handle_providerThrows_detailAlreadySettledInDb_returnsDone() {
+        // executeTask throws (e.g. INVALID_ACTION before reconciliation patch reaches DB),
+        // but the re-fetch after the exception shows the detail is VERIFIED in DB.
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFICATION_IN_PROGRESS);
+        Bill bill = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS, List.of(detail));
+        Bill postExceptionRefresh = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS,
+                List.of(buildDetail(DETAIL_ID_1, Status.VERIFIED)));
+
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean()))
+                .thenReturn(bill)               // initial fetch
+                .thenReturn(postExceptionRefresh); // re-fetch after exception
+        doThrow(new RuntimeException("INVALID ACTION")).when(mtnService).executeTask(any());
+
+        SchedulerJobResult result = handler.handle(buildDetailVerifyJob(BILL_ID, DETAIL_ID_1));
+
+        assertEquals(SchedulerJobResult.DONE, result);
+        verify(agg).checkAndAggregateBill(eq(BILL_ID), eq(TENANT_ID), eq(POLL_PHASE_VERIFICATION), any());
+    }
+
+    @Test
+    public void handle_providerThrows_detailStillInProgress_returnsRetry() {
+        // executeTask throws and the re-fetch still shows VERIFICATION_IN_PROGRESS.
+        BillDetail detail = buildDetail(DETAIL_ID_1, Status.VERIFICATION_IN_PROGRESS);
+        Bill bill = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS, List.of(detail));
+        Bill stillInProgress = buildBillWithDetails(Status.VERIFICATION_IN_PROGRESS,
+                List.of(buildDetail(DETAIL_ID_1, Status.VERIFICATION_IN_PROGRESS)));
+
+        when(pws.fetchBillWithDetails(eq(BILL_ID), eq(TENANT_ID), any(), anyBoolean()))
+                .thenReturn(bill)
+                .thenReturn(stillInProgress);
+        doThrow(new RuntimeException("network error")).when(mtnService).executeTask(any());
+
+        SchedulerJobResult result = handler.handle(buildDetailVerifyJob(BILL_ID, DETAIL_ID_1));
+
+        assertEquals(SchedulerJobResult.RETRY, result);
+        verify(agg, never()).checkAndAggregateBill(any(), any(), any(), any());
+    }
+}

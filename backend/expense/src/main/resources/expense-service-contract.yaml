@@ -1,632 +1,515 @@
 openapi: 3.0.0
 info:
-  version: 1.0.0
-  title: Expense Bill and Payments
-  description: Capture the details for expense Bill and Payments 
+  version: 2.0.0
+  title: Expense Bill and Payments Service
+  description: APIs for managing expense bills, payments, MTN operations, and transaction reports
+servers:
+  - url: http://localhost:8081/health-expense
+    description: Local development server
+
+tags:
+  - name: Bill
+    description: Bill management APIs
+  - name: Payment
+    description: Payment management APIs
+  - name: MTN
+    description: MTN (Mobile Transfer Network) task and verification APIs
+  - name: BillReport
+    description: Bill report generation and search APIs (supports EXCEL, PDF, PAYMENT_ADVISORY types)
+
 paths:
   /bill/v1/_create:
     post:
       tags:
         - Bill
+      summary: Create a new expense bill
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/BillRequest'
       responses:
-        '202':
-          description: Accepted account registration request.
+        '201':
+          description: Bill created successfully.
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/BillResponse'
         '400':
           description: Invalid input.
           content:
-            '*/*':
+            application/json:
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+                $ref: '#/components/schemas/ErrorRes'
+
   /bill/v1/_update:
     post:
       tags:
         - Bill
+      summary: Update an existing expense bill
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/BillRequest'
       responses:
         '202':
-          description: Accepted account updation request.
+          description: Bill updated successfully.
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/BillResponse'
         '400':
           description: Invalid input.
           content:
-            '*/*':
+            application/json:
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+                $ref: '#/components/schemas/ErrorRes'
+
   /bill/v1/_search:
     post:
       tags:
         - Bill
+      summary: Search expense bills
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/BillSearchRequest'
       responses:
-        '200':
-          description: Return search results
+        '202':
+          description: Search results returned.
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/BillResponse'
         '400':
           description: Invalid input.
           content:
-            '*/*':
+            application/json:
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+                $ref: '#/components/schemas/ErrorRes'
+
+  /bill/v1/search/_calculated:
+    post:
+      tags:
+        - Bill
+      summary: Search calculated bills
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillSearchRequest'
+      responses:
+        '202':
+          description: Calculated bill search results returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillResponse'
+        '400':
+          description: Invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /bill/v1/_bulkupdate:
+    post:
+      tags:
+        - Bill
+      summary: Bulk update multiple bills
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkBillUpdateRequest'
+      responses:
+        '202':
+          description: Bulk update result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkBillUpdateResponse'
+        '400':
+          description: Invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /bill/v1/_bulkupdatestatus:
+    post:
+      tags:
+        - Bill
+      summary: Bulk update status of multiple bills
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkBillStatusUpdateRequest'
+      responses:
+        '202':
+          description: Bulk status update result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkBillStatusUpdateResponse'
+        '400':
+          description: Invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /bill/v1/billdetails/_update:
+    post:
+      tags:
+        - Bill
+      summary: Partial update of one or more bill details under a single bill
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillDetailUpdateRequest'
+      responses:
+        '202':
+          description: Bill details partially updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillDetailUpdateResponse'
+        '400':
+          description: Invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
   /payment/v1/_create:
     post:
       tags:
         - Payment
+      summary: Create a new payment
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/PaymentRequest'
       responses:
         '201':
-          description: Accepted account registration request.
+          description: Payment created successfully.
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/PaymentResponse'
         '400':
           description: Invalid input.
           content:
-            '*/*':
+            application/json:
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+                $ref: '#/components/schemas/ErrorRes'
+
   /payment/v1/_update:
     post:
       tags:
         - Payment
+      summary: Update an existing payment
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/PaymentRequest'
       responses:
         '202':
-          description: Accepted account updation request.
+          description: Payment updated successfully.
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/PaymentResponse'
         '400':
           description: Invalid input.
           content:
-            '*/*':
+            application/json:
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
-  /Payment/v1/_search:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /payment/v1/_search:
     post:
       tags:
         - Payment
+      summary: Search payments
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/PaymentSearchRequest'
       responses:
-        '200':
-          description: Return search results
+        '202':
+          description: Search results returned.
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/PaymentResponse'
         '400':
           description: Invalid input.
           content:
-            '*/*':
+            application/json:
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+                $ref: '#/components/schemas/ErrorRes'
+
+  /v1/bill/_verify:
+    post:
+      tags:
+        - MTN
+      summary: Verify a bill via MTN
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillTaskRequest'
+      responses:
+        '202':
+          description: Bill verification task initiated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillTaskResponse'
+        '400':
+          description: Invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /v1/task/_status:
+    post:
+      tags:
+        - MTN
+      summary: Get task status
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatusRequest'
+      responses:
+        '200':
+          description: Task status returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusResponse'
+        '400':
+          description: Invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /v1/task/_details:
+    post:
+      tags:
+        - MTN
+      summary: Get task details for a bill or bill detail
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskDetailsRequest'
+      responses:
+        '200':
+          description: Task details returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDetailsResponse'
+        '400':
+          description: Invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /v1/payment/_balance:
+    post:
+      tags:
+        - MTN
+      summary: Get MTN payment balance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MtnBalanceRequest'
+      responses:
+        '200':
+          description: MTN balance returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MtnBalanceResponse'
+        '400':
+          description: Invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /v1/payment/_transfer:
+    post:
+      tags:
+        - MTN
+      summary: Initiate MTN payment transfer for a bill
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillTaskRequest'
+      responses:
+        '202':
+          description: Payment transfer task initiated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillTaskResponse'
+        '400':
+          description: Invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /v1/bill/details/status/_update:
+    post:
+      tags:
+        - MTN
+      summary: Update bill detail status
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillRequest'
+      responses:
+        '202':
+          description: Bill detail status updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillDetailResponse'
+        '400':
+          description: Invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /bill/v1/report/_generate:
+    post:
+      tags:
+        - BillReport
+      summary: Generate a bill report (EXCEL, PDF, or PAYMENT_ADVISORY)
+      description: |
+        Initiates async report generation for one or more bills supplied in billIds.
+        A separate report is generated per bill. For PAYMENT_ADVISORY type,
+        the caller must have the PAYMENT_APPROVER role and all bills must be in REVIEWED status.
+        Returns INITIATED immediately with the list of initiated BillReport records;
+        poll /_search with billIds to get fileStoreIds once GENERATED.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillReportRequest'
+      responses:
+        '202':
+          description: Report generation initiated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillReportResponse'
+        '400':
+          description: Invalid input or authorization failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
+  /bill/v1/report/_search:
+    post:
+      tags:
+        - BillReport
+      summary: Search bill reports
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillReportSearchRequest'
+      responses:
+        '200':
+          description: Report search results returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillReportSearchResponse'
+        '400':
+          description: Invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
 components:
   schemas:
-    Bill:
-      description: A Object which holds the info about the expense details
-      type: object
-      properties:
-        id:
-          description: Unique identifier of the record
-          readOnly: true
-          type: string
-          minLength: 2
-          maxLength: 64
-          example: "8801de85-f123-4e4b-9e4e-adbd04e49965"
-        tenantId:
-          description: Tenant Identifier
-          example: pg.citya
-          type: string
-          minLength: 2
-          maxLength: 64
-        billDate:
-          description: Bill generation date 
-          type: number
-          format: int64
-          example: 1685491199000
-        dueDate:
-          description: Bill Payment due date
-          type: number
-          format: int64
-          example: 1683003761000
-        netPayableAmount:
-          description: Net payable amount of the bill 
-          type: number
-          format: BigDecimal
-          example: 500
-        netPaidAmount:
-          description: Net paid amount for a bill
-          type: number
-          format: BigDecimal
-          example: 500
-        businessService:
-          description: Capture the expense system unique identifier.(It's name spaced master data defined in MDMS) 
-          example: WORKS.PURCHASE
-          type: string
-          minLength: 2
-          maxLength: 64
-        referenceId:
-          description: Pass reference id to link the bill with business entity
-          type: string
-          example: MUSTERROLE-WAGE-01
-          minLength: 2
-          maxLength: 64
-        fromPeriod:
-          description: Start date of billing period 
-          type: number
-          format: int64
-          example: 1680307200000
-        toPeriod:
-          description: End date of demand period  
-          type: number
-          format: int64
-          example: 1682899199000
-        paymentStatus:
-          $ref: '#/components/schemas/PaymentStatus'
-        status:
-          $ref: '#/components/schemas/Status'
-        payer:
-            $ref: '#/components/schemas/Party'
-        billDetails:
-          type: array
-          items:
-            $ref: '#/components/schemas/BillDetail'
-        
-        additionalDetails:
-          description: Any additional details that need to be captured
-          type: object
-        auditDetails:
-          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails
-      required:
-        - tenantId
-        - businessService
-        - billDetails
-        - payer
-    Party:
-      description: Account details
-      type: object
-      properties:
-        type:
-          description: Party type
-          example: DEPARTMENT
-          type: string
-          minLength: 2
-          maxLength: 64
-        identifier:
-          description: Unique identifier of a the party individual/Org
-          type: string
-          minLength: 2
-          maxLength: 64
-          example: RURALMINISTRY-MUKTHA
-      required:
-        - type
-        - identifier
-    BillDetail:
-      description: Bill details of the individual payees
-      type: object
-      properties:
-        id:
-          description: Unique identifier of the record
-          readOnly: true
-          type: string
-          example: "edd5f8fc-95da-4ad7-b0a3-9ec0aa926bd2"
-        referenceId:
-          description: Pass reference to link payees to business entity
-          type: string
-          minLength: 2
-          maxLength: 64
-          example: WAGESEEKER-01
-        paymentStatus:
-          $ref: '#/components/schemas/PaymentStatus'
-        status:
-          $ref: '#/components/schemas/Status'
-        totalAmount:
-          description: total Amount for the particular bill-detail during payment  
-          type: number
-          format: int64
-        totalPaidAmount:
-          description: Amount being paid for the particular bill-detail during payment  
-          type: number
-          format: int64
-        fromPeriod:
-          description: Start date of bill period  
-          type: number
-          format: int64
-          example: 1680307200000
-        toPeriod:
-          description: End date of bill period  
-          type: number
-          format: int64
-          example: 1682899199000
-        netLineItemAmount:
-          description: Amount being paid for the particular bill-detail during payment  
-          type: number
-          format: int64
-          example: 1682899199000
-        payee:
-            $ref: '#/components/schemas/Party'
-        lineItems:
-          type: array
-          description: Bill line items
-          items:
-            $ref: '#/components/schemas/LineItem'
-        payableLineItems:
-          type: array
-          description: Bill line items
-          items:
-            $ref: '#/components/schemas/LineItem'
-        additionalDetails:
-          description: Any additional details that need to be captured
-          type: object
-        auditDetails:
-          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails
-        
-      required:
-        - payee
-        - payableLineItem
-    LineItem:
-      description: Line items are the amount breakups for net amounts 
-      type: object
-      properties:
-        id:
-          description: Unique identifier of the account
-          readOnly: true
-          type: string
-          minLength: 2
-          maxLength: 64
-          example: 67dcdf9f-40c4-4621-be35-1982ecc650aa
-        tenantId:
-          description: Tenant Identifier
-          example: pg.citya
-          type: string
-          minLength: 2
-          maxLength: 64
-        headCode:
-          description: Head codes are define master data  
-          example: WAGE 
-          type: string
-          minLength: 2
-          maxLength: 64
-        amount:
-          description: amount for head code
-          example: 500
-          type: number
-          format: BigDecimal
-        type:
-          $ref: '#/components/schemas/LineItemType'
-        paidAmount:
-          description: Net paid amount for a bill
-          type: number
-          format: BigDecimal
-        status:
-          $ref: '#/components/schemas/Status'
-        paymentStatus:
-          $ref: '#/components/schemas/PaymentStatus'
-        additionalDetails:
-          description: Any additional details that need to be captured
-          type: object
-        auditDetails:
-          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails
-      required:
-        - tenantId
-        - headCode
-        - amount
-        - type
-    BillRequest:
-      type: object
-      properties:
-        RequestInfo:
-          $ref: >-
-                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
-        bill:
-          $ref: '#/components/schemas/Bill'
-        workflow:
-          $ref: >-
-                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow
-    BillResponse:
-      type: object
-      properties:
-        responseInfo:
-          $ref: >-
-                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
-        bill:
-          type: array
-          items:
-            $ref: '#/components/schemas/Bill'
-        pagination:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
-    BillCriteria:
-      type: object
-      properties:
-        tenantId:
-          description: Tenant Identifier
-          example: pg.citya
-          type: string
-          minLength: 2
-          maxLength: 64
-        ids:
-          type: array
-          description: Search by bill ids 
-          items:
-            type: string
-            example: 'c453edf5-0b89-4040-8f34-b8fbdfac1b2e'
-        businessService:
-          description: Search bill by business service
-          example: WORKS-MUSTERROLE
-          type: string
-          minLength: 2
-          maxLength: 64
-        referenceId:
-          description: search bill by  referance ids         
-          type: array
-          items:
-            type: string
-        status:
-          $ref: '#/components/schemas/Status'
-      required: 
-        - tenantId
-    BillSearchRequest:
-      type: object
-      properties:
-        RequestInfo:
-          $ref: >-
-                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
-        billCriteria:
-          $ref: '#/components/schemas/BillCriteria'
-        pagination:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
-    PaymentCriteria:
-      type: object
-      properties:
-        tenantId:
-          description: tenant Identifier
-          example: pg.citya
-          type: string
-          minLength: 2
-          maxLength: 64
-        ids:
-          type: array
-          description: Search by the payment ids 
-          format: uuid
-          items:
-            type: string
-            example: 44452d1f-d88b-4dee-b87d-679756a88161
-        billIds:
-          description: search payment by the bill ids         
-          type: array
-          format: string
-          items:
-            type: string
-            example: 1e4bce04-499d-433c-928b-51d222019d45
-        status:
-            $ref: '#/components/schemas/Status'
-      
-      required: 
-        - tenantId
-    PaymentSearchRequest:
-      type: object
-      properties:
-        RequestInfo:
-          $ref: >-
-                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
-        paymentCriteria:
-          $ref: '#/components/schemas/PaymentCriteria'
-        pagination:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'   
-    PaymentRequest:
-      type: object
-      properties:
-        RequestInfo:
-          $ref: >-
-                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
-        payment:
-          $ref: '#/components/schemas/Payment'
-    PaymentResponse:
-      type: object
-      properties:
-        responseInfo:
-          $ref: >-
-                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
-        payments:
-          type: array
-          items:
-            $ref: '#/components/schemas/Payment'
-        pagination:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/367d45e50eb274ccaabeddc302bc34420edebe09/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination'
-    Payment:
-      type: object
-      properties:
-        tenantId:
-          description: tenant Identifier
-          example: pg.citya
-          type: string
-          minLength: 2
-          maxLength: 64
-        id:
-          type: string
-          description: The unique payment id
-          example: c346bbc6-244a-4aef-b5ae-fdd9a02827ff
-        netPayableAmount:
-          description: Net payable amount of the bill 
-          type: number
-          format: BigDecimal
-          example: 500
-        netPaidAmount:
-          description: Net paid amount for a bill
-          type: number
-          format: BigDecimal
-        bills:
-          description: search payment by the bill ids         
-          type: array
-          format: uuid
-          items:
-            $ref: '#/components/schemas/PaymentBill'
-        status:
-          $ref: '#/components/schemas/Status'
-        additionalDetails:
-          description: Any additional details that need to be captured
-          type: object
-        auditDetails:
-          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails
-      required: 
-        - tenantId  
-        - netPaidAmount
-        - netPayableAmount
-        - bills
-    PaymentBill:
-      description: A Object which holds the info about the expense details
-      type: object
-      properties:
-        id:
-          description: Unique identifier of the record
-          readOnly: true
-          type: string
-        billId:
-          description: Unique identifier of the bill
-          type: string
-        tenantId:
-          description: Tenant Identifier
-          example: pg.citya
-          type: string
-          minLength: 2
-          maxLength: 64
-        status:
-          $ref: '#/components/schemas/PaymentStatus'
-        totalAmount:
-          description: Net paid amount for a bill
-          type: number
-          format: BigDecimal
-        totalPaidAmount:
-          description: Net paid amount for a bill
-          type: number
-          format: BigDecimal
-        billDetails:
-          type: array
-          items:
-            $ref: '#/components/schemas/PaymentBillDetail'
-        auditDetails:
-          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails
-      required:
-        - billId
-        - totalAmount
-        - totalPaidAmount
-        - billDetails
-    PaymentBillDetail:
-      description: Bill details of the individual payees
-      type: object
-      properties:
-        id:
-          description: Unique identifier of the record
-          readOnly: true
-          type: string
-          format: uuid
-        billDetailId:
-          description: Unique identifier of the record
-          type: string
-          format: uuid
-        totalAmount:
-          description: total Amount for the particular bill-detail during payment  
-          type: number
-          format: int64
-        totalPaidAmount:
-          description: Amount being paid for the particular bill-detail during payment  
-          type: number
-          format: int64
-        status:
-          $ref: '#/components/schemas/PaymentStatus'
-        payableLineItems:
-          type: array
-          description: Bill line items
-          items:
-            $ref: '#/components/schemas/PaymentLineItem'
-        auditDetails:
-          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails
-      required:
-        - billDetailId
-        - totalPaidAmount
-        - totalAmount
-        - payableLineItems
-    PaymentLineItem:
-      description: Line items are the amount breakups for net amounts 
-      type: object
-      properties:
-        id:
-          description: Unique identifier of the account
-          readOnly: true
-          type: string
-          example: 67dcdf9f-40c4-4621-be35-1982ecc650aa
-        lineItemid:
-          description: Unique identifier of the account
-          type: string
-          example: 7yu9df9f-40c4-4621-be35-1982ecc650aa
-        tenantId:
-          description: Tenant Identifier
-          example: pg.citya
-          type: string
-          minLength: 2
-          maxLength: 64
-        paidAmount:
-          description: Net paid amount for a bill
-          type: number
-          format: BigDecimal
-        status:
-          $ref: '#/components/schemas/PaymentStatus'
-        auditDetails:
-          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract.yml#/definitions/AuditDetails
-      required:
-        - tenantId
-        - lineItemid
-        - paidAmount
+
+    # ─── Enums ───────────────────────────────────────────────────────────────────
+
     PaymentStatus:
-      description: enum value for the payment status 
+      description: Enum value for payment status
       type: string
-      enum: [INITIATED, SUCCESSFUL, FAILED, CANCELLED]
+      enum:
+        - INITIATED
+        - SUCCESSFUL
+        - FAILED
+        - PARTIAL
+        - CANCELLED
+
+    ReferenceStatus:
+      description: Enum for external payment provider reference status
+      type: string
+      enum:
+        - PAYMENT_INITIATED
+        - PAYMENT_PARTIAL
+        - PAYMENT_FAILED
+        - PAYMENT_SUCCESS
+        - PAYMENT_ERROR_PROCESSING_PAYMENT
+        - PAYMENT_INSUFFICIENT_FUNDS
+        - PAYMENT_SERVER_UNREACHABLE
+        - PAYMENT_DECLINED
+
     Status:
-      description: enum value for the payment status 
+      description: Lifecycle status of a record
       type: string
-      enum: [INACTIVE, ACTIVE, INWORKFLOW]
+      enum:
+        - INACTIVE
+        - ACTIVE
+        - INWORKFLOW
+
     LineItemType:
       description: Type of line item
       type: string
@@ -634,3 +517,1291 @@ components:
         - PAYABLE
         - DEDUCTION
 
+    ReportStatus:
+      description: Status of a bill transaction report
+      type: string
+      enum:
+        - INITIATED
+        - GENERATED
+        - FAILED
+
+    ReportType:
+      description: Format type of a bill report
+      type: string
+      enum:
+        - TRANSACTION_REPORT_EXCEL
+        - TRANSACTION_REPORT_PDF
+        - PAYMENT_ADVISORY_EXCEL
+
+    TaskType:
+      description: Type of MTN task
+      type: string
+      enum:
+        - Verify
+        - Transfer
+
+    # ─── Common ──────────────────────────────────────────────────────────────────
+
+    AuditDetails:
+      type: object
+      properties:
+        createdBy:
+          type: string
+          description: User who created the record
+        lastModifiedBy:
+          type: string
+          description: User who last modified the record
+        createdTime:
+          type: integer
+          format: int64
+          description: Epoch timestamp of creation
+        lastModifiedTime:
+          type: integer
+          format: int64
+          description: Epoch timestamp of last modification
+
+    Pagination:
+      description: Pagination details
+      type: object
+      properties:
+        limit:
+          type: integer
+          description: Number of records per page
+          example: 10
+        offSet:
+          type: integer
+          description: Offset (0-based) for pagination
+          example: 0
+        totalCount:
+          type: integer
+          description: Total number of matching records
+          example: 100
+        sortBy:
+          type: string
+          description: Field to sort by
+          example: createdTime
+        order:
+          type: string
+          description: Sort order
+          enum:
+            - ASC
+            - DESC
+
+    ErrorDetail:
+      description: Error detail object
+      type: object
+      properties:
+        code:
+          type: string
+          description: Error code
+        message:
+          type: string
+          description: Human-readable error message
+
+    ErrorRes:
+      description: Error response
+      type: object
+      properties:
+        ResponseInfo:
+          type: object
+        Errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+
+    # ─── Party ───────────────────────────────────────────────────────────────────
+
+    Party:
+      description: Account/payee details for a bill or bill detail
+      type: object
+      required:
+        - tenantId
+        - type
+        - identifier
+      properties:
+        id:
+          type: string
+          description: Auto-generated unique identifier
+          readOnly: true
+          example: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+        parentId:
+          type: string
+          description: Reference to parent party (e.g. bill-level payer from bill-detail payee)
+          example: "b2c3d4e5-f6a7-8901-bcde-f12345678901"
+        tenantId:
+          type: string
+          description: Tenant identifier
+          minLength: 2
+          maxLength: 64
+          example: "ng.state"
+        type:
+          type: string
+          description: Party type (e.g. DEPARTMENT, INDIVIDUAL, ORGANISATION)
+          minLength: 2
+          maxLength: 64
+          example: "INDIVIDUAL"
+        identifier:
+          type: string
+          description: Unique identifier of the individual/organisation
+          minLength: 2
+          maxLength: 64
+          example: "IND-2025-01-000123"
+        paymentProvider:
+          type: string
+          description: Payment provider identifier (e.g. MTN, BANK)
+          maxLength: 16
+          example: "MTN"
+        payeeName:
+          type: string
+          description: Display name of the payee
+          maxLength: 256
+          example: "John Doe"
+        payeePhoneNumber:
+          type: string
+          description: Phone number used for mobile money transfer
+          maxLength: 64
+          example: "+2348012345678"
+        bankAccount:
+          type: string
+          description: Bank account number
+          maxLength: 128
+          example: "0123456789"
+        bankCode:
+          type: string
+          description: Bank code / routing number
+          maxLength: 64
+          example: "058"
+        beneficiaryCode:
+          type: string
+          description: External beneficiary code for payment provider
+          maxLength: 128
+          example: "BEN-001"
+        status:
+          $ref: '#/components/schemas/Status'
+        additionalDetails:
+          type: object
+          description: Any additional details
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+
+    # ─── LineItem ─────────────────────────────────────────────────────────────────
+
+    LineItem:
+      description: Amount breakup for a bill detail (payable or deduction head)
+      type: object
+      required:
+        - tenantId
+        - headCode
+        - amount
+        - type
+      properties:
+        id:
+          type: string
+          description: Auto-generated unique identifier
+          readOnly: true
+          example: "67dcdf9f-40c4-4621-be35-1982ecc650aa"
+        billDetailId:
+          type: string
+          description: Reference to the parent bill detail
+          example: "edd5f8fc-95da-4ad7-b0a3-9ec0aa926bd2"
+        tenantId:
+          type: string
+          description: Tenant identifier
+          minLength: 2
+          maxLength: 64
+          example: "ng.state"
+        headCode:
+          type: string
+          description: Head code from MDMS master data (e.g. WAGE, FOOD)
+          minLength: 2
+          maxLength: 64
+          example: "WAGE"
+        amount:
+          type: number
+          description: Amount for this head code
+          example: 500.00
+        type:
+          $ref: '#/components/schemas/LineItemType'
+        paidAmount:
+          type: number
+          description: Amount already paid for this line item
+          example: 0.00
+        status:
+          $ref: '#/components/schemas/Status'
+        paymentStatus:
+          $ref: '#/components/schemas/PaymentStatus'
+        additionalDetails:
+          type: object
+          description: Any additional details
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+
+    # ─── BillDetail ───────────────────────────────────────────────────────────────
+
+    BillDetail:
+      description: Bill details for an individual payee within a bill
+      type: object
+      required:
+        - tenantId
+        - payee
+        - payableLineItems
+      properties:
+        id:
+          type: string
+          description: Auto-generated unique identifier
+          readOnly: true
+          example: "edd5f8fc-95da-4ad7-b0a3-9ec0aa926bd2"
+        tenantId:
+          type: string
+          description: Tenant identifier
+          minLength: 2
+          maxLength: 64
+          example: "ng.state"
+        billId:
+          type: string
+          description: Reference to the parent bill
+          example: "8801de85-f123-4e4b-9e4e-adbd04e49965"
+        totalAmount:
+          type: number
+          description: Total gross amount for this payee
+          example: 600.00
+        totalPaidAmount:
+          type: number
+          description: Total amount already paid to this payee
+          example: 0.00
+        referenceId:
+          type: string
+          description: External reference (e.g. muster roll entry)
+          minLength: 2
+          maxLength: 64
+          example: "WAGESEEKER-01"
+        paymentStatus:
+          $ref: '#/components/schemas/PaymentStatus'
+        status:
+          $ref: '#/components/schemas/Status'
+        fromPeriod:
+          type: integer
+          format: int64
+          description: Start of billing period (epoch ms)
+          example: 1680307200000
+        toPeriod:
+          type: integer
+          format: int64
+          description: End of billing period (epoch ms)
+          example: 1682899199000
+        workerId:
+          type: string
+          description: Worker identifier linked to this bill detail
+          maxLength: 64
+          example: "WKR-2025-01-000001"
+        totalAttendance:
+          type: number
+          description: Total attendance days captured for this payee
+          example: 22.5
+        payee:
+          $ref: '#/components/schemas/Party'
+        lineItems:
+          type: array
+          description: Deduction line items
+          items:
+            $ref: '#/components/schemas/LineItem'
+        payableLineItems:
+          type: array
+          description: Payable line items (net amounts after deductions)
+          items:
+            $ref: '#/components/schemas/LineItem'
+        wfStatus:
+          type: string
+          description: Current workflow status
+          minLength: 2
+          maxLength: 64
+          example: "APPROVED"
+        additionalDetails:
+          type: object
+          description: Any additional details
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+
+    # ─── Bill ─────────────────────────────────────────────────────────────────────
+
+    Bill:
+      description: Expense bill holding payee details and amount breakups
+      type: object
+      required:
+        - tenantId
+        - billDate
+        - businessService
+        - referenceId
+        - payer
+        - billDetails
+      properties:
+        id:
+          type: string
+          description: Auto-generated unique identifier
+          readOnly: true
+          example: "8801de85-f123-4e4b-9e4e-adbd04e49965"
+        tenantId:
+          type: string
+          description: Tenant identifier
+          minLength: 2
+          maxLength: 64
+          example: "ng.state"
+        localityCode:
+          type: string
+          description: Locality code for the bill
+          minLength: 2
+          maxLength: 256
+          example: "LOC-001"
+        billDate:
+          type: integer
+          format: int64
+          description: Bill generation date (epoch ms)
+          example: 1685491199000
+        dueDate:
+          type: integer
+          format: int64
+          description: Payment due date (epoch ms)
+          example: 1683003761000
+        totalAmount:
+          type: number
+          description: Total gross amount across all payees
+          example: 5000.00
+        totalWageAmount:
+          type: number
+          description: Total wage component amount
+          example: 4000.00
+        totalFoodAmount:
+          type: number
+          description: Total food allowance amount
+          example: 500.00
+        totalTransportAmount:
+          type: number
+          description: Total transport allowance amount
+          example: 500.00
+        totalPaidAmount:
+          type: number
+          description: Total amount already paid across all payees
+          example: 0.00
+        businessService:
+          type: string
+          description: Business service identifier from MDMS (e.g. WORKS.WAGE-BILL)
+          minLength: 2
+          maxLength: 128
+          example: "WORKS.WAGE-BILL"
+        referenceId:
+          type: string
+          description: Reference to the source entity (e.g. muster roll ID)
+          minLength: 2
+          maxLength: 256
+          example: "MR-2025-01-000001"
+        fromPeriod:
+          type: integer
+          format: int64
+          description: Start of billing period (epoch ms)
+          example: 1680307200000
+        toPeriod:
+          type: integer
+          format: int64
+          description: End of billing period (epoch ms)
+          example: 1682899199000
+        paymentStatus:
+          $ref: '#/components/schemas/PaymentStatus'
+        status:
+          $ref: '#/components/schemas/Status'
+        billNumber:
+          type: string
+          description: Human-readable bill number
+          example: "BILL-2025-01-000001"
+        wfStatus:
+          type: string
+          description: Current workflow status
+          minLength: 2
+          maxLength: 64
+          example: "APPROVED"
+        payer:
+          $ref: '#/components/schemas/Party'
+        billDetails:
+          type: array
+          description: Individual payee details
+          items:
+            $ref: '#/components/schemas/BillDetail'
+        additionalDetails:
+          type: object
+          description: Any additional details
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+
+    # ─── Bill Request/Response ────────────────────────────────────────────────────
+
+    BillRequest:
+      type: object
+      properties:
+        RequestInfo:
+          type: object
+          description: DIGIT RequestInfo
+        bill:
+          $ref: '#/components/schemas/Bill'
+        workflow:
+          type: object
+          description: Workflow action details
+
+    BillResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          type: object
+          description: DIGIT ResponseInfo
+        bills:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bill'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    BillSearchRequest:
+      type: object
+      properties:
+        RequestInfo:
+          type: object
+          description: DIGIT RequestInfo
+        billCriteria:
+          $ref: '#/components/schemas/BillCriteria'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    BillCriteria:
+      description: Search criteria for bills
+      type: object
+      required:
+        - tenantId
+      properties:
+        tenantId:
+          type: string
+          description: Tenant identifier
+          minLength: 2
+          maxLength: 64
+          example: "ng.state"
+        ids:
+          type: array
+          description: Filter by bill IDs
+          items:
+            type: string
+            example: "c453edf5-0b89-4040-8f34-b8fbdfac1b2e"
+        businessService:
+          type: string
+          description: Filter by business service
+          minLength: 2
+          maxLength: 64
+          example: "WORKS.WAGE-BILL"
+        referenceIds:
+          type: array
+          description: Filter by reference IDs
+          items:
+            type: string
+        billNumbers:
+          type: array
+          description: Filter by bill numbers
+          items:
+            type: string
+        status:
+          type: string
+          description: Filter by status (ACTIVE, INACTIVE, INWORKFLOW)
+          example: "ACTIVE"
+        statusNot:
+          type: string
+          description: Exclude records with this status
+          example: "INACTIVE"
+        isPaymentStatusNull:
+          type: boolean
+          description: Filter bills where paymentStatus is null
+          example: false
+        localityCode:
+          type: string
+          description: Filter by locality code
+          example: "LOC-001"
+        fromDate:
+          type: integer
+          format: int64
+          description: Filter bills created on or after this date (epoch ms)
+          example: 1680307200000
+        toDate:
+          type: integer
+          format: int64
+          description: Filter bills created on or before this date (epoch ms)
+          example: 1682899199000
+        billingPeriodIds:
+          type: array
+          description: Filter by billing period IDs (V2 payments)
+          items:
+            type: string
+        isAggregate:
+          type: boolean
+          description: Whether to return aggregate bills (V2 payments)
+          example: false
+        billingType:
+          type: string
+          description: Type of billing (V2 payments)
+          example: "WAGE"
+        reportStatus:
+          type: string
+          description: Filter by report status
+          example: "GENERATED"
+
+    # ─── Bulk Bill Update ─────────────────────────────────────────────────────────
+
+    BulkBillUpdateRequest:
+      type: object
+      properties:
+        RequestInfo:
+          type: object
+          description: DIGIT RequestInfo
+        bills:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bill'
+        workflow:
+          type: object
+          description: Workflow action details
+
+    BulkBillUpdateResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          type: object
+          description: DIGIT ResponseInfo
+        bills:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bill'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/BulkUpdateError'
+
+    BulkBillStatusUpdateRequest:
+      type: object
+      required:
+        - RequestInfo
+        - tenantId
+        - billIds
+        - status
+      properties:
+        RequestInfo:
+          type: object
+          description: DIGIT RequestInfo
+        tenantId:
+          type: string
+          description: Tenant ID for the bulk operation
+          minLength: 2
+          maxLength: 64
+          example: "ng.ondo"
+        billIds:
+          type: array
+          description: List of bill IDs to update
+          items:
+            type: string
+        status:
+          type: string
+          description: Target status to set
+          example: "ACTIVE"
+        workflow:
+          type: object
+          description: Workflow action details
+
+    BulkBillStatusUpdateResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          type: object
+          description: DIGIT ResponseInfo
+        bills:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bill'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/BulkUpdateError'
+
+    BulkUpdateError:
+      description: Error for a single bill during bulk operations
+      type: object
+      properties:
+        billId:
+          type: string
+          description: ID of the bill that failed
+          example: "8801de85-f123-4e4b-9e4e-adbd04e49965"
+        code:
+          type: string
+          description: Error code
+          example: "EG_EXPENSE_BILL_NOT_FOUND"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Bill not found"
+
+    # ─── Bill Detail Partial Update ───────────────────────────────────────────────
+
+    BillDetailUpdateRequest:
+      description: Partial update of one or more bill details under a single bill
+      type: object
+      required:
+        - RequestInfo
+        - billId
+        - tenantId
+        - billDetails
+      properties:
+        RequestInfo:
+          type: object
+          description: DIGIT RequestInfo
+        billId:
+          type: string
+          description: ID of the bill whose details are being updated
+          example: "8801de85-f123-4e4b-9e4e-adbd04e49965"
+        tenantId:
+          type: string
+          description: Tenant identifier
+          minLength: 2
+          maxLength: 64
+          example: "ng.state"
+        billDetails:
+          type: array
+          minItems: 1
+          description: List of partial bill detail updates
+          items:
+            $ref: '#/components/schemas/PartialBillDetail'
+
+    BillDetailUpdateResponse:
+      description: Response for bill details partial update
+      type: object
+      properties:
+        ResponseInfo:
+          type: object
+          description: DIGIT ResponseInfo
+        billDetails:
+          type: array
+          description: Successfully updated bill details
+          items:
+            $ref: '#/components/schemas/BillDetail'
+        errors:
+          type: array
+          description: Per-detail errors for failed updates
+          items:
+            $ref: '#/components/schemas/BillDetailUpdateError'
+
+    PartialBillDetail:
+      description: Partial bill detail DTO for update. Only id is required; all other fields are optional and only provided fields are updated.
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          description: ID of the bill detail to update
+          example: "edd5f8fc-95da-4ad7-b0a3-9ec0aa926bd2"
+        totalAmount:
+          type: number
+          description: Updated total amount
+          example: 600.00
+        totalPaidAmount:
+          type: number
+          description: Updated total paid amount
+          example: 0.00
+        paymentStatus:
+          $ref: '#/components/schemas/PaymentStatus'
+        status:
+          $ref: '#/components/schemas/Status'
+        fromPeriod:
+          type: integer
+          format: int64
+          description: Updated start of billing period (epoch ms)
+          example: 1680307200000
+        toPeriod:
+          type: integer
+          format: int64
+          description: Updated end of billing period (epoch ms)
+          example: 1682899199000
+        workerId:
+          type: string
+          description: Updated worker ID
+          maxLength: 64
+          example: "WKR-2025-01-000001"
+        totalAttendance:
+          type: number
+          description: Updated total attendance days
+          example: 22.5
+        payee:
+          $ref: '#/components/schemas/Party'
+        lineItems:
+          type: array
+          description: Updated deduction line items
+          items:
+            $ref: '#/components/schemas/LineItem'
+        payableLineItems:
+          type: array
+          description: Updated payable line items
+          items:
+            $ref: '#/components/schemas/LineItem'
+        additionalDetails:
+          type: object
+          description: Any additional details
+
+    BillDetailUpdateError:
+      description: Error for a single bill detail during partial update
+      type: object
+      properties:
+        billDetailId:
+          type: string
+          description: ID of the bill detail that failed
+          example: "edd5f8fc-95da-4ad7-b0a3-9ec0aa926bd2"
+        code:
+          type: string
+          description: Error code
+          example: "EG_EXPENSE_BILLDETAIL_NOT_FOUND"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Bill detail not found"
+
+    BillDetailResponse:
+      description: Response containing updated bill details
+      type: object
+      properties:
+        ResponseInfo:
+          type: object
+          description: DIGIT ResponseInfo
+        billDetails:
+          type: array
+          description: Updated bill details
+          items:
+            $ref: '#/components/schemas/BillDetail'
+
+    # ─── Payment ──────────────────────────────────────────────────────────────────
+
+    PaymentLineItem:
+      description: Payment line item tracking paid amount against a bill line item
+      type: object
+      required:
+        - paidAmount
+      properties:
+        id:
+          type: string
+          description: Auto-generated unique identifier
+          readOnly: true
+          example: "67dcdf9f-40c4-4621-be35-1982ecc650aa"
+        lineItemId:
+          type: string
+          description: Reference to the original bill line item
+          example: "7yu9df9f-40c4-4621-be35-1982ecc650aa"
+        tenantId:
+          type: string
+          description: Tenant identifier
+          minLength: 2
+          maxLength: 64
+          example: "ng.state"
+        paidAmount:
+          type: number
+          description: Amount paid for this line item
+          example: 500.00
+        status:
+          $ref: '#/components/schemas/PaymentStatus'
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+
+    PaymentBillDetail:
+      description: Payment record for an individual bill detail (payee)
+      type: object
+      required:
+        - billDetailId
+        - totalAmount
+        - totalPaidAmount
+        - payableLineItems
+      properties:
+        id:
+          type: string
+          description: Auto-generated unique identifier
+          readOnly: true
+          example: "edd5f8fc-95da-4ad7-b0a3-9ec0aa926bd2"
+        tenantId:
+          type: string
+          description: Tenant identifier
+          example: "ng.state"
+        billDetailId:
+          type: string
+          description: Reference to the bill detail
+          example: "edd5f8fc-95da-4ad7-b0a3-9ec0aa926bd2"
+        totalAmount:
+          type: number
+          description: Total gross amount for this payee
+          example: 600.00
+        totalPaidAmount:
+          type: number
+          description: Amount paid for this payee
+          example: 600.00
+        status:
+          $ref: '#/components/schemas/PaymentStatus'
+        payableLineItems:
+          type: array
+          description: Payment line items for this payee
+          items:
+            $ref: '#/components/schemas/PaymentLineItem'
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+
+    PaymentBill:
+      description: Payment record for a single bill
+      type: object
+      required:
+        - billId
+        - billDetails
+      properties:
+        id:
+          type: string
+          description: Auto-generated unique identifier
+          readOnly: true
+          example: "b1c2d3e4-f5a6-7890-bcde-f12345678902"
+        billId:
+          type: string
+          description: Reference to the bill being paid
+          example: "8801de85-f123-4e4b-9e4e-adbd04e49965"
+        tenantId:
+          type: string
+          description: Tenant identifier
+          example: "ng.state"
+        totalAmount:
+          type: number
+          description: Total gross amount of the bill
+          example: 5000.00
+        totalPaidAmount:
+          type: number
+          description: Total amount paid for this bill
+          example: 5000.00
+        status:
+          $ref: '#/components/schemas/PaymentStatus'
+        billDetails:
+          type: array
+          description: Payment records per payee
+          items:
+            $ref: '#/components/schemas/PaymentBillDetail'
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+
+    Payment:
+      description: A payment transaction covering one or more bills
+      type: object
+      required:
+        - tenantId
+        - netPayableAmount
+        - netPaidAmount
+        - bills
+      properties:
+        id:
+          type: string
+          description: Auto-generated unique payment identifier
+          readOnly: true
+          example: "c346bbc6-244a-4aef-b5ae-fdd9a02827ff"
+        tenantId:
+          type: string
+          description: Tenant identifier
+          minLength: 2
+          maxLength: 64
+          example: "ng.state"
+        netPayableAmount:
+          type: number
+          description: Net payable amount across all bills
+          example: 5000.00
+        netPaidAmount:
+          type: number
+          description: Net amount actually paid
+          example: 5000.00
+        paymentNumber:
+          type: string
+          description: Human-readable payment number
+          example: "PAY-2025-01-000001"
+        status:
+          $ref: '#/components/schemas/PaymentStatus'
+        referenceStatus:
+          $ref: '#/components/schemas/ReferenceStatus'
+        bills:
+          type: array
+          description: Bills covered by this payment
+          items:
+            $ref: '#/components/schemas/PaymentBill'
+        additionalDetails:
+          type: object
+          description: Any additional details
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+
+    PaymentRequest:
+      type: object
+      required:
+        - RequestInfo
+        - payment
+      properties:
+        RequestInfo:
+          type: object
+          description: DIGIT RequestInfo
+        payment:
+          $ref: '#/components/schemas/Payment'
+
+    PaymentResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          type: object
+          description: DIGIT ResponseInfo
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    PaymentSearchRequest:
+      type: object
+      properties:
+        RequestInfo:
+          type: object
+          description: DIGIT RequestInfo
+        paymentCriteria:
+          $ref: '#/components/schemas/PaymentCriteria'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    PaymentCriteria:
+      description: Search criteria for payments
+      type: object
+      properties:
+        tenantId:
+          type: string
+          description: Tenant identifier
+          minLength: 2
+          maxLength: 64
+          example: "ng.state"
+        ids:
+          type: array
+          description: Filter by payment IDs
+          items:
+            type: string
+            example: "44452d1f-d88b-4dee-b87d-679756a88161"
+        billIds:
+          type: array
+          description: Filter by bill IDs
+          items:
+            type: string
+            example: "1e4bce04-499d-433c-928b-51d222019d45"
+        paymentNumbers:
+          type: array
+          description: Filter by payment numbers
+          items:
+            type: string
+            example: "PAY-2025-01-000001"
+        status:
+          type: string
+          description: Filter by payment status
+          example: "SUCCESSFUL"
+        referenceStatus:
+          type: string
+          description: Filter by external reference status
+          example: "PAYMENT_SUCCESS"
+
+    # ─── MTN ──────────────────────────────────────────────────────────────────────
+
+    Task:
+      description: MTN task for bill verification or payment transfer
+      type: object
+      properties:
+        id:
+          type: string
+          description: Auto-generated unique task identifier
+          readOnly: true
+          example: "t1a2b3c4-d5e6-7890-cdef-123456789012"
+        tenantId:
+          type: string
+          description: Tenant identifier
+          example: "ng.state"
+        billId:
+          type: string
+          description: Reference to the bill being processed
+          example: "8801de85-f123-4e4b-9e4e-adbd04e49965"
+        status:
+          $ref: '#/components/schemas/Status'
+        type:
+          $ref: '#/components/schemas/TaskType'
+        additionalDetails:
+          type: object
+          description: Any additional details
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+
+    TaskDetails:
+      description: Detailed task record for an individual payee within a bill
+      type: object
+      properties:
+        id:
+          type: string
+          description: Auto-generated unique identifier
+          readOnly: true
+          example: "td1a2b3c-d4e5-6789-abcd-ef1234567890"
+        tenantId:
+          type: string
+          description: Tenant identifier
+          minLength: 2
+          maxLength: 64
+          example: "ng.state"
+        billId:
+          type: string
+          description: Reference to the parent bill
+          example: "8801de85-f123-4e4b-9e4e-adbd04e49965"
+        billDetailsId:
+          type: string
+          description: Reference to the bill detail (payee)
+          example: "edd5f8fc-95da-4ad7-b0a3-9ec0aa926bd2"
+        payeeId:
+          type: string
+          description: Identifier of the payee
+          example: "IND-2025-01-000123"
+        taskId:
+          type: string
+          description: External task ID from the payment provider
+          example: "MTN-TASK-001"
+        referenceId:
+          type: string
+          description: External reference identifier
+          minLength: 2
+          maxLength: 64
+          example: "REF-001"
+        responseMessage:
+          type: string
+          description: Response message from the payment provider
+          example: "Payment processed successfully"
+        status:
+          $ref: '#/components/schemas/Status'
+        reasonForFailure:
+          type: string
+          description: Reason for task failure (if applicable)
+          example: "Insufficient funds"
+        additionalDetails:
+          type: object
+          description: Any additional details
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+
+    BillTaskRequest:
+      type: object
+      properties:
+        RequestInfo:
+          type: object
+          description: DIGIT RequestInfo
+        bill:
+          $ref: '#/components/schemas/Bill'
+
+    BillTaskResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          type: object
+          description: DIGIT ResponseInfo
+        taskId:
+          type: string
+          description: ID of the task created for async processing
+          example: "MTN-TASK-001"
+
+    StatusRequest:
+      type: object
+      properties:
+        RequestInfo:
+          type: object
+          description: DIGIT RequestInfo
+        task:
+          $ref: '#/components/schemas/Task'
+
+    StatusResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          type: object
+          description: DIGIT ResponseInfo
+        task:
+          $ref: '#/components/schemas/Task'
+
+    TaskDetailsRequest:
+      type: object
+      properties:
+        RequestInfo:
+          type: object
+          description: DIGIT RequestInfo
+        taskId:
+          type: string
+          description: Filter by task ID
+          example: "MTN-TASK-001"
+        billId:
+          type: string
+          description: Filter by bill ID
+          example: "8801de85-f123-4e4b-9e4e-adbd04e49965"
+        billDetailsId:
+          type: string
+          description: Filter by bill detail ID
+          example: "edd5f8fc-95da-4ad7-b0a3-9ec0aa926bd2"
+
+    TaskDetailsResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          type: object
+          description: DIGIT ResponseInfo
+        taskDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskDetails'
+
+    MtnBalance:
+      description: MTN wallet balance
+      type: object
+      properties:
+        amount:
+          type: string
+          description: Balance amount as string
+          example: "10000.00"
+        currency:
+          type: string
+          description: Currency code
+          example: "NGN"
+
+    MtnBalanceRequest:
+      type: object
+      properties:
+        RequestInfo:
+          type: object
+          description: DIGIT RequestInfo
+
+    MtnBalanceResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          type: object
+          description: DIGIT ResponseInfo
+        MtnBalance:
+          $ref: '#/components/schemas/MtnBalance'
+
+    # ─── Bill Report ─────────────────────────────────────────────────────────────
+
+    BillReport:
+      description: Bill report record (EXCEL, PDF, or PAYMENT_ADVISORY)
+      type: object
+      required:
+        - tenantId
+        - type
+      properties:
+        id:
+          type: string
+          description: Auto-generated unique identifier
+          readOnly: true
+          example: "rpt1a2b3-c4d5-6789-efab-cdef12345678"
+        billIds:
+          type: array
+          description: Bill IDs to generate reports for (one report per bill). Used on generate request.
+          items:
+            type: string
+          example: ["8801de85-f123-4e4b-9e4e-adbd04e49965", "9912ef96-g234-5f5c-0f45-cfeeg23456789"]
+        billId:
+          type: string
+          description: Bill ID of the individual report record (set per-report after generation is initiated).
+          readOnly: true
+          example: "8801de85-f123-4e4b-9e4e-adbd04e49965"
+        tenantId:
+          type: string
+          description: Tenant identifier
+          example: "ng.state"
+        type:
+          $ref: '#/components/schemas/ReportType'
+        status:
+          $ref: '#/components/schemas/ReportStatus'
+        fileStoreId:
+          type: string
+          description: File store ID of the generated report file
+          example: "fs-2025-01-000001"
+        errorDetails:
+          type: object
+          description: Error details if report generation failed
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+
+    BillReportRequest:
+      type: object
+      required:
+        - RequestInfo
+        - billReport
+      properties:
+        RequestInfo:
+          type: object
+          description: DIGIT RequestInfo
+        billReport:
+          $ref: '#/components/schemas/BillReport'
+
+    BillReportResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          type: object
+          description: DIGIT ResponseInfo
+        status:
+          $ref: '#/components/schemas/ReportStatus'
+        billReports:
+          type: array
+          description: List of initiated BillReport records, one per bill in the request
+          items:
+            $ref: '#/components/schemas/BillReport'
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+
+    BillReportSearchCriteria:
+      description: Search criteria for bill reports
+      type: object
+      required:
+        - tenantId
+      properties:
+        billIds:
+          type: array
+          description: Bill IDs to search reports for
+          items:
+            type: string
+          example: ["8801de85-f123-4e4b-9e4e-adbd04e49965", "9912ef96-g234-5f5c-0f45-cfeeg23456789"]
+        tenantId:
+          type: string
+          description: Tenant identifier
+          example: "ng.state"
+        type:
+          type: string
+          description: Report type filter (TRANSACTION_REPORT_EXCEL, TRANSACTION_REPORT_PDF, or PAYMENT_ADVISORY_EXCEL)
+          example: "PAYMENT_ADVISORY_EXCEL"
+
+    BillReportSearchRequest:
+      type: object
+      required:
+        - RequestInfo
+        - searchCriteria
+      properties:
+        RequestInfo:
+          type: object
+          description: DIGIT RequestInfo
+        searchCriteria:
+          $ref: '#/components/schemas/BillReportSearchCriteria'
+
+    BillReportSearchResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          type: object
+          description: DIGIT ResponseInfo
+        totalCount:
+          type: integer
+          description: Total number of matching records
+          example: 5
+        billReports:
+          type: array
+          items:
+            $ref: '#/components/schemas/BillReport'

@@ -174,9 +174,14 @@ public class WageSeekerBillGeneratorService {
 				log.info("Building billDetail for referenceId [" + referenceId + "] and musterRollNumber ["
 						+ musterRollNumber + "]");
 
+				BigDecimal totalAttendance = individualEntry.getModifiedTotalAttendance() != null
+						? individualEntry.getModifiedTotalAttendance()
+						: individualEntry.getActualTotalAttendance();
+
 				BillDetail billDetail = BillDetail.builder().billId(null).referenceId(musterRollNumber).tenantId(tenantId)
 						.fromPeriod(musterRoll.getStartDate().longValue()).toPeriod(musterRoll.getEndDate().longValue())
 						.payee(payee).lineItems(lineItems).payableLineItems(payables)
+						.totalAttendance(totalAttendance)
 						.netLineItemAmount(actualAmountToPay).build();
 
 				billDetails.add(billDetail);

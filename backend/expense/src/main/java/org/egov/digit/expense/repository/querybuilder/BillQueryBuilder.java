@@ -38,7 +38,7 @@ public class BillQueryBuilder {
         if(isCountRequired) {
             query = new StringBuilder(Constants.BILL_COUNT_QUERY);
         } else {
-            query = new StringBuilder(Constants.BILL_QUERY);
+            query = new StringBuilder(Constants.BILL_ONLY_QUERY);
         }
 
         Set<String> billNumbers = criteria.getBillNumbers();
@@ -115,16 +115,26 @@ public class BillQueryBuilder {
             preparedStmtList.add(criteria.getBusinessService());
         }
 
-        if (StringUtils.isNotBlank(criteria.getStatus())) {
+        if (!CollectionUtils.isEmpty(criteria.getStatuses())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" bill.status = ? ");
-            preparedStmtList.add(criteria.getStatus());
+            if (criteria.getStatuses().size() == 1) {
+                query.append(" bill.status = ? ");
+                preparedStmtList.add(criteria.getStatuses().get(0));
+            } else {
+                query.append(" bill.status IN (").append(createQuery(criteria.getStatuses())).append(") ");
+                addToPreparedStatement(preparedStmtList, criteria.getStatuses());
+            }
         }
-        
-        if (StringUtils.isNotBlank(criteria.getStatusNot())) {
+
+        if (!CollectionUtils.isEmpty(criteria.getStatusesNot())) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" bill.status != ? ");
-            preparedStmtList.add(criteria.getStatusNot());
+            if (criteria.getStatusesNot().size() == 1) {
+                query.append(" bill.status != ? ");
+                preparedStmtList.add(criteria.getStatusesNot().get(0));
+            } else {
+                query.append(" bill.status NOT IN (").append(createQuery(criteria.getStatusesNot())).append(") ");
+                addToPreparedStatement(preparedStmtList, criteria.getStatusesNot());
+            }
         }
         if (criteria.getIsPaymentStatusNull() != null && criteria.getIsPaymentStatusNull().equals(true)) {
             addClauseIfRequired(query, preparedStmtList);
@@ -233,5 +243,14 @@ public class BillQueryBuilder {
             return Constants.COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
         else
             return query;
+    }
+
+    public String getStatusCountQuery(BillSearchRequest billSearchRequest, List<Object> preparedStmtList) {
+        // Reuse the count query WHERE conditions, then pivot to status group-by
+        String countQuery = getBillQuery(billSearchRequest, preparedStmtList, true, false);
+        return countQuery.replace(
+                "SELECT distinct(bill.id)",
+                "SELECT bill.status, count(distinct bill.id) as status_count"
+        ) + " GROUP BY bill.status";
     }
 }

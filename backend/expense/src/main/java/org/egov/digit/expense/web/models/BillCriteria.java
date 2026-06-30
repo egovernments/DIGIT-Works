@@ -8,9 +8,12 @@ import java.util.Set;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import org.egov.digit.expense.util.StringOrListDeserializer;
 import org.springframework.validation.annotation.Validated;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,11 +49,15 @@ public class BillCriteria {
 	@JsonProperty("billNumbers")
 	private Set<String> billNumbers;
 
-	@JsonProperty("status")
-	private String status;
-	
-	@JsonProperty("statusNot")
-	private String statusNot;
+	@JsonProperty("statuses")
+	@JsonAlias("status")
+	@JsonDeserialize(using = StringOrListDeserializer.class)
+	private List<String> statuses;
+
+	@JsonProperty("statusesNot")
+	@JsonAlias("statusNot")
+	@JsonDeserialize(using = StringOrListDeserializer.class)
+	private List<String> statusesNot;
 
 	@JsonProperty("isPaymentStatusNull")
 	private Boolean isPaymentStatusNull;

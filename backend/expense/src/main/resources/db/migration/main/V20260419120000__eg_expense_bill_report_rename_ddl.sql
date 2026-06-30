@@ -1,0 +1,6 @@
+-- Rename bill transaction report table and indexes to generic bill report
+ALTER TABLE eg_expense_bill_transaction_report RENAME TO eg_expense_bill_report;
+
+ALTER INDEX IF EXISTS idx_eg_expense_bill_txn_report_bill_tenant RENAME TO idx_eg_expense_bill_report_bill_tenant;
+ALTER INDEX IF EXISTS idx_eg_expense_bill_txn_report_status RENAME TO idx_eg_expense_bill_report_status;
+ALTER INDEX IF EXISTS idx_eg_expense_bill_txn_report_modified_time RENAME TO idx_eg_expense_bill_report_modified_time;
