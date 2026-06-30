@@ -26,7 +26,6 @@ import org.egov.web.models.report.ReportStatus;
 import org.egov.repository.MusterRollReportRepository;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.web.models.worker.IndividualWorker;
-import org.egov.works.services.common.models.attendance.AttendanceRegisterSearchCriteria;
 import org.egov.works.services.common.models.attendance.StaffPermission;
 import org.egov.works.services.common.models.attendance.StaffType;
 import org.egov.works.services.common.models.musterroll.Status;
@@ -845,21 +844,19 @@ public class AttendanceReportGeneratorService {
     private AttendanceRegister fetchAttendanceRegister(RequestInfo requestInfo, String tenantId, String registerId) {
         StringBuilder uri = new StringBuilder();
         uri.append(config.getAttendanceLogHost()).append(config.getAttendanceRegisterEndpoint());
-        uri.append("?tenantId=").append(tenantId);
 
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("RequestInfo", requestInfo);
+        String url = UriComponentsBuilder.fromHttpUrl(uri.toString())
+                .queryParam("tenantId", tenantId)
+                .queryParam("ids", registerId)
+                .queryParam("status", "ACTIVE")
+                .toUriString();
 
-        AttendanceRegisterSearchCriteria searchCriteria = new AttendanceRegisterSearchCriteria();
-        searchCriteria.setTenantId(tenantId);
-        searchCriteria.setIds(Collections.singletonList(registerId));
-
-        requestBody.put("searchCriteria", searchCriteria);
+        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
         try {
             AttendanceRegisterResponse response = restTemplate.postForObject(
-                    uri.toString(),
-                    requestBody,
+                    url,
+                    requestInfoWrapper,
                     AttendanceRegisterResponse.class
             );
 
