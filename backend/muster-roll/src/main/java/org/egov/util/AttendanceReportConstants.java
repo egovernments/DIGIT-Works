@@ -92,6 +92,10 @@ public class AttendanceReportConstants {
 
     // Attendance log additionalDetails keys
     public static final String LOG_ADDITIONAL_DETAILS_SESSION_TYPE = "SESSION_TYPE";
+    public static final String LOG_ADDITIONAL_DETAILS_SIGNATURE = "signature";
+
+    // Synthetic key prefix for inline (non-filestore) signature images
+    public static final String INLINE_SIGNATURE_KEY_PREFIX = "INLINE_SIG:";
 
     // Session type values (from attendance log additionalDetails.SESSION_TYPE)
     public static final String SESSION_TYPE_MORNING = "MORNING";
