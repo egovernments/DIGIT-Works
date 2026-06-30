@@ -59,8 +59,7 @@ public class StaffEnrichmentService {
         for (StaffPermission staffPermissionFromRequest : staffPermissionListFromRequest) {
             for (StaffPermission staffPermissionFromDB : staffPermissionListFromDB) {
                 if (staffPermissionFromDB.getUserId().equals(staffPermissionFromRequest.getUserId())
-                        && staffPermissionFromDB.getRegisterId().equals(staffPermissionFromRequest.getRegisterId())
-                        && staffPermissionFromDB.getDenrollmentDate() == null) {
+                        && staffPermissionFromDB.getRegisterId().equals(staffPermissionFromRequest.getRegisterId())) {
                     staffPermissionFromRequest.setId(staffPermissionFromDB.getId());
                     staffPermissionFromRequest.setEnrollmentDate(staffPermissionFromDB.getEnrollmentDate());
                     staffPermissionFromRequest.setStaffType(staffPermissionFromDB.getStaffType());
@@ -70,7 +69,11 @@ public class StaffEnrichmentService {
                     staffPermissionFromRequest.setAuditDetails(auditDetails);
 
                     if (staffPermissionFromRequest.getDenrollmentDate() == null) {
-                        staffPermissionFromRequest.setDenrollmentDate(new BigDecimal(System.currentTimeMillis()));
+                        BigDecimal now = new BigDecimal(System.currentTimeMillis());
+                        BigDecimal enrollmentDate = staffPermissionFromDB.getEnrollmentDate();
+                        BigDecimal deEnrollmentDate = (enrollmentDate != null && enrollmentDate.compareTo(now) > 0)
+                                ? enrollmentDate : now;
+                        staffPermissionFromRequest.setDenrollmentDate(deEnrollmentDate);
                     }
 
                     if (staffPermissionFromRequest.getAdditionalDetails() == null) {

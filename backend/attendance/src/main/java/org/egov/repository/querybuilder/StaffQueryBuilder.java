@@ -84,6 +84,12 @@ public class StaffQueryBuilder {
             preparedStmtList.add("%" + staffName + "%");
         }
 
+        addClauseIfRequired(query, preparedStmtList);
+        query.append(" stf.register_id IN (SELECT id FROM ").append(SCHEMA_REPLACE_STRING)
+                .append(".eg_wms_attendance_register WHERE status = ? AND isdeleted = ?) ");
+        preparedStmtList.add("ACTIVE");
+        preparedStmtList.add(false);
+
         addLimitAndOffset(query, criteria, preparedStmtList);
         return multiStateInstanceUtil.replaceSchemaPlaceholder(query.toString(), tenantId);
     }

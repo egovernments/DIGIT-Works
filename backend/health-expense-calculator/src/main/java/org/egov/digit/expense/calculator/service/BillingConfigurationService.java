@@ -3,7 +3,9 @@ package org.egov.digit.expense.calculator.service;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.common.models.project.Project;
 import org.egov.digit.expense.calculator.repository.BillingConfigRepository;
+import org.egov.digit.expense.calculator.repository.ExpenseCalculatorRepository;
 import org.egov.digit.expense.calculator.util.ResponseInfoFactory;
 import org.egov.digit.expense.calculator.validator.BillingConfigValidator;
 import org.egov.digit.expense.calculator.web.models.*;
@@ -13,9 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -38,20 +45,26 @@ import java.util.UUID;
 @Slf4j
 public class BillingConfigurationService {
 
+    private static final DateTimeFormatter DT_FORMAT =
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z").withZone(ZoneId.systemDefault());
+
     private final BillingConfigRepository repository;
     private final PeriodGenerationService periodGenerationService;
     private final BillingConfigValidator validator;
     private final ResponseInfoFactory responseInfoFactory;
+    private final ExpenseCalculatorRepository expenseCalculatorRepository;
 
     @Autowired
     public BillingConfigurationService(BillingConfigRepository repository,
                                       PeriodGenerationService periodGenerationService,
                                       BillingConfigValidator validator,
-                                      ResponseInfoFactory responseInfoFactory) {
+                                      ResponseInfoFactory responseInfoFactory,
+                                      ExpenseCalculatorRepository expenseCalculatorRepository) {
         this.repository = repository;
         this.periodGenerationService = periodGenerationService;
         this.validator = validator;
         this.responseInfoFactory = responseInfoFactory;
+        this.expenseCalculatorRepository = expenseCalculatorRepository;
     }
 
     /**
@@ -698,5 +711,242 @@ public class BillingConfigurationService {
         if (incoming.getCreatedTime() == null) {
             incoming.setCreatedTime(existing.getCreatedTime());
         }
+    }
+
+    // -------------------------------------------------------------------------
+    // Campaign date update — triggered by update-project-health Kafka event
+    // -------------------------------------------------------------------------
+
+    /**
+     * Handles campaign start/end date changes received from the project update Kafka event.
+     *
+     * Guards:
+     *  - Null dates, missing config, inactive config → skip silently
+     *  - FINAL_AGGREGATE bill exists → block (campaign fully finalized)
+     *  - No actual change → skip
+     *
+     * Routing:
+     *  - Start date changed → deprecate all periods, regenerate with new dates
+     *  - End date changed only → find concerned period and trim/extend/append
+     */
+    @Transactional
+    public void handleCampaignDateUpdate(Project rootProject, String userId) {
+        String projectId = rootProject.getId();
+        String tenantId = rootProject.getTenantId();
+        Long newStart = rootProject.getStartDate();
+        Long newEnd = rootProject.getEndDate();
+
+        // Guard: null dates
+        if (newStart == null || newEnd == null) {
+            log.warn("Skipping campaign date update — null dates for project: {}", projectId);
+            return;
+        }
+
+        // Guard: no billing config
+        BillingConfig config = repository.findByProjectId(projectId, tenantId);
+        if (config == null) {
+            log.info("No billing config found for project: {}, skipping campaign date update", projectId);
+            return;
+        }
+
+        // Guard: inactive/completed config
+        if (!config.isActive()) {
+            log.info("BillingConfig {} is not ACTIVE, skipping campaign date update", config.getId());
+            return;
+        }
+
+        // Guard: campaign fully finalized (FINAL_AGGREGATE bill exists)
+        if (expenseCalculatorRepository.checkAggregateBillExists(projectId, tenantId)) {
+            throw new CustomException("CAMPAIGN_ALREADY_FINALIZED",
+                "Cannot update campaign dates — a FINAL_AGGREGATE bill already exists for project: " + projectId);
+        }
+
+        Long existingStart = config.getProjectStartDate();
+        Long existingEnd = config.getProjectEndDate();
+
+        // Guard: no change
+        if (newStart.equals(existingStart) && newEnd.equals(existingEnd)) {
+            log.info("No date change detected for project: {}, skipping", projectId);
+            return;
+        }
+
+        // Guard: invalid date range
+        if (newStart >= newEnd) {
+            throw new CustomException("INVALID_DATE_RANGE",
+                "New start date must be before new end date for project: " + projectId);
+        }
+
+        boolean startDateChanged = !newStart.equals(existingStart);
+        boolean endDateChanged = !newEnd.equals(existingEnd);
+
+        if (startDateChanged) {
+            handleStartDateChange(config, newStart, newEnd, userId);
+        } else if (endDateChanged) {
+            handleEndDateChange(config, newEnd, userId);
+        }
+    }
+
+    /**
+     * Handles start date change (covers "start only" and "start + end" together).
+     * Blocks if campaign has already started. Otherwise deprecates all periods and regenerates.
+     */
+    private void handleStartDateChange(BillingConfig config, Long newStart, Long newEnd, String userId) {
+        long currentTime = System.currentTimeMillis();
+
+        if (currentTime >= config.getProjectStartDate()) {
+            throw new CustomException("START_DATE_UPDATE_NOT_ALLOWED",
+                "Cannot update start date after campaign has started. " +
+                "Campaign: " + config.getCampaignNumber() +
+                ", projectStartDate: " + config.getProjectStartDate());
+        }
+
+        log.info("Start date changed for campaign: {} — deprecating all periods and regenerating", config.getCampaignNumber());
+
+        // Deprecate all existing active periods
+        repository.deprecatePeriodsByConfigId(config.getId(), userId, currentTime);
+
+        // Determine next period number (continues from max deprecated number)
+        int nextPeriodNumber = repository.getMaxPeriodNumber(config.getId(), config.getTenantId()) + 1;
+
+        // Update config with both new dates
+        config.setProjectStartDate(newStart);
+        config.setProjectEndDate(newEnd);
+        config.setLastModifiedBy(userId);
+        config.setLastModifiedTime(currentTime);
+        repository.update(config);
+
+        // Regenerate all periods for the new date range
+        List<BillingPeriod> newPeriods = periodGenerationService.generatePeriods(config, nextPeriodNumber);
+        repository.savePeriods(newPeriods);
+
+        log.info("Regenerated {} periods for campaign: {} with new start: {}, end: {}",
+            newPeriods.size(), config.getCampaignNumber(), newStart, newEnd);
+    }
+
+    /**
+     * Handles end date change only (start date unchanged).
+     *
+     * Finds the period whose range contains the new end date:
+     *  - Concerned period found + PENDING → trim its end date, deprecate periods after it
+     *  - Concerned period found + BILLED/COMPLETED/PROCESSING → block
+     *  - No concerned period → extension; append new periods after the last one
+     */
+    private void handleEndDateChange(BillingConfig config, Long newEnd, String userId) {
+        long currentTime = System.currentTimeMillis();
+        String configId = config.getId();
+        String tenantId = config.getTenantId();
+
+        List<BillingPeriod> activePeriods = repository.findPeriodsByConfigId(configId, tenantId);
+
+        // Edge case: no active periods — regenerate from existing start to new end
+        if (activePeriods.isEmpty()) {
+            log.info("No active periods for config: {} — regenerating from existing start to new end", configId);
+            int nextPeriodNumber = repository.getMaxPeriodNumber(configId, tenantId) + 1;
+            config.setProjectEndDate(newEnd);
+            config.setLastModifiedBy(userId);
+            config.setLastModifiedTime(currentTime);
+            repository.update(config);
+            List<BillingPeriod> newPeriods = periodGenerationService.generatePeriods(config, nextPeriodNumber);
+            repository.savePeriods(newPeriods);
+            return;
+        }
+
+        // Find the period whose range contains newEnd
+        Optional<BillingPeriod> concernedOpt = activePeriods.stream()
+            .filter(p -> p.getPeriodStartDate() <= newEnd && p.getPeriodEndDate() >= newEnd)
+            .findFirst();
+
+        if (concernedOpt.isPresent()) {
+            BillingPeriod concerned = concernedOpt.get();
+
+            if (concerned.isBilled() || concerned.isCompleted() || concerned.isProcessing()) {
+                throw new CustomException("END_DATE_UPDATE_BLOCKED",
+                    "Cannot update end date — it falls within an immutable period. " +
+                    "periodId: " + concerned.getId() +
+                    ", periodNumber: " + concerned.getPeriodNumber() +
+                    ", status: " + concerned.getStatus());
+            }
+
+            // PENDING — safe to trim or deprecate
+            if (newEnd.equals(concerned.getPeriodStartDate())) {
+                // newEnd falls exactly on this period's start — trimming to zero length would violate
+                // chk_period_dates (period_start_date < period_end_date). Deprecate this period entirely.
+                log.info("End date equals period {} start date — deprecating period entirely", concerned.getPeriodNumber());
+                repository.deprecatePeriodsAfterNumber(configId, concerned.getPeriodNumber() - 1, userId, currentTime);
+            } else {
+                log.info("End date falls within PENDING period {} — trimming and deprecating tail", concerned.getPeriodNumber());
+                repository.updatePeriodEndDate(concerned.getId(), newEnd, userId, currentTime);
+                repository.deprecatePeriodsAfterNumber(configId, concerned.getPeriodNumber(), userId, currentTime);
+            }
+
+        } else {
+            // newEnd is beyond all existing periods — extension
+            BillingPeriod lastPeriod = activePeriods.stream()
+                .max(Comparator.comparingInt(BillingPeriod::getPeriodNumber))
+                .orElseThrow();
+
+            long extensionStart = lastPeriod.getPeriodEndDate() + 1;
+
+            // If the last period is still PENDING and its end date has not yet passed,
+            // and it was trimmed short (natural frequency boundary is later than its current end),
+            // extend it to the natural boundary before appending new periods.
+            long frequencyDurationMs = periodGenerationService.getFrequencyDurationMs(config);
+            log.info("Last period [{}] — status: {}, start: {}, end: {}, currentTime: {}, frequencyDuration: {} days",
+                lastPeriod.getPeriodNumber(), lastPeriod.getStatus(),
+                fmt(lastPeriod.getPeriodStartDate()), fmt(lastPeriod.getPeriodEndDate()),
+                fmt(currentTime), frequencyDurationMs / 86_400_000L);
+            if (lastPeriod.isPending()
+                    && lastPeriod.getPeriodEndDate() >= currentTime
+                    && frequencyDurationMs > 0) {
+                long naturalEnd = lastPeriod.getPeriodStartDate() + frequencyDurationMs - 1;
+                log.info("Natural end of last period [{}]: {}, willExtend: {}",
+                    lastPeriod.getPeriodNumber(), fmt(naturalEnd), naturalEnd > lastPeriod.getPeriodEndDate());
+                if (naturalEnd > lastPeriod.getPeriodEndDate()) {
+                    long updatedEnd = Math.min(naturalEnd, newEnd);
+                    repository.updatePeriodEndDate(lastPeriod.getId(), updatedEnd, userId, currentTime);
+                    log.info("Extended period [{}] — start: {}, previousEnd: {} → updatedEnd: {} (natural {} boundary)",
+                        lastPeriod.getPeriodNumber(),
+                        fmt(lastPeriod.getPeriodStartDate()), fmt(lastPeriod.getPeriodEndDate()),
+                        fmt(updatedEnd), config.getBillingFrequency());
+                    extensionStart = updatedEnd + 1;
+                }
+            }
+
+            if (extensionStart >= newEnd) {
+                log.info("No new periods to append — extensionStart: {} >= newEnd: {} for config: {}",
+                    fmt(extensionStart), fmt(newEnd), configId);
+            } else {
+                log.info("Appending new periods from {} to {} for campaign: {}",
+                    fmt(extensionStart), fmt(newEnd), config.getCampaignNumber());
+
+                BillingConfig tailConfig = BillingConfig.builder()
+                    .id(config.getId())
+                    .tenantId(config.getTenantId())
+                    .projectId(config.getProjectId())
+                    .campaignNumber(config.getCampaignNumber())
+                    .billingFrequency(config.getBillingFrequency())
+                    .customFrequencyDays(config.getCustomFrequencyDays())
+                    .projectStartDate(extensionStart)
+                    .projectEndDate(newEnd)
+                    .createdBy(config.getCreatedBy())
+                    .build();
+
+                List<BillingPeriod> newPeriods = periodGenerationService.generatePeriods(
+                    tailConfig, lastPeriod.getPeriodNumber() + 1);
+                repository.savePeriods(newPeriods);
+                log.info("Appended {} new periods for campaign: {} ({} to {})",
+                    newPeriods.size(), config.getCampaignNumber(), fmt(extensionStart), fmt(newEnd));
+            }
+        }
+
+        // Always update config end date
+        config.setProjectEndDate(newEnd);
+        config.setLastModifiedBy(userId);
+        config.setLastModifiedTime(currentTime);
+        repository.update(config);
+    }
+
+    private String fmt(long epochMs) {
+        return DT_FORMAT.format(Instant.ofEpochMilli(epochMs));
     }
 }

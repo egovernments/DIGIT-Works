@@ -472,6 +472,77 @@ public class BillingConfigRepository {
     }
 
     /**
+     * Updates only the period_end_date of a billing period.
+     * Used when campaign end date changes and the new end falls within an existing PENDING period.
+     */
+    @Transactional
+    public void updatePeriodEndDate(String periodId, Long newEndDate, String modifiedBy, Long modifiedTime) {
+        log.info("Updating period_end_date for period: {} to {}", periodId, newEndDate);
+
+        String sql = "UPDATE eg_wms_billing_period SET " +
+            "period_end_date = :newEndDate, " +
+            "last_modified_by = :modifiedBy, " +
+            "last_modified_time = :modifiedTime " +
+            "WHERE id = :periodId";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("periodId", periodId);
+        params.put("newEndDate", newEndDate);
+        params.put("modifiedBy", modifiedBy);
+        params.put("modifiedTime", modifiedTime);
+
+        int rowsUpdated = namedParameterJdbcTemplate.update(sql, params);
+        if (rowsUpdated == 0) {
+            log.warn("No billing period found to update period_end_date for id: {}", periodId);
+        } else {
+            log.info("period_end_date updated successfully for period: {}", periodId);
+        }
+    }
+
+    /**
+     * Deprecates all non-deprecated periods with period_number greater than the given threshold.
+     * Used when campaign end date is reduced — periods beyond the new end are trimmed off.
+     */
+    @Transactional
+    public void deprecatePeriodsAfterNumber(String billingConfigId, int periodNumber,
+                                            String modifiedBy, Long modifiedTime) {
+        log.info("Deprecating periods after number {} for config: {}", periodNumber, billingConfigId);
+
+        String sql = "UPDATE eg_wms_billing_period SET " +
+            "is_deprecated = true, " +
+            "last_modified_by = :modifiedBy, " +
+            "last_modified_time = :modifiedTime " +
+            "WHERE billing_config_id = :billingConfigId " +
+            "AND period_number > :periodNumber " +
+            "AND is_deprecated = false";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("billingConfigId", billingConfigId);
+        params.put("periodNumber", periodNumber);
+        params.put("modifiedBy", modifiedBy);
+        params.put("modifiedTime", modifiedTime);
+
+        int rowsUpdated = namedParameterJdbcTemplate.update(sql, params);
+        log.info("Deprecated {} periods after number {} for config: {}", rowsUpdated, periodNumber, billingConfigId);
+    }
+
+    /**
+     * Returns the highest period_number across all periods (including deprecated) for a config.
+     * Used to continue period numbering after a bulk deprecation.
+     */
+    public int getMaxPeriodNumber(String billingConfigId, String tenantId) {
+        String sql = "SELECT COALESCE(MAX(period_number), 0) FROM eg_wms_billing_period " +
+            "WHERE billing_config_id = :billingConfigId AND tenant_id = :tenantId";
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("billingConfigId", billingConfigId);
+        params.put("tenantId", tenantId);
+
+        Integer max = namedParameterJdbcTemplate.queryForObject(sql, params, Integer.class);
+        return max != null ? max : 0;
+    }
+
+    /**
      * Converts additional details object to JSON string.
      *
      * @param additionalDetails Additional details object

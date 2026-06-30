@@ -42,7 +42,7 @@ public class AttendanceRegisterConsumer {
      * tenant-specific and global topics.
      */
 
-    @KafkaListener(topicPattern = "(${attendance.kafka.tenant.id.pattern}){0,1}${project.management.system.kafka.update.topic}")
+    @KafkaListener(topicPattern = "(${attendance.kafka.tenant.id.pattern})${project.management.system.kafka.update.topic}")
     public void projectUpdate(Map<String, Object> consumerRecord,
                            @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {

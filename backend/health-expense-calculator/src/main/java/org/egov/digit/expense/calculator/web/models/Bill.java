@@ -2,7 +2,9 @@ package org.egov.digit.expense.calculator.web.models;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -11,6 +13,9 @@ import jakarta.validation.constraints.Size;
 import org.egov.common.contract.models.AuditDetails;
 import org.springframework.validation.annotation.Validated;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -59,20 +64,23 @@ public class Bill {
 	@Default
 	private BigDecimal totalAmount = BigDecimal.ZERO;
 
-	@JsonProperty("totalWageAmount")
-	@Valid
+	@JsonIgnore
 	@Default
-	private BigDecimal totalWageAmount = BigDecimal.ZERO;
+	private Map<String, BigDecimal> amountBreakup = new LinkedHashMap<>();
 
-	@JsonProperty("totalFoodAmount")
-	@Valid
-	@Default
-	private BigDecimal totalFoodAmount = BigDecimal.ZERO;
+	/** Serializes dynamic amount entries as sibling JSON fields (e.g. "totalWageAmount": 100). */
+	@JsonAnyGetter
+	public Map<String, BigDecimal> getAmountBreakup() {
+		return amountBreakup;
+	}
 
-	@JsonProperty("totalTransportAmount")
-	@Valid
-	@Default
-	private BigDecimal totalTransportAmount = BigDecimal.ZERO;
+	/** Deserializes unknown numeric JSON fields back into amountBreakup. */
+	@JsonAnySetter
+	public void setAmountEntry(String key, Object value) {
+		if (value instanceof Number) {
+			amountBreakup.put(key, new BigDecimal(value.toString()));
+		}
+	}
 
 	@JsonProperty("totalPaidAmount")
 	@Valid

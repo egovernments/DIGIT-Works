@@ -16,7 +16,8 @@ import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
@@ -26,6 +27,8 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
+
+import org.egov.digit.expense.calculator.web.models.RateFieldConfig;
 
 import static org.egov.digit.expense.calculator.util.BillReportConstraints.*;
 
@@ -68,7 +71,30 @@ public class BillExcelGenerate {
     private ByteArrayResource generateExcelFromReportObject(ReportBill reportBill, Map<String, String> localizationMap) {
         byte[] excelBytes;
 
-        String[] columns = BILL_EXCEL_COLUMNS; // Default column names
+        // Use fieldConfigs from reportBill for ordered column header localization keys
+        List<RateFieldConfig> fieldConfigs = reportBill.getFieldConfigs() != null
+                ? reportBill.getFieldConfigs() : Collections.emptyList();
+
+        // Build column headers: fixed prefix + per-day amounts + totalWages + days + total-per-field + totalAmount
+        // Structure: [slNo, name, role, boundary, id, mobile] + [perDay_1..N] + [totalWages, days] + [total_1..N] + [totalAmountToPay]
+        List<String> columnList = new ArrayList<>(Arrays.asList(
+                "PDF_STATIC_LABEL_BILL_TABLE_SERIAL_NUMBER", "PDF_STATIC_LABEL_BILL_TABLE_INDIVIDUAL_NAME",
+                "PDF_STATIC_LABEL_BILL_TABLE_ROLE", "PDF_STATIC_LABEL_BILL_TABLE_BOUNDARY_NAME",
+                "PDF_STATIC_LABEL_BILL_TABLE_ID_NUMBER", "PDF_STATIC_LABEL_BILL_TABLE_MOBILE_NUMBER"
+        ));
+        fieldConfigs.forEach(cfg -> columnList.add(
+                cfg.getColumnLabelKey() != null ? cfg.getColumnLabelKey() : cfg.getReportDetailKey()));
+        columnList.add("PDF_STATIC_LABEL_BILL_TABLE_TOTAL_WAGE");
+        columnList.add("PDF_STATIC_LABEL_BILL_TABLE_NUMBER_OF_DAYS");
+        fieldConfigs.forEach(cfg -> columnList.add(
+                cfg.getTotalColumnLabelKey() != null ? cfg.getTotalColumnLabelKey() : cfg.getReportDetailKey()));
+        columnList.add("PDF_STATIC_LABEL_BILL_TABLE_TOTAL_AMOUNT_TO_PAY");
+
+        // Ordered reportDetailKey list used for data rows and footer
+        List<String> dynamicKeys = fieldConfigs.stream()
+                .map(RateFieldConfig::getReportDetailKey)
+                .collect(Collectors.toList());
+        String[] columns = columnList.toArray(new String[0]);
         BigDecimal totalAmountToProcess = reportBill.getTotalAmount();
         String totalNumberOfWorkers = reportBill.getNumberOfIndividuals().toString();
         String campaignName = reportBill.getCampaignName();
@@ -149,46 +175,55 @@ public class BillExcelGenerate {
         // Write data rows
         for (ReportBillDetail detail : reportBill.getReportBillDetails()) {
             Row row = sheet.createRow(rowNum++);
-            BigDecimal wageAmount = detail.getWageAmount();
-            BigDecimal foodAmount = detail.getFoodAmount();
-            BigDecimal transportAmount = detail.getTransportAmount();
-            BigDecimal totalDays = BigDecimal.valueOf(detail.getTotalNumberOfDays());
+            BigDecimal totalDays = BigDecimal.valueOf(detail.getTotalNumberOfDays() != null ? detail.getTotalNumberOfDays() : 0f);
 
-            // Perform multiplication using .multiply() method
-            BigDecimal totalWageAmount = wageAmount.multiply(totalDays);
-            BigDecimal totalFoodAmount = foodAmount.multiply(totalDays);
-            BigDecimal totalTransportAmount = transportAmount.multiply(totalDays);
-            Object[] data = {
+            List<Object> data = new ArrayList<>(Arrays.asList(
                     detail.getSlNo(), detail.getIndividualName(), detail.getRole(), detail.getLocality(),
-                    detail.getIdNumber(), detail.getMobileNumber(),
-                    detail.getWageAmount(), detail.getFoodAmount(),
-                    detail.getTransportAmount(), detail.getTotalWages(),
-                    detail.getTotalNumberOfDays(),
-                    totalWageAmount, totalFoodAmount, totalTransportAmount,
-                    detail.getTotalAmount()
-            };
+                    detail.getIdNumber(), detail.getMobileNumber()
+            ));
+            // Per-day amounts for each dynamic field
+            for (String key : dynamicKeys) {
+                data.add(detail.getPerDayBreakup().getOrDefault(key, BigDecimal.ZERO));
+            }
+            data.add(detail.getTotalWages());
+            data.add(detail.getTotalNumberOfDays());
+            // Total amounts per field: use stored bill total when available (PERCENTAGE fields),
+            // otherwise fall back to perDayBreakup × days (FLAT fields).
+            for (String key : dynamicKeys) {
+                BigDecimal storedTotal = detail.getTotalAmountBreakup().get(key);
+                if (storedTotal != null) {
+                    data.add(storedTotal);
+                } else {
+                    data.add(detail.getPerDayBreakup().getOrDefault(key, BigDecimal.ZERO).multiply(totalDays));
+                }
+            }
+            data.add(detail.getTotalAmount());
 
-            for (int i = 0; i < data.length; i++) {
+            for (int i = 0; i < data.size(); i++) {
                 Cell cell = row.createCell(i);
                 if (i == 0) {
                     cell.setCellStyle(slNoStyle);
-                    cell.setCellValue(data[i].toString());
+                    cell.setCellValue(data.get(i) != null ? data.get(i).toString() : "");
                 } else {
-                    setCellValueWithAlignment(cell, data[i], textStyle, numberStyle);
+                    setCellValueWithAlignment(cell, data.get(i), textStyle, numberStyle);
                 }
             }
         }
 
-        // Write total row
+        // Write total row — dynamic number of amount columns
         Row billFooterTotalRow = sheet.createRow(rowNum++);
-        Cell totalLabelcell = billFooterTotalRow.createCell(columns.length - 5);
+        // Label is placed before the dynamic total columns
+        int footerLabelCol = columns.length - dynamicKeys.size() - 2;
+        Cell totalLabelcell = billFooterTotalRow.createCell(footerLabelCol);
         setCellValueWithAlignment(totalLabelcell, localizationMap.getOrDefault(BILL_EXCEL_FOOTER_TOTAL_AMOUNT_LABEL, BILL_EXCEL_FOOTER_TOTAL_AMOUNT_LABEL), textStyle, numberStyle);
-        Cell totalWageAmountCell = billFooterTotalRow.createCell(columns.length - 4);
-        setCellValueWithAlignment(totalWageAmountCell, reportBill.getTotalWageAmount(), textStyle, numberStyle);
-        Cell totalFoodAmountCell = billFooterTotalRow.createCell(columns.length - 3);
-        setCellValueWithAlignment(totalFoodAmountCell, reportBill.getTotalFoodAmount(), textStyle, numberStyle);
-        Cell totalTransportAmountCell = billFooterTotalRow.createCell(columns.length - 2);
-        setCellValueWithAlignment(totalTransportAmountCell, reportBill.getTotalTransportAmount(), textStyle, numberStyle);
+        // Dynamic total amount columns — use billAmountKey from fieldConfig for correct map lookup
+        for (int i = 0; i < fieldConfigs.size(); i++) {
+            String billAmountKey = fieldConfigs.get(i).getBillAmountKey();
+            BigDecimal val = billAmountKey != null
+                    ? reportBill.getAmountBreakup().getOrDefault(billAmountKey, BigDecimal.ZERO)
+                    : BigDecimal.ZERO;
+            setCellValueWithAlignment(billFooterTotalRow.createCell(footerLabelCol + 1 + i), val, textStyle, numberStyle);
+        }
         Cell totalAmountCell = billFooterTotalRow.createCell(columns.length - 1);
         setCellValueWithAlignment(totalAmountCell, reportBill.getTotalAmount(), textStyle, numberStyle);
 

@@ -191,27 +191,19 @@ public class StaffServiceValidator {
         RequestInfo requestInfo = staffPermissionRequest.getRequestInfo();
         List<StaffPermission> staffPermissionListFromRequest = staffPermissionRequest.getStaff();
 
-        boolean staffExists = false;
-        boolean staffDeenrolled = true;
-
-
-        //check is staff user id exists in staff table. If yes check if the de enrollment date is null
-        log.info("checking if the de enrollment date of staff is null");
+        //check that each staff user id is linked with the register
+        log.info("checking that each staff in the request is linked with the register");
         for (StaffPermission staffPermissionFromRequest : staffPermissionListFromRequest) {
+            boolean staffExists = false;
             for (StaffPermission staffPermissionFromDB : staffPermissionListFromDB) {
                 if (staffPermissionFromRequest.getRegisterId().equals(staffPermissionFromDB.getRegisterId()) &&
                         staffPermissionFromRequest.getUserId().equals(staffPermissionFromDB.getUserId())) {
                     staffExists = true;
-                    if (staffPermissionFromDB.getDenrollmentDate() == null) {
-                        staffDeenrolled = false;
-                        break;
-                    }
+                    break;
                 }
             }
             if (!staffExists)
                 throw new CustomException("USER_ID", "Staff with the given user id: " + staffPermissionFromRequest.getUserId() + " is not linked with the given register id");//handled
-            if (staffDeenrolled)
-                throw new CustomException("USER_ID", "Staff with the given user id : " + staffPermissionFromRequest.getUserId() + " is already de enrolled from the register");
         }
 
 
@@ -226,10 +218,14 @@ public class StaffServiceValidator {
         }
 
 
-        //<registerId,staffCount> from staffRequest - number of de enrollments from each register
+        //<registerId,staffCount> from staffRequest - count only active staff actually being de-enrolled from each register
         for (StaffPermission staffPermissionFromRequest : staffPermissionListFromRequest) {
             String staffRegisterId = staffPermissionFromRequest.getRegisterId();
-            if (staffCountInEachRegisterIdFromRequest.containsKey(staffRegisterId)) {
+            boolean activeInDB = staffPermissionListFromDB.stream()
+                    .anyMatch(s -> s.getRegisterId().equals(staffPermissionFromRequest.getRegisterId())
+                            && s.getUserId().equals(staffPermissionFromRequest.getUserId())
+                            && s.getDenrollmentDate() == null);
+            if (activeInDB && staffCountInEachRegisterIdFromRequest.containsKey(staffRegisterId)) {
                 int count = staffCountInEachRegisterIdFromRequest.get(staffRegisterId);
                 count++;
                 staffCountInEachRegisterIdFromRequest.put(staffRegisterId, count);
@@ -249,14 +245,22 @@ public class StaffServiceValidator {
 
         // validate that de-enrollment date falls within register's start and end dates
         log.info("validating that de-enrollment date falls within register start and end dates");
+        BigDecimal currentDate = new BigDecimal(System.currentTimeMillis());
         for (StaffPermission staffFromRequest : staffPermissionListFromRequest) {
             AttendanceRegister register = attendanceRegisterListFromDB.stream()
                     .filter(r -> r.getId().equals(staffFromRequest.getRegisterId()))
                     .findFirst().orElse(null);
             if (register != null) {
+                StaffPermission staffFromDB = staffPermissionListFromDB.stream()
+                        .filter(s -> s.getRegisterId().equals(staffFromRequest.getRegisterId())
+                                && s.getUserId().equals(staffFromRequest.getUserId()))
+                        .findFirst().orElse(null);
+                BigDecimal enrollmentDate = staffFromDB != null ? staffFromDB.getEnrollmentDate() : null;
+                BigDecimal defaultDate = (enrollmentDate != null && enrollmentDate.compareTo(currentDate) > 0)
+                        ? enrollmentDate : currentDate;
                 BigDecimal denrollmentDate = staffFromRequest.getDenrollmentDate() != null
                         ? staffFromRequest.getDenrollmentDate()
-                        : new BigDecimal(System.currentTimeMillis());
+                        : defaultDate;
                 if (denrollmentDate.compareTo(register.getStartDate()) < 0) {
                     log.error("De-enrollment date is before register start date for register id " + register.getId());
                     throw new CustomException("DENROLLMENT_DATE", "De-enrollment date cannot be before register start date for register id: " + register.getId());
@@ -264,6 +268,10 @@ public class StaffServiceValidator {
                 if (denrollmentDate.compareTo(register.getEndDate()) > 0) {
                     log.error("De-enrollment date is after register end date for register id " + register.getId());
                     throw new CustomException("DENROLLMENT_DATE", "De-enrollment date cannot be after register end date for register id: " + register.getId());
+                }
+                if (enrollmentDate != null && denrollmentDate.compareTo(enrollmentDate) < 0) {
+                    log.error("De-enrollment date is before enrollment date for register id " + register.getId());
+                    throw new CustomException("DENROLLMENT_DATE", "De-enrollment date cannot be before enrollment date for register id: " + register.getId());
                 }
             }
         }

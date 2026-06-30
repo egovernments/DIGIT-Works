@@ -147,7 +147,7 @@ public class MusterRollStatusUpdateConsumer {
      * @param consumerRecord The Kafka message as Map
      * @param topic The Kafka topic name (for logging)
      */
-    @KafkaListener(topicPattern = "(${attendance.kafka.tenant.id.pattern}){0,1}${attendance.register.kafka.muster.status.update.topic}")
+    @KafkaListener(topicPattern = "(${attendance.kafka.tenant.id.pattern})${attendance.register.kafka.muster.status.update.topic}")
     public void processMusterRollStatusUpdate(
             Map<String, Object> consumerRecord,
             @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
@@ -341,7 +341,7 @@ public class MusterRollStatusUpdateConsumer {
 
             // Publish to update-attendance topic (reusing existing topic)
             // Persister config already includes period_statuses field in the UPDATE query
-            producer.push(updateAttendanceRegisterTopic, request);
+            producer.push(tenantId, updateAttendanceRegisterTopic, request);
 
             log.debug("publishRegisterUpdate::Published to topic: {} for register: {}", updateAttendanceRegisterTopic, register.getId());
 

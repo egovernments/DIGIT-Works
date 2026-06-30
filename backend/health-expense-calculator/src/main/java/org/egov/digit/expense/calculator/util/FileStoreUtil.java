@@ -31,26 +31,31 @@ public class FileStoreUtil {
         this.config = config;
     }
 
-    public String uploadFileAndGetFileStoreId(String tenantId, Resource resource){
+    private static final int MAX_UPLOAD_RETRIES = 3;
+    private static final long UPLOAD_RETRY_BASE_DELAY_MS = 5000L;
+
+    public String uploadFileAndGetFileStoreId(String tenantId, Resource resource) {
         HttpHeaders headers = new HttpHeaders();
-        Object response = null;
-        StringBuilder uri = new StringBuilder();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        uri.append(config.getFileStoreHost()).append(config.getFileStoreEndpoint());
+        String uri = config.getFileStoreHost() + config.getFileStoreEndpoint();
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("tenantId", tenantId);
         body.add("file", resource);
         body.add("module", "BILL");
-
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-        try {
-            response = restTemplate.postForObject(uri.toString(),requestEntity, Object.class);
-        }catch (Exception e){
-            log.error("Exception while uploading file to filestore: ", e);
-            throw new RuntimeException(e.getMessage());
+        Exception lastException = null;
+        for (int attempt = 1; attempt <= MAX_UPLOAD_RETRIES; attempt++) {
+            try {
+                log.info("Filestore upload attempt {}/{} for tenantId: {}", attempt, MAX_UPLOAD_RETRIES, tenantId);
+                Object response = restTemplate.postForObject(uri, requestEntity, Object.class);
+                return getFileStoreId(response);
+            } catch (Exception e) {
+                lastException = e;
+                log.error("Filestore upload attempt {}/{} failed: {}", attempt, MAX_UPLOAD_RETRIES, e.getMessage());
+            }
         }
-        return getFileStoreId(response);
+        throw new RuntimeException("Filestore upload failed after " + MAX_UPLOAD_RETRIES + " attempts: " + lastException.getMessage(), lastException);
     }
 
     private String getFileStoreId(Object response) {

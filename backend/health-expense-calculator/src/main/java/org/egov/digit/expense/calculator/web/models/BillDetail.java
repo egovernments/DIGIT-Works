@@ -98,6 +98,11 @@ public class BillDetail {
 	@Valid
 	private AuditDetails auditDetails;
 
+	@JsonProperty("totalAttendance")
+	@Valid
+	@Default
+	private BigDecimal totalAttendance = BigDecimal.ZERO;
+
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails;
 

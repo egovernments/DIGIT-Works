@@ -309,3 +309,48 @@ serviceMaps:
             - jsonPath: $.attendanceRegister.*.auditDetails.lastModifiedBy
             - jsonPath: $.attendanceRegister.*.auditDetails.lastModifiedTime
             - jsonPath: $.attendanceRegister.*.id
+    - version: 1.0
+      name: Face Auth Event
+      description: Persists face verification events in eg_wms_face_auth_event table
+      fromTopic: save-face-auth-event
+      isTransaction: true
+      isAuditEnabled: true
+      module: ATND
+      objecIdJsonPath: $.id
+      tenantIdJsonPath: $.tenantId
+      auditAttributeBasePath: $.faceAuthEvents.*
+      queryMaps:
+        - query: INSERT INTO eg_wms_face_auth_event(id,clientreferenceid,tenantid,individual_id,device_id,event_type,outcome,confidence,latitude,longitude,location_accuracy,event_timestamp,failed_attempt_count,popup_time,response_time,response_type,face_image,anomaly_flags,project_id,boundary_code,additionaldetails,createdby,lastmodifiedby,createdtime,lastmodifiedtime,clientcreatedby,clientlastmodifiedby,clientcreatedtime,clientlastmodifiedtime) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+          basePath: $.faceAuthEvents.*
+          jsonMaps:
+            - jsonPath: $.faceAuthEvents.*.id
+            - jsonPath: $.faceAuthEvents.*.clientReferenceId
+            - jsonPath: $.faceAuthEvents.*.tenantId
+            - jsonPath: $.faceAuthEvents.*.individualId
+            - jsonPath: $.faceAuthEvents.*.deviceId
+            - jsonPath: $.faceAuthEvents.*.eventType
+            - jsonPath: $.faceAuthEvents.*.outcome
+            - jsonPath: $.faceAuthEvents.*.confidence
+            - jsonPath: $.faceAuthEvents.*.latitude
+            - jsonPath: $.faceAuthEvents.*.longitude
+            - jsonPath: $.faceAuthEvents.*.locationAccuracy
+            - jsonPath: $.faceAuthEvents.*.timestamp
+            - jsonPath: $.faceAuthEvents.*.failedAttemptCount
+            - jsonPath: $.faceAuthEvents.*.popupTime
+            - jsonPath: $.faceAuthEvents.*.responseTime
+            - jsonPath: $.faceAuthEvents.*.responseType
+            - jsonPath: $.faceAuthEvents.*.faceImage
+            - jsonPath: $.faceAuthEvents.*.anomalyFlags
+            - jsonPath: $.faceAuthEvents.*.projectId
+            - jsonPath: $.faceAuthEvents.*.boundaryCode
+            - jsonPath: $.faceAuthEvents.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.faceAuthEvents.*.auditDetails.createdBy
+            - jsonPath: $.faceAuthEvents.*.auditDetails.lastModifiedBy
+            - jsonPath: $.faceAuthEvents.*.auditDetails.createdTime
+            - jsonPath: $.faceAuthEvents.*.auditDetails.lastModifiedTime
+            - jsonPath: $.faceAuthEvents.*.clientAuditDetails.createdBy
+            - jsonPath: $.faceAuthEvents.*.clientAuditDetails.lastModifiedBy
+            - jsonPath: $.faceAuthEvents.*.clientAuditDetails.createdTime
+            - jsonPath: $.faceAuthEvents.*.clientAuditDetails.lastModifiedTime

@@ -126,6 +126,9 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.expense.bill.service.search.endpoint}")
 	private String expenseBillSearchEndPoint;
 
+	@Value("${egov.bill.report.meta.update.endpoint}")
+	private String billReportMetaUpdateEndPoint;
+
 	// HRMS
 	@Value("${egov.hrms.host}")
 	private String hrmsHost;

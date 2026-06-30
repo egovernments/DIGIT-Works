@@ -981,8 +981,8 @@ public class AttendanceRegisterService {
 
                 registers.forEach(attendanceRegister -> {
                     Boolean isUpdated = false;
-                    if(attendanceRegister.getEndDate().compareTo(projectEndDate) < 0) {
-                        // update register end date to project end date
+                    if(attendanceRegister.getEndDate().compareTo(projectEndDate) != 0) {
+                        // update register end date to match project end date (extend or reduce)
                         attendanceRegister.setEndDate(projectEndDate);
                         isUpdated = true;
                     }

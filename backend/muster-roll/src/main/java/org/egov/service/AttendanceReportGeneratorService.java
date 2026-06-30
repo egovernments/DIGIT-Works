@@ -140,10 +140,18 @@ public class AttendanceReportGeneratorService {
             log.info("Starting report generation for muster roll: {} ({} {})",
                     musterRollId, reportType, reportFormat);
 
-            // Fetch muster roll
-            musterRoll = fetchMusterRoll(musterRollId, tenantId);
+            // Prefer the in-memory muster roll from the request (race-free); fall back to DB read
+            musterRoll = request.getMusterRoll() != null ? request.getMusterRoll()
+                    : fetchMusterRoll(musterRollId, tenantId);
             if (musterRoll == null) {
                 log.error("Muster roll not found: {}", musterRollId);
+                return;
+            }
+
+            if (!AttendanceReportConstants.REPORT_STATUS_COMPLETED.equalsIgnoreCase(musterRoll.getMusterRollStatus())
+                    && !"APPROVED".equalsIgnoreCase(musterRoll.getMusterRollStatus())) {
+                log.info("Skipping report generation - muster roll {} not approved (status: {})",
+                        musterRollId, musterRoll.getMusterRollStatus());
                 return;
             }
 
