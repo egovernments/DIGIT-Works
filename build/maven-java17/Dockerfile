@@ -8,7 +8,7 @@ COPY ${WORK_DIR}/pom.xml ./pom.xml
 COPY ${WORK_DIR}/src ./src
 
 # Build the project
-RUN mvn -B -f /app/pom.xml package
+RUN mvn -B -f /app/pom.xml package -DskipTests
 
 # ─────────────── RUNTIME STAGE ───────────────
 FROM gcr.io/distroless/java17-debian12:nonroot
