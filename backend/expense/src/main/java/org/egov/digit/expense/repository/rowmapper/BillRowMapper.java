@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.digit.expense.web.models.Bill;
+import org.egov.digit.expense.web.models.BillSignature;
 import org.egov.digit.expense.web.models.Party;
 import org.egov.digit.expense.web.models.enums.PaymentStatus;
 import org.egov.digit.expense.web.models.enums.Status;
@@ -89,6 +90,20 @@ public class BillRowMapper implements ResultSetExtractor<List<Bill>> {
 								breakup.put(e.getKey(), e.getValue().decimalValue());
 							}
 						});
+					}
+
+					// Restore workflow sign-off signatures (persisted under additionalDetails.signatures)
+					JsonNode storedSignatures = billAdditionalDetails.get("signatures");
+					if (storedSignatures != null && storedSignatures.isArray() && !storedSignatures.isEmpty()) {
+						List<BillSignature> signatures = new ArrayList<>();
+						for (JsonNode signatureNode : storedSignatures) {
+							try {
+								signatures.add(mapper.treeToValue(signatureNode, BillSignature.class));
+							} catch (IOException e) {
+								log.warn("Skipping unparseable signature entry on bill {}: {}", billId, e.getMessage());
+							}
+						}
+						bill.setSignatures(signatures);
 					}
 				}
 

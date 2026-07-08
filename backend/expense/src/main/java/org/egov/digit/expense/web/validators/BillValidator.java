@@ -35,6 +35,7 @@ import org.egov.digit.expense.web.models.BillDetailUpdateError;
 import org.egov.digit.expense.web.models.BillDetailUpdateRequest;
 import org.egov.digit.expense.web.models.BillRequest;
 import org.egov.digit.expense.web.models.BillSearchRequest;
+import org.egov.digit.expense.web.models.BillSignature;
 import org.egov.digit.expense.web.models.BulkBillStatusUpdateRequest;
 import org.egov.digit.expense.web.models.BulkUpdateError;
 import org.egov.digit.expense.web.models.LineItem;
@@ -1337,5 +1338,47 @@ public class BillValidator {
 			throw new CustomException(ERR_BILL_META_UPDATE_ERROR, MSG_META_UPDATE_TENANT_ID_MANDATORY);
 		if (request.getReportDetails() == null || request.getReportDetails().isEmpty())
 			throw new CustomException(ERR_BILL_META_UPDATE_ERROR, MSG_META_UPDATE_REPORT_MANDATORY);
+	}
+
+	/**
+	 * Enforces the sign-off requirement: when the workflow action is one of the configured
+	 * signature-required actions (editor / reviewer / approver hand-offs), the bill must carry
+	 * a signature entry for that action with a non-blank printed name and a signature image
+	 * (filestore id). Must be called after signatures are enriched onto the bill.
+	 */
+	public void validateSignatureForWorkflowAction(BillRequest billRequest) {
+
+		Workflow workflow = billRequest.getWorkflow();
+		if (workflow == null || !StringUtils.hasText(workflow.getAction()))
+			return;
+
+		String action = workflow.getAction();
+		if (!configs.getSignatureRequiredActions().contains(action))
+			return;
+
+		Bill bill = billRequest.getBill();
+		BillSignature signature = bill.getSignatures() == null ? null
+				: bill.getSignatures().stream()
+						.filter(entry -> action.equals(entry.getAction()))
+						.reduce((first, second) -> second)
+						.orElse(null);
+
+		if (signature == null)
+			throw new CustomException("EG_EXPENSE_BILL_SIGNATURE_REQUIRED",
+					"A printed name and signature are mandatory to perform the action " + action
+							+ " on bill : " + bill.getBillNumber());
+
+		Map<String, String> errorMap = new HashMap<>();
+
+		if (!StringUtils.hasText(signature.getPrintedName()) || signature.getPrintedName().trim().isEmpty())
+			errorMap.put("EG_EXPENSE_BILL_SIGNATURE_PRINTED_NAME_REQUIRED",
+					"Printed name is mandatory and cannot be blank for the action " + action);
+
+		if (!StringUtils.hasText(signature.getFileStoreId()))
+			errorMap.put("EG_EXPENSE_BILL_SIGNATURE_IMAGE_REQUIRED",
+					"A drawn or uploaded signature image (fileStoreId) is mandatory for the action " + action);
+
+		if (!errorMap.isEmpty())
+			throw new CustomException(errorMap);
 	}
 }

@@ -4,9 +4,12 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.models.project.Project;
 import org.egov.common.models.project.ProjectResponse;
@@ -14,6 +17,7 @@ import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillDetail;
+import org.egov.digit.expense.web.models.BillSignature;
 import org.egov.digit.expense.web.models.BillRequest;
 import org.egov.digit.expense.web.models.BillSearchRequest;
 import org.egov.digit.expense.web.models.LineItem;
@@ -24,6 +28,7 @@ import org.egov.digit.expense.web.models.PaymentBill;
 import org.egov.digit.expense.web.models.PaymentBillDetail;
 import org.egov.digit.expense.web.models.PaymentLineItem;
 import org.egov.digit.expense.web.models.PaymentRequest;
+import org.egov.digit.expense.web.models.enums.Actions;
 import org.egov.digit.expense.web.models.enums.LineItemType;
 import org.egov.digit.expense.web.models.enums.PaymentStatus;
 import org.egov.digit.expense.web.models.enums.ReferenceStatus;
@@ -578,5 +583,102 @@ public class EnrichmentUtil {
             merged.add(li);
         }
         return merged;
+    }
+
+    /**
+     * Merges signatures already captured on the persisted bill with new sign-off entries
+     * from the incoming request, stamps identity data (uuid, user, role, time) on the new
+     * entries, and mirrors the merged list into additionalDetails.signatures so the existing
+     * persister config writes it to the DB without any schema change. Previously captured
+     * signatures are always preserved.
+     */
+    public void enrichBillSignatures(BillRequest billRequest, Bill billFromSearch) {
+
+        Bill bill = billRequest.getBill();
+        List<BillSignature> merged = billFromSearch != null && billFromSearch.getSignatures() != null
+                ? new ArrayList<>(billFromSearch.getSignatures())
+                : new ArrayList<>();
+        Set<String> existingIds = merged.stream()
+                .map(BillSignature::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        if (bill.getSignatures() != null) {
+            for (BillSignature signature : bill.getSignatures()) {
+
+                if (signature.getId() != null && existingIds.contains(signature.getId()))
+                    continue;
+
+                signature.setId(UUID.randomUUID().toString());
+                signature.setSignedTime(System.currentTimeMillis());
+                if (signature.getPrintedName() != null)
+                    signature.setPrintedName(signature.getPrintedName().trim());
+                if (!org.springframework.util.StringUtils.hasText(signature.getAction())
+                        && billRequest.getWorkflow() != null)
+                    signature.setAction(billRequest.getWorkflow().getAction());
+
+                org.egov.common.contract.request.User userInfo = billRequest.getRequestInfo() != null
+                        ? billRequest.getRequestInfo().getUserInfo()
+                        : null;
+                if (userInfo != null) {
+                    signature.setSignedBy(userInfo.getUuid());
+                    if (!org.springframework.util.StringUtils.hasText(signature.getRole()))
+                        signature.setRole(resolvePaymentRole(userInfo, signature.getAction()));
+                }
+                merged.add(signature);
+            }
+        }
+
+        if (merged.isEmpty())
+            return;
+
+        bill.setSignatures(merged);
+        syncSignaturesToAdditionalDetails(bill);
+    }
+
+    /**
+     * Picks the payment role the signature was made under: prefers the role implied by the
+     * workflow action if the user holds it, else the first payment role on the user.
+     */
+    private String resolvePaymentRole(org.egov.common.contract.request.User userInfo, String action) {
+
+        List<org.egov.common.contract.request.Role> roles = userInfo.getRoles();
+        if (roles == null || roles.isEmpty())
+            return null;
+
+        Set<String> userRoleCodes = roles.stream()
+                .map(org.egov.common.contract.request.Role::getCode)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        String actionImpliedRole = null;
+        if (Actions.SEND_FOR_REVIEW.toString().equals(action) || Actions.VERIFY.toString().equals(action))
+            actionImpliedRole = Constants.ROLE_PAYMENT_EDITOR;
+        else if (Actions.SEND_FOR_APPROVAL.toString().equals(action))
+            actionImpliedRole = Constants.ROLE_PAYMENT_REVIEWER;
+        else if (Actions.PAYMENT_INITIATION.toString().equals(action))
+            actionImpliedRole = Constants.ROLE_PAYMENT_APPROVER;
+
+        if (actionImpliedRole != null && userRoleCodes.contains(actionImpliedRole))
+            return actionImpliedRole;
+
+        return Stream.of(Constants.ROLE_PAYMENT_APPROVER, Constants.ROLE_PAYMENT_REVIEWER, Constants.ROLE_PAYMENT_EDITOR)
+                .filter(userRoleCodes::contains)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private void syncSignaturesToAdditionalDetails(Bill bill) {
+
+        ObjectNode details;
+        Object additionalDetails = bill.getAdditionalDetails();
+        if (additionalDetails == null) {
+            details = objectMapper.createObjectNode();
+        } else {
+            JsonNode node = objectMapper.valueToTree(additionalDetails);
+            details = node != null && node.isObject() ? (ObjectNode) node : objectMapper.createObjectNode();
+        }
+        details.set("signatures", objectMapper.valueToTree(bill.getSignatures()));
+        bill.setAdditionalDetails(details);
     }
 }

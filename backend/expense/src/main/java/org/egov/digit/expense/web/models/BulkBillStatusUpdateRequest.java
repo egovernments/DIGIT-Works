@@ -46,4 +46,12 @@ public class BulkBillStatusUpdateRequest {
 	@JsonProperty("workflow")
 	private Workflow workflow;
 
+	/**
+	 * Sign-off applied to every bill in this bulk transition: printed name + signature
+	 * image (filestore id) of the acting payment editor / reviewer / approver.
+	 */
+	@JsonProperty("signature")
+	@Valid
+	private BillSignature signature;
+
 }

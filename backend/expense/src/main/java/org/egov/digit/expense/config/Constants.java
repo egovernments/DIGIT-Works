@@ -222,6 +222,7 @@ public class Constants {
 	// Roles
 	public static final String ROLE_PAYMENT_EDITOR   = "PAYMENT_EDITOR";
 	public static final String ROLE_PAYMENT_REVIEWER = "PAYMENT_REVIEWER";
+	public static final String ROLE_PAYMENT_APPROVER = "PAYMENT_APPROVER";
 
 	// Bill / BillDetail workflow statuses
 	public static final String STATUS_PENDING_VERIFICATION = "PENDING_VERIFICATION";
