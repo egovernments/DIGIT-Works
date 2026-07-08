@@ -392,12 +392,30 @@ public class Configuration {
 	@Value("${bill.started.check.initial.delay.ms:2000}")
 	private long billStartedCheckInitialDelayMs;
 
+	/**
+	 * Workflow actions that require a printed name + signature (sign-off) before the
+	 * bill can transition. Defaults to the editor, reviewer and approver hand-off actions.
+	 */
+	@Value("${expense.bill.signature.required.actions:SEND_FOR_REVIEW,SEND_FOR_APPROVAL,PAYMENT_INITIATION}")
+	private String signatureRequiredActionsRaw;
+
 
 	public List<String> getSchedulerBootstrapTenants() {
 		if (schedulerBootstrapTenantsRaw == null || schedulerBootstrapTenantsRaw.isBlank()) {
 			return Collections.emptyList();
 		}
 		return List.of(schedulerBootstrapTenantsRaw.split(","))
+				.stream()
+				.map(String::trim)
+				.filter(s -> !s.isEmpty())
+				.toList();
+	}
+
+	public List<String> getSignatureRequiredActions() {
+		if (signatureRequiredActionsRaw == null || signatureRequiredActionsRaw.isBlank()) {
+			return Collections.emptyList();
+		}
+		return List.of(signatureRequiredActionsRaw.split(","))
 				.stream()
 				.map(String::trim)
 				.filter(s -> !s.isEmpty())

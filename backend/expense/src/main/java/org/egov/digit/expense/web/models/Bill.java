@@ -123,6 +123,10 @@ public class Bill {
 	@Valid
 	private List<BillDetail> billDetails;
 
+	@JsonProperty("signatures")
+	@Valid
+	private List<BillSignature> signatures;
+
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails;
 
@@ -167,6 +171,9 @@ public class Bill {
 				.status(source.getStatus())
 				.billNumber(source.getBillNumber())
 				.payer(source.getPayer())
+				.signatures(source.getSignatures() != null
+						? new ArrayList<>(source.getSignatures())
+						: null)
 				.additionalDetails(source.getAdditionalDetails())
 				.auditDetails(source.getAuditDetails())
 				.billDetails(Collections.singletonList(detail))

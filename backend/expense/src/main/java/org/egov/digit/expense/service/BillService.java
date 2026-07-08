@@ -76,6 +76,7 @@ public class BillService {
 
 		validator.validateCreateRequest(billRequest);
 		enrichmentUtil.encrichBillForCreate(billRequest);
+		enrichmentUtil.enrichBillSignatures(billRequest, null);
 
 		if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
 			State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
@@ -132,6 +133,8 @@ public class BillService {
 		} else {
 			List<Bill> billsFromSearch = validator.validateUpdateRequest(billRequest);
 			enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
+			enrichmentUtil.enrichBillSignatures(billRequest, billsFromSearch.get(0));
+			validator.validateSignatureForWorkflowAction(billRequest);
 			if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {
 				State wfState = workflowUtil.callWorkFlow(workflowUtil.prepareWorkflowRequestForBill(billRequest), billRequest);
 				bill.setStatus(Status.fromValue(wfState.getApplicationStatus()));
@@ -366,9 +369,19 @@ public class BillService {
 						.localityCode(billFromSearch.getLocalityCode())
 						.paymentStatus(billFromSearch.getPaymentStatus())
 						.additionalDetails(billFromSearch.getAdditionalDetails())
-						.build();
+							.build();
 
-				updateBillStatus(billToUpdate, workflow, requestInfo, batchId);
+					if (bulkRequest.getSignature() != null) {
+						BillSignature template = bulkRequest.getSignature();
+						billToUpdate.setSignatures(new ArrayList<>(Collections.singletonList(BillSignature.builder()
+								.printedName(template.getPrintedName())
+								.fileStoreId(template.getFileStoreId())
+								.action(template.getAction() != null ? template.getAction() : action)
+								.role(template.getRole())
+								.build())));
+					}
+
+					updateBillStatus(billToUpdate, workflow, requestInfo, batchId);
 				successfulBills.add(billToUpdate);
 
 			} catch (Exception e) {
@@ -416,6 +429,9 @@ public class BillService {
 		List<Bill> billsFromSearch = validator.validateUpdateRequest(billRequest);
 		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
 		bill.setStatus(billsFromSearch.get(0).getStatus());
+
+		enrichmentUtil.enrichBillSignatures(billRequest, billsFromSearch.get(0));
+		validator.validateSignatureForWorkflowAction(billRequest);
 
 		if (Actions.VERIFY.toString().equals(action)) {
 			validator.validateNoBillDetailInVerificationInProgress(billsFromSearch.get(0));
