@@ -27,8 +27,13 @@ public class ServiceRequestRepository {
 		try {
 			response = restTemplate.postForObject(uri.toString(), request, Map.class);
 		} catch (HttpClientErrorException e) {
-			log.error("External Service threw an Exception: ", e);
-			throw new ServiceCallException(e.getResponseBodyAsString());
+			String body = e.getResponseBodyAsString();
+			if (body != null && (body.contains("INVALID ACTION") || body.contains("INVALID_ACTION") || body.contains("No valid action"))) {
+				log.debug("WF INVALID_ACTION (idempotent): {}", body);
+			} else {
+				log.error("External Service threw an Exception: ", e);
+			}
+			throw new ServiceCallException(body);
 		} catch (Exception e) {
 			log.error("Exception while fetching from searcher: ", e.getMessage());
 		}

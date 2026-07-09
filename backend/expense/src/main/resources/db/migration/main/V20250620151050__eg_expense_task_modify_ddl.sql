@@ -1,0 +1,1 @@
+ALTER TABLE eg_expense_task add bill_id VARCHAR(64);

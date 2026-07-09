@@ -4,11 +4,13 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.workflow.ProcessInstance;
 import org.egov.digit.expense.web.models.enums.PaymentStatus;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.springframework.validation.annotation.Validated;
@@ -74,6 +76,10 @@ public class BillDetail {
 	@Valid
 	private Long toPeriod;
 
+	@JsonProperty("workerId")
+	@Size(max = 64)
+	private String workerId;
+
 	@JsonProperty("payee")
 	@NotNull
 	@Valid
@@ -96,6 +102,18 @@ public class BillDetail {
 	
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails;
+
+	@JsonProperty("totalAttendance")
+	@Valid
+	private BigDecimal totalAttendance;
+
+	@JsonProperty("wfStatus")
+	@Size(min = 2, max = 64)
+	private String wfStatus;
+
+	@JsonProperty("processInstance")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private ProcessInstance processInstance;
 
 	public BillDetail addLineItems(LineItem lineItem) {
 

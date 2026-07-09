@@ -1,5 +1,7 @@
 package org.egov.digit.expense.web.models;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,7 +21,10 @@ import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A Object which holds the info about the expense details
@@ -59,6 +64,22 @@ public class Bill {
 	@Valid
 	@Builder.Default
 	private BigDecimal totalAmount = BigDecimal.ZERO;
+
+	@JsonIgnore
+	@Builder.Default
+	private Map<String, BigDecimal> amountBreakup = new LinkedHashMap<>();
+
+	@JsonAnyGetter
+	public Map<String, BigDecimal> getAmountBreakup() {
+		return amountBreakup;
+	}
+
+	@JsonAnySetter
+	public void setAmountEntry(String key, Object value) {
+		if (value instanceof Number) {
+			amountBreakup.put(key, new BigDecimal(value.toString()));
+		}
+	}
 
 	@JsonProperty("totalPaidAmount")
 	@Valid
@@ -124,6 +145,32 @@ public class Bill {
 
 		this.billDetails.add(billDetailsItem);
 		return this;
+	}
+
+	public static Bill singleDetailView(Bill source, BillDetail detail) {
+		return Bill.builder()
+				.id(source.getId())
+				.tenantId(source.getTenantId())
+				.localityCode(source.getLocalityCode())
+				.billDate(source.getBillDate())
+				.dueDate(source.getDueDate())
+				.totalAmount(source.getTotalAmount())
+				.amountBreakup(source.getAmountBreakup() != null
+						? new LinkedHashMap<>(source.getAmountBreakup())
+						: new LinkedHashMap<>())
+				.totalPaidAmount(source.getTotalPaidAmount())
+				.businessService(source.getBusinessService())
+				.referenceId(source.getReferenceId())
+				.fromPeriod(source.getFromPeriod())
+				.toPeriod(source.getToPeriod())
+				.paymentStatus(source.getPaymentStatus())
+				.status(source.getStatus())
+				.billNumber(source.getBillNumber())
+				.payer(source.getPayer())
+				.additionalDetails(source.getAdditionalDetails())
+				.auditDetails(source.getAuditDetails())
+				.billDetails(Collections.singletonList(detail))
+				.build();
 	}
 
 }

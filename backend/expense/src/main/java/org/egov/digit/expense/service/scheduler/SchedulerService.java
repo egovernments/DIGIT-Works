@@ -1,0 +1,316 @@
+package org.egov.digit.expense.service.scheduler;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import lombok.extern.slf4j.Slf4j;
+import org.egov.digit.expense.config.Configuration;
+import org.egov.digit.expense.repository.SchedulerJobRepository;
+import org.egov.digit.expense.web.models.SchedulerJob;
+import org.egov.digit.expense.web.models.enums.SchedulerJobStatus;
+import org.egov.digit.expense.web.models.enums.SchedulerJobType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+
+/**
+ * Adaptive DB-backed scheduler.
+ *
+ * <ul>
+ *   <li>Polls per active tenant using a single-threaded executor (no concurrent runs).</li>
+ *   <li>Claims jobs atomically via {@code UPDATE...RETURNING} CTE with {@code FOR UPDATE SKIP LOCKED}.</li>
+ *   <li>Dispatches to the correct {@link SchedulerJobHandler} by job type.</li>
+ *   <li>Applies exponential backoff for retries and backs off polling when idle.</li>
+ *   <li>Recovery and cleanup run on Spring {@code @Scheduled} threads (independent of the poll loop).</li>
+ * </ul>
+ */
+@Service
+@Slf4j
+public class SchedulerService {
+
+    private final Configuration config;
+    private final SchedulerJobRepository jobRepository;
+    private final SchedulerJobRegistry registry;
+    private final Map<SchedulerJobType, SchedulerJobHandler> handlers;
+
+    private final ScheduledExecutorService executor =
+            Executors.newSingleThreadScheduledExecutor(r -> {
+                Thread t = new Thread(r, "scheduler-poll");
+                t.setDaemon(true);
+                return t;
+            });
+
+    private final AtomicLong currentIntervalMs = new AtomicLong(0);
+    private final AtomicReference<ScheduledFuture<?>> nextCycle = new AtomicReference<>();
+
+    /** Result from one tenant poll cycle: whether any work was done and the earliest RETRY job's nextCheckAt. */
+    private record TenantPollResult(boolean hadWork, long earliestNextCheckAt) {}
+
+    @Autowired
+    public SchedulerService(Configuration config,
+                             SchedulerJobRepository jobRepository,
+                             SchedulerJobRegistry registry,
+                             List<SchedulerJobHandler> handlerList) {
+        this.config = config;
+        this.jobRepository = jobRepository;
+        this.registry = registry;
+
+        // Build handler map from all SchedulerJobHandler beans (Strategy pattern)
+        this.handlers = new EnumMap<>(SchedulerJobType.class);
+        for (SchedulerJobHandler h : handlerList) {
+            handlers.put(h.getJobType(), h);
+            log.info("Registered scheduler handler: {} → {}", h.getJobType(), h.getClass().getSimpleName());
+        }
+    }
+
+    @PostConstruct
+    public void start() {
+        // Pre-register configured tenants so PENDING jobs in DB are picked up after a full cluster restart,
+        // without waiting for a new transfer request to dynamically re-register the tenant.
+        config.getSchedulerBootstrapTenants().forEach(tenantId -> {
+            registry.register(tenantId);
+            log.info("SchedulerService: bootstrapped tenant {} from configuration", tenantId);
+        });
+        currentIntervalMs.set(config.getSchedulerMinIntervalMs());
+        scheduleNextCycle(config.getSchedulerInitialDelayMs());
+        log.info("SchedulerService started — initial delay {}ms, {} bootstrap tenant(s)",
+                config.getSchedulerInitialDelayMs(), config.getSchedulerBootstrapTenants().size());
+    }
+
+    @PreDestroy
+    public void stop() {
+        executor.shutdownNow();
+        log.info("SchedulerService stopped");
+    }
+
+    // ── Main polling loop ─────────────────────────────────────────────────────
+
+    private void runCycle() {
+        boolean anyWork = false;
+        long earliestRetryMs = Long.MAX_VALUE;
+        try {
+            for (String tenantId : registry.getActiveTenants()) {
+                TenantPollResult result = processForTenant(tenantId);
+                if (result.hadWork()) anyWork = true;
+                if (result.earliestNextCheckAt() < earliestRetryMs) {
+                    earliestRetryMs = result.earliestNextCheckAt();
+                }
+            }
+        } catch (Exception e) {
+            log.error("Unexpected error in scheduler poll cycle", e);
+        } finally {
+            long nextInterval;
+            if (anyWork) {
+                long nowMs = System.currentTimeMillis();
+                long retryDelay = earliestRetryMs == Long.MAX_VALUE
+                        ? config.getSchedulerMinIntervalMs()
+                        : Math.max(0L, earliestRetryMs - nowMs);
+                nextInterval = Math.min(config.getSchedulerMinIntervalMs(), retryDelay);
+            } else {
+                nextInterval = Math.min((long) (currentIntervalMs.get() * 1.5), config.getSchedulerMaxIntervalMs());
+            }
+            currentIntervalMs.set(nextInterval);
+            try {
+                scheduleNextCycle(nextInterval);
+            } catch (java.util.concurrent.RejectedExecutionException ignored) {
+                log.info("Scheduler executor shut down — stopping poll loop");
+            }
+        }
+    }
+
+    private TenantPollResult processForTenant(String tenantId) {
+        List<SchedulerJob> claimed = jobRepository.claimBatch(
+                tenantId, config.getSchedulerBatchSize(), System.currentTimeMillis());
+
+        if (claimed.isEmpty()) return new TenantPollResult(false, Long.MAX_VALUE);
+
+        long earliestRetryAt = Long.MAX_VALUE;
+
+        // RC-8: update each job's status immediately after processing so that a pod crash
+        // leaves at most 1 job in PROCESSING state — stuck-recovery resets it within threshold.
+        for (SchedulerJob job : claimed) {
+            SchedulerJob updated;
+            try {
+                updated = processJob(job);
+            } catch (Exception e) {
+                // Defensive: processJob has its own catch-alls so this should never fire,
+                // but if it does (e.g. Error promoted to Exception), fall back to RETRY
+                // so the loop continues and the remaining jobs in the batch are not orphaned.
+                log.error("Unexpected error in processJob for job={} type={} — scheduling retry",
+                        job.getId(), job.getJobType(), e);
+                updated = retrying(job, job.getAttemptCount() + 1,
+                        System.currentTimeMillis() + config.getSchedulerBackoffBaseMs());
+            }
+            if (updated.getSchedulerStatus() == SchedulerJobStatus.PENDING
+                    && updated.getNextCheckAt() != null
+                    && updated.getNextCheckAt() < earliestRetryAt) {
+                earliestRetryAt = updated.getNextCheckAt();
+            }
+            try {
+                jobRepository.updateStatus(updated, tenantId);
+            } catch (Exception e) {
+                log.error("Status persist failed for job={} type={} — stuck-recovery will reset it",
+                        job.getId(), job.getJobType(), e);
+            }
+        }
+
+        return new TenantPollResult(true, earliestRetryAt);
+    }
+
+    /**
+     * Schedules the next poll cycle, replacing (cancelling) any previously queued cycle.
+     * Safe to call from any thread. If cancel arrives after the old cycle has already started,
+     * it is a no-op and both cycles run sequentially — harmless due to SKIP LOCKED on claimBatch.
+     */
+    private void scheduleNextCycle(long delayMs) {
+        ScheduledFuture<?> f = executor.schedule(this::runCycle, Math.max(0L, delayMs), TimeUnit.MILLISECONDS);
+        ScheduledFuture<?> old = nextCycle.getAndSet(f);
+        if (old != null) old.cancel(false);
+    }
+
+    /**
+     * Triggers an early poll cycle for the given tenant if the requested wake-up time is
+     * meaningfully sooner than the currently queued cycle (>200ms gap).
+     * Safe to call from any thread (API thread, Kafka consumer, scheduler handlers).
+     */
+    @EventListener
+    public void onSchedulerWakeup(SchedulerWakeupEvent event) {
+        wakeUp(event.getTenantId(), event.getDelayMs());
+    }
+
+    public void wakeUp(String tenantId, long delayMs) {
+        registry.register(tenantId);
+        ScheduledFuture<?> cur = nextCycle.get();
+        long remaining = (cur != null && !cur.isDone() && !cur.isCancelled())
+                ? Math.max(0L, cur.getDelay(TimeUnit.MILLISECONDS))
+                : Long.MAX_VALUE;
+        if (delayMs + 200 < remaining) {
+            // Schedule directly on the executor — do NOT call scheduleNextCycle() here.
+            // scheduleNextCycle() stores the future in nextCycle; the running cycle's finally
+            // block also calls scheduleNextCycle(backoff), which atomically cancels whatever
+            // is in nextCycle — including the wake-up task we just scheduled.
+            // A standalone executor.schedule() is invisible to that swap.
+            // Double-execution is safe: claimBatch uses FOR UPDATE SKIP LOCKED.
+            try {
+                executor.schedule(this::runCycle, Math.max(0L, delayMs), TimeUnit.MILLISECONDS);
+            } catch (java.util.concurrent.RejectedExecutionException e) {
+                log.debug("wakeUp ignored for tenant={} — scheduler executor shutting down", tenantId);
+            }
+        }
+    }
+
+    private SchedulerJob processJob(SchedulerJob job) {
+        long nowMs = System.currentTimeMillis();
+        int nextAttempt = job.getAttemptCount() + 1;
+
+        // Timeout protection
+        if (nowMs - job.getCreatedAt() >= config.getSchedulerMaxDurationMs()) {
+            log.warn("Job {} (type={}) timed out after {}ms — marking FAILED",
+                    job.getId(), job.getJobType(), config.getSchedulerMaxDurationMs());
+            return finalized(job, SchedulerJobStatus.FAILED, nextAttempt, null);
+        }
+
+        // Max-attempts protection
+        if (nextAttempt > job.getMaxAttempts()) {
+            log.warn("Job {} (type={}) exceeded max attempts {} — marking FAILED",
+                    job.getId(), job.getJobType(), job.getMaxAttempts());
+            SchedulerJobHandler exhaustedHandler = handlers.get(job.getJobType());
+            if (exhaustedHandler != null) {
+                try { exhaustedHandler.onMaxAttemptsExceeded(job); }
+                catch (Exception e) {
+                    log.error("Error in onMaxAttemptsExceeded for job {} type={}", job.getId(), job.getJobType(), e);
+                }
+            }
+            return finalized(job, SchedulerJobStatus.FAILED, nextAttempt, null);
+        }
+
+        SchedulerJobHandler handler = handlers.get(job.getJobType());
+        if (handler == null) {
+            log.error("No handler registered for job type {} (jobId={}) — marking FAILED",
+                    job.getJobType(), job.getId());
+            return finalized(job, SchedulerJobStatus.FAILED, nextAttempt, null);
+        }
+
+        log.info("Handling job={} type={} referenceId={} tenantId={} attempt={}/{}",
+                job.getId(), job.getJobType(), job.getReferenceId(), job.getTenantId(),
+                job.getAttemptCount(), job.getMaxAttempts());
+        SchedulerJobResult result = handler.handle(job);
+
+        return switch (result) {
+            case DONE -> {
+                log.info("Job {} resolved after {} attempt(s)", job.getId(), nextAttempt);
+                yield finalized(job, SchedulerJobStatus.DONE, nextAttempt, null);
+            }
+            case FAILED -> {
+                log.warn("Job {} permanently failed after {} attempt(s)", job.getId(), nextAttempt);
+                yield finalized(job, SchedulerJobStatus.FAILED, nextAttempt, null);
+            }
+            case RETRY -> {
+                long backoff = computeBackoffMs(nextAttempt);
+                log.info("Job {} still pending — attempt {}/{}, retry in {}ms",
+                        job.getId(), nextAttempt, job.getMaxAttempts(), backoff);
+                yield retrying(job, nextAttempt, nowMs + backoff);
+            }
+        };
+    }
+
+    private long computeBackoffMs(int attempt) {
+        double multiplier = Math.pow(1.5, attempt - 1);
+        long backoff = (long) (config.getSchedulerBackoffBaseMs() * multiplier);
+        return Math.min(backoff, config.getSchedulerMaxIntervalMs());
+    }
+
+    private SchedulerJob finalized(SchedulerJob job, SchedulerJobStatus status,
+                                    int attemptCount, Long nextCheckAt) {
+        job.setSchedulerStatus(status);
+        job.setAttemptCount(attemptCount);
+        job.setNextCheckAt(nextCheckAt);
+        return job;
+    }
+
+    private SchedulerJob retrying(SchedulerJob job, int attemptCount, long nextCheckAt) {
+        job.setSchedulerStatus(SchedulerJobStatus.PENDING);
+        job.setAttemptCount(attemptCount);
+        job.setNextCheckAt(nextCheckAt);
+        return job;
+    }
+
+    // ── Recovery job (every 2 min) ────────────────────────────────────────────
+
+    @Scheduled(fixedRateString = "${task.scheduler.recovery.interval.ms:120000}",
+               initialDelayString = "${task.scheduler.recovery.interval.ms:120000}")
+    public void recoverStuckJobs() {
+        for (String tenantId : registry.getActiveTenants()) {
+            try {
+                jobRepository.recoverStuck(tenantId, config.getSchedulerStuckThresholdMs());
+            } catch (Exception e) {
+                log.error("Error in recovery job for tenant {}", tenantId, e);
+            }
+        }
+    }
+
+    // ── Cleanup job (every 1 hr) ──────────────────────────────────────────────
+
+    @Scheduled(fixedRateString = "${task.scheduler.cleanup.interval.ms:3600000}",
+               initialDelayString = "${task.scheduler.cleanup.interval.ms:3600000}")
+    public void cleanupCompletedJobs() {
+        for (String tenantId : registry.getActiveTenants()) {
+            try {
+                jobRepository.cleanup(tenantId, config.getSchedulerCleanupAfterMs());
+            } catch (Exception e) {
+                log.error("Error in cleanup job for tenant {}", tenantId, e);
+            }
+        }
+    }
+}
