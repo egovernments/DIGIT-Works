@@ -8,6 +8,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.Individual;
 import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.util.MdmsUtil;
+import org.egov.web.models.BillingPeriod;
 import org.egov.web.models.ElasticsearchQueryConfig;
 import org.egov.web.models.IndividualEntry;
 import org.egov.web.models.MusterRoll;
@@ -72,9 +73,34 @@ public class MusterRollAnalyticsService {
         }
 
         String tenantId = musterRoll.getTenantId();
-        Long startDate = musterRoll.getStartDate().longValue();
-        Long endDate = musterRoll.getEndDate().longValue();
         String projectId = musterRoll.getReferenceId();
+
+        Long startDate;
+        Long endDate;
+
+        try {
+            if (musterRoll.getAdditionalDetails() != null) {
+                JsonNode rootNode = objectMapper.valueToTree(musterRoll.getAdditionalDetails());
+                JsonNode billingNode = rootNode.get("billingPeriod");
+                if (billingNode != null && !billingNode.isNull()) {
+                    BillingPeriod period = objectMapper.convertValue(
+                            billingNode,
+                            BillingPeriod.class
+                    );
+                    startDate = period.getPeriodStartDate();
+                    endDate = period.getPeriodEndDate();
+
+                } else {
+                    throw new IllegalStateException("billingPeriod not present in additionalDetails");
+                }
+            } else {
+                throw new IllegalStateException("additionalDetails is null");
+            }
+        } catch (Exception e) {
+            log.error("failed to parse billing period for the muster roll. falling back to muster roll startdate, enddate", e);
+            startDate = musterRoll.getStartDate() != null ? musterRoll.getStartDate().longValue() : null;
+            endDate = musterRoll.getEndDate() != null ? musterRoll.getEndDate().longValue() : null;
+        }
 
         // Fetch ES query configs from MDMS
         List<ElasticsearchQueryConfig> esQueryConfigs = fetchEsQueryConfigs(requestInfo, tenantId);

@@ -26,7 +26,6 @@ import org.egov.web.models.report.ReportStatus;
 import org.egov.repository.MusterRollReportRepository;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.web.models.worker.IndividualWorker;
-import org.egov.works.services.common.models.attendance.AttendanceRegisterSearchCriteria;
 import org.egov.works.services.common.models.attendance.StaffPermission;
 import org.egov.works.services.common.models.attendance.StaffType;
 import org.egov.works.services.common.models.musterroll.Status;
@@ -409,6 +408,7 @@ public class AttendanceReportGeneratorService {
         sigDateFormatter.setTimeZone(TimeZone.getTimeZone(config.getReportTimezone()));
         Map<String, String[]> dailySignatureIds = new HashMap<>();
         Map<String, String[]> dailySessionAttendance = new HashMap<>();
+        Map<String, String> inlineSignatures = new HashMap<>();
         Map<String, List<AttendanceLog>> logsForIndividual =
                 signatureLogMap.getOrDefault(entry.getIndividualId(), Collections.emptyMap());
         for (Long dateMillis : campaignDates) {
@@ -419,10 +419,8 @@ public class AttendanceReportGeneratorService {
             AttendanceLog morningLog = findSessionLog(logsForDay, true, sessions, boundaryMillis);
             AttendanceLog eveningLog = findSessionLog(logsForDay, false, sessions, boundaryMillis);
 
-            String morningId = extractSignatureFileStoreId(
-                    morningLog != null ? Collections.singletonList(morningLog) : Collections.emptyList(), 0);
-            String eveningId = extractSignatureFileStoreId(
-                    eveningLog != null ? Collections.singletonList(eveningLog) : Collections.emptyList(), 0);
+            String morningId = resolveSignatureRef(morningLog, entry.getIndividualId(), dateStr, "AM", inlineSignatures);
+            String eveningId = resolveSignatureRef(eveningLog, entry.getIndividualId(), dateStr, "PM", inlineSignatures);
             dailySignatureIds.put(dateStr, new String[]{morningId, eveningId});
 
             String morningStatus = (morningLog != null && Status.ACTIVE.equals(morningLog.getStatus()))
@@ -451,6 +449,7 @@ public class AttendanceReportGeneratorService {
                 .dailyAttendance(dailyAttendance)
                 .dailySignatureIds(dailySignatureIds)
                 .dailySessionAttendance(dailySessionAttendance)
+                .inlineSignatures(inlineSignatures)
                 .baseSignatureFileStoreId(individualWorker.getSignatureId())
                 .totalPerformance(totalInterventions)
                 .build();
@@ -636,6 +635,51 @@ public class AttendanceReportGeneratorService {
     }
 
     /**
+     * Resolves the signature reference for a session log: the real filestore id when present,
+     * otherwise a synthetic key backed by the log's inline {@code signature} base64.
+     * Returns null when the log has neither. Populates {@code inlineSignatures} (key → base64).
+     */
+    private String resolveSignatureRef(AttendanceLog sessionLog, String individualId, String dateStr,
+            String session, Map<String, String> inlineSignatures) {
+        if (sessionLog == null) return null;
+
+        String fileStoreId = extractSignatureFileStoreId(Collections.singletonList(sessionLog), 0);
+        if (fileStoreId != null) return fileStoreId;
+
+        String inlineBase64 = extractInlineSignature(sessionLog);
+        if (inlineBase64 == null) return null;
+
+        String key = AttendanceReportConstants.INLINE_SIGNATURE_KEY_PREFIX
+                + individualId + ":" + dateStr + ":" + session;
+        inlineSignatures.put(key, inlineBase64);
+        return key;
+    }
+
+    /**
+     * Extracts the inline {@code additionalDetails.signature} base64 string from a log
+     * (device-scan flow that was never uploaded to filestore). Strips an optional
+     * {@code data:image/...;base64,} prefix. Returns null if absent or unreadable.
+     */
+    private String extractInlineSignature(AttendanceLog attendanceLog) {
+        try {
+            if (attendanceLog.getAdditionalDetails() == null) return null;
+            JsonNode node = objectMapper.valueToTree(attendanceLog.getAdditionalDetails());
+            JsonNode sigNode = node.get(AttendanceReportConstants.LOG_ADDITIONAL_DETAILS_SIGNATURE);
+            if (sigNode != null && !sigNode.isNull() && !sigNode.asText().isBlank()) {
+                String value = sigNode.asText();
+                int comma = value.indexOf(',');
+                if (value.startsWith("data:") && comma > 0) {
+                    value = value.substring(comma + 1);
+                }
+                return value;
+            }
+        } catch (Exception e) {
+            log.warn("Failed to extract inline signature from attendance log: {}", e.getMessage());
+        }
+        return null;
+    }
+
+    /**
      * Extracts signatureFileStoreId from the log at the given index in the list.
      * Returns null if the index is out of bounds or the field is absent.
      */
@@ -663,24 +707,42 @@ public class AttendanceReportGeneratorService {
         Map<String, byte[]> signatureImages = new HashMap<>();
         if (reportData.getAttendanceDetails() == null) return signatureImages;
 
+        // Decode inline (non-filestore) signatures and key their bytes by the same synthetic id
+        // referenced from dailySignatureIds, so the Excel embed path resolves them unchanged.
+        int inlineCount = 0;
+        for (AttendanceReportDetail detail : reportData.getAttendanceDetails()) {
+            if (CollectionUtils.isEmpty(detail.getInlineSignatures())) continue;
+            for (Map.Entry<String, String> e : detail.getInlineSignatures().entrySet()) {
+                try {
+                    signatureImages.put(e.getKey(), Base64.getDecoder().decode(e.getValue()));
+                    inlineCount++;
+                } catch (Exception ex) {
+                    log.warn("Failed to decode inline signature for key {}: {}", e.getKey(), ex.getMessage());
+                }
+            }
+        }
+
         Set<String> fileStoreIds = new HashSet<>();
         for (AttendanceReportDetail detail : reportData.getAttendanceDetails()) {
             if (detail.getBaseSignatureFileStoreId() != null)
                 fileStoreIds.add(detail.getBaseSignatureFileStoreId());
             if (detail.getDailySignatureIds() == null) continue;
             for (String[] ids : detail.getDailySignatureIds().values()) {
-                if (ids[0] != null) fileStoreIds.add(ids[0]);
-                if (ids[1] != null) fileStoreIds.add(ids[1]);
+                if (ids[0] != null && !signatureImages.containsKey(ids[0])) fileStoreIds.add(ids[0]);
+                if (ids[1] != null && !signatureImages.containsKey(ids[1])) fileStoreIds.add(ids[1]);
             }
         }
 
+        int downloaded = 0;
         for (String fileStoreId : fileStoreIds) {
             byte[] bytes = fileStoreUtil.downloadFileBytes(fileStoreId, tenantId);
             if (bytes != null) {
                 signatureImages.put(fileStoreId, bytes);
+                downloaded++;
             }
         }
-        log.info("Downloaded {}/{} signature images for report", signatureImages.size(), fileStoreIds.size());
+        log.info("Resolved signature images for report: {} inline, {}/{} downloaded from filestore",
+                inlineCount, downloaded, fileStoreIds.size());
         return signatureImages;
     }
 
@@ -782,21 +844,19 @@ public class AttendanceReportGeneratorService {
     private AttendanceRegister fetchAttendanceRegister(RequestInfo requestInfo, String tenantId, String registerId) {
         StringBuilder uri = new StringBuilder();
         uri.append(config.getAttendanceLogHost()).append(config.getAttendanceRegisterEndpoint());
-        uri.append("?tenantId=").append(tenantId);
 
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("RequestInfo", requestInfo);
+        String url = UriComponentsBuilder.fromHttpUrl(uri.toString())
+                .queryParam("tenantId", tenantId)
+                .queryParam("ids", registerId)
+                .queryParam("status", "ACTIVE")
+                .toUriString();
 
-        AttendanceRegisterSearchCriteria searchCriteria = new AttendanceRegisterSearchCriteria();
-        searchCriteria.setTenantId(tenantId);
-        searchCriteria.setIds(Collections.singletonList(registerId));
-
-        requestBody.put("searchCriteria", searchCriteria);
+        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 
         try {
             AttendanceRegisterResponse response = restTemplate.postForObject(
-                    uri.toString(),
-                    requestBody,
+                    url,
+                    requestInfoWrapper,
                     AttendanceRegisterResponse.class
             );
 
