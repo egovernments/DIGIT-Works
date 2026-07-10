@@ -112,7 +112,7 @@ public class BillDetailExcelParser {
 
                 if (isReviewer) {
                     BigDecimal totalAttendance = readBigDecimal(row, colMap.totalAttendance);
-                    if (totalAttendance == null || totalAttendance.compareTo(BigDecimal.ZERO) <= 0) {
+                    if (totalAttendance == null || totalAttendance.compareTo(BigDecimal.ZERO) < 0) {
                         throw new CustomException(ERR_TEMPLATE_INVALID_ATTENDANCE,
                                 "totalAttendance must be > 0 for workerId=" + workerId);
                     }
