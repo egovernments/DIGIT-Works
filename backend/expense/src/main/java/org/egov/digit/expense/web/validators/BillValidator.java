@@ -294,7 +294,7 @@ public class BillValidator {
 			}
 		}
 
-		validatePaymentProviderValues(bill);
+		validatePaymentProviderValues(bill, billFromSearch);
 		// TODO: Propagate payment detail changes back to Worker Registry
 	}
 
@@ -326,18 +326,29 @@ public class BillValidator {
 				|| (payee.getBeneficiaryCode() != null && !payee.getBeneficiaryCode().equals(payeeFromSearch.getBeneficiaryCode()));
 	}
 
-	private void validatePaymentProviderValues(Bill bill) {
+	private void validatePaymentProviderValues(Bill bill, Bill billFromSearch) {
 		if (bill.getBillDetails() == null) return;
+		Map<String, BillDetail> searchDetailsMap = billFromSearch.getBillDetails().stream()
+				.collect(Collectors.toMap(BillDetail::getId, Function.identity()));
 		for (BillDetail detail : bill.getBillDetails()) {
 			Party payee = detail.getPayee();
-			if (payee != null && payee.getPaymentProvider() != null
-					&& !Constants.VALID_PAYMENT_PROVIDERS.contains(payee.getPaymentProvider().toUpperCase())) {
-				throw new CustomException(ERR_INVALID_PAYMENT_PROVIDER,
-						"Invalid paymentProvider '" + payee.getPaymentProvider()
-						+ "' on bill detail " + detail.getId()
-						+ ". Allowed values: " + Constants.VALID_PAYMENT_PROVIDERS);
-			}
+			// Blank provider = not configured — async verification fails the detail with a recorded reason
+			if (payee == null || !StringUtils.hasText(payee.getPaymentProvider())) continue;
+			String provider = payee.getPaymentProvider();
+			if (Constants.VALID_PAYMENT_PROVIDERS.contains(provider.toUpperCase())) continue;
+			if (isProviderUnchanged(detail, searchDetailsMap.get(detail.getId()))) continue;
+			throw new CustomException(ERR_INVALID_PAYMENT_PROVIDER,
+					"Invalid paymentProvider '" + provider
+					+ "' on bill detail " + detail.getId()
+					+ ". Allowed values: " + Constants.VALID_PAYMENT_PROVIDERS);
 		}
+	}
+
+	private boolean isProviderUnchanged(BillDetail detail, BillDetail detailFromSearch) {
+		if (detail.getId() == null || detailFromSearch == null || detailFromSearch.getPayee() == null)
+			return false;
+		return detail.getPayee().getPaymentProvider()
+				.equalsIgnoreCase(detailFromSearch.getPayee().getPaymentProvider());
 	}
 
 	public void validateSearchRequest(BillSearchRequest billSearchRequest) {

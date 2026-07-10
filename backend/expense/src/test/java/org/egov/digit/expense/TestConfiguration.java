@@ -34,6 +34,9 @@ public class TestConfiguration {
     @Bean
     public BillCacheService billCacheService() {
         return mock(BillCacheService.class);
+    }
+
+    @Bean
     public RestTemplateBuilder restTemplateBuilder() {
         return new RestTemplateBuilder();
     }
