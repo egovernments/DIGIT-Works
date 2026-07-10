@@ -1,6 +1,7 @@
 package org.egov.digit.expense.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -213,14 +214,17 @@ public class MTNService implements PaymentProviderService {
                             : "No payment provider configured";
                     if (billDetail.getStatus() == Status.PENDING_VERIFICATION
                             || billDetail.getStatus() == Status.VERIFICATION_FAILED) {
-                        log.warn("billDetail {} — {} — marking VERIFICATION_FAILED", billDetail.getId(), reason);
                         Workflow verifyWf = Workflow.builder().action(Actions.VERIFY.toString()).build();
                         setBillDetailStatus(billDetail, verifyWf, taskRequest.getRequestInfo(), true);
-                        if (billDetail.getStatus() == Status.VERIFICATION_IN_PROGRESS) {
-                            Workflow failWf = Workflow.builder().action(Actions.FAILED.toString()).build();
-                            setBillDetailStatus(billDetail, failWf, taskRequest.getRequestInfo(), true);
-                        }
-                    } else {
+                    }
+                    if (billDetail.getStatus() == Status.VERIFICATION_IN_PROGRESS) {
+                        log.warn("billDetail {} — {} — marking VERIFICATION_FAILED", billDetail.getId(), reason);
+                        Map<String, Object> additionalDetails = toMutableAdditionalDetails(billDetail.getAdditionalDetails());
+                        additionalDetails.put("errorDetails", ErrorDetails.builder().reasonForFailure(reason).build());
+                        billDetail.setAdditionalDetails(additionalDetails);
+                        Workflow failWf = Workflow.builder().action(Actions.FAILED.toString()).comments(reason).build();
+                        setBillDetailStatus(billDetail, failWf, taskRequest.getRequestInfo(), true);
+                    } else if (billDetail.getStatus() != Status.VERIFICATION_FAILED) {
                         log.info("Skipping billDetail {} (provider={}, status={}) — not actionable", billDetail.getId(), provider, billDetail.getStatus());
                     }
                     continue;
@@ -278,17 +282,7 @@ public class MTNService implements PaymentProviderService {
                 taskDetails.setStatus(Status.DONE);
                 expenseProducer.push(billFromSearch.getTenantId(), config.getBillTaskDetailsTopic(), taskDetails);
 
-                Object additionalDetailsObj = billDetail.getAdditionalDetails();
-                Map<String, Object> additionalDetails;
-                try {
-                    additionalDetails = objectMapper.convertValue(
-                            additionalDetailsObj,
-                            new TypeReference<>() {
-                            }
-                    );
-                } catch (IllegalArgumentException e) {
-                    additionalDetails = new HashMap<>();
-                }
+                Map<String, Object> additionalDetails = toMutableAdditionalDetails(billDetail.getAdditionalDetails());
 
                 if (verificationSucceeded) {
                     // Clear any prior errorDetails on success so stale failure info is not persisted.
@@ -353,6 +347,22 @@ public class MTNService implements PaymentProviderService {
             task.setStatus(Status.DONE);
             expenseProducer.push(billFromRequest.getTenantId(), config.getTaskUpdateTopic(), task);
         }
+    }
+
+    /**
+     * Returns a mutable copy of additionalDetails as a Map<String, Object>,
+     * handling both JsonNode (returned by BillRowMapper) and plain Map.
+     */
+    private Map<String, Object> toMutableAdditionalDetails(Object raw) {
+        if (raw instanceof JsonNode jsonNode) {
+            return objectMapper.convertValue(jsonNode, new TypeReference<Map<String, Object>>() {});
+        }
+        if (raw instanceof Map<?, ?> map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> copy = new HashMap<>((Map<String, Object>) map);
+            return copy;
+        }
+        return new HashMap<>();
     }
 
     private void syncStatusToRequest(TaskRequest taskRequest, List<BillDetail> settled) {
