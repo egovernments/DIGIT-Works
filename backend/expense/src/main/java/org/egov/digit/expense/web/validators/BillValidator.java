@@ -273,7 +273,7 @@ public class BillValidator {
 			}
 		}
 
-		if (bill.getBillDetails() != null) {
+		if (bill.getBillDetails() != null && billFromSearch.getBillDetails() != null) {
 			Map<String, BillDetail> searchDetailsMap = billFromSearch.getBillDetails().stream()
 					.collect(Collectors.toMap(BillDetail::getId, Function.identity()));
 
@@ -303,7 +303,7 @@ public class BillValidator {
 	 * Delegates to per-detail comparison to avoid false positives from non-null unchanged fields.
 	 */
 	private boolean hasPaymentFieldChanges(Bill bill, Bill billFromSearch) {
-		if (bill.getBillDetails() == null) return false;
+		if (bill.getBillDetails() == null || billFromSearch.getBillDetails() == null) return false;
 		Map<String, BillDetail> searchDetailsMap = billFromSearch.getBillDetails().stream()
 				.collect(Collectors.toMap(BillDetail::getId, Function.identity()));
 		return bill.getBillDetails().stream().anyMatch(detail -> {
@@ -327,7 +327,7 @@ public class BillValidator {
 	}
 
 	private void validatePaymentProviderValues(Bill bill, Bill billFromSearch) {
-		if (bill.getBillDetails() == null) return;
+		if (bill.getBillDetails() == null || billFromSearch.getBillDetails() == null) return;
 		Map<String, BillDetail> searchDetailsMap = billFromSearch.getBillDetails().stream()
 				.collect(Collectors.toMap(BillDetail::getId, Function.identity()));
 		for (BillDetail detail : bill.getBillDetails()) {
@@ -1154,7 +1154,9 @@ public class BillValidator {
 	private boolean hasPayableAmountChanges(Bill updatedBill, Bill existingBill) {
 		if (updatedBill.getBillDetails() == null) return false;
 
-		Map<String, LineItem> existingPayableMap = existingBill.getBillDetails().stream()
+		Map<String, LineItem> existingPayableMap = existingBill.getBillDetails() == null ? Map.of()
+				: existingBill.getBillDetails().stream()
+				.filter(d -> d.getPayableLineItems() != null)
 				.flatMap(d -> d.getPayableLineItems().stream())
 				.filter(li -> li.getId() != null)
 				.collect(Collectors.toMap(LineItem::getId, Function.identity(), (a, b) -> a));

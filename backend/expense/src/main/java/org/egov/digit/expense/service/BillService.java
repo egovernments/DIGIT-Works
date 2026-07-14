@@ -414,7 +414,14 @@ public class BillService {
 				.build();
 
 		List<Bill> billsFromSearch = validator.validateUpdateRequest(billRequest);
+		boolean detailsBackfillNeeded = bill.getBillDetails() == null || bill.getBillDetails().isEmpty();
 		enrichmentUtil.encrichBillWithUuidAndAuditForUpdate(billRequest, billsFromSearch);
+		if (detailsBackfillNeeded) {
+			// Pure workflow-action calls send billDetails: [] — backfill from DB so PaymentWorkflowService
+			// can push per-detail tasks. Done after enrichment (not before) so untouched details don't have
+			// their audit fields overwritten by enrichExistingBillDetail's unconditional createAudit stamp.
+			bill.setBillDetails(billsFromSearch.get(0).getBillDetails());
+		}
 		bill.setStatus(billsFromSearch.get(0).getStatus());
 
 		if (Actions.VERIFY.toString().equals(action)) {
