@@ -70,6 +70,8 @@ public class ExpenseCalculatorServiceConstants {
     public static final String RATES_CONSTANT = "Rates";
     public static final String HCM_CONSTANT = "HCM";
     public static final String WORKER_RATES = "WORKER_RATES";
+    public static final String HCM_PAYMENTS_CONFIG = "paymentsConfig";
+    public static final String JSON_PATH_FOR_PAYMENTS_CONFIG = MDMS_RESP_CONSTANT + HCM_CONSTANT + "." + HCM_PAYMENTS_CONFIG;
     public static final String JSON_PATH_FOR_SOR = MDMS_RESP_CONSTANT+WORKS_SOR_CONSTANT + "." + SOR_CONSTANT;
     public static final String JSON_PATH_FOR_RATES = MDMS_RESP_CONSTANT+WORKS_SOR_CONSTANT + "." + RATES_CONSTANT;
     public static final String JSON_PATH_FOR_HCM = MDMS_RESP_CONSTANT+HCM_CONSTANT + "." + WORKER_RATES;
@@ -92,4 +94,12 @@ public class ExpenseCalculatorServiceConstants {
     public static final String REPORT_STATUS_FAILED = "FAILED";
 
     public static final String EXPENSE_WAGES_BUSINESS_SERVICE = "EXPENSE.WAGES";
+    public static final String DISTRICT_BOUNDARYTYPE = "District Sanitaire";
+    public static final String REPORT_FIRST_CONSTANT = "PAYMENT_TITLE";
+    public static final String REPORT_MIDDLE_CONSTANT = "FOR_CONSTANT";
+    public static final String LOCALIZATION_CODES_JSONPATH = "$.messages.*.code";
+    public static final String LOCALIZATION_MSGS_JSONPATH = "$.messages.*.message";
+    public static final String WF_CREATE_ACTION_CONSTANT = "CREATE";
+    public static final String PAYMENTS_BILL_BUSINESS_SERVICE = "PAYMENTS.BILL";
+    public static final String PAYMENTS_BILLDETAILS_BUSINESS_SERVICE = "PAYMENTS.BILLDETAILS";
 }

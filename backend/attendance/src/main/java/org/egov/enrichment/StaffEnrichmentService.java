@@ -15,6 +15,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -44,8 +45,9 @@ public class StaffEnrichmentService {
             AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), staffPermissionFromRequest.getAuditDetails(), true);
             staffPermissionFromRequest.setAuditDetails(auditDetails);
             staffPermissionFromRequest.setId(UUID.randomUUID().toString());
-            BigDecimal enrollmentDate = new BigDecimal(System.currentTimeMillis());
-            staffPermissionFromRequest.setEnrollmentDate(enrollmentDate);
+            if (staffPermissionFromRequest.getEnrollmentDate() == null) {
+                staffPermissionFromRequest.setEnrollmentDate(new BigDecimal(System.currentTimeMillis()));
+            }
             staffPermissionFromRequest.setAdditionalDetails(Map.of("staffName", !individualList.isEmpty() ? individualList.get(0).getName().getGivenName() : "NA"));
         }
     }
@@ -57,22 +59,34 @@ public class StaffEnrichmentService {
         for (StaffPermission staffPermissionFromRequest : staffPermissionListFromRequest) {
             for (StaffPermission staffPermissionFromDB : staffPermissionListFromDB) {
                 if (staffPermissionFromDB.getUserId().equals(staffPermissionFromRequest.getUserId())
-                        && staffPermissionFromDB.getRegisterId().equals(staffPermissionFromRequest.getRegisterId())
-                        && staffPermissionFromDB.getDenrollmentDate() == null) {
+                        && staffPermissionFromDB.getRegisterId().equals(staffPermissionFromRequest.getRegisterId())) {
                     staffPermissionFromRequest.setId(staffPermissionFromDB.getId());
                     staffPermissionFromRequest.setEnrollmentDate(staffPermissionFromDB.getEnrollmentDate());
+                    staffPermissionFromRequest.setStaffType(staffPermissionFromDB.getStaffType());
 
                     AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), staffPermissionFromDB.getAuditDetails(), false);
 
                     staffPermissionFromRequest.setAuditDetails(auditDetails);
 
-                    BigDecimal deenrollmentDate = new BigDecimal(System.currentTimeMillis());
-                    staffPermissionFromRequest.setDenrollmentDate(deenrollmentDate);
+                    if (staffPermissionFromRequest.getDenrollmentDate() == null) {
+                        BigDecimal now = new BigDecimal(System.currentTimeMillis());
+                        BigDecimal enrollmentDate = staffPermissionFromDB.getEnrollmentDate();
+                        BigDecimal deEnrollmentDate = (enrollmentDate != null && enrollmentDate.compareTo(now) > 0)
+                                ? enrollmentDate : now;
+                        staffPermissionFromRequest.setDenrollmentDate(deEnrollmentDate);
+                    }
+
+                    if (staffPermissionFromRequest.getAdditionalDetails() == null) {
+                        staffPermissionFromRequest.setAdditionalDetails(staffPermissionFromDB.getAdditionalDetails());
+                    } else if (staffPermissionFromDB.getAdditionalDetails() instanceof Map
+                            && staffPermissionFromRequest.getAdditionalDetails() instanceof Map) {
+                        Map<String, Object> merged = new HashMap<>((Map<String, Object>) staffPermissionFromDB.getAdditionalDetails());
+                        merged.putAll((Map<String, Object>) staffPermissionFromRequest.getAdditionalDetails());
+                        staffPermissionFromRequest.setAdditionalDetails(merged);
+                    }
                 }
             }
         }
-
-
     }
 
 

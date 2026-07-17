@@ -1,11 +1,13 @@
 package org.egov.web.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.validation.constraints.Size;
 import org.egov.common.contract.models.AuditDetails;
 import org.springframework.validation.annotation.Validated;
 
@@ -30,17 +32,38 @@ import jakarta.validation.constraints.Min;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class IndividualEntry {
 
     @JsonProperty("id")
     private String id = null;
 
+    @JsonProperty("tenantId")
+    private String tenantId = null;
+
     @JsonProperty("individualId")
     private String individualId = null;
+
+    @JsonProperty("musterRollId")
+    private String musterRollId = null;
+
+    @JsonProperty("enrollmentDate")
+    private BigDecimal enrollmentDate = null;
+
+    @JsonProperty("denrollmentDate")
+    private BigDecimal denrollmentDate = null;
 
     @JsonProperty("actualTotalAttendance")
     @Min(0)
     private BigDecimal actualTotalAttendance = null;
+
+    @JsonProperty("totalRegistrations")
+    @Min(0)
+    private Long totalRegistrations = null;
+
+    @JsonProperty("totalInterventions")
+    @Min(0)
+    private Long totalInterventions = null;
 
     @JsonProperty("modifiedTotalAttendance")
     @Min(0)
@@ -55,6 +78,14 @@ public class IndividualEntry {
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails = null;
+
+    @Size(max=64)
+    @JsonProperty("tag")
+    private String tag = null; // represent teamcode to group attendees
+
+    @Size(max=128)
+    @JsonProperty("role")
+    private String role = null; // individual's skill type (e.g., REGISTRAR, DISTRIBUTOR)
 
 
     public IndividualEntry addAttendanceEntriesItem(AttendanceEntry attendanceEntriesItem) {

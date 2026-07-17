@@ -1,7 +1,11 @@
 package org.egov.digit.expense.calculator.web.models.report;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.egov.digit.expense.calculator.web.models.RateFieldConfig;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -9,6 +13,9 @@ import jakarta.validation.constraints.Size;
 
 import org.springframework.validation.annotation.Validated;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -34,6 +41,22 @@ public class ReportBill {
     @Valid
     @Default
     private BigDecimal totalAmount = BigDecimal.ZERO;
+
+    @JsonIgnore
+    @Default
+    private Map<String, BigDecimal> amountBreakup = new LinkedHashMap<>();
+
+    @JsonAnyGetter
+    public Map<String, BigDecimal> getAmountBreakup() {
+        return amountBreakup;
+    }
+
+    @JsonAnySetter
+    public void setAmountEntry(String key, Object value) {
+        if (value instanceof Number) {
+            amountBreakup.put(key, new BigDecimal(value.toString()));
+        }
+    }
 
     @JsonProperty("campaignName")
     private String campaignName;
@@ -68,5 +91,7 @@ public class ReportBill {
     @Valid
     private List<ReportBillDetail> reportBillDetails;
 
+    @JsonIgnore
+    private List<RateFieldConfig> fieldConfigs;
 
 }

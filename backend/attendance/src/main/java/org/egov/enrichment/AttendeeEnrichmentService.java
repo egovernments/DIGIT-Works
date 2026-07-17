@@ -33,7 +33,6 @@ public class AttendeeEnrichmentService {
             AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), attendee.getAuditDetails(), true);
             attendee.setAuditDetails(auditDetails);
             attendee.setId(UUID.randomUUID().toString());
-            attendee.setDenrollmentDate(null);
             if (attendee.getEnrollmentDate() == null) {
                 BigDecimal enrollmentDate = new BigDecimal(System.currentTimeMillis());
                 attendee.setEnrollmentDate(enrollmentDate);
@@ -103,7 +102,10 @@ public class AttendeeEnrichmentService {
 
 
                     if (attendee.getDenrollmentDate() == null) {
-                        BigDecimal deEnrollmentDate = new BigDecimal(System.currentTimeMillis());
+                        BigDecimal now = new BigDecimal(System.currentTimeMillis());
+                        BigDecimal enrollmentDate = attendeeFromDB.getEnrollmentDate();
+                        BigDecimal deEnrollmentDate = (enrollmentDate != null && enrollmentDate.compareTo(now) > 0)
+                                ? enrollmentDate : now;
                         attendee.setDenrollmentDate(deEnrollmentDate);
                     }
                 }

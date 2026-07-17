@@ -43,11 +43,20 @@ public class AttendanceRegisterSearchCriteria {
     @JsonProperty("staffId")
     private String staffId;
 
+    @JsonProperty("staffName")
+    private String staffName;
+
+    @JsonProperty("staffTypes")
+    private List<String> staffTypes;
+
     @JsonProperty("referenceId")
     private String referenceId;
 
     @JsonProperty("serviceCode")
     private String serviceCode;
+
+    @JsonProperty("isServiceCodeExact")
+    private Boolean isServiceCodeExact = Boolean.TRUE;
 
     @JsonProperty("referenceIds")
     private List<String> referenceIds;
@@ -66,6 +75,9 @@ public class AttendanceRegisterSearchCriteria {
 
     @JsonProperty("localityCode")
     private String localityCode;
+
+    @JsonProperty("campaignNumber")
+    private String campaignNumber;
 
     @JsonProperty("reviewStatus")
     private String reviewStatus;
@@ -115,6 +127,12 @@ public class AttendanceRegisterSearchCriteria {
      */
     @JsonProperty("registerPeriodStatus")
     private String registerPeriodStatus;
+
+    @JsonProperty("includeStaff")
+    private Boolean includeStaff = Boolean.TRUE;
+
+    @JsonProperty("includeAttendee")
+    private Boolean includeAttendee = Boolean.TRUE;
 
     public enum SortOrder {
         ASC,

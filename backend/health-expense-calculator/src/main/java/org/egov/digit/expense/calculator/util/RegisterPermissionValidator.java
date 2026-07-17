@@ -63,7 +63,8 @@ public class RegisterPermissionValidator {
             List<String> registerIds,
             String tenantId,
             String localityCode,
-            String projectId) {
+            String projectId,
+            boolean isLowestBillBoundary) {
 
         if (requestInfo == null || requestInfo.getUserInfo() == null) {
             log.error("RegisterPermissionValidator::validateUserPermissionForBillGeneration::RequestInfo or UserInfo is null");
@@ -111,7 +112,7 @@ public class RegisterPermissionValidator {
             while (hasMoreRegisters) {
                 // Fetch batch of registers
                 List<AttendanceRegister> registers = attendanceUtil.fetchAttendanceRegister(
-                    projectId, tenantId, requestInfo, localityCode, false, offset
+                    projectId, tenantId, requestInfo, localityCode, isLowestBillBoundary, offset
                 );
 
                 if (CollectionUtils.isEmpty(registers)) {
@@ -236,7 +237,8 @@ public class RegisterPermissionValidator {
             java.util.Collections.singletonList(registerId),
             tenantId,
             localityCode,
-            projectId
+            projectId,
+            true  // single-register callers are always at the lowest boundary level
         );
     }
 
@@ -263,7 +265,8 @@ public class RegisterPermissionValidator {
             String projectId,
             String tenantId,
             String reviewStatus,
-            String localityCode) {
+            String localityCode,
+            boolean isLowestBillBoundary) {
 
         if (requestInfo == null || requestInfo.getUserInfo() == null) {
             log.error("RegisterPermissionValidator::validateUserPermissionForReviewStatusUpdate::RequestInfo or UserInfo is null");
@@ -307,7 +310,7 @@ public class RegisterPermissionValidator {
             while (hasMoreRegisters) {
                 // Fetch batch of registers
                 List<AttendanceRegister> registers = attendanceUtil.fetchAttendanceRegister(
-                    projectId, tenantId, requestInfo, localityCode, false, offset
+                    projectId, tenantId, requestInfo, localityCode, isLowestBillBoundary, offset
                 );
 
                 if (CollectionUtils.isEmpty(registers)) {

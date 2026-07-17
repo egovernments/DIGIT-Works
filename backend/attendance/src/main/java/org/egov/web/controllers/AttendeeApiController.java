@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping("/attendee/v1")
@@ -62,6 +63,25 @@ public class AttendeeApiController {
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendeeDeleteRequest.getRequestInfo(), true);
         AttendeeDeleteResponse attendeeDeleteResponse = AttendeeDeleteResponse.builder().responseInfo(responseInfo).attendees(enrichedRequest.getAttendees()).build();
         return new ResponseEntity<AttendeeDeleteResponse>(attendeeDeleteResponse, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/_search", method = RequestMethod.POST)
+    public ResponseEntity<AttendeeSearchResponse> searchAttendees(
+            @ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType,
+            @ApiParam(value = "") @Valid @RequestBody AttendeeSearchRequest attendeeSearchRequest,
+            @RequestParam String tenantId,
+            @RequestParam(required = false) Integer limit,
+            @RequestParam(required = false) Integer offset) {
+        AttendeeSearchCriteria criteria = attendeeSearchRequest.getAttendeeSearchCriteria();
+        if (criteria == null) criteria = new AttendeeSearchCriteria();
+        criteria.setTenantId(tenantId);
+        List<IndividualEntry> attendees = attendeeService.searchAttendees(attendeeSearchRequest.getRequestInfo(), criteria, limit, offset);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(attendeeSearchRequest.getRequestInfo(), true);
+        AttendeeSearchResponse response = AttendeeSearchResponse.builder()
+                .responseInfo(responseInfo)
+                .attendees(attendees)
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }

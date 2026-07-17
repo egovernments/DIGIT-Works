@@ -51,6 +51,30 @@ public class Party {
 	@Size(min = 2, max = 64)
 	private String identifier;
 
+	@JsonProperty("paymentProvider")
+	@Size(max = 16)
+	private String paymentProvider;
+
+	@JsonProperty("payeeName")
+	@Size(max = 256)
+	private String payeeName;
+
+	@JsonProperty("payeePhoneNumber")
+	@Size(max = 64)
+	private String payeePhoneNumber;
+
+	@JsonProperty("bankAccount")
+	@Size(max = 128)
+	private String bankAccount;
+
+	@JsonProperty("bankCode")
+	@Size(max = 64)
+	private String bankCode;
+
+	@JsonProperty("beneficiaryCode")
+	@Size(max = 128)
+	private String beneficiaryCode;
+
 	@JsonProperty("status")
 	private Status status;
 

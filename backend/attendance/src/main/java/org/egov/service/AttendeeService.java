@@ -1,12 +1,17 @@
 package org.egov.service;
 
 import digit.models.coremodels.RequestInfoWrapper;
+import org.egov.common.contract.request.RequestInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.config.AttendanceServiceConfiguration;
 import org.egov.enrichment.AttendeeEnrichmentService;
+import org.egov.common.models.individual.Individual;
+import org.egov.common.models.individual.IndividualSearch;
 import org.egov.common.producer.Producer;
 import org.egov.repository.AttendeeRepository;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.HRMSUtil;
+import org.egov.util.IndividualServiceUtil;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceServiceValidator;
 import org.egov.validator.AttendeeServiceValidator;
@@ -15,10 +20,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.egov.util.AttendanceServiceConstants.*;
 
 @Service
 @Slf4j
@@ -39,8 +48,10 @@ public class AttendeeService {
 
     private final Producer producer;
 
+    private final IndividualServiceUtil individualServiceUtil;
+
     @Autowired
-    public AttendeeService(AttendeeServiceValidator attendeeServiceValidator, ResponseInfoFactory responseInfoFactory, AttendeeRepository attendeeRepository, AttendanceRegisterService attendanceRegisterService, AttendanceServiceValidator attendanceServiceValidator, AttendeeEnrichmentService attendeeEnrichmentService, AttendanceServiceConfiguration attendanceServiceConfiguration, Producer producer) {
+    public AttendeeService(AttendeeServiceValidator attendeeServiceValidator, ResponseInfoFactory responseInfoFactory, AttendeeRepository attendeeRepository, AttendanceRegisterService attendanceRegisterService, AttendanceServiceValidator attendanceServiceValidator, AttendeeEnrichmentService attendeeEnrichmentService, AttendanceServiceConfiguration attendanceServiceConfiguration, Producer producer, IndividualServiceUtil individualServiceUtil) {
         this.attendeeServiceValidator = attendeeServiceValidator;
         this.responseInfoFactory = responseInfoFactory;
         this.attendeeRepository = attendeeRepository;
@@ -49,6 +60,7 @@ public class AttendeeService {
         this.attendeeEnrichmentService = attendeeEnrichmentService;
         this.attendanceServiceConfiguration = attendanceServiceConfiguration;
         this.producer = producer;
+        this.individualServiceUtil = individualServiceUtil;
     }
 
     /* * Update Attendee Tag
@@ -122,6 +134,20 @@ public class AttendeeService {
 
         //db call to get the attendeeList data
         List<IndividualEntry> attendeeListFromDB = getAttendees(tenantId, registerIds,attendeeIds);
+
+        // If register has no attendees at all, only CAMPAIGN_MANAGER can enroll first attendee
+        for (String registerId : registerIds) {
+            AttendeeSearchCriteria allAttendeeCriteria = AttendeeSearchCriteria.builder()
+                    .registerIds(java.util.Collections.singletonList(registerId)).tenantId(tenantId).build();
+            List<IndividualEntry> allAttendeesInRegister = attendeeRepository.getAttendees(tenantId, allAttendeeCriteria);
+            if (allAttendeesInRegister.isEmpty()) {
+                Set<String> userRoles = HRMSUtil.getUserRoleCodes(attendeeCreateRequest.getRequestInfo());
+                if (!userRoles.contains(ROLE_CAMPAIGN_MANAGER)) {
+                    throw new CustomException(ERROR_KEY_UNAUTHORIZED, ERROR_MSG_UNAUTHORIZED_FIRST_ATTENDEE_PREFIX + registerId);
+                }
+                break; // one role check is sufficient since all attendees share same user
+            }
+        }
 
         //db call to get registers from db
         List<AttendanceRegister> attendanceRegisterListFromDB = getAttendanceRegisters(attendeeCreateRequest,registerIds,tenantId);
@@ -249,5 +275,50 @@ public class AttendeeService {
             attendeeIds.add(attendee.getIndividualId());
         }
         return attendeeIds;
+    }
+
+    public List<IndividualEntry> searchAttendees(RequestInfo requestInfo, AttendeeSearchCriteria criteria, Integer limit, Integer offset) {
+        String tenantId = criteria.getTenantId();
+
+        // RBAC: only open-search-enabled roles (includes CAMPAIGN_MANAGER via config) can call this
+        Set<String> userRoles = HRMSUtil.getUserRoleCodes(requestInfo);
+        Set<String> openSearchEnabledRoles = HRMSUtil.getRegisterOpenSearchEnabledRoles(
+                attendanceServiceConfiguration.getRegisterOpenSearchEnabledRoles());
+        if (!HRMSUtil.isUserEnabledForOpenSearch(userRoles, openSearchEnabledRoles)) {
+            throw new CustomException(ERROR_KEY_UNAUTHORIZED, "User does not have permission to perform attendee search");
+        }
+
+        int resolvedLimit = (limit == null) ? attendanceServiceConfiguration.getAttendanceRegisterDefaultLimit()
+                : Math.min(limit, attendanceServiceConfiguration.getAttendanceRegisterMaxLimit());
+        int resolvedOffset = (offset == null) ? attendanceServiceConfiguration.getAttendanceRegisterDefaultOffset() : offset;
+        criteria.setLimit(resolvedLimit);
+        criteria.setOffset(resolvedOffset);
+
+        List<String> usernames = criteria.getUsernames();
+        if (usernames != null && !usernames.isEmpty()) {
+            IndividualSearch individualSearch = IndividualSearch.builder()
+                    .username(usernames)
+                    .build();
+            List<Individual> individuals;
+            try {
+                individuals = individualServiceUtil.getIndividualDetailsFromSearchCriteria(
+                        individualSearch, requestInfo, tenantId);
+            } catch (CustomException e) {
+                if ("INDIVIDUAL_SEARCH_RESPONSE_IS_EMPTY".equals(e.getCode())) {
+                    return Collections.emptyList();
+                }
+                throw e;
+            }
+            List<String> individualIds = individuals.stream()
+                    .map(Individual::getId)
+                    .collect(Collectors.toList());
+            if (individualIds.isEmpty()) {
+                return Collections.emptyList();
+            }
+            criteria.setIndividualIds(individualIds);
+        }
+
+        log.info("Searching attendees for tenantId: {}", tenantId);
+        return attendeeRepository.getAttendees(tenantId, criteria);
     }
 }

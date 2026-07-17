@@ -6,8 +6,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.service.StaffService;
 import org.egov.util.ResponseInfoFactory;
+import org.egov.web.models.StaffPermission;
 import org.egov.web.models.StaffPermissionRequest;
 import org.egov.web.models.StaffPermissionResponse;
+import org.egov.web.models.StaffSearchCriteria;
+import org.egov.web.models.StaffSearchRequest;
+import org.egov.web.models.StaffSearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +20,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping("/staff/v1")
@@ -56,6 +62,25 @@ public class StaffApiController {
         StaffPermissionResponse staffPermissionResponse = StaffPermissionResponse.builder().responseInfo(responseInfo)
                 .staff(enrichedRequest.getStaff()).build();
         return new ResponseEntity<StaffPermissionResponse>(staffPermissionResponse, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/_search", method = RequestMethod.POST)
+    public ResponseEntity<StaffSearchResponse> searchStaff(
+            @ApiParam(value = "", allowableValues = "application/json") @RequestHeader(value = "Content-Type", required = false) String contentType,
+            @ApiParam(value = "") @Valid @RequestBody StaffSearchRequest staffSearchRequest,
+            @RequestParam String tenantId,
+            @RequestParam(required = false) Integer limit,
+            @RequestParam(required = false) Integer offset) {
+        StaffSearchCriteria criteria = staffSearchRequest.getStaffSearchCriteria();
+        if (criteria == null) criteria = new StaffSearchCriteria();
+        criteria.setTenantId(tenantId);
+        List<StaffPermission> staff = staffService.searchStaff(staffSearchRequest.getRequestInfo(), criteria, limit, offset);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(staffSearchRequest.getRequestInfo(), true);
+        StaffSearchResponse response = StaffSearchResponse.builder()
+                .responseInfo(responseInfo)
+                .staff(staff)
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }

@@ -1,0 +1,122 @@
+[
+  {
+    "code": "PDF_LABEL_TXN_REP_TRANSACTION_REPORT_TITLE",
+    "message": "Rapport de Transactions",
+    "locale": "fr_CG",
+    "module": "hcm-payments"
+  },
+  {
+    "code": "PDF_LABEL_TXN_REP_SERIAL_NO",
+    "message": "N°",
+    "locale": "fr_CG",
+    "module": "hcm-payments"
+  },
+  {
+    "code": "PDF_LABEL_TXN_REP_DATE",
+    "message": "Date",
+    "locale": "fr_CG",
+    "module": "hcm-payments"
+  },
+  {
+    "code": "PDF_LABEL_TXN_REP_BILL_NUMBER",
+    "message": "Numéro de Facture",
+    "locale": "fr_CG",
+    "module": "hcm-payments"
+  },
+  {
+    "code": "PDF_LABEL_TXN_REP_MTN_TRANSACTION_ID",
+    "message": "ID Transaction MTN",
+    "locale": "fr_CG",
+    "module": "hcm-payments"
+  },
+  {
+    "code": "PDF_LABEL_TXN_REP_DESCRIPTION",
+    "message": "Description",
+    "locale": "fr_CG",
+    "module": "hcm-payments"
+  },
+  {
+    "code": "PDF_LABEL_TXN_REP_DEBIT_AMOUNT",
+    "message": "Montant Débité",
+    "locale": "fr_CG",
+    "module": "hcm-payments"
+  },
+  {
+    "code": "PDF_LABEL_TXN_REP_GENERATED_TIME",
+    "message": "Date de Génération:",
+    "locale": "fr_CG",
+    "module": "hcm-payments"
+  },
+  {
+    "code": "HCM_AM_TRANSACTION_REPORT",
+    "message": "Rapport de Transactions",
+    "locale": "fr_CG",
+    "module": "hcm-payments"
+  },
+  {
+    "code": "HCM_AM_LAST_GENERATED_ON",
+    "message": "Dernière Génération le",
+    "locale": "fr_CG",
+    "module": "hcm-payments"
+  },
+  {
+    "code": "HCM_AM_GENERATE_REPORT",
+    "message": "Générer le Rapport",
+    "locale": "fr_CG",
+    "module": "hcm-payments"
+  },
+  {
+    "code": "HCM_AM_DOWNLOAD",
+    "message": "Télécharger",
+    "locale": "fr_CG",
+    "module": "hcm-payments"
+  },
+  {
+    "code": "HCM_AM_DOWNLOAD_EXCEL",
+    "message": "Télécharger Excel",
+    "locale": "fr_CG",
+    "module": "hcm-payments"
+  },
+  {
+    "code": "HCM_AM_DOWNLOAD_PDF",
+    "message": "Télécharger PDF",
+    "locale": "fr_CG",
+    "module": "hcm-payments"
+  },
+  {
+    "code": "EXPENSE_TXN_SERIAL_NO",
+    "message": "N°",
+    "locale": "fr_CG",
+    "module": "hcm-payments"
+  },
+  {
+    "code": "EXPENSE_TXN_DATE",
+    "message": "Date",
+    "locale": "fr_CG",
+    "module": "hcm-payments"
+  },
+  {
+    "code": "EXPENSE_TXN_BILL_NO",
+    "message": "Numéro de Facture",
+    "locale": "fr_CG",
+    "module": "hcm-payments"
+  },
+  {
+    "code": "EXPENSE_TXN_MTN_ID",
+    "message": "ID Transaction MTN",
+    "locale": "fr_CG",
+    "module": "hcm-payments"
+  },
+  {
+    "code": "EXPENSE_TXN_DESC",
+    "message": "Description",
+    "locale": "fr_CG",
+    "module": "hcm-payments"
+  },
+  {
+    "code": "EXPENSE_TXN_DEBIT_AMT",
+    "message": "Montant Débité",
+    "locale": "fr_CG",
+    "module": "hcm-payments"
+  }
+]

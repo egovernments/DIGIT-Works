@@ -93,16 +93,29 @@ public class AttendeeQueryBuilder {
                 throw new CustomException("INVALID_SEARCH_PARAM", "Cannot specify denrollmentDate without a enrollmentDate");
             }
         }
+        addClauseIfRequired(query, preparedStmtList);
+        query.append(" att.register_id IN (SELECT id FROM ").append(SCHEMA_REPLACE_STRING)
+                .append(".eg_wms_attendance_register WHERE status = ? AND isdeleted = ?) ");
+        preparedStmtList.add("ACTIVE");
+        preparedStmtList.add(false);
+
+        addLimitAndOffset(query, criteria, preparedStmtList);
         // After building full query, replace schema placeholders with actual schema using MultiStateInstanceUtil
         return multiStateInstanceUtil.replaceSchemaPlaceholder(query.toString(), tenantId);
     }
     private void addLimitAndOffset(StringBuilder query, AttendeeSearchCriteria criteria, List<Object> preparedStmtList) {
-        query.append(" OFFSET ? ");
-        preparedStmtList.add(criteria.getOffset());
+        Integer offset = criteria.getOffset();
+        Integer limit = criteria.getLimit();
 
-        query.append(" LIMIT ? ");
-        preparedStmtList.add(criteria.getLimit());
+        if (offset != null) {
+            query.append(" OFFSET ? ");
+            preparedStmtList.add(offset);
+        }
 
+        if (limit != null) {
+            query.append(" LIMIT ? ");
+            preparedStmtList.add(limit);
+        }
     }
 
     private String createQuery(Collection<String> ids) {

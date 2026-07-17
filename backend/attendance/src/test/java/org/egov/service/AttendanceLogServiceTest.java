@@ -9,6 +9,7 @@ import org.egov.repository.AttendanceLogRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.validator.AttendanceLogServiceValidator;
+import org.egov.service.AttendanceDocumentEventService;
 import org.egov.web.models.AttendanceLogRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,6 +47,12 @@ public class AttendanceLogServiceTest {
 
     @Mock
     private AttendanceServiceConfiguration config;
+
+    @Mock
+    private AttendanceLogRepository attendanceLogRepository;
+
+    @Mock
+    private AttendanceDocumentEventService attendanceDocumentEventService;
 
 
     @DisplayName("create attendance log successfully")

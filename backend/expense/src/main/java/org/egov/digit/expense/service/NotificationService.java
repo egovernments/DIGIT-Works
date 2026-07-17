@@ -61,7 +61,7 @@ public class NotificationService {
             }
             String customizedMessage = buildMessageReplaceVariables(message, billNumber, amount);
             SMSRequest smsRequest = SMSRequest.builder().mobileNumber(contactMobileNumber).message(customizedMessage).build();
-            expenseProducer.push(tenantId, config.getSmsNotificationTopic(), smsRequest);
+            expenseProducer.push(config.getSmsNotificationTopic(), smsRequest);
         }
     }
 
@@ -74,15 +74,15 @@ public class NotificationService {
         String contactMobileNumber = cboDetails.get(CONTACT_MOBILE_NUMBER);
         String customizedMessage = buildMessageReplaceVariables(message, billNumber, amount);
         SMSRequest smsRequest = SMSRequest.builder().mobileNumber(contactMobileNumber).message(customizedMessage).build();
-        expenseProducer.push(tenantId, config.getSmsNotificationTopic(), smsRequest);
+        expenseProducer.push(config.getSmsNotificationTopic(), smsRequest);
     }
 
     public String getMessage(RequestInfo requestInfo, String tenantId, String msgCode){
-        String locale = "en_IN";
+        String locale = config.getLocalizationDefaultLocale();
         if(requestInfo.getMsgId().split("\\|").length > 1)
             locale = requestInfo.getMsgId().split("\\|")[1];
         Map<String, Map<String, String>> localizedMessageMap = localizationUtil.getLocalisedMessages(requestInfo, tenantId,
-                locale, EXPENSE_CALCULATOR_MODULE_CODE);
+                locale, config.getNotificationLocalizationModule());
         return localizedMessageMap.get(locale + "|" + tenantId).get(msgCode);
     }
 

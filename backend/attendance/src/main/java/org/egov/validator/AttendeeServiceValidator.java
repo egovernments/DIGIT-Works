@@ -438,6 +438,26 @@ public class AttendeeServiceValidator {
                                     , "Enrollment date for attendee '" + individualName + "' must be within start and end date of the register '" + registerName + "'");
                         }
                     }
+
+                    if (attendeeFromRequest.getDenrollmentDate() != null) {
+                        String individualName = individualIdToNameMap.getOrDefault(attendeeFromRequest.getIndividualId(), attendeeFromRequest.getIndividualId());
+                        String registerName = registerIdToNameMap.getOrDefault(attendeeFromRequest.getRegisterId(), attendeeFromRequest.getRegisterId());
+
+                        int denrollStartCompare = attendeeFromRequest.getDenrollmentDate().compareTo(attendanceRegister.getStartDate());
+                        int denrollEndCompare = attendanceRegister.getEndDate().compareTo(attendeeFromRequest.getDenrollmentDate());
+                        if (denrollStartCompare < 0 || denrollEndCompare < 0) {
+                            throw new CustomException("DENROLLMENT_DATE"
+                                    , "De-enrollment date for attendee '" + individualName + "' must be within start and end date of the register '" + registerName + "'");
+                        }
+
+                        BigDecimal effectiveEnrollmentDate = attendeeFromRequest.getEnrollmentDate() != null
+                                ? attendeeFromRequest.getEnrollmentDate()
+                                : currentDate;
+                        if (attendeeFromRequest.getDenrollmentDate().compareTo(effectiveEnrollmentDate) < 0) {
+                            throw new CustomException("DENROLLMENT_DATE"
+                                    , "De-enrollment date for attendee '" + individualName + "' cannot be before its enrollment date");
+                        }
+                    }
                 }
             }
         }
@@ -467,40 +487,41 @@ public class AttendeeServiceValidator {
                                          List<IndividualEntry> attendeeListFromDB, List<AttendanceRegister> attendanceRegisterListFromDB) {
 
         List<IndividualEntry> attendeeListFromRequest = attendeeDeleteRequest.getAttendees();
+        BigDecimal currentDate = new BigDecimal(System.currentTimeMillis());
 
-
-        //attendee de-enrollment date, if present in request should be before end date and after start date of register
-        log.info("verifying attendee de-enrollment date, if present in request should be before end date and after start date of register");
-        for (AttendanceRegister attendanceRegister : attendanceRegisterListFromDB) {
-            for (IndividualEntry attendeeFromRequest : attendeeListFromRequest) {
-                if (attendeeFromRequest.getDenrollmentDate() != null) {
-                    int startDateCompare = attendeeFromRequest.getDenrollmentDate().compareTo(attendanceRegister.getStartDate());
-                    int endDateCompare = attendanceRegister.getEndDate().compareTo(attendeeFromRequest.getDenrollmentDate());
-                    if (startDateCompare < 0 || endDateCompare < 0) {
-                        throw new CustomException("DE ENROLLMENT_DATE"
-                                , "De enrollment date for attendee : " + attendeeFromRequest.getIndividualId() + " must be between start date and end date of the register");
-                    }
-                }
-            }
-        }
-
-        //check if attendee is already de-enrolled from the register
-        log.info("checking if attendee is already de-enrolled from the register");
-        boolean attendeeDeEnrolled = true;
+        log.info("validating attendee de-enrollment: existence in register and de-enrollment date bounds");
         for (IndividualEntry attendeeFromRequest : attendeeListFromRequest) {
-            for (IndividualEntry attendeeFromDB : attendeeListFromDB) {
-                if (attendeeFromRequest.getRegisterId().equals(attendeeFromDB.getRegisterId()) && attendeeFromDB.getIndividualId().equals(attendeeFromRequest.getIndividualId())) { //attendee present in db
-                    if (attendeeFromDB.getDenrollmentDate() == null) {
-                        attendeeDeEnrolled = false;
-                        break;
-                    }
-                }
+            IndividualEntry attendeeFromDB = attendeeListFromDB.stream()
+                    .filter(a -> a.getRegisterId().equals(attendeeFromRequest.getRegisterId())
+                            && a.getIndividualId().equals(attendeeFromRequest.getIndividualId()))
+                    .findFirst().orElse(null);
+            if (attendeeFromDB == null) {
+                throw new CustomException("INDIVIDUAL_ID", "Attendee " + attendeeFromRequest.getIndividualId() + " is not enrolled in the register " + attendeeFromRequest.getRegisterId());
             }
-            if (attendeeDeEnrolled) {
-                throw new CustomException("INDIVIDUAL_ID", "Attendee " + attendeeFromRequest.getIndividualId() + " is already de enrolled from the register " + attendeeFromRequest.getRegisterId());
+
+            AttendanceRegister register = attendanceRegisterListFromDB.stream()
+                    .filter(r -> r.getId().equals(attendeeFromRequest.getRegisterId()))
+                    .findFirst().orElse(null);
+            if (register == null) {
+                continue;
+            }
+
+            BigDecimal enrollmentDate = attendeeFromDB.getEnrollmentDate();
+            BigDecimal defaultDate = (enrollmentDate != null && enrollmentDate.compareTo(currentDate) > 0)
+                    ? enrollmentDate : currentDate;
+            BigDecimal denrollmentDate = attendeeFromRequest.getDenrollmentDate() != null
+                    ? attendeeFromRequest.getDenrollmentDate() : defaultDate;
+
+            if (denrollmentDate.compareTo(register.getStartDate()) < 0 || register.getEndDate().compareTo(denrollmentDate) < 0) {
+                throw new CustomException("DE ENROLLMENT_DATE"
+                        , "De enrollment date for attendee : " + attendeeFromRequest.getIndividualId() + " must be between start date and end date of the register");
+            }
+
+            if (enrollmentDate != null && denrollmentDate.compareTo(enrollmentDate) < 0) {
+                throw new CustomException("DE ENROLLMENT_DATE"
+                        , "De enrollment date for attendee : " + attendeeFromRequest.getIndividualId() + " cannot be before its enrollment date");
             }
         }
-
     }
 
     private void validateRequestInfo(RequestInfo requestInfo, Map<String, String> errorMap) {
@@ -550,22 +571,6 @@ public class AttendeeServiceValidator {
                 .map(IndividualEntry::getRegisterId)
                 .collect(Collectors.toList());
 
-        //creating a register Id to First Staff Map
-        Map<String, StaffPermission> registerIdToFirstStaffMap;
-        if(config.isRegisterFirstOwnerStaffEnabled()) {
-            log.info("Using first owner staff mapping strategy");
-            registerIdToFirstStaffMap = staffService.fetchRegisterIdtoFirstOwnerStaffMap(tenantId,registerIds);
-        }
-        else {
-            log.info("Using first staff mapping strategy");
-            registerIdToFirstStaffMap = staffService.fetchRegisterIdtoFirstStaffMap(tenantId,registerIds);
-        }
-
-        if(registerIdToFirstStaffMap.isEmpty()) {
-            log.error("No staff mapping found for registers: {}", registerIds);
-            throw new CustomException("STAFF_MAPPING_NOT_FOUND", "No staff mapping found for the registers");
-        }
-
         //Fetching all the attendees's uuids for hrms search
         List<String> userUuids = attendeeCreateRequest.getAttendees().stream()
                 .map(IndividualEntry::getIndividualId)
@@ -577,6 +582,22 @@ public class AttendeeServiceValidator {
         Map<String, Employee> individualIdVsEmployeeMap = employeeList.stream()
                 .collect(Collectors.toMap(Employee::getUuid, emp -> emp));
 
+        // Only fetch staff mapping when reportingTo validation is needed (registerFirstStaffInsertEnabled=true)
+        Map<String, StaffPermission> registerIdToFirstStaffMap = null;
+        if (config.getRegisterFirstStaffInsertEnabled()) {
+            if (config.isRegisterFirstOwnerStaffEnabled()) {
+                log.info("Using first owner staff mapping strategy");
+                registerIdToFirstStaffMap = staffService.fetchRegisterIdtoFirstOwnerStaffMap(tenantId, registerIds);
+            } else {
+                log.info("Using first staff mapping strategy");
+                registerIdToFirstStaffMap = staffService.fetchRegisterIdtoFirstStaffMap(tenantId, registerIds);
+            }
+            if (registerIdToFirstStaffMap.isEmpty()) {
+                log.error("No staff mapping found for registers: {}", registerIds);
+                throw new CustomException("STAFF_MAPPING_NOT_FOUND", "No staff mapping found for the registers");
+            }
+        }
+
         //looping through attendees for validating their details
         for (IndividualEntry entry : attendeeCreateRequest.getAttendees()) {
             try {
@@ -585,23 +606,27 @@ public class AttendeeServiceValidator {
                     throw new CustomException("HRMS_EMPLOYEE_NOT_FOUND", "Employee not present in HRMS for the individual ID - " + entry.getIndividualId());
                 }
 
-                //fetch reportingTo uuids from employees assignments
-                List<String> reportingToList = individualIdVsEmployeeMap.get(entry.getIndividualId()).getAssignments().stream()
-                        .map(Assignment::getReportingTo)
-                        .filter(reportingTo -> reportingTo != null && !reportingTo.isEmpty())
-                        .collect(Collectors.toList());
+                // Validate reportingTo only when registerFirstStaffInsertEnabled=true
+                if (config.getRegisterFirstStaffInsertEnabled()) {
+                    //fetch reportingTo uuids from employees assignments
+                    List<String> reportingToList = individualIdVsEmployeeMap.get(entry.getIndividualId()).getAssignments().stream()
+                            .map(Assignment::getReportingTo)
+                            .filter(reportingTo -> reportingTo != null && !reportingTo.isEmpty())
+                            .collect(Collectors.toList());
 
-                //fetch the first staff's User Id
-                String reportersUuid = registerIdToFirstStaffMap.get(entry.getRegisterId()).getUserId();
+                    //fetch the first staff's User Id
+                    String reportersUuid = registerIdToFirstStaffMap.get(entry.getRegisterId()).getUserId();
 
-                List<Employee> reportersEmployeeList = hrmsUtil.getEmployee(tenantId, Collections.singletonList(reportersUuid), requestInfo);
-                if(reportersEmployeeList.isEmpty())
-                    throw new CustomException("FAILED_TO_FETCH_REPORTERS_UUID", "Failed to fetch reporters hrms uuid for userserviceId - " + reportersUuid);
+                    List<Employee> reportersEmployeeList = hrmsUtil.getEmployee(tenantId, Collections.singletonList(reportersUuid), requestInfo);
+                    if (reportersEmployeeList.isEmpty())
+                        throw new CustomException("FAILED_TO_FETCH_REPORTERS_UUID", "Failed to fetch reporters hrms uuid for userserviceId - " + reportersUuid);
 
-                if (!reportingToList.contains(reportersEmployeeList.get(0).getUser().getUserServiceUuid())) {
-                    //throw validation error if attendee's reportingTo is not First Staff of the Register
-                    throw new CustomException("REPORTING_STAFF_INCORRECT_FOR_ATTENDEE", "Attendees reporting uuid does not match with the register owner uuid");
+                    if (!reportingToList.contains(reportersEmployeeList.get(0).getUser().getUserServiceUuid())) {
+                        //throw validation error if attendee's reportingTo is not First Staff of the Register
+                        throw new CustomException("REPORTING_STAFF_INCORRECT_FOR_ATTENDEE", "Attendees reporting uuid does not match with the register owner uuid");
+                    }
                 }
+
                 validIndividualEntries.add(entry);
             }
             catch (CustomException e) {

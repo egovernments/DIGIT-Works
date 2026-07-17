@@ -64,7 +64,7 @@ public class ProjectStaffConsumer {
      * tenant-specific and global topics.
      */
 
-    @KafkaListener(topicPattern = "(${attendance.kafka.tenant.id.pattern}){0,1}${project.staff.attendance.topic}")
+    @KafkaListener(topicPattern = "(${attendance.kafka.tenant.id.pattern})${project.staff.attendance.topic}")
     public void bulkStaffCreate(Map<String, Object> consumerRecord,
                                          @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {

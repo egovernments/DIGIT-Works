@@ -2,7 +2,9 @@ package org.egov.digit.expense.calculator.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.models.project.ProjectRequest;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
+import org.egov.digit.expense.calculator.service.BillingConfigurationService;
 import org.egov.digit.expense.calculator.service.ExpenseCalculatorService;
 import org.egov.digit.expense.calculator.service.HealthBillReportGenerator;
 import org.egov.digit.expense.calculator.service.RedisService;
@@ -28,6 +30,8 @@ import java.util.Map;
 @Slf4j
 public class ExpenseCalculatorConsumer {
 
+	private static final int MAX_REPORT_GENERATION_RETRIES = 3;
+
 	private final ExpenseCalculatorConfiguration configs;
 	private final ExpenseCalculatorService expenseCalculatorService;
 	private final ObjectMapper objectMapper;
@@ -35,11 +39,13 @@ public class ExpenseCalculatorConsumer {
 	private final HealthBillReportGenerator healthBillReportGenerator;
 	private final RedisService redisService;
 	private final ExpenseCalculatorUtil expenseCalculatorUtil;
+	private final BillingConfigurationService billingConfigurationService;
 
 	@Autowired
 	public ExpenseCalculatorConsumer(ExpenseCalculatorConfiguration configs, ExpenseCalculatorService expenseCalculatorService,
 									 ObjectMapper objectMapper, ExpenseCalculatorProducer producer, HealthBillReportGenerator healthBillReportGenerator,
-									 RedisService redisService, ExpenseCalculatorUtil expenseCalculatorUtil) {
+									 RedisService redisService, ExpenseCalculatorUtil expenseCalculatorUtil,
+									 BillingConfigurationService billingConfigurationService) {
 		this.configs = configs;
 		this.expenseCalculatorService = expenseCalculatorService;
 		this.objectMapper = objectMapper;
@@ -47,6 +53,7 @@ public class ExpenseCalculatorConsumer {
         this.healthBillReportGenerator = healthBillReportGenerator;
         this.redisService = redisService;
         this.expenseCalculatorUtil = expenseCalculatorUtil;
+        this.billingConfigurationService = billingConfigurationService;
     }
 
 	// Commenting existing consumer
@@ -91,8 +98,10 @@ public class ExpenseCalculatorConsumer {
 	public void listenBillForReport(final String consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 		log.info("ExpenseCalculatorConsumer:listenBillForReport - consuming from topic: {}", topic);
 
+		String processingBillId = null;
+		ReportGenerationTrigger trigger = null;
 		try {
-			ReportGenerationTrigger trigger = objectMapper.readValue(consumerRecord, ReportGenerationTrigger.class);
+			trigger = objectMapper.readValue(consumerRecord, ReportGenerationTrigger.class);
 			long triggerAge = System.currentTimeMillis() - trigger.getCreatedTime();
 			log.info("Processing report trigger for billId: {}, tenantId: {}, numberOfBillDetails: {}, triggerCreatedTime: {}, triggerAge: {} seconds",
 				trigger.getBillId(), trigger.getTenantId(), trigger.getNumberOfBillDetails(),
@@ -105,6 +114,16 @@ public class ExpenseCalculatorConsumer {
 			// Validate that bill exists in the system, because of async possible that it's not persisted while consuming the record.
 			if (!CollectionUtils.isEmpty(bills) && bills.get(0).getBillDetails().size() == trigger.getNumberOfBillDetails()) {
 				Bill bill = bills.get(0);
+
+				// Check if report generation is already in progress for a previous update
+				// If INITIATED and forceRegenerate=true, wait for the prior run to finish before retrying
+				String currentReportStatus = extractReportStatus(bill);
+				if ("INITIATED".equals(currentReportStatus) && !Boolean.TRUE.equals(trigger.getForceRegenerate())) {
+					log.info("Report generation already INITIATED for bill {}. Waiting for prior run to complete.", bill.getId());
+					Thread.sleep(15 * 1000);
+					producer.push(configs.getReportGenerationRetryTriggerTopic(), trigger);
+					return;
+				}
 
 				log.info("Bill found with matching details count. BillId: {}, billNumber: {}, actualBillDetails: {}, expectedBillDetails: {}",
 						bill.getId(), bill.getBillNumber(),
@@ -149,12 +168,19 @@ public class ExpenseCalculatorConsumer {
 				BillRequest request = BillRequest.builder().requestInfo(trigger.getRequestInfo()).bill(bill).build();
 				log.info("Bill exists and validated for bill id: {} (V2: {}), tenantId: {}", bill.getId(), isV2Bill, bill.getTenantId());
 
+				// If force regeneration requested (bill was updated), evict cache to allow re-processing
+				if (Boolean.TRUE.equals(trigger.getForceRegenerate())) {
+					log.info("Force regeneration requested for billId: {} — evicting Redis cache", bill.getId());
+					redisService.evict(bill.getId());
+				}
+
 				// Atomic operation to prevent concurrent duplicate processing
 				if (!redisService.setCacheIfAbsent(bill.getId())) {
 					log.info("Bill {} already in cache, skipping report generation to prevent duplicate", bill.getId());
 					return;
 				}
 
+				processingBillId = bill.getId();
 				log.info("Starting report generation for bill: {} (V2: {})", bill.getId(), isV2Bill);
 				healthBillReportGenerator.generateHealthBillReportRequest(request);
 			}
@@ -183,10 +209,33 @@ public class ExpenseCalculatorConsumer {
 		} catch (Exception exception) {
 			log.error("Error occurred while processing the report from topic: {} for record: {}",
 				topic, consumerRecord, exception);
-			String errorDetail = exception instanceof CustomException
-				? ((CustomException) exception).getCode() + ": " + exception.getMessage()
-				: exception.getMessage();
-			producer.push(configs.getReportErrorQueueTopic(), errorDetail + " : " + consumerRecord);
+			// Evict Redis cache so the trigger can be reprocessed on retry
+			if (processingBillId != null) {
+				redisService.evict(processingBillId);
+				log.info("Evicted Redis cache for bill {} to allow retry", processingBillId);
+			}
+			// Retry the trigger up to MAX_REPORT_GENERATION_RETRIES times
+			if (trigger != null && trigger.getRetryCount() < MAX_REPORT_GENERATION_RETRIES) {
+				ReportGenerationTrigger retryTrigger = ReportGenerationTrigger.builder()
+						.requestInfo(trigger.getRequestInfo())
+						.tenantId(trigger.getTenantId())
+						.billId(trigger.getBillId())
+						.createdTime(trigger.getCreatedTime())
+						.numberOfBillDetails(trigger.getNumberOfBillDetails())
+						.forceRegenerate(trigger.getForceRegenerate())
+						.retryCount(trigger.getRetryCount() + 1)
+						.build();
+				log.info("Scheduling report generation retry {}/{} for billId: {}",
+						retryTrigger.getRetryCount(), MAX_REPORT_GENERATION_RETRIES, trigger.getBillId());
+				producer.push(configs.getReportGenerationRetryTriggerTopic(), retryTrigger);
+			} else {
+				String errorDetail = exception instanceof CustomException
+					? ((CustomException) exception).getCode() + ": " + exception.getMessage()
+					: exception.getMessage();
+				log.error("Report generation exhausted {} retries for billId: {}. Sending to error queue.",
+						MAX_REPORT_GENERATION_RETRIES, trigger != null ? trigger.getBillId() : "unknown");
+				producer.push(configs.getReportErrorQueueTopic(), errorDetail + " : " + consumerRecord);
+			}
 		}
 	}
 
@@ -202,5 +251,72 @@ public class ExpenseCalculatorConsumer {
 			log.error("Error occurred while processing the report from topic : " + topic, exception);
 			producer.push(configs.getCalculatorErrorTopic(), exception.getMessage() + " : " + consumerRecord);
 		}
+	}
+
+	/**
+	 * Listens to the project update topic (same as attendance service) to sync
+	 * BillingConfig and BillingPeriod records when campaign dates change.
+	 *
+	 * Only root projects (parent == null) carry campaign-level date changes.
+	 * Child projects (per locality) are handled by the attendance service.
+	 */
+	@KafkaListener(topics = {"${project.management.system.kafka.update.date.topic}"})
+	public void listenProjectUpdate(final String consumerRecord, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+		log.info("ExpenseCalculatorConsumer:listenProjectUpdate from topic: {}", topic);
+		try {
+			ProjectRequest projectRequest = objectMapper.readValue(consumerRecord, ProjectRequest.class);
+			if (projectRequest.getProjects() == null || projectRequest.getProjects().isEmpty()) {
+				log.warn("Received empty project list on topic: {}", topic);
+				return;
+			}
+			String userId = extractUserId(projectRequest);
+			projectRequest.getProjects().stream()
+				.filter(p -> p.getParent() == null)
+				.forEach(rootProject -> {
+					try {
+						billingConfigurationService.handleCampaignDateUpdate(rootProject, userId);
+					} catch (CustomException e) {
+						log.error("Campaign date update blocked for project {}: {} — {}",
+							rootProject.getId(), e.getCode(), e.getMessage());
+					} catch (Exception e) {
+						log.error("Error handling campaign date update for project {}", rootProject.getId(), e);
+					}
+				});
+		} catch (Exception exception) {
+			log.error("Error processing project update event from topic: {}", topic, exception);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private String extractReportStatus(Bill bill) {
+		try {
+			if (bill.getAdditionalDetails() == null) return null;
+			Map<String, Object> details = objectMapper.convertValue(
+					bill.getAdditionalDetails(),
+					objectMapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class));
+			Object reportDetailsObj = details.get("reportDetails");
+			if (reportDetailsObj == null) return null;
+			Map<String, Object> reportDetails = objectMapper.convertValue(
+					reportDetailsObj,
+					objectMapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class));
+			Object status = reportDetails.get("status");
+			return status != null ? status.toString() : null;
+		} catch (Exception e) {
+			log.warn("Could not extract report status from bill {}", bill.getId());
+			return null;
+		}
+	}
+
+	private String extractUserId(ProjectRequest projectRequest) {
+		try {
+			if (projectRequest.getRequestInfo() != null
+					&& projectRequest.getRequestInfo().getUserInfo() != null
+					&& projectRequest.getRequestInfo().getUserInfo().getUuid() != null) {
+				return projectRequest.getRequestInfo().getUserInfo().getUuid();
+			}
+		} catch (Exception e) {
+			log.warn("Could not extract userId from ProjectRequest, falling back to SYSTEM", e);
+		}
+		return "SYSTEM";
 	}
 }

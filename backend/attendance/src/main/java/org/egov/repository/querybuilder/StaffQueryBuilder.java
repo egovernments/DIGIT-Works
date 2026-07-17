@@ -70,6 +70,27 @@ public class StaffQueryBuilder {
             preparedStmtList.add(staffType);
         }
 
+        List<String> staffTypes = criteria.getStaffTypes();
+        if (staffTypes != null && !staffTypes.isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" stf.stafftype IN (").append(createQuery(staffTypes)).append(") ");
+            preparedStmtList.addAll(staffTypes);
+        }
+
+        String staffName = criteria.getStaffName();
+        if (staffName != null && !staffName.isEmpty()) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" stf.additionaldetails->>'staffName' ILIKE ? ");
+            preparedStmtList.add("%" + staffName + "%");
+        }
+
+        addClauseIfRequired(query, preparedStmtList);
+        query.append(" stf.register_id IN (SELECT id FROM ").append(SCHEMA_REPLACE_STRING)
+                .append(".eg_wms_attendance_register WHERE status = ? AND isdeleted = ?) ");
+        preparedStmtList.add("ACTIVE");
+        preparedStmtList.add(false);
+
+        addLimitAndOffset(query, criteria, preparedStmtList);
         return multiStateInstanceUtil.replaceSchemaPlaceholder(query.toString(), tenantId);
     }
     private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList) {
@@ -92,12 +113,18 @@ public class StaffQueryBuilder {
 
 
     private void addLimitAndOffset(StringBuilder query, StaffSearchCriteria criteria, List<Object> preparedStmtList) {
-        query.append(" OFFSET ? ");
-        preparedStmtList.add(criteria.getOffset());
+        Integer offset = criteria.getOffset();
+        Integer limit = criteria.getLimit();
 
-        query.append(" LIMIT ? ");
-        preparedStmtList.add(criteria.getLimit());
+        if (offset != null) {
+            query.append(" OFFSET ? ");
+            preparedStmtList.add(offset);
+        }
 
+        if (limit != null) {
+            query.append(" LIMIT ? ");
+            preparedStmtList.add(limit);
+        }
     }
 
     public static String appendOrderLimit(String query) {

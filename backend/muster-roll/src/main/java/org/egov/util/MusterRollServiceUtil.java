@@ -784,4 +784,68 @@ public class MusterRollServiceUtil {
 
 		return false;
 	}
+
+	/**
+	 * Check if bill generation has been initiated or completed for the given period.
+	 *
+	 * Calls the same _checkBillStatus endpoint as isPeriodBilled() but reads the
+	 * isInitiated flag, which is true when eg_expense_bill_gen_status has an entry
+	 * with status INITIATED or SUCCESSFUL for the period.
+	 *
+	 * Used exclusively for CAMPAIGN_SUPERVISOR edit gate — blocks as soon as bill
+	 * processing starts, not just after report completion.
+	 *
+	 * Fail-open: returns false on any error to avoid blocking legitimate edits.
+	 *
+	 * @param billingPeriodId Billing period ID (V2 only — returns false if blank)
+	 * @param projectId       Campaign/project reference ID
+	 * @param tenantId        Tenant ID
+	 * @param requestInfo     Request info for API call
+	 * @return true if bill generation has been initiated or completed
+	 */
+	public boolean isBillInitiated(String billingPeriodId, String projectId,
+	                               String tenantId, RequestInfo requestInfo) {
+		if (StringUtils.isBlank(billingPeriodId)) {
+			log.debug("isBillInitiated::No billingPeriodId — skipping (V1 or unknown)");
+			return false;
+		}
+
+		log.info("isBillInitiated::Checking for period: {}, project: {}, tenant: {}",
+				billingPeriodId, projectId, tenantId);
+
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getExpenseCalculatorServiceHost())
+		   .append(config.getCheckBillStatusEndpoint());
+
+		Map<String, Object> requestBody = new HashMap<>();
+		requestBody.put("RequestInfo", requestInfo);
+		requestBody.put("tenantId", tenantId);
+		requestBody.put("projectId", projectId);
+		requestBody.put("billingPeriodId", billingPeriodId);
+
+		try {
+			Map<String, Object> response = restTemplate.postForObject(
+					uri.toString(), requestBody, Map.class);
+
+			if (response != null && response.containsKey("isInitiated")) {
+				Object isInitiatedObj = response.get("isInitiated");
+				boolean isInitiated = false;
+				if (isInitiatedObj instanceof Boolean) {
+					isInitiated = (Boolean) isInitiatedObj;
+				} else if (isInitiatedObj instanceof String) {
+					isInitiated = "true".equalsIgnoreCase((String) isInitiatedObj);
+				}
+				log.info("isBillInitiated::Result: {} for period: {}", isInitiated, billingPeriodId);
+				return isInitiated;
+			}
+		} catch (HttpClientErrorException | HttpServerErrorException e) {
+			log.warn("isBillInitiated::HTTP error (fail-open): {}", e.getStatusCode());
+			return false;
+		} catch (Exception e) {
+			log.warn("isBillInitiated::Error checking bill initiated status (fail-open): {}", e.getMessage());
+			return false;
+		}
+
+		return false;
+	}
 }

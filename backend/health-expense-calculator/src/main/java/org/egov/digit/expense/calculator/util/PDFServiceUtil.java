@@ -40,33 +40,38 @@ public class PDFServiceUtil {
      * @param pdfKey     the key to identify the pdf template
      * @return the file store id of the generated pdf file
      */
+    private static final int MAX_PDF_RETRIES = 3;
+    private static final long PDF_RETRY_BASE_DELAY_MS = 5000L;
+
     public String createPDF(BillReportRequest request, String tenantId, String pdfKey) {
-        Object result = null;
         StringBuilder uri = new StringBuilder();
-        String filestoreId = null;
-        List<String> filestoreids = null;
         uri.append(config.getPdfServiceHost()).append(config.getPdfServiceCreateEndpoint())
-                .append("?tenantId=" + tenantId)
-                .append("&key=" + pdfKey);
-        try {
-            // Log PDF service call with non-sensitive identifiers only
-            log.info("Calling PDF Service - TenantId: {}, PDFKey: {}, URL: {}", tenantId, pdfKey, uri.toString());
+                .append("?tenantId=").append(tenantId)
+                .append("&key=").append(pdfKey);
 
-            // Full request payload logged at DEBUG level with guard to avoid serialization cost in production
-            if (log.isDebugEnabled()) {
-                log.debug("PDF Service Request Payload: {}", mapper.writeValueAsString(request));
+        log.info("Calling PDF Service - TenantId: {}, PDFKey: {}, URL: {}", tenantId, pdfKey, uri);
+        if (log.isDebugEnabled()) {
+            try { log.debug("PDF Service Request Payload: {}", mapper.writeValueAsString(request)); }
+            catch (Exception ignored) {}
+        }
+
+        Exception lastException = null;
+        for (int attempt = 1; attempt <= MAX_PDF_RETRIES; attempt++) {
+            try {
+                log.info("PDF generation attempt {}/{} for tenantId: {}, key: {}", attempt, MAX_PDF_RETRIES, tenantId, pdfKey);
+                Object result = restRepo.fetchResult(uri, request);
+                List<String> filestoreIds = JsonPath.read(result, PDF_RESPONSE_FILESTORE_ID_JSONPATH);
+                if (filestoreIds != null && !filestoreIds.isEmpty()) {
+                    return filestoreIds.get(0);
+                }
+                lastException = new RuntimeException("PDF service returned empty filestoreIds");
+                log.error("PDF generation attempt {}/{} returned no filestoreIds", attempt, MAX_PDF_RETRIES);
+            } catch (Exception e) {
+                lastException = e;
+                log.error("PDF generation attempt {}/{} failed: {}", attempt, MAX_PDF_RETRIES, e.getMessage());
             }
-
-            result = restRepo.fetchResult(uri, request);
-            filestoreids = JsonPath.read(result, PDF_RESPONSE_FILESTORE_ID_JSONPATH);
-        } catch (Exception e) {
-            log.error("Exception while creating PDF: " + e);
-
         }
-        if (null != filestoreids && filestoreids.size() > 0) {
-            filestoreId = filestoreids.get(0);
-        }
-        return filestoreId;
+        throw new RuntimeException("PDF generation failed after " + MAX_PDF_RETRIES + " attempts: " + lastException.getMessage(), lastException);
     }
 
 

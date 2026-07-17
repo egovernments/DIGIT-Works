@@ -13,6 +13,7 @@ import org.egov.config.MusterRollServiceConfiguration;
 import org.egov.kafka.MusterRollProducer;
 import org.egov.repository.MusterRollRepository;
 import org.egov.tracer.model.CustomException;
+import org.egov.util.AttendanceReportConstants;
 import org.egov.util.MdmsUtil;
 import org.egov.util.MusterRollServiceUtil;
 import org.egov.util.ResponseInfoCreator;
@@ -26,6 +27,9 @@ import org.egov.web.models.MusterRollRequest;
 import org.egov.web.models.MusterRollResponse;
 import org.egov.web.models.MusterRollSearchCriteria;
 import org.egov.web.models.MusterRollStatusUpdateEvent;
+import org.egov.web.models.report.ReportGenerationRequest;
+import org.egov.web.models.report.MusterRollReport;
+import org.egov.repository.MusterRollReportRepository;
 import org.egov.works.services.common.models.musterroll.Status;
 import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,10 +132,12 @@ public class MusterRollService {
 
     private final ResponseInfoCreator responseInfoCreator;
 
+    private final MusterRollReportRepository musterRollReportRepository;
+
     private static final String COMPUTE_ATTENDENSE = "computeAttendance";
 
     @Autowired
-    public MusterRollService(CalculationService calculationService, MusterRollValidator musterRollValidator, EnrichmentService enrichmentService, WorkflowService workflowService, NotificationService notificationService, MusterRollProducer musterRollProducer, MusterRollServiceConfiguration serviceConfiguration, MusterRollRepository musterRollRepository, ObjectMapper mapper, RestTemplate restTemplate, MdmsUtil mdmsUtils, MusterRollServiceUtil musterRollServiceUtil, MusterRollServiceConfiguration config, ResponseInfoCreator responseInfoCreator) {
+    public MusterRollService(CalculationService calculationService, MusterRollValidator musterRollValidator, EnrichmentService enrichmentService, WorkflowService workflowService, NotificationService notificationService, MusterRollProducer musterRollProducer, MusterRollServiceConfiguration serviceConfiguration, MusterRollRepository musterRollRepository, ObjectMapper mapper, RestTemplate restTemplate, MdmsUtil mdmsUtils, MusterRollServiceUtil musterRollServiceUtil, MusterRollServiceConfiguration config, ResponseInfoCreator responseInfoCreator, MusterRollReportRepository musterRollReportRepository) {
         this.calculationService = calculationService;
         this.musterRollValidator = musterRollValidator;
         this.enrichmentService = enrichmentService;
@@ -146,6 +152,7 @@ public class MusterRollService {
         this.musterRollServiceUtil = musterRollServiceUtil;
         this.config = config;
         this.responseInfoCreator = responseInfoCreator;
+        this.musterRollReportRepository = musterRollReportRepository;
     }
 
     /**
@@ -206,6 +213,10 @@ public class MusterRollService {
 
         // Save muster roll
         musterRollProducer.push(musterRoll.getTenantId(), serviceConfiguration.getSaveMusterRollTopic(), musterRollRequest);
+
+        // Trigger report generation for all configured types (independent, async)
+        triggerReportGeneration(musterRoll.getId(), musterRoll.getTenantId(), musterRollRequest.getRequestInfo(),
+                musterRollRequest.getMusterRoll());
 
         log.info("MusterRollService::createMusterRoll - Created muster roll {} with status {}",
             musterRoll.getId(), musterRoll.getMusterRollStatus());
@@ -327,6 +338,11 @@ public class MusterRollService {
             filteredMusterRollList = applyLimitAndOffset(searchCriteria,filteredMusterRollList);
         }
 
+        // Enrich muster rolls with reports from separate table
+        if (filteredMusterRollList != null && !filteredMusterRollList.isEmpty()) {
+            enrichMusterRollsWithReports(filteredMusterRollList);
+        }
+
         //populate response
         ResponseInfo responseInfo = responseInfoCreator.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
         return MusterRollResponse.builder().responseInfo(responseInfo).musterRolls(filteredMusterRollList)
@@ -361,6 +377,13 @@ public class MusterRollService {
 
         //check if the user is enrolled in the attendance register for resubmit
         MusterRoll existingMusterRoll = fetchExistingMusterRoll(musterRollRequest.getMusterRoll());
+
+        boolean isCampaignSupervisorEdit = isCampaignSupervisorEditingApproved(
+                existingMusterRoll.getMusterRollStatus(), musterRollRequest.getRequestInfo());
+
+        if (isCampaignSupervisorEdit) {
+            validateBillNotInitiated(existingMusterRoll, musterRollRequest.getRequestInfo());
+        }
         log.info("MusterRollService::updateMusterRoll::update request for musterRollNumber::"+existingMusterRoll.getMusterRollNumber());
 
         //fetch MDMS data for muster - skill level
@@ -379,14 +402,19 @@ public class MusterRollService {
         if (isComputeAttendance) {
             RequestInfo requestInfo = musterRollRequest.getRequestInfo();
             musterRollValidator.isValidUser(existingMusterRoll, requestInfo);
-            calculationService.updateAttendance(musterRollRequest,mdmsData);
+            calculationService.updateAttendance(musterRollRequest, mdmsData);
         }
 
         // V2 Intermediate Billing - Capture previous status before workflow update
         String previousStatus = musterRollRequest.getMusterRoll().getMusterRollStatus();
 
-        if(config.isMusterRollWorkflowEnabled()) {
+        if (config.isMusterRollWorkflowEnabled() && !isCampaignSupervisorEdit) {
             workflowService.updateWorkflowStatus(musterRollRequest);
+        }
+
+        // CAMPAIGN_SUPERVISOR edits do not trigger a workflow transition — preserve APPROVED status
+        if (isCampaignSupervisorEdit) {
+            musterRollRequest.getMusterRoll().setMusterRollStatus(STATUS_APPROVED);
         }
 
         // V2 Intermediate Billing - Publish status update event (for V2 muster rolls only)
@@ -425,6 +453,10 @@ public class MusterRollService {
             }
         }
         musterRollProducer.push(tenantId, serviceConfiguration.getUpdateMusterRollTopic(), musterRollRequest);
+
+        // Trigger report generation for all configured types (independent, async)
+        triggerReportGeneration(musterRollRequest.getMusterRoll().getId(), tenantId, musterRollRequest.getRequestInfo(),
+                musterRollRequest.getMusterRoll());
 
         try {
             notificationService.sendNotificationToCBO(musterRollRequest);
@@ -559,6 +591,43 @@ public class MusterRollService {
         }
 
         log.info("validatePeriodNotLocked::Period is not locked, update allowed");
+    }
+
+    private boolean isCampaignSupervisorEditingApproved(String currentStatus, RequestInfo requestInfo) {
+        if (!STATUS_APPROVED.equalsIgnoreCase(currentStatus)) return false;
+        String campaignRole = config.getCampaignSupervisorRole();
+        return requestInfo.getUserInfo().getRoles().stream()
+                .anyMatch(r -> campaignRole.equalsIgnoreCase(r.getCode()));
+    }
+
+    private void validateBillNotInitiated(MusterRoll musterRoll, RequestInfo requestInfo) {
+        if (StringUtils.isBlank(musterRoll.getBillingPeriodId())) {
+            log.debug("validateBillNotInitiated::No billingPeriodId — skipping (V1)");
+            return;
+        }
+        String campaignNumber = null;
+        try {
+            AttendanceRegisterResponse registerResponse = musterRollServiceUtil.fetchAttendanceRegister(
+                    requestInfo, musterRoll.getTenantId(), musterRoll.getRegisterId());
+            if (registerResponse != null && !CollectionUtils.isEmpty(registerResponse.getAttendanceRegister())) {
+                campaignNumber = registerResponse.getAttendanceRegister().get(0).getReferenceId();
+            }
+        } catch (Exception e) {
+            log.warn("validateBillNotInitiated::Could not fetch register (fail-open): {}", e.getMessage());
+            return;
+        }
+        if (StringUtils.isBlank(campaignNumber)) {
+            log.warn("validateBillNotInitiated::No campaign number found — skipping check");
+            return;
+        }
+        boolean isInitiated = musterRollServiceUtil.isBillInitiated(
+                musterRoll.getBillingPeriodId(), campaignNumber,
+                musterRoll.getTenantId(), requestInfo);
+        if (isInitiated) {
+            throw new CustomException("BILL_ALREADY_INITIATED",
+                    "Cannot edit muster roll: bill generation has already been initiated for period "
+                    + musterRoll.getBillingPeriodId());
+        }
     }
 
     /**
@@ -727,5 +796,63 @@ public class MusterRollService {
                         .skip(searchCriteria.getOffset())  // offset
                         .limit(searchCriteria.getLimit()) // limit
                         .collect(Collectors.toList());
+    }
+
+    /**
+     * Enrich muster rolls with their associated reports from the database
+     * @param musterRolls List of muster rolls to enrich
+     */
+    private void enrichMusterRollsWithReports(List<MusterRoll> musterRolls) {
+        try {
+            for (MusterRoll musterRoll : musterRolls) {
+                List<MusterRollReport> reports = musterRollReportRepository.findByMusterRollAndTenant(
+                        musterRoll.getId(),
+                        musterRoll.getTenantId()
+                );
+                musterRoll.setReports(reports);
+
+                log.debug("Enriched muster roll {} with {} reports",
+                        musterRoll.getId(), reports.size());
+            }
+        } catch (Exception e) {
+            log.error("Error enriching muster rolls with reports: {}", e.getMessage());
+            // Non-fatal: continue without reports
+        }
+    }
+
+    /**
+     * Triggers report generation for all configured report type/format combinations.
+     * Each combination is published as an independent Kafka message for async processing.
+     *
+     * @param musterRollId ID of the muster roll
+     * @param tenantId tenant ID
+     * @param requestInfo request context
+     * @param musterRoll in-memory muster roll to build the report from (avoids a stale DB re-read race)
+     */
+    private void triggerReportGeneration(String musterRollId, String tenantId, RequestInfo requestInfo,
+                                         MusterRoll musterRoll) {
+        for (String[] combo : AttendanceReportConstants.DEFAULT_AUTO_GENERATE_REPORTS) {
+            try {
+                ReportGenerationRequest reportRequest = ReportGenerationRequest.builder()
+                        .musterRollId(musterRollId)
+                        .tenantId(tenantId)
+                        .reportType(combo[0])
+                        .reportFormat(combo[1])
+                        .requestInfo(requestInfo)
+                        .timestamp(System.currentTimeMillis())
+                        .musterRoll(musterRoll)
+                        .build();
+
+                // 1-arg push (no tenant prefix) — matches how consumer listens
+                musterRollProducer.push(serviceConfiguration.getAttendanceReportGenerateTopic(), reportRequest);
+
+                log.info("MusterRollService::triggerReportGeneration - Triggered {} {} for muster: {}",
+                        combo[0], combo[1], musterRollId);
+            } catch (Exception e) {
+                // Non-fatal: log and continue
+                log.error("MusterRollService::triggerReportGeneration - Failed to trigger {} {} for muster: {}",
+                        combo[0], combo[1], musterRollId, e);
+            }
+        }
     }
 }

@@ -1,5 +1,7 @@
 package org.egov.repository;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.egov.common.exception.InvalidTenantIdException;
 import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.repository.querybuilder.MusterRollQueryBuilder;
@@ -16,6 +18,7 @@ import java.util.List;
 
 import static org.egov.util.MusterRollServiceConstants.INVALID_TENANT_ID_ERR_CODE;
 
+@Slf4j
 @Repository
 public class MusterRollRepository {
 

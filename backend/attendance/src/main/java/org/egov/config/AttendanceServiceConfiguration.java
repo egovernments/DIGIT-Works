@@ -45,6 +45,8 @@ public class AttendanceServiceConfiguration {
     private String saveAttendanceRegisterTopic;
     @Value("${attendance.register.kafka.update.topic}")
     private String updateAttendanceRegisterTopic;
+    @Value("${attendance.register.kafka.delete.topic}")
+    private String deleteAttendanceRegisterTopic;
     // V2 Intermediate Billing - Consumer topic for muster-roll status updates
     @Value("${attendance.register.kafka.muster.status.update.topic}")
     private String musterRollStatusUpdateTopic;
@@ -72,6 +74,9 @@ public class AttendanceServiceConfiguration {
 
     @Value("${attendance.log.kafka.update.topic}")
     private String updateAttendanceLogTopic;
+
+    @Value("${attendance.log.kafka.first.signature.topic}")
+    private String firstAttendanceLogTopic;
 
     // service integration config
     @Value("${attendance.individual.service.integration.required}")
@@ -195,6 +200,14 @@ public class AttendanceServiceConfiguration {
 
     @Value("${musterroll.workflow.business.service}")
     private String musterRollWorkflowBusinessService;
+
+    // Face Auth Event Topics
+    @Value("${attendance.face.auth.kafka.create.topic}")
+    private String saveFaceAuthEventTopic;
+
+    @Value("${attendance.face.auth.kafka.consumer.bulk.create.topic}")
+    private String bulkCreateFaceAuthEventTopic;
+
 }
 
 

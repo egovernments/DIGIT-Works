@@ -83,6 +83,8 @@ public class RegisterRowMapper implements ResultSetExtractor<List<AttendanceRegi
             String serviceCode = rs.getString("servicecode");
             String localityCode = rs.getString("localitycode");
             String reviewstatus = rs.getString("reviewstatus");
+            String campaignNumber = rs.getString("campaignnumber");
+            boolean isDeleted = rs.getBoolean("isdeleted");
 
             AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
                     .lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime)
@@ -107,7 +109,9 @@ public class RegisterRowMapper implements ResultSetExtractor<List<AttendanceRegi
                     .auditDetails(auditDetails)
                     .localityCode(localityCode)
                     .reviewStatus(reviewstatus)
+                    .campaignNumber(campaignNumber)
                     .periodStatuses(periodStatuses)
+                    .isDeleted(isDeleted)
                     .build();
 
             if (!attendanceRegisterMap.containsKey(id)) {

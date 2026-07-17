@@ -217,6 +217,14 @@ public class MdmsUtils {
         return prepareMDMSCriteria(requestInfo,moduleDetails,tenantId);
     }
 
+    public Object getPaymentsConfigFromMDMS(RequestInfo requestInfo, String tenantId) {
+        MdmsCriteria mdmsCriteria = getMdmsCriteria(requestInfo, HCM_PAYMENTS_CONFIG, tenantId, null, HCM_CONSTANT);
+        return serviceRequestRepository.fetchResult(
+            getMDMSV2SearchUrl(),
+            MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build()
+        );
+    }
+
     public Object getWorkerRateFromMDMSV2(RequestInfo requestInfo, String tenantId, String campaignId) {
         String filter = getWorkerFilter(campaignId);
         MdmsCriteria mdmsCriteria = getMdmsCriteria(requestInfo, WORKER_RATES, tenantId, filter, HCM_CONSTANT);
