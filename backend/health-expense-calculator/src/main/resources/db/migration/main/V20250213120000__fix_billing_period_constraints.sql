@@ -9,54 +9,20 @@
 -- Step 1: Drop overly restrictive unique constraints
 -- -----------------------------------------------------------------------------
 
--- Drop old constraints and add new ones
-DO $$
-DECLARE
-    v_table_name CONSTANT TEXT := 'eg_wms_billing_period';
-BEGIN
-    -- Drop the project_id based unique constraint (from V20250131120000)
-    IF EXISTS (
-        SELECT 1 FROM pg_constraint
-        WHERE conname = 'uk_billing_period'
-        AND conrelid = v_table_name::regclass
-    ) THEN
-        EXECUTE format('ALTER TABLE %I DROP CONSTRAINT uk_billing_period', v_table_name);
-        RAISE NOTICE 'Dropped constraint: uk_billing_period';
-    END IF;
+ALTER TABLE eg_wms_billing_period DROP CONSTRAINT IF EXISTS uk_billing_period;
+ALTER TABLE eg_wms_billing_period DROP CONSTRAINT IF EXISTS uk_billing_period_campaign;
 
-    -- Drop the campaign_number based unique constraint (from V20250212160000)
-    IF EXISTS (
-        SELECT 1 FROM pg_constraint
-        WHERE conname = 'uk_billing_period_campaign'
-        AND conrelid = v_table_name::regclass
-    ) THEN
-        EXECUTE format('ALTER TABLE %I DROP CONSTRAINT uk_billing_period_campaign', v_table_name);
-        RAISE NOTICE 'Dropped constraint: uk_billing_period_campaign';
-    END IF;
+-- -----------------------------------------------------------------------------
+-- Step 2: Add config-scoped unique constraint (periods unique within each config)
+-- -----------------------------------------------------------------------------
+-- DROP-then-ADD keeps this idempotent without a DO guard, since ADD CONSTRAINT has no IF NOT EXISTS
+ALTER TABLE eg_wms_billing_period DROP CONSTRAINT IF EXISTS uk_billing_period_config_number;
+ALTER TABLE eg_wms_billing_period
+    ADD CONSTRAINT uk_billing_period_config_number UNIQUE (billing_config_id, period_number, tenant_id);
 
-    -- Step 2: Add new constraint scoped to billing_config_id
-    -- This allows multiple configs for same project (e.g., when updating config)
-    -- but ensures period numbers are unique within each configuration version
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_constraint
-        WHERE conname = 'uk_billing_period_config_number'
-        AND conrelid = v_table_name::regclass
-    ) THEN
-        EXECUTE format('ALTER TABLE %I ADD CONSTRAINT uk_billing_period_config_number UNIQUE (billing_config_id, period_number, tenant_id)', v_table_name);
-        RAISE NOTICE 'Added constraint: uk_billing_period_config_number';
-    END IF;
-
-    -- Step 3: Add deprecation tracking field
-    -- Add is_deprecated flag to track old periods when config is updated
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns
-        WHERE table_name = v_table_name
-        AND column_name = 'is_deprecated'
-    ) THEN
-        EXECUTE format('ALTER TABLE %I ADD COLUMN is_deprecated BOOLEAN DEFAULT FALSE NOT NULL', v_table_name);
-        RAISE NOTICE 'Added column: is_deprecated';
-    END IF;
-END$$;
+-- Native IF NOT EXISTS scopes to search_path; information_schema check would span all schemas and skip wrongly
+ALTER TABLE eg_wms_billing_period
+    ADD COLUMN IF NOT EXISTS is_deprecated BOOLEAN DEFAULT FALSE NOT NULL;
 
 -- Create index for querying non-deprecated periods
 CREATE INDEX IF NOT EXISTS idx_billing_period_deprecated
