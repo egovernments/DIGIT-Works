@@ -40,24 +40,24 @@ public class BoundaryService {
         this.config = config;
     }
 
-    public BoundaryHierarchyResult getBoundaryHierarchyWithLocalityCode(String localityCode, String tenantId) {
+    public BoundaryHierarchyResult getBoundaryHierarchyWithLocalityCode(String localityCode, String tenantId, String hierarchyType) {
         if (localityCode == null) {
             return null;
         }
         // Fetch both localized and non-localized boundary data
-        BoundaryHierarchyResult boundaryResult = getBoundaryCodeToNameMap(localityCode, tenantId);
+        BoundaryHierarchyResult boundaryResult = getBoundaryCodeToNameMap(localityCode, tenantId, hierarchyType);
 
         return applyTransformerElasticIndexLabels(boundaryResult, tenantId);
     }
 
 
-    public BoundaryHierarchyResult getBoundaryCodeToNameMap(String locationCode, String tenantId) {
+    public BoundaryHierarchyResult getBoundaryCodeToNameMap(String locationCode, String tenantId, String hierarchyType) {
         RequestInfo requestInfo = RequestInfo.builder()
                 .authToken(config.getBoundaryV2AuthToken())
                 .build();
 
         // Fetch boundaries
-        List<EnrichedBoundary> boundaries = fetchBoundaryData(locationCode, tenantId);
+        List<EnrichedBoundary> boundaries = fetchBoundaryData(locationCode, tenantId, hierarchyType);
 
         // Create and return BoundaryHierarchyResult
         return createBoundaryHierarchyResult(boundaries, tenantId, requestInfo);
@@ -117,7 +117,7 @@ public class BoundaryService {
     }
 
 
-    public List<EnrichedBoundary> fetchBoundaryData(String locationCode, String tenantId) {
+    public List<EnrichedBoundary> fetchBoundaryData(String locationCode, String tenantId, String hierarchyType) {
         List<EnrichedBoundary> finalEnrichedBoundary;
         if (cachedEnrichedBoundaries != null && !cachedEnrichedBoundaries.isEmpty()) {
             log.info("Fetching boundary info from cached boundary for code: {}", locationCode);
@@ -139,7 +139,7 @@ public class BoundaryService {
         StringBuilder uri = new StringBuilder(config.getBoundaryServiceHost()
                 + config.getBoundaryRelationshipSearchUrl()
                 + "?includeParents=true&includeChildren=true&tenantId=" + tenantId
-                + "&hierarchyType=" + config.getBoundaryHierarchyName()
+                + "&hierarchyType=" + hierarchyType
                 + "&code=" + locationCode);
         log.info("URI: {}, \n, requestBody: {}", uri, requestInfo);
         try {

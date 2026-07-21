@@ -1,5 +1,6 @@
 package org.egov.digit.expense.calculator.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
@@ -7,6 +8,7 @@ import org.egov.common.models.individual.Address;
 import org.egov.common.models.individual.Identifier;
 import org.egov.common.models.individual.Individual;
 import org.egov.common.models.individual.Skill;
+import org.egov.common.models.project.Project;
 import org.egov.common.models.project.ProjectResponse;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.service.BillingConfigurationService;
@@ -277,8 +279,8 @@ public class HealthBillReportGenerator {
             }
         }
 
-        enrichCampaignName(reportBill, billRequest);
-        enrichLocalization(reportBill, billRequest);
+        Project project = enrichCampaignName(reportBill, billRequest);
+        enrichLocalization(reportBill, billRequest, project);
         billRequest.getRequestInfo().setMsgId(getMsgIdWithLocalCode(billRequest.getRequestInfo().getMsgId()));
 
         return BillReportRequest.builder()
@@ -917,7 +919,7 @@ public class HealthBillReportGenerator {
      * @param reportBill ReportBill to be enriched
      * @param billRequest BillRequest containing the request info and bill
      */
-    private void enrichCampaignName(ReportBill reportBill, BillRequest billRequest) {
+    private Project enrichCampaignName(ReportBill reportBill, BillRequest billRequest) {
         ProjectResponse projectResponse = projectUtil.getProjectDetails(
                 billRequest.getRequestInfo(),
                 billRequest.getBill().getTenantId(),
@@ -926,7 +928,27 @@ public class HealthBillReportGenerator {
         );
         if (projectResponse != null && projectResponse.getProject() != null && !projectResponse.getProject().isEmpty()) {
             reportBill.setCampaignName(projectResponse.getProject().get(0).getName());
+            return projectResponse.getProject().get(0);
         }
+        return null;
+    }
+
+    // Resolve the campaign's boundary hierarchy from the project; fall back to the static default.
+    private String getHierarchyTypeFromProject(Project project) {
+        try {
+            if (project != null) {
+                JsonNode additionalDetails = objectMapper.valueToTree(project.getAdditionalDetails());
+                if (additionalDetails != null && additionalDetails.hasNonNull("hierarchyType")) {
+                    String hierarchyType = additionalDetails.get("hierarchyType").asText(null);
+                    if (hierarchyType != null && !hierarchyType.trim().isEmpty()) {
+                        return hierarchyType;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Failed to fetch hierarchyType from project additionalDetails: {}", e.getMessage());
+        }
+        return config.getBoundaryHierarchyName();
     }
 
     /**
@@ -935,7 +957,8 @@ public class HealthBillReportGenerator {
      * @param reportBill the report bill to be enriched
      * @param billRequest the bill request containing the request info and bill
      */
-    private void enrichLocalization(ReportBill reportBill, BillRequest billRequest) {
+    private void enrichLocalization(ReportBill reportBill, BillRequest billRequest, Project project) {
+        String hierarchyType = getHierarchyTypeFromProject(project);
         String localCode = localizationUtil.getLocalCode(billRequest.getRequestInfo());
         Map<String, Map<String, String>> localizationMap = localizationUtil.getLocalisedMessages(
                 billRequest.getRequestInfo(), billRequest.getBill().getTenantId(),
@@ -955,7 +978,7 @@ public class HealthBillReportGenerator {
             String newReportTitle = startingConstant + " " + campaignName + " " + middleConstant + " " + localizedBoundary;
             reportBill.setReportTitle(newReportTitle);
             for (ReportBillDetail reportBillDetail : reportBill.getReportBillDetails()) {
-                BoundaryHierarchyResult boundaryHierarchyResult = boundaryService.getBoundaryHierarchyWithLocalityCode(reportBillDetail.getLocality(),billRequest.getRequestInfo().getUserInfo().getTenantId());
+                BoundaryHierarchyResult boundaryHierarchyResult = boundaryService.getBoundaryHierarchyWithLocalityCode(reportBillDetail.getLocality(),billRequest.getRequestInfo().getUserInfo().getTenantId(), hierarchyType);
                 if(boundaryHierarchyResult != null) {
                     Map<String, String> boundaryMap = boundaryHierarchyResult.getBoundaryHierarchy();
                     // Check if "COUNTRY" is the only entry
