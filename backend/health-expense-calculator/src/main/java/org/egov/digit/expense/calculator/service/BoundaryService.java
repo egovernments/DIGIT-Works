@@ -17,9 +17,12 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.egov.tracer.model.CustomException;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.*;
 
@@ -34,8 +37,12 @@ public class BoundaryService {
     private static Map<String, String> boundaryCodeVsLocalizedName = new ConcurrentHashMap<>();
     private final ExpenseCalculatorConfiguration config;
 
-    // keyed by tenantId + hierarchyType so different hierarchies don't cross-serve cached trees
-    private static Map<String, List<EnrichedBoundary>> cachedEnrichedBoundaries = new ConcurrentHashMap<>();
+    // keyed by tenantId + hierarchyType so different hierarchies don't cross-serve cached trees;
+    // bounded Caffeine cache (size + TTL) matching the excel-ingestion boundary caches
+    private static final Cache<String, List<EnrichedBoundary>> cachedEnrichedBoundaries = Caffeine.newBuilder()
+            .expireAfterWrite(1, TimeUnit.HOURS)
+            .maximumSize(100)
+            .build();
     @Autowired
     public BoundaryService( ServiceRequestClient serviceRequestClient , ExpenseCalculatorConfiguration config) {
         this.serviceRequestClient = serviceRequestClient;
@@ -122,7 +129,7 @@ public class BoundaryService {
     public List<EnrichedBoundary> fetchBoundaryData(String locationCode, String tenantId, String hierarchyType) {
         List<EnrichedBoundary> finalEnrichedBoundary;
         String cacheKey = tenantId + "|" + hierarchyType;
-        List<EnrichedBoundary> cachedForKey = cachedEnrichedBoundaries.get(cacheKey);
+        List<EnrichedBoundary> cachedForKey = cachedEnrichedBoundaries.getIfPresent(cacheKey);
         if (cachedForKey != null && !cachedForKey.isEmpty()) {
             log.info("Fetching boundary info from cached boundary for code: {}", locationCode);
             finalEnrichedBoundary = getEnrichedBoundaryPath(cachedForKey, locationCode);

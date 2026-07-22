@@ -13,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import com.github.benmanes.caffeine.cache.Cache;
+
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,7 +40,7 @@ class BoundaryServiceTest {
     @BeforeEach
     void resetStaticCache() {
         // static cache would otherwise short-circuit the service call across tests
-        ReflectionTestUtils.setField(BoundaryService.class, "cachedEnrichedBoundaries", new java.util.concurrent.ConcurrentHashMap<>());
+        ((Cache<?, ?>) ReflectionTestUtils.getField(BoundaryService.class, "cachedEnrichedBoundaries")).invalidateAll();
     }
 
     @Test
@@ -60,5 +62,18 @@ class BoundaryServiceTest {
                 "boundary search URL should carry the passed hierarchyType; was: " + uri);
         // the static hierarchy config must not be consulted anymore
         verify(config, never()).getBoundaryHierarchyName();
+    }
+
+    @Test
+    @DisplayName("boundary cache is bounded (size-capped, no unbounded growth)")
+    @SuppressWarnings("unchecked")
+    void cacheIsBounded() {
+        Cache<String, Object> cache = (Cache<String, Object>) ReflectionTestUtils.getField(BoundaryService.class, "cachedEnrichedBoundaries");
+        cache.invalidateAll();
+        for (int i = 0; i < 600; i++) {
+            cache.put("mz|H" + i, Collections.emptyList());
+        }
+        cache.cleanUp();
+        assertTrue(cache.estimatedSize() <= 100, "cache must stay bounded; size was " + cache.estimatedSize());
     }
 }
