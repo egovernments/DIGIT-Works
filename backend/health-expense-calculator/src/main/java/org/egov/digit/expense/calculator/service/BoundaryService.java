@@ -33,7 +33,8 @@ public class BoundaryService {
     private static Map<String, String> boundaryCodeVsLocalizedName = new ConcurrentHashMap<>();
     private final ExpenseCalculatorConfiguration config;
 
-    private static List<EnrichedBoundary> cachedEnrichedBoundaries = null;
+    // keyed by tenantId + hierarchyType so different hierarchies don't cross-serve cached trees
+    private static Map<String, List<EnrichedBoundary>> cachedEnrichedBoundaries = new ConcurrentHashMap<>();
     @Autowired
     public BoundaryService( ServiceRequestClient serviceRequestClient , ExpenseCalculatorConfiguration config) {
         this.serviceRequestClient = serviceRequestClient;
@@ -119,9 +120,11 @@ public class BoundaryService {
 
     public List<EnrichedBoundary> fetchBoundaryData(String locationCode, String tenantId, String hierarchyType) {
         List<EnrichedBoundary> finalEnrichedBoundary;
-        if (cachedEnrichedBoundaries != null && !cachedEnrichedBoundaries.isEmpty()) {
+        String cacheKey = tenantId + "|" + hierarchyType;
+        List<EnrichedBoundary> cachedForKey = cachedEnrichedBoundaries.get(cacheKey);
+        if (cachedForKey != null && !cachedForKey.isEmpty()) {
             log.info("Fetching boundary info from cached boundary for code: {}", locationCode);
-            finalEnrichedBoundary = getEnrichedBoundaryPath(cachedEnrichedBoundaries, locationCode);
+            finalEnrichedBoundary = getEnrichedBoundaryPath(cachedForKey, locationCode);
             if (finalEnrichedBoundary != null && !finalEnrichedBoundary.isEmpty()) {
                 return finalEnrichedBoundary;
             }
@@ -156,7 +159,7 @@ public class BoundaryService {
                     .filter(hierarchyRelation -> !CollectionUtils.isEmpty(hierarchyRelation.getBoundary()))
                     .flatMap(hierarchyRelation -> hierarchyRelation.getBoundary().stream())
                     .collect(Collectors.toList());
-            cachedEnrichedBoundaries = enrichedBoundaries;
+            cachedEnrichedBoundaries.put(cacheKey, enrichedBoundaries);
             log.info("Cached boundary object");
             boundaries = getEnrichedBoundaryPath(enrichedBoundaries, locationCode);
 //            getAllBoundaryCodes(enrichedBoundaries, boundaries);

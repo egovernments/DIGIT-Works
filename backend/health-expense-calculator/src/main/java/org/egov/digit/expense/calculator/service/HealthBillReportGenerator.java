@@ -941,7 +941,7 @@ public class HealthBillReportGenerator {
                 if (additionalDetails != null && additionalDetails.hasNonNull("hierarchyType")) {
                     String hierarchyType = additionalDetails.get("hierarchyType").asText(null);
                     if (hierarchyType != null && !hierarchyType.trim().isEmpty()) {
-                        return hierarchyType;
+                        return hierarchyType.trim();
                     }
                 }
             }
