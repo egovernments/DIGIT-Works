@@ -14,11 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.egov.tracer.model.CustomException;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.*;
 
@@ -33,31 +37,36 @@ public class BoundaryService {
     private static Map<String, String> boundaryCodeVsLocalizedName = new ConcurrentHashMap<>();
     private final ExpenseCalculatorConfiguration config;
 
-    private static List<EnrichedBoundary> cachedEnrichedBoundaries = null;
+    // keyed by tenantId + hierarchyType so different hierarchies don't cross-serve cached trees;
+    // bounded Caffeine cache (size + TTL) matching the excel-ingestion boundary caches
+    private static final Cache<String, List<EnrichedBoundary>> cachedEnrichedBoundaries = Caffeine.newBuilder()
+            .expireAfterWrite(1, TimeUnit.HOURS)
+            .maximumSize(100)
+            .build();
     @Autowired
     public BoundaryService( ServiceRequestClient serviceRequestClient , ExpenseCalculatorConfiguration config) {
         this.serviceRequestClient = serviceRequestClient;
         this.config = config;
     }
 
-    public BoundaryHierarchyResult getBoundaryHierarchyWithLocalityCode(String localityCode, String tenantId) {
+    public BoundaryHierarchyResult getBoundaryHierarchyWithLocalityCode(String localityCode, String tenantId, String hierarchyType) {
         if (localityCode == null) {
             return null;
         }
         // Fetch both localized and non-localized boundary data
-        BoundaryHierarchyResult boundaryResult = getBoundaryCodeToNameMap(localityCode, tenantId);
+        BoundaryHierarchyResult boundaryResult = getBoundaryCodeToNameMap(localityCode, tenantId, hierarchyType);
 
         return applyTransformerElasticIndexLabels(boundaryResult, tenantId);
     }
 
 
-    public BoundaryHierarchyResult getBoundaryCodeToNameMap(String locationCode, String tenantId) {
+    public BoundaryHierarchyResult getBoundaryCodeToNameMap(String locationCode, String tenantId, String hierarchyType) {
         RequestInfo requestInfo = RequestInfo.builder()
                 .authToken(config.getBoundaryV2AuthToken())
                 .build();
 
         // Fetch boundaries
-        List<EnrichedBoundary> boundaries = fetchBoundaryData(locationCode, tenantId);
+        List<EnrichedBoundary> boundaries = fetchBoundaryData(locationCode, tenantId, hierarchyType);
 
         // Create and return BoundaryHierarchyResult
         return createBoundaryHierarchyResult(boundaries, tenantId, requestInfo);
@@ -117,11 +126,13 @@ public class BoundaryService {
     }
 
 
-    public List<EnrichedBoundary> fetchBoundaryData(String locationCode, String tenantId) {
+    public List<EnrichedBoundary> fetchBoundaryData(String locationCode, String tenantId, String hierarchyType) {
         List<EnrichedBoundary> finalEnrichedBoundary;
-        if (cachedEnrichedBoundaries != null && !cachedEnrichedBoundaries.isEmpty()) {
+        String cacheKey = tenantId + "|" + hierarchyType;
+        List<EnrichedBoundary> cachedForKey = cachedEnrichedBoundaries.getIfPresent(cacheKey);
+        if (cachedForKey != null && !cachedForKey.isEmpty()) {
             log.info("Fetching boundary info from cached boundary for code: {}", locationCode);
-            finalEnrichedBoundary = getEnrichedBoundaryPath(cachedEnrichedBoundaries, locationCode);
+            finalEnrichedBoundary = getEnrichedBoundaryPath(cachedForKey, locationCode);
             if (finalEnrichedBoundary != null && !finalEnrichedBoundary.isEmpty()) {
                 return finalEnrichedBoundary;
             }
@@ -136,11 +147,15 @@ public class BoundaryService {
                 .build();
         BoundaryRelationshipRequest boundaryRequest = BoundaryRelationshipRequest.builder()
                 .requestInfo(requestInfo).build();
-        StringBuilder uri = new StringBuilder(config.getBoundaryServiceHost()
-                + config.getBoundaryRelationshipSearchUrl()
-                + "?includeParents=true&includeChildren=true&tenantId=" + tenantId
-                + "&hierarchyType=" + config.getBoundaryHierarchyName()
-                + "&code=" + locationCode);
+        StringBuilder uri = new StringBuilder(UriComponentsBuilder
+                .fromUriString(config.getBoundaryServiceHost() + config.getBoundaryRelationshipSearchUrl())
+                .queryParam("includeParents", "true")
+                .queryParam("includeChildren", "true")
+                .queryParam("tenantId", tenantId)
+                .queryParam("hierarchyType", hierarchyType)
+                .queryParam("code", locationCode)
+                .encode()
+                .toUriString());
         log.info("URI: {}, \n, requestBody: {}", uri, requestInfo);
         try {
             // Fetch boundary details from the service
@@ -156,7 +171,7 @@ public class BoundaryService {
                     .filter(hierarchyRelation -> !CollectionUtils.isEmpty(hierarchyRelation.getBoundary()))
                     .flatMap(hierarchyRelation -> hierarchyRelation.getBoundary().stream())
                     .collect(Collectors.toList());
-            cachedEnrichedBoundaries = enrichedBoundaries;
+            cachedEnrichedBoundaries.put(cacheKey, enrichedBoundaries);
             log.info("Cached boundary object");
             boundaries = getEnrichedBoundaryPath(enrichedBoundaries, locationCode);
 //            getAllBoundaryCodes(enrichedBoundaries, boundaries);
