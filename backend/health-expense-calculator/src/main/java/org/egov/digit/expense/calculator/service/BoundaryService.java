@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.egov.tracer.model.CustomException;
 
@@ -139,11 +140,15 @@ public class BoundaryService {
                 .build();
         BoundaryRelationshipRequest boundaryRequest = BoundaryRelationshipRequest.builder()
                 .requestInfo(requestInfo).build();
-        StringBuilder uri = new StringBuilder(config.getBoundaryServiceHost()
-                + config.getBoundaryRelationshipSearchUrl()
-                + "?includeParents=true&includeChildren=true&tenantId=" + tenantId
-                + "&hierarchyType=" + hierarchyType
-                + "&code=" + locationCode);
+        StringBuilder uri = new StringBuilder(UriComponentsBuilder
+                .fromUriString(config.getBoundaryServiceHost() + config.getBoundaryRelationshipSearchUrl())
+                .queryParam("includeParents", "true")
+                .queryParam("includeChildren", "true")
+                .queryParam("tenantId", tenantId)
+                .queryParam("hierarchyType", hierarchyType)
+                .queryParam("code", locationCode)
+                .encode()
+                .toUriString());
         log.info("URI: {}, \n, requestBody: {}", uri, requestInfo);
         try {
             // Fetch boundary details from the service
