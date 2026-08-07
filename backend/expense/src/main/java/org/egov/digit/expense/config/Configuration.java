@@ -327,6 +327,14 @@ public class Configuration {
 	@Value("${expense.bill.report.update}")
 	private String billReportUpdateTopic;
 
+	// Bill Approval (signature capture) Topic
+	@Value("${expense.bill.approval.create}")
+	private String billApprovalCreateTopic;
+
+	// Signature upload constraints
+	@Value("${expense.signature.max.size.bytes:5242880}")
+	private Long signatureMaxSizeBytes;
+
 	// Filestore
 	@Value("${egov.filestore.host}")
 	private String filestoreHost;

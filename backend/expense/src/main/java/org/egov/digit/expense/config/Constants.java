@@ -272,6 +272,17 @@ public class Constants {
 	public static final String ERR_BILL_WF_FIELDS_ERROR                     = "EG_BILL_WF_FIELDS_ERROR";
 	public static final String ERR_BILL_META_UPDATE_ERROR                   = "EG_BILL_META_UPDATE_ERROR";
 
+	// Error codes — bill approval signature capture
+	public static final String ERR_APPROVAL_SIGNATURE_REQUIRED       = "EG_EXPENSE_APPROVAL_SIGNATURE_REQUIRED";
+	public static final String ERR_APPROVAL_PRINTED_NAME_REQUIRED    = "EG_EXPENSE_APPROVAL_PRINTED_NAME_REQUIRED";
+	public static final String ERR_APPROVAL_SIGNATURE_FILE_REQUIRED  = "EG_EXPENSE_APPROVAL_SIGNATURE_FILE_REQUIRED";
+	public static final String ERR_APPROVAL_UNAUTHORIZED             = "EG_EXPENSE_APPROVAL_UNAUTHORIZED";
+	public static final String ERR_SIGNATURE_FILE_EMPTY              = "EG_EXPENSE_SIGNATURE_FILE_EMPTY";
+	public static final String ERR_SIGNATURE_FILE_TOO_LARGE          = "EG_EXPENSE_SIGNATURE_FILE_TOO_LARGE";
+	public static final String ERR_SIGNATURE_FILE_INVALID_FORMAT     = "EG_EXPENSE_SIGNATURE_FILE_INVALID_FORMAT";
+	public static final String ERR_SIGNATURE_FILE_CONTENT_MISMATCH   = "EG_EXPENSE_SIGNATURE_FILE_CONTENT_MISMATCH";
+	public static final String ERR_APPROVAL_SIGNATURE_FILE_NOT_FOUND = "EG_EXPENSE_APPROVAL_SIGNATURE_FILE_NOT_FOUND";
+
 	// Error messages (static — no dynamic parts)
 	public static final String MSG_TEMPLATE_EMPTY                = "No valid rows found in the uploaded template";
 	public static final String MSG_TEMPLATE_GENERATE_ERROR       = "Failed to generate bill detail template";
@@ -294,6 +305,17 @@ public class Constants {
 	public static final String MSG_META_UPDATE_BILL_ID_MANDATORY    = "billId is mandatory";
 	public static final String MSG_META_UPDATE_TENANT_ID_MANDATORY  = "tenantId is mandatory";
 	public static final String MSG_META_UPDATE_REPORT_MANDATORY     = "reportDetails is mandatory and must not be empty";
+
+	// Error messages — bill approval signature capture
+	public static final String MSG_APPROVAL_SIGNATURE_REQUIRED      = "A signed approval (printedName + signature) is required to approve a bill";
+	public static final String MSG_APPROVAL_PRINTED_NAME_REQUIRED   = "Printed name is mandatory and cannot be blank";
+	public static final String MSG_APPROVAL_SIGNATURE_FILE_REQUIRED = "A signature (drawn or uploaded) is mandatory to approve a bill";
+	public static final String MSG_APPROVAL_UNAUTHORIZED            = "You are not authorized to approve this bill. Only PAYMENT_APPROVER may approve.";
+	public static final String MSG_SIGNATURE_FILE_EMPTY             = "The uploaded signature file is empty";
+	public static final String MSG_SIGNATURE_FILE_TOO_LARGE_PREFIX  = "Signature file exceeds the maximum allowed size of ";
+	public static final String MSG_SIGNATURE_FILE_INVALID_FORMAT    = "Unsupported signature file format. Allowed formats: PNG, JPG, JPEG";
+	public static final String MSG_SIGNATURE_FILE_CONTENT_MISMATCH  = "The uploaded file's content does not match a valid PNG/JPEG image";
+	public static final String MSG_APPROVAL_SIGNATURE_FILE_NOT_FOUND = "The submitted signature file could not be found for this tenant";
 
 	// Cache key prefixes
 	public static final String BILL_CACHE_KEY_PREFIX = "bill:";
