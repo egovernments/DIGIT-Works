@@ -20,7 +20,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.List;
 
@@ -41,77 +40,83 @@ class BillApprovalServiceTest {
     @InjectMocks
     private BillApprovalService billApprovalService;
 
+    private static final byte[] PNG_BYTES = {(byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x01};
+    private static final byte[] JPEG_BYTES = {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0, 0x00, 0x01};
+
     @BeforeEach
     void setUp() {
         when(config.getSignatureMaxSizeBytes()).thenReturn(5L * 1024 * 1024);
         when(config.getBillApprovalCreateTopic()).thenReturn("expense-bill-approval-create");
+        when(filestoreUtil.downloadFile(any(), any())).thenReturn(PNG_BYTES);
     }
 
-    // ── uploadSignature ──────────────────────────────────────────────────────
+    private ApprovalSignature signatureWith(String fileStoreId) {
+        return ApprovalSignature.builder()
+                .printedName("Jane Doe")
+                .signatureMethod(SignatureMethod.UPLOADED)
+                .signatureFileStoreId(fileStoreId)
+                .build();
+    }
+
+    // ── signature image validation (on the approval path) ─────────────────────
+    //
+    // The image is uploaded straight to filestore by the client, so these checks run when
+    // the approval is submitted — the first point at which the server holds the bytes, and
+    // a path that is already authenticated and role-checked.
 
     @Test
-    void uploadSignature_emptyFile_throws() {
-        MockMultipartFile file = new MockMultipartFile("file", "sig.png", "image/png", new byte[0]);
+    void validateApproval_emptySignatureImage_throws() {
+        Bill bill = buildBill(Status.REVIEWED, Status.REVIEWED, 1);
+        RequestInfo requestInfo = buildRequestInfo("PAYMENT_APPROVER");
+        ApprovalSignature signature = signatureWith("fs-001");
+        when(filestoreUtil.downloadFile("fs-001", TENANT_ID)).thenReturn(new byte[0]);
 
         CustomException ex = assertThrows(CustomException.class,
-                () -> billApprovalService.uploadSignature(file, TENANT_ID));
+                () -> billApprovalService.validateApproval(bill, bill, signature, requestInfo));
         assertEquals("EG_EXPENSE_SIGNATURE_FILE_EMPTY", ex.getCode());
-        verify(filestoreUtil, never()).upload(any(), any(), any());
+        verify(expenseProducer, never()).push(any(), any(), any());
     }
 
     @Test
-    void uploadSignature_tooLarge_throws() {
-        byte[] bytes = new byte[6 * 1024 * 1024];
-        MockMultipartFile file = new MockMultipartFile("file", "sig.png", "image/png", bytes);
+    void validateApproval_signatureImageTooLarge_throws() {
+        Bill bill = buildBill(Status.REVIEWED, Status.REVIEWED, 1);
+        RequestInfo requestInfo = buildRequestInfo("PAYMENT_APPROVER");
+        byte[] oversized = new byte[6 * 1024 * 1024];
+        oversized[0] = (byte) 0x89; oversized[1] = 0x50; oversized[2] = 0x4E; oversized[3] = 0x47;
+        ApprovalSignature signature = signatureWith("fs-001");
+        when(filestoreUtil.downloadFile("fs-001", TENANT_ID)).thenReturn(oversized);
 
         CustomException ex = assertThrows(CustomException.class,
-                () -> billApprovalService.uploadSignature(file, TENANT_ID));
+                () -> billApprovalService.validateApproval(bill, bill, signature, requestInfo));
         assertEquals("EG_EXPENSE_SIGNATURE_FILE_TOO_LARGE", ex.getCode());
     }
 
     @Test
-    void uploadSignature_invalidFormat_throws() {
-        MockMultipartFile file = new MockMultipartFile("file", "sig.pdf", "application/pdf", new byte[]{1, 2, 3});
+    void validateApproval_signatureImageNotPngOrJpeg_throws() {
+        // A file that is neither PNG nor JPEG (e.g. a PDF or renamed binary). Format is decided
+        // by magic bytes, so nothing the client claims about the file can get past this.
+        Bill bill = buildBill(Status.REVIEWED, Status.REVIEWED, 1);
+        RequestInfo requestInfo = buildRequestInfo("PAYMENT_APPROVER");
+        ApprovalSignature signature = signatureWith("fs-001");
+        when(filestoreUtil.downloadFile("fs-001", TENANT_ID)).thenReturn(new byte[]{1, 2, 3, 4, 5});
 
         CustomException ex = assertThrows(CustomException.class,
-                () -> billApprovalService.uploadSignature(file, TENANT_ID));
+                () -> billApprovalService.validateApproval(bill, bill, signature, requestInfo));
         assertEquals("EG_EXPENSE_SIGNATURE_FILE_INVALID_FORMAT", ex.getCode());
+        verify(expenseProducer, never()).push(any(), any(), any());
     }
 
     @Test
-    void uploadSignature_validPng_uploadsAndReturnsFileStoreId() {
-        byte[] pngBytes = {(byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x01};
-        MockMultipartFile file = new MockMultipartFile("file", "sig.png", "image/png", pngBytes);
-        when(filestoreUtil.upload(any(), eq(TENANT_ID), eq("sig.png"))).thenReturn("fs-001");
+    void validateApproval_validJpegSignature_passes() {
+        Bill bill = buildBill(Status.REVIEWED, Status.REVIEWED, 1);
+        bill.setId("bill-001");
+        RequestInfo requestInfo = buildRequestInfo("PAYMENT_APPROVER");
+        when(filestoreUtil.downloadFile("fs-002", TENANT_ID)).thenReturn(JPEG_BYTES);
 
-        String fileStoreId = billApprovalService.uploadSignature(file, TENANT_ID);
+        BillApproval approval = billApprovalService.validateApproval(
+                bill, bill, signatureWith("fs-002"), requestInfo);
 
-        assertEquals("fs-001", fileStoreId);
-        verify(filestoreUtil).upload(any(), eq(TENANT_ID), eq("sig.png"));
-    }
-
-    @Test
-    void uploadSignature_validJpeg_uploadsAndReturnsFileStoreId() {
-        byte[] jpegBytes = {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0, 0x00, 0x01};
-        MockMultipartFile file = new MockMultipartFile("file", "sig.jpg", "image/jpeg", jpegBytes);
-        when(filestoreUtil.upload(any(), eq(TENANT_ID), eq("sig.jpg"))).thenReturn("fs-002");
-
-        String fileStoreId = billApprovalService.uploadSignature(file, TENANT_ID);
-
-        assertEquals("fs-002", fileStoreId);
-    }
-
-    @Test
-    void uploadSignature_contentTypeSpoofed_magicBytesMismatch_throws() {
-        // Content-Type header claims PNG, but the actual bytes are not a PNG (e.g. a renamed
-        // executable or arbitrary binary) — the magic-byte check must catch what the spoofable
-        // Content-Type header alone would miss.
-        MockMultipartFile file = new MockMultipartFile("file", "sig.png", "image/png", new byte[]{1, 2, 3, 4, 5});
-
-        CustomException ex = assertThrows(CustomException.class,
-                () -> billApprovalService.uploadSignature(file, TENANT_ID));
-        assertEquals("EG_EXPENSE_SIGNATURE_FILE_CONTENT_MISMATCH", ex.getCode());
-        verify(filestoreUtil, never()).upload(any(), any(), any());
+        assertEquals("fs-002", approval.getSignatureFileStoreId());
     }
 
     // ── validateApproval / recordApproval ────────────────────────────────────
@@ -191,6 +196,9 @@ class BillApprovalServiceTest {
                 () -> billApprovalService.validateApproval(bill, bill, signature, requestInfo));
         assertEquals("EG_EXPENSE_APPROVAL_UNAUTHORIZED", ex.getCode());
         verify(expenseProducer, never()).push(any(), any(), any());
+        // Authorisation must be settled before the filestore is touched, so an unauthorised
+        // caller can never make the service fetch a file on their behalf.
+        verify(filestoreUtil, never()).downloadFile(any(), any());
     }
 
     @Test

@@ -56,7 +56,7 @@
       "name": "Bill Approval (Signature Capture)",
       "item": [
         {
-          "name": "1. Upload Signature",
+          "name": "1. Upload Signature to Filestore",
           "event": [
             {
               "listen": "test",
@@ -65,8 +65,8 @@
                 "exec": [
                   "if (pm.response.code === 201) {",
                   "    const body = pm.response.json();",
-                  "    pm.collectionVariables.set('signatureFileStoreId', body.signatureFileStoreId);",
-                  "    console.log('Captured signatureFileStoreId=' + body.signatureFileStoreId);",
+                  "    pm.collectionVariables.set('signatureFileStoreId', body.files[0].fileStoreId);",
+                  "    console.log('Captured signatureFileStoreId=' + body.files[0].fileStoreId);",
                   "}"
                 ]
               }
@@ -76,18 +76,19 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{expense_host}}/expense/bill/v1/signature/_upload",
-              "host": ["{{expense_host}}"],
-              "path": ["expense", "bill", "v1", "signature", "_upload"]
+              "raw": "{{filestore_host}}/filestore/v1/files",
+              "host": ["{{filestore_host}}"],
+              "path": ["filestore", "v1", "files"]
             },
             "body": {
               "mode": "formdata",
               "formdata": [
                 { "key": "file", "type": "file", "src": [] },
-                { "key": "tenantId", "type": "text", "value": "{{tenantId}}" }
+                { "key": "tenantId", "type": "text", "value": "{{tenantId}}" },
+                { "key": "module", "type": "text", "value": "expense" }
               ]
             },
-            "description": "Select a PNG/JPG/JPEG under 5MB for the 'file' field. On success this test script auto-captures signatureFileStoreId into a collection variable for the next requests."
+            "description": "Signature images go straight to filestore, as with every other DIGIT upload. Select a PNG/JPG/JPEG under 5MB for the 'file' field; this script auto-captures the fileStoreId for the next requests. The image is validated server-side (format via magic bytes, 5MB limit) when the approval is submitted in step 2 — an invalid image is rejected there, not here."
           }
         },
         {
@@ -172,6 +173,7 @@
   "variable": [
     { "key": "approverUuid", "value": "approver-uuid-1" },
     { "key": "billId", "value": "" },
+    { "key": "filestore_host", "value": "" },
     { "key": "signatureFileStoreId", "value": "" }
   ]
 }
