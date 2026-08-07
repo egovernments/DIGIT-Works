@@ -141,7 +141,11 @@ public class Bill {
 	@JsonProperty("processInstance")
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private ProcessInstance processInstance;
-	
+
+	@JsonProperty("approvals")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private List<BillApproval> approvals;
+
 	public Bill addBillDetailsItem(BillDetail billDetailsItem) {
 
 		if (null == this.billDetails)
@@ -176,6 +180,7 @@ public class Bill {
 						: null)
 				.additionalDetails(source.getAdditionalDetails())
 				.auditDetails(source.getAuditDetails())
+				.approvals(source.getApprovals())
 				.billDetails(Collections.singletonList(detail))
 				.build();
 	}

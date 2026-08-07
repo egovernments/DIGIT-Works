@@ -16,6 +16,7 @@ import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -48,6 +49,7 @@ public class BillServiceTest {
     @Mock private BillCacheService billCacheService;
     @Mock private BillDetailCacheService billDetailCacheService;
     @Mock private com.fasterxml.jackson.databind.ObjectMapper objectMapper;
+    @Mock private BillApprovalService billApprovalService;
 
     @InjectMocks
     private BillService billService;
@@ -185,6 +187,7 @@ public class BillServiceTest {
 
         verify(paymentWorkflowService).retryPayment(any(BillRequest.class));
         verify(paymentWorkflowService, never()).initiatePayment(any());
+        verify(billApprovalService, never()).validateApproval(any(), any(), any(), any());
     }
 
     @Test
@@ -198,6 +201,65 @@ public class BillServiceTest {
 
         verify(paymentWorkflowService).initiatePayment(any(BillRequest.class));
         verify(paymentWorkflowService, never()).retryPayment(any());
+    }
+
+    @Test
+    public void bulkUpdate_paymentInitiation_reviewedBill_validatesApprovalBeforeInitiatingPayment_andRecordsAfter() {
+        Bill bill = buildBill(Status.REVIEWED, Status.REVIEWED, 1); bill.setId("b1");
+        when(validator.validateBulkStatusUpdateRequest(any())).thenReturn(Collections.emptyList());
+        when(validator.getBillsByIds(any(), any(), any())).thenReturn(List.of(bill));
+        when(validator.validateUpdateRequest(any())).thenReturn(List.of(bill));
+
+        billService.bulkUpdateStatus(buildBulkRequest("PAYMENT_IN_PROGRESS", Actions.PAYMENT_INITIATION.toString(), "b1"));
+
+        verify(billApprovalService).validateApproval(any(Bill.class), eq(bill), any(), any());
+        verify(billApprovalService).recordApproval(any(), any());
+
+        // Validate must happen before initiation (blocks bad input); record must happen only
+        // AFTER initiation succeeds, so a failed initiation can never leave behind a false
+        // "approved" signature audit row.
+        InOrder inOrder = inOrder(billApprovalService, paymentWorkflowService);
+        inOrder.verify(billApprovalService).validateApproval(any(), any(), any(), any());
+        inOrder.verify(paymentWorkflowService).initiatePayment(any(BillRequest.class));
+        inOrder.verify(billApprovalService).recordApproval(any(), any());
+    }
+
+    @Test
+    public void bulkUpdate_paymentInitiation_reviewedBill_approvalValidationFails_blocksInitiatePaymentAndRecord() {
+        Bill bill = buildBill(Status.REVIEWED, Status.REVIEWED, 1); bill.setId("b1");
+        when(validator.validateBulkStatusUpdateRequest(any())).thenReturn(Collections.emptyList());
+        when(validator.getBillsByIds(any(), any(), any())).thenReturn(List.of(bill));
+        when(validator.validateUpdateRequest(any())).thenReturn(List.of(bill));
+        doThrow(new CustomException("EG_EXPENSE_APPROVAL_PRINTED_NAME_REQUIRED", "Printed name is mandatory"))
+                .when(billApprovalService).validateApproval(any(), any(), any(), any());
+
+        BulkBillStatusUpdateResponse response = billService.bulkUpdateStatus(
+                buildBulkRequest("PAYMENT_IN_PROGRESS", Actions.PAYMENT_INITIATION.toString(), "b1"));
+
+        verify(paymentWorkflowService, never()).initiatePayment(any());
+        verify(billApprovalService, never()).recordApproval(any(), any());
+        assertEquals(1, response.getErrors().size());
+        assertEquals("EG_EXPENSE_BILL_STATUS_UPDATE_FAILED", response.getErrors().get(0).getCode());
+        assertEquals("Printed name is mandatory", response.getErrors().get(0).getMessage());
+    }
+
+    @Test
+    public void bulkUpdate_paymentInitiation_reviewedBill_initiatePaymentFails_neverRecordsApproval() {
+        Bill bill = buildBill(Status.REVIEWED, Status.REVIEWED, 1); bill.setId("b1");
+        when(validator.validateBulkStatusUpdateRequest(any())).thenReturn(Collections.emptyList());
+        when(validator.getBillsByIds(any(), any(), any())).thenReturn(List.of(bill));
+        when(validator.validateUpdateRequest(any())).thenReturn(List.of(bill));
+        doThrow(new RuntimeException("payment workflow unavailable"))
+                .when(paymentWorkflowService).initiatePayment(any());
+
+        BulkBillStatusUpdateResponse response = billService.bulkUpdateStatus(
+                buildBulkRequest("PAYMENT_IN_PROGRESS", Actions.PAYMENT_INITIATION.toString(), "b1"));
+
+        // Regression guard: a failed initiation must never leave behind a false "approved"
+        // signature audit row, even though validation itself passed.
+        verify(billApprovalService).validateApproval(any(), any(), any(), any());
+        verify(billApprovalService, never()).recordApproval(any(), any());
+        assertEquals(1, response.getErrors().size());
     }
 
     @Test
