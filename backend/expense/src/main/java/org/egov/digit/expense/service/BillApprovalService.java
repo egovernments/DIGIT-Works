@@ -18,7 +18,6 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,11 +37,7 @@ import static org.egov.digit.expense.config.Constants.*;
 @Slf4j
 public class BillApprovalService {
 
-    private static final Set<String> ALLOWED_SIGNATURE_CONTENT_TYPES =
-            Set.of("image/png", "image/jpeg", "image/jpg");
-
-    // Magic-byte signatures, checked against actual file content — the client-supplied
-    // Content-Type header (checked above) can be spoofed, so it alone is not trustworthy.
+    // Magic-byte signatures, checked against actual file content.
     private static final byte[] PNG_MAGIC = {(byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A};
     private static final byte[] JPEG_MAGIC = {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF};
 
@@ -63,39 +58,28 @@ public class BillApprovalService {
     }
 
     /**
-     * Validates an uploaded/drawn signature image (format + size) and stores it in the
-     * filestore, returning the fileStoreId to be echoed back in the approval request.
+     * Validates the raw signature image: non-empty, within the configured size limit, and
+     * actually a PNG or JPEG.
+     *
+     * Format is decided by magic bytes rather than a filename extension or a client-supplied
+     * Content-Type, neither of which is trustworthy — the image is uploaded straight to
+     * filestore by the client (the DIGIT convention), so the only point at which the server
+     * can vouch for it is here, once it holds the bytes itself.
      */
-    public String uploadSignature(MultipartFile file, String tenantId) {
-        if (file == null || file.isEmpty()) {
+    void validateSignatureBytes(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) {
             throw new CustomException(ERR_SIGNATURE_FILE_EMPTY, MSG_SIGNATURE_FILE_EMPTY);
         }
 
         long maxSize = config.getSignatureMaxSizeBytes();
-        if (file.getSize() > maxSize) {
+        if (bytes.length > maxSize) {
             throw new CustomException(ERR_SIGNATURE_FILE_TOO_LARGE,
                     MSG_SIGNATURE_FILE_TOO_LARGE_PREFIX + (maxSize / (1024 * 1024)) + "MB");
         }
 
-        String contentType = file.getContentType();
-        if (!StringUtils.hasText(contentType) || !ALLOWED_SIGNATURE_CONTENT_TYPES.contains(contentType.toLowerCase())) {
+        if (!startsWith(bytes, PNG_MAGIC) && !startsWith(bytes, JPEG_MAGIC)) {
             throw new CustomException(ERR_SIGNATURE_FILE_INVALID_FORMAT, MSG_SIGNATURE_FILE_INVALID_FORMAT);
         }
-
-        byte[] bytes;
-        try {
-            bytes = file.getBytes();
-        } catch (Exception e) {
-            throw new CustomException(ERR_SIGNATURE_FILE_EMPTY, MSG_SIGNATURE_FILE_EMPTY);
-        }
-
-        if (!startsWith(bytes, PNG_MAGIC) && !startsWith(bytes, JPEG_MAGIC)) {
-            throw new CustomException(ERR_SIGNATURE_FILE_CONTENT_MISMATCH, MSG_SIGNATURE_FILE_CONTENT_MISMATCH);
-        }
-
-        String fileName = StringUtils.hasText(file.getOriginalFilename())
-                ? file.getOriginalFilename() : "signature.png";
-        return filestoreUtil.upload(bytes, tenantId, fileName);
     }
 
     private boolean startsWith(byte[] bytes, byte[] magic) {
@@ -126,19 +110,23 @@ public class BillApprovalService {
             throw new CustomException(ERR_APPROVAL_SIGNATURE_FILE_REQUIRED, MSG_APPROVAL_SIGNATURE_FILE_REQUIRED);
         }
 
-        // Confirm the fileStoreId actually belongs to this tenant before accepting it as the
-        // approver's signature — without this, any caller could submit an arbitrary/foreign
-        // fileStoreId that was never uploaded through /signature/_upload.
-        try {
-            filestoreUtil.downloadFile(signature.getSignatureFileStoreId(), bill.getTenantId());
-        } catch (Exception e) {
-            throw new CustomException(ERR_APPROVAL_SIGNATURE_FILE_NOT_FOUND, MSG_APPROVAL_SIGNATURE_FILE_NOT_FOUND);
-        }
-
+        // Authorise before touching the filestore, so an unauthorised caller cannot make the
+        // service fetch arbitrary files on their behalf.
         Set<String> roles = extractRoles(requestInfo);
         if (!roles.contains(ROLE_PAYMENT_APPROVER)) {
             throw new CustomException(ERR_APPROVAL_UNAUTHORIZED, MSG_APPROVAL_UNAUTHORIZED);
         }
+
+        // Fetch the image and validate it here — this is the only place the signature is
+        // checked. Confirming it resolves for this tenant also stops a caller submitting an
+        // arbitrary or foreign fileStoreId they never uploaded.
+        byte[] signatureBytes;
+        try {
+            signatureBytes = filestoreUtil.downloadFile(signature.getSignatureFileStoreId(), bill.getTenantId());
+        } catch (Exception e) {
+            throw new CustomException(ERR_APPROVAL_SIGNATURE_FILE_NOT_FOUND, MSG_APPROVAL_SIGNATURE_FILE_NOT_FOUND);
+        }
+        validateSignatureBytes(signatureBytes);
 
         String approverUuid = requestInfo.getUserInfo() != null ? requestInfo.getUserInfo().getUuid() : null;
         long now = System.currentTimeMillis();

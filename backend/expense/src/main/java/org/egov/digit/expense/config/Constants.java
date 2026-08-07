@@ -280,7 +280,6 @@ public class Constants {
 	public static final String ERR_SIGNATURE_FILE_EMPTY              = "EG_EXPENSE_SIGNATURE_FILE_EMPTY";
 	public static final String ERR_SIGNATURE_FILE_TOO_LARGE          = "EG_EXPENSE_SIGNATURE_FILE_TOO_LARGE";
 	public static final String ERR_SIGNATURE_FILE_INVALID_FORMAT     = "EG_EXPENSE_SIGNATURE_FILE_INVALID_FORMAT";
-	public static final String ERR_SIGNATURE_FILE_CONTENT_MISMATCH   = "EG_EXPENSE_SIGNATURE_FILE_CONTENT_MISMATCH";
 	public static final String ERR_APPROVAL_SIGNATURE_FILE_NOT_FOUND = "EG_EXPENSE_APPROVAL_SIGNATURE_FILE_NOT_FOUND";
 
 	// Error messages (static — no dynamic parts)
@@ -314,7 +313,6 @@ public class Constants {
 	public static final String MSG_SIGNATURE_FILE_EMPTY             = "The uploaded signature file is empty";
 	public static final String MSG_SIGNATURE_FILE_TOO_LARGE_PREFIX  = "Signature file exceeds the maximum allowed size of ";
 	public static final String MSG_SIGNATURE_FILE_INVALID_FORMAT    = "Unsupported signature file format. Allowed formats: PNG, JPG, JPEG";
-	public static final String MSG_SIGNATURE_FILE_CONTENT_MISMATCH  = "The uploaded file's content does not match a valid PNG/JPEG image";
 	public static final String MSG_APPROVAL_SIGNATURE_FILE_NOT_FOUND = "The submitted signature file could not be found for this tenant";
 
 	// Cache key prefixes
