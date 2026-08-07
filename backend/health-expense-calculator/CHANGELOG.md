@@ -1,6 +1,12 @@
 
 All notable changes to this module will be documented in this file.
 
+## 2.0.1 - 2026-07-21
+
+- Bill report boundary lookup now sources the boundary hierarchy from the campaign's project (`additionalDetails.hierarchyType`) instead of the static `egov.boundary.hierarchy.name`, falling back to the static value; adds multi-hierarchy support to report generation.
+- Upgraded tracer library to `2.9.3-SNAPSHOT`; new tracer handles `DataAccessException` errors via `ExceptionAdvise` and adds correlation-id propagation.
+- Added OpenTelemetry BOM and Instrumentation BOM dependency management, and `otel.*.exporter=none` defaults.
+
 ## 2.0.0 - 2025-11-24
 
 - Added Payments V2 billing configuration lifecycle (create/search/update) with period generation and constraints.
