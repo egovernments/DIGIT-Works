@@ -35,4 +35,8 @@ public class BillRequest {
 	@JsonProperty("workflow")
 	private Workflow workflow;
 
+	@JsonProperty("approvalSignature")
+	@Valid
+	private ApprovalSignature approvalSignature;
+
 }

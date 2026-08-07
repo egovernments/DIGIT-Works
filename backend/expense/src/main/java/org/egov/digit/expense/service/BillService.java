@@ -45,6 +45,7 @@ public class BillService {
 	private final BillCacheService billCacheService;
 	private final BillDetailService billDetailService;
 	private final BillDetailCacheService billDetailCacheService;
+	private final BillApprovalService billApprovalService;
 
 	@Autowired
 	public BillService(ExpenseProducer expenseProducer, Configuration config, BillValidator validator,
@@ -52,7 +53,8 @@ public class BillService {
 	                   ResponseInfoFactory responseInfoFactory, NotificationService notificationService,
 	                   CalculatorUtil calculatorUtil, PaymentWorkflowService paymentWorkflowService,
 	                   ObjectMapper objectMapper, BillCacheService billCacheService,
-	                   BillDetailService billDetailService, BillDetailCacheService billDetailCacheService) {
+	                   BillDetailService billDetailService, BillDetailCacheService billDetailCacheService,
+	                   BillApprovalService billApprovalService) {
 		this.expenseProducer = expenseProducer;
 		this.config = config;
 		this.validator = validator;
@@ -67,6 +69,7 @@ public class BillService {
 		this.billCacheService = billCacheService;
 		this.billDetailService = billDetailService;
 		this.billDetailCacheService = billDetailCacheService;
+		this.billApprovalService = billApprovalService;
 	}
 
 	public BillResponse create(BillRequest billRequest) {
@@ -120,7 +123,7 @@ public class BillService {
 			boolean isNotificationAction = Actions.SEND_FOR_REVIEW.toString().equals(action)
 					|| Actions.SEND_FOR_APPROVAL.toString().equals(action);
 			String batchId = isNotificationAction ? UUID.randomUUID().toString() : null;
-			updateBillStatus(bill, billRequest.getWorkflow(), requestInfo, batchId);
+			updateBillStatus(bill, billRequest.getWorkflow(), requestInfo, batchId, billRequest.getApprovalSignature());
 			if (isNotificationAction) {
 				try {
 					paymentWorkflowService.insertBillBatchEmailJob(
@@ -214,6 +217,8 @@ public class BillService {
 					}
 				}
 			}
+
+			billApprovalService.enrichBillsWithApprovals(bills, tenantId);
 		}
 
 		ResponseInfo responseInfo = responseInfoFactory
@@ -314,6 +319,7 @@ public class BillService {
 		List<String> billIds = bulkRequest.getBillIds();
 		String newStatus = bulkRequest.getStatus();
 		org.egov.common.contract.models.Workflow workflow = bulkRequest.getWorkflow();
+		ApprovalSignature approvalSignature = bulkRequest.getApprovalSignature();
 
 		List<Bill> successfulBills = new ArrayList<>();
 		List<BulkUpdateError> errors = new ArrayList<>();
@@ -368,7 +374,7 @@ public class BillService {
 						.additionalDetails(billFromSearch.getAdditionalDetails())
 						.build();
 
-				updateBillStatus(billToUpdate, workflow, requestInfo, batchId);
+				updateBillStatus(billToUpdate, workflow, requestInfo, batchId, approvalSignature);
 				successfulBills.add(billToUpdate);
 
 			} catch (Exception e) {
@@ -400,10 +406,11 @@ public class BillService {
 	}
 
 	private void updateBillStatus(Bill bill, org.egov.common.contract.models.Workflow workflow, RequestInfo requestInfo) {
-		updateBillStatus(bill, workflow, requestInfo, null);
+		updateBillStatus(bill, workflow, requestInfo, null, null);
 	}
 
-	private void updateBillStatus(Bill bill, org.egov.common.contract.models.Workflow workflow, RequestInfo requestInfo, String batchId) {
+	private void updateBillStatus(Bill bill, org.egov.common.contract.models.Workflow workflow, RequestInfo requestInfo,
+	                               String batchId, ApprovalSignature approvalSignature) {
 		String tenantId = bill.getTenantId();
 		String action = workflow.getAction();
 
@@ -438,7 +445,14 @@ public class BillService {
 			if (currentStatus == Status.PAYMENT_FAILED || currentStatus == Status.PARTIALLY_PAID) {
 				paymentWorkflowService.retryPayment(billRequest);
 			} else {
+				// Genuine approval (REVIEWED -> PAYMENT_IN_PROGRESS): the bill is not approved
+				// unless a valid printed name + signature is captured first. Validation happens
+				// BEFORE initiation (blocks approval on bad input); the audit row is only recorded
+				// AFTER initiation succeeds, so a failed initiation never leaves behind a false
+				// "approved" signature record.
+				BillApproval approval = billApprovalService.validateApproval(bill, billsFromSearch.get(0), approvalSignature, requestInfo);
 				paymentWorkflowService.initiatePayment(billRequest);
+				billApprovalService.recordApproval(approval, requestInfo);
 			}
 		} else {
 			if (validator.isWorkflowActiveForBusinessService(bill.getBusinessService())) {

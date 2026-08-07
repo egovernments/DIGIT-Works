@@ -478,6 +478,34 @@ serviceMaps:
             - jsonPath: $.billReport.id
             - jsonPath: $.billReport.tenantId
     - version: 1.0
+      name: Bill Approval Create
+      description: create bill approval signature record in eg_expense_bill_approval
+      fromTopic: expense-bill-approval-create
+      queryMaps:
+        - query: INSERT INTO eg_expense_bill_approval (id, tenant_id, bill_id, bill_number,
+            business_service, approver_uuid, approver_name, role, signature_method,
+            signature_file_store_id, approval_status, approved_time, created_by, created_time,
+            last_modified_by, last_modified_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT (id, tenant_id) DO NOTHING;
+          basePath: $.billApproval
+          jsonMaps:
+            - jsonPath: $.billApproval.id
+            - jsonPath: $.billApproval.tenantId
+            - jsonPath: $.billApproval.billId
+            - jsonPath: $.billApproval.billNumber
+            - jsonPath: $.billApproval.businessService
+            - jsonPath: $.billApproval.approverUuid
+            - jsonPath: $.billApproval.approverName
+            - jsonPath: $.billApproval.role
+            - jsonPath: $.billApproval.signatureMethod
+            - jsonPath: $.billApproval.signatureFileStoreId
+            - jsonPath: $.billApproval.approvalStatus
+            - jsonPath: $.billApproval.approvedTime
+            - jsonPath: $.billApproval.auditDetails.createdBy
+            - jsonPath: $.billApproval.auditDetails.createdTime
+            - jsonPath: $.billApproval.auditDetails.lastModifiedBy
+            - jsonPath: $.billApproval.auditDetails.lastModifiedTime
+    - version: 1.0
       name: bill verification task create
       description: create bill verification task in eg_expense_task
       fromTopic: expense-bill-task

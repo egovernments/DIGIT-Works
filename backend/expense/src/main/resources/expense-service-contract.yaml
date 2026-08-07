@@ -193,6 +193,47 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorRes'
 
+  /bill/v1/signature/_upload:
+    post:
+      tags:
+        - Bill
+      summary: Upload an approver's signature image (drawn or picked) for bill approval
+      description: |
+        Validates the uploaded image (PNG/JPG/JPEG only, 5MB max) and stores it in the
+        filestore service, returning a signatureFileStoreId. Both the "draw signature"
+        (canvas exported as a PNG) and "upload signature" (file picker) flows in the
+        approval dialog call this endpoint; the resulting fileStoreId is then passed as
+        approvalSignature.signatureFileStoreId on /bill/v1/_update or /bill/v1/_bulkupdatestatus
+        when submitting the PAYMENT_INITIATION approval action.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+                - tenantId
+              properties:
+                file:
+                  type: string
+                  format: binary
+                tenantId:
+                  type: string
+      responses:
+        '201':
+          description: Signature uploaded successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignatureUploadResponse'
+        '400':
+          description: Invalid, oversized, or unsupported-format signature file.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorRes'
+
   /payment/v1/_create:
     post:
       tags:
@@ -930,6 +971,15 @@ components:
           description: Any additional details
         auditDetails:
           $ref: '#/components/schemas/AuditDetails'
+        approvals:
+          type: array
+          description: |
+            Immutable history of approval events (printed name, signature, role, timestamp)
+            captured against this bill. Populated on search; empty/absent until the bill
+            has been through a PAYMENT_INITIATION approval.
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/BillApproval'
 
     # ─── Bill Request/Response ────────────────────────────────────────────────────
 
@@ -944,6 +994,8 @@ components:
         workflow:
           type: object
           description: Workflow action details
+        approvalSignature:
+          $ref: '#/components/schemas/ApprovalSignature'
 
     BillResponse:
       type: object
@@ -957,6 +1009,94 @@ components:
             $ref: '#/components/schemas/Bill'
         pagination:
           $ref: '#/components/schemas/Pagination'
+
+    # ─── Bill Approval (signature capture) ────────────────────────────────────────
+
+    SignatureMethod:
+      type: string
+      description: How the approver's signature was captured
+      enum:
+        - DRAWN
+        - UPLOADED
+
+    ApprovalSignature:
+      description: Printed name and signature captured from the approver while approving a bill
+      type: object
+      required:
+        - printedName
+        - signatureMethod
+        - signatureFileStoreId
+      properties:
+        printedName:
+          type: string
+          description: Approver's printed name, mandatory and cannot be blank
+          minLength: 1
+          maxLength: 256
+          example: "Jane Doe"
+        signatureMethod:
+          $ref: '#/components/schemas/SignatureMethod'
+        signatureFileStoreId:
+          type: string
+          description: fileStoreId returned by /bill/v1/signature/_upload
+          minLength: 1
+          maxLength: 256
+          example: "e8f6d8b2-4b1a-4b0a-9c3a-7e6f6f6f6f6f"
+
+    BillApproval:
+      description: An immutable record of a single bill approval event
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+          example: "8801de85-f123-4e4b-9e4e-adbd04e49965"
+        tenantId:
+          type: string
+          example: "ng.state"
+        billId:
+          type: string
+        billNumber:
+          type: string
+          example: "BILL-2025-01-000001"
+        businessService:
+          type: string
+          example: "PAYMENTS.BILL"
+        approverUuid:
+          type: string
+          description: UUID of the user who approved the bill
+        approverName:
+          type: string
+          description: Printed name entered by the approver at the time of approval
+          example: "Jane Doe"
+        role:
+          type: string
+          description: Role held by the approver at the time of approval
+          example: "PAYMENT_APPROVER"
+        signatureMethod:
+          $ref: '#/components/schemas/SignatureMethod'
+        signatureFileStoreId:
+          type: string
+        approvalStatus:
+          type: string
+          enum:
+            - APPROVED
+        approvedTime:
+          type: integer
+          format: int64
+          description: Epoch ms when the approval was recorded
+        auditDetails:
+          $ref: '#/components/schemas/AuditDetails'
+
+    SignatureUploadResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          type: object
+          description: DIGIT ResponseInfo
+        signatureFileStoreId:
+          type: string
+          description: fileStoreId of the stored signature image, to be echoed back in approvalSignature
+          example: "e8f6d8b2-4b1a-4b0a-9c3a-7e6f6f6f6f6f"
 
     BillSearchRequest:
       type: object
@@ -1107,6 +1247,12 @@ components:
         workflow:
           type: object
           description: Workflow action details
+        approvalSignature:
+          $ref: '#/components/schemas/ApprovalSignature'
+          description: |
+            Required when workflow.action is PAYMENT_INITIATION and the bills are in REVIEWED
+            status (i.e. a genuine approval, not a payment retry). Applies to every bill in
+            billIds — one signed approval per batch submission.
 
     BulkBillStatusUpdateResponse:
       type: object

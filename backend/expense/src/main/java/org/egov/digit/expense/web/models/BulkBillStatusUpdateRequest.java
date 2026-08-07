@@ -46,4 +46,8 @@ public class BulkBillStatusUpdateRequest {
 	@JsonProperty("workflow")
 	private Workflow workflow;
 
+	@JsonProperty("approvalSignature")
+	@Valid
+	private ApprovalSignature approvalSignature;
+
 }
