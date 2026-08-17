@@ -256,6 +256,18 @@ public class ExpenseCalculatorConfiguration {
 	@Value("${egov.filestore.path}")
 	private String fileStoreEndpoint;
 
+	/**
+	 * Timeouts for signature image reads only. Report generation fetches signature images inline,
+	 * so an unresponsive filestore would otherwise stall the report consumer indefinitely — the
+	 * shared RestTemplate carries no timeout. Scoped to these reads on purpose: the pdf render and
+	 * the voucher upload legitimately take longer and must keep the shared client's behaviour.
+	 */
+	@Value("${egov.filestore.signature.connect.timeout.ms:3000}")
+	private int signatureConnectTimeoutMs;
+
+	@Value("${egov.filestore.signature.read.timeout.ms:10000}")
+	private int signatureReadTimeoutMs;
+
 	@Value("${state.level.tenant.id}")
 	private String stateLevelTenantId;
 
