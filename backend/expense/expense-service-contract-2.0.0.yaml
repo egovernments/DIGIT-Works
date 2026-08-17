@@ -151,13 +151,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Bill'
-        approvalSignature:
-          description: |
-            Printed name + signature captured from a PAYMENT_APPROVER, required when submitting
-            the PAYMENT_INITIATION workflow action to approve a bill (not required for other
-            workflow actions such as VERIFY, SEND_FOR_REVIEW, or REJECT).
-          allOf:
-            - $ref: '#/components/schemas/ApprovalSignature'
       required: [RequestInfo, Bill]
 
     BillResponse:
@@ -201,14 +194,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BillDetail'
-        approvals:
-          type: array
-          readOnly: true
-          description: |
-            Immutable history of approval events (printed name, signature, role, timestamp)
-            captured for this bill, returned on search.
-          items:
-            $ref: '#/components/schemas/BillApproval'
 
     BillDetail:
       type: object
@@ -423,104 +408,6 @@ components:
       required:
         - code
         - message
-
-    AuditDetails:
-      type: object
-      properties:
-        createdBy:
-          type: string
-          description: User who created the record
-        lastModifiedBy:
-          type: string
-          description: User who last modified the record
-        createdTime:
-          type: integer
-          format: int64
-          description: Epoch timestamp of creation
-        lastModifiedTime:
-          type: integer
-          format: int64
-          description: Epoch timestamp of last modification
-
-    # ─── Bill Approval (signature capture) ────────────────────────────────────────
-
-    SignatureMethod:
-      type: string
-      description: How the approver's signature was captured
-      enum:
-        - DRAWN
-        - UPLOADED
-
-    ApprovalSignature:
-      description: Printed name and signature captured from the approver while approving a bill
-      type: object
-      required:
-        - printedName
-        - signatureMethod
-        - signatureFileStoreId
-      properties:
-        printedName:
-          type: string
-          description: Approver's printed name, mandatory and cannot be blank
-          minLength: 1
-          maxLength: 256
-          example: "Jane Doe"
-        signatureMethod:
-          $ref: '#/components/schemas/SignatureMethod'
-        signatureFileStoreId:
-          type: string
-          description: |
-            fileStoreId of the signature image, uploaded by the client to the filestore
-            service. The image is fetched and validated server-side (PNG/JPEG, 5MB max)
-            when the approval is submitted.
-          minLength: 1
-          maxLength: 256
-          example: "e8f6d8b2-4b1a-4b0a-9c3a-7e6f6f6f6f6f"
-
-    BillApproval:
-      description: An immutable record of a single bill approval event
-      type: object
-      properties:
-        id:
-          type: string
-          readOnly: true
-          example: "8801de85-f123-4e4b-9e4e-adbd04e49965"
-        tenantId:
-          type: string
-          example: "ng.state"
-        billId:
-          type: string
-        billNumber:
-          type: string
-          example: "BILL-2025-01-000001"
-        businessService:
-          type: string
-          example: "PAYMENTS.BILL"
-        approverUuid:
-          type: string
-          description: UUID of the user who approved the bill
-        approverName:
-          type: string
-          description: Printed name entered by the approver at the time of approval
-          example: "Jane Doe"
-        role:
-          type: string
-          description: Role held by the approver at the time of approval
-          example: "PAYMENT_APPROVER"
-        signatureMethod:
-          $ref: '#/components/schemas/SignatureMethod'
-        signatureFileStoreId:
-          type: string
-        approvalStatus:
-          type: string
-          enum:
-            - APPROVED
-        approvedTime:
-          type: integer
-          format: int64
-          description: Epoch ms when the approval was recorded
-        auditDetails:
-          $ref: '#/components/schemas/AuditDetails'
 
   parameters:
     tenantId:
