@@ -54,8 +54,4 @@ public class BulkBillStatusUpdateRequest {
 	@Valid
 	private BillSignature signature;
 
-	@JsonProperty("approvalSignature")
-	@Valid
-	private ApprovalSignature approvalSignature;
-
 }

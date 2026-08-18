@@ -3,7 +3,6 @@ package org.egov.digit.expense.kafka;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.digit.expense.config.Configuration;
-import org.egov.digit.expense.service.BillApprovalService;
 import org.egov.digit.expense.service.PaymentWorkflowService;
 import org.egov.digit.expense.util.FilestoreUtil;
 import org.egov.digit.expense.util.PaymentAdvisoryExcelGenerator;
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.Map;
 
 @Slf4j
@@ -30,7 +28,6 @@ public class BillReportConsumer {
     private final PaymentWorkflowService paymentWorkflowService;
     private final PaymentAdvisoryExcelGenerator excelGenerator;
     private final FilestoreUtil filestoreUtil;
-    private final BillApprovalService billApprovalService;
 
     @Autowired
     public BillReportConsumer(ObjectMapper objectMapper,
@@ -38,15 +35,13 @@ public class BillReportConsumer {
                               Configuration config,
                               PaymentWorkflowService paymentWorkflowService,
                               PaymentAdvisoryExcelGenerator excelGenerator,
-                              FilestoreUtil filestoreUtil,
-                              BillApprovalService billApprovalService) {
+                              FilestoreUtil filestoreUtil) {
         this.objectMapper = objectMapper;
         this.producer = producer;
         this.config = config;
         this.paymentWorkflowService = paymentWorkflowService;
         this.excelGenerator = excelGenerator;
         this.filestoreUtil = filestoreUtil;
-        this.billApprovalService = billApprovalService;
     }
 
     @KafkaListener(topicPattern = "(${expense.kafka.tenant.id.pattern}){0,1}${expense.bill.report.save}")
@@ -107,10 +102,6 @@ public class BillReportConsumer {
             log.error("Bill not found in DB or cache: billId={} tenantId={}", billId, tenantId);
             throw new RuntimeException("Bill not found for billId=" + billId + " tenantId=" + tenantId);
         }
-        // fetchBillWithDetails goes straight to the bill repository, so approvals are not
-        // populated by it — the generated voucher has to carry the approver's printed name
-        // and signature, so enrich them here.
-        billApprovalService.enrichBillsWithApprovals(Collections.singletonList(bill), tenantId);
         return bill;
     }
 
