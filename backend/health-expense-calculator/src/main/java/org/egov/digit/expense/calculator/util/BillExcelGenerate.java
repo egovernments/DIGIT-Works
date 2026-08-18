@@ -23,10 +23,13 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.calculator.config.ExpenseCalculatorConfiguration;
 import org.egov.digit.expense.calculator.web.models.report.ReportBill;
 import org.egov.digit.expense.calculator.web.models.report.ReportBillDetail;
+import org.egov.digit.expense.calculator.web.models.report.ReportSignature;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import org.egov.digit.expense.calculator.web.models.RateFieldConfig;
 
@@ -239,9 +242,15 @@ public class BillExcelGenerate {
         Cell signerCellApprovedBy = billFooterSignerRow.createCell(9);
         sheet.addMergedRegion(new CellRangeAddress(rowNum, rowNum, 9, 11));
         setCellValueWithAlignment(signerCellApprovedBy, localizationMap.getOrDefault(BILL_EXCEL_FOOTER_PYMT_ADV_APPROVED_BY, BILL_EXCEL_FOOTER_PYMT_ADV_APPROVED_BY), textStyle, numberStyle);
+
+        // The three rows this report has always left blank under the sign-off labels are the
+        // signing area. Where a signature was captured, the image and printed name now fill it;
+        // where none was, they stay blank and the voucher prints for a pen signature as before.
+        Row signatureImageRow = sheet.createRow(rowNum++);
+        Row printedNameRow = sheet.createRow(rowNum++);
         sheet.createRow(rowNum++);
-        sheet.createRow(rowNum++);
-        sheet.createRow(rowNum++);
+
+        writeSignOff(sheet, reportBill, signatureImageRow, printedNameRow, textStyle, numberStyle);
 
         Row billFooterAuditDateTime = sheet.createRow(rowNum++);
         Cell auditCellDateAndTimeLabel = billFooterAuditDateTime.createCell(1);
@@ -443,6 +452,109 @@ public class BillExcelGenerate {
      * @param textStyle the style to apply for text values
      * @param numberStyle the style to apply for numeric values
      */
+    /** Tall enough that an embedded signature stays legible once the voucher is printed. */
+    private static final short SIGNATURE_ROW_HEIGHT_POINTS = 60;
+
+    /**
+     * Left-hand column of each sign-off slot, matching the label columns written above it.
+     * Each signature is drawn across SIGNATURE_COL_SPAN columns from here.
+     */
+    private static final Map<String, Integer> SLOT_COLUMN = Map.of(
+            ReportSignature.SLOT_PREPARED_BY, 1,
+            ReportSignature.SLOT_VERIFIED_BY, 4,
+            ReportSignature.SLOT_APPROVED_BY, 9);
+
+    private static final int SIGNATURE_COL_SPAN = 3;
+
+    /**
+     * Fills the voucher's signing area with the printed name and signature image for each slot
+     * that was signed. Slots with no signature are left untouched.
+     */
+    private void writeSignOff(Sheet sheet, ReportBill reportBill, Row imageRow, Row printedNameRow,
+                              XSSFCellStyle textStyle, XSSFCellStyle numberStyle) {
+
+        List<ReportSignature> signatures = reportBill.getSignatures();
+        if (CollectionUtils.isEmpty(signatures)) {
+            log.info("No signatures captured for this bill — leaving the voucher sign-off area blank");
+            return;
+        }
+
+        Map<String, byte[]> signatureImages = downloadSignatureImages(reportBill);
+        imageRow.setHeightInPoints(SIGNATURE_ROW_HEIGHT_POINTS);
+
+        for (ReportSignature signature : signatures) {
+            Integer column = SLOT_COLUMN.get(signature.getSlot());
+            if (column == null) {
+                log.warn("Signature for unknown voucher slot {} — skipping", signature.getSlot());
+                continue;
+            }
+
+            if (signature.getPrintedName() != null)
+                setCellValueWithAlignment(printedNameRow.createCell(column), signature.getPrintedName(),
+                        textStyle, numberStyle);
+
+            byte[] image = signature.getFileStoreId() == null ? null
+                    : signatureImages.get(signature.getFileStoreId());
+            if (image != null)
+                embedSignature(sheet, image, imageRow.getRowNum(), column);
+        }
+    }
+
+    /**
+     * Fetches each distinct signature image once, so a voucher signed by the same person in more
+     * than one slot costs a single filestore call. An image that cannot be fetched is left out
+     * and the printed name alone records that slot's sign-off.
+     */
+    private Map<String, byte[]> downloadSignatureImages(ReportBill reportBill) {
+
+        String tenantId = StringUtils.hasText(reportBill.getTenantId())
+                ? reportBill.getTenantId()
+                : config.getStateLevelTenantId();
+
+        Map<String, byte[]> images = new HashMap<>();
+        reportBill.getSignatures().stream()
+                .map(ReportSignature::getFileStoreId)
+                .filter(StringUtils::hasText)
+                .distinct()
+                .forEach(fileStoreId -> {
+                    try {
+                        images.put(fileStoreId, fileStoreUtil.downloadFile(tenantId, fileStoreId));
+                    } catch (Exception e) {
+                        log.warn("Could not fetch signature image {}: {}", fileStoreId, e.getMessage());
+                    }
+                });
+        return images;
+    }
+
+    /**
+     * Anchors a signature image into the signing area. An unusable image is logged and skipped —
+     * the printed name still records the sign-off, and a bad image must never fail the voucher.
+     */
+    private void embedSignature(Sheet sheet, byte[] imageBytes, int rowIdx, int colIdx) {
+        try {
+            int pictureType = isJpeg(imageBytes) ? Workbook.PICTURE_TYPE_JPEG : Workbook.PICTURE_TYPE_PNG;
+            int pictureIdx = sheet.getWorkbook().addPicture(imageBytes, pictureType);
+
+            Drawing<?> drawing = sheet.createDrawingPatriarch();
+            ClientAnchor anchor = sheet.getWorkbook().getCreationHelper().createClientAnchor();
+            anchor.setCol1(colIdx);
+            anchor.setRow1(rowIdx);
+            anchor.setCol2(colIdx + SIGNATURE_COL_SPAN);
+            anchor.setRow2(rowIdx + 1);
+            anchor.setAnchorType(ClientAnchor.AnchorType.MOVE_AND_RESIZE);
+
+            drawing.createPicture(anchor, pictureIdx);
+        } catch (Exception e) {
+            log.warn("Skipping unusable signature image at row {} column {}: {}", rowIdx, colIdx, e.getMessage());
+        }
+    }
+
+    /** Decides the picture type from the bytes themselves rather than trusting a file name. */
+    private boolean isJpeg(byte[] bytes) {
+        return bytes.length >= 3
+                && bytes[0] == (byte) 0xFF && bytes[1] == (byte) 0xD8 && bytes[2] == (byte) 0xFF;
+    }
+
     private void setCellValueWithAlignment(Cell cell, Object value, XSSFCellStyle textStyle, XSSFCellStyle numberStyle) {
         if (value instanceof BigDecimal) {
             // Set cell value for BigDecimal with two decimal places

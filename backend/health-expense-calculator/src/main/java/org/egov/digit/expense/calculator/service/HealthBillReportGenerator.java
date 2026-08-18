@@ -1,5 +1,6 @@
 package org.egov.digit.expense.calculator.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
@@ -21,6 +22,7 @@ import org.egov.digit.expense.calculator.web.models.report.BillReportRequest;
 import org.egov.digit.expense.calculator.web.models.report.ReportBill;
 import org.egov.digit.expense.calculator.web.models.report.ReportBillDetail;
 import org.egov.digit.expense.calculator.web.models.report.ReportGenerationRequest;
+import org.egov.digit.expense.calculator.web.models.report.ReportSignature;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.CustomException;
 import org.egov.works.services.common.models.expense.calculator.IndividualEntry;
@@ -61,10 +63,11 @@ public class HealthBillReportGenerator {
     private final ObjectMapper objectMapper;
     private final BillingConfigurationService billingConfigurationService;
     private final BoundaryService boundaryService;
+    private final FileStoreUtil fileStoreUtil;
 
 
     @Autowired
-    public HealthBillReportGenerator(IndividualUtil individualUtil, ExpenseCalculatorUtil expenseCalculatorUtil, BillExcelGenerate billExcelGenerate, ExpenseCalculatorConfiguration config, ProjectUtil projectUtil, LocalizationUtil localizationUtil, PDFServiceUtil pdfServiceUtil, BillUtils billUtils, ExpenseCalculatorService expenseCalculatorService, ObjectMapper objectMapper, BillingConfigurationService billingConfigurationService, BoundaryService boundaryService) {
+    public HealthBillReportGenerator(IndividualUtil individualUtil, ExpenseCalculatorUtil expenseCalculatorUtil, BillExcelGenerate billExcelGenerate, ExpenseCalculatorConfiguration config, ProjectUtil projectUtil, LocalizationUtil localizationUtil, PDFServiceUtil pdfServiceUtil, BillUtils billUtils, ExpenseCalculatorService expenseCalculatorService, ObjectMapper objectMapper, BillingConfigurationService billingConfigurationService, BoundaryService boundaryService, FileStoreUtil fileStoreUtil) {
         this.individualUtil = individualUtil;
         this.expenseCalculatorUtil = expenseCalculatorUtil;
         this.billExcelGenerate = billExcelGenerate;
@@ -77,6 +80,7 @@ public class HealthBillReportGenerator {
         this.objectMapper = objectMapper;
         this.billingConfigurationService = billingConfigurationService;
         this.boundaryService = boundaryService;
+        this.fileStoreUtil = fileStoreUtil;
     }
 
     /**
@@ -242,6 +246,8 @@ public class HealthBillReportGenerator {
 
         ReportBill reportBill = ReportBill.builder()
                 .totalAmount(billRequest.getBill().getTotalAmount())
+                .tenantId(billRequest.getBill().getTenantId())
+                .signatures(resolveSignatures(billRequest.getBill()))
                 .reportTitle(billRequest.getBill().getLocalityCode())
                 .createdBy(createdBy)
                 .createdTime(System.currentTimeMillis())
@@ -277,6 +283,7 @@ public class HealthBillReportGenerator {
             }
         }
 
+        flattenSignaturesForPdf(reportBill);
         enrichCampaignName(reportBill, billRequest);
         enrichLocalization(reportBill, billRequest);
         billRequest.getRequestInfo().setMsgId(getMsgIdWithLocalCode(billRequest.getRequestInfo().getMsgId()));
@@ -286,6 +293,164 @@ public class HealthBillReportGenerator {
                 .reportBill(Collections.singletonList(reportBill))
                 .build();
 
+    }
+
+    /**
+     * Maps each signature-bearing workflow action onto the voucher slot it signs off.
+     * Mirrors the expense service's own action-to-role resolution so a signature lands in the
+     * same place the workflow says it belongs.
+     */
+    private static final Map<String, String> ACTION_TO_VOUCHER_SLOT = Map.of(
+            "SEND_FOR_REVIEW", ReportSignature.SLOT_PREPARED_BY,
+            "VERIFY", ReportSignature.SLOT_PREPARED_BY,
+            "SEND_FOR_APPROVAL", ReportSignature.SLOT_VERIFIED_BY,
+            "PAYMENT_INITIATION", ReportSignature.SLOT_APPROVED_BY);
+
+    /**
+     * Reads the sign-off records the expense service mirrors into additionalDetails.signatures
+     * and maps them onto the voucher's three slots.
+     *
+     * Bills signed before sign-off capture existed carry none, so an empty list is returned and
+     * the voucher renders its signature slots blank rather than failing. Where the same action
+     * was signed more than once the latest entry wins, matching how the expense service picks
+     * the signature it validates.
+     */
+    // Package-private so the slot mapping can be tested directly against the additionalDetails
+    // shape the expense service writes, without standing up the whole report pipeline.
+    List<ReportSignature> resolveSignatures(Bill bill) {
+
+        if (bill == null || bill.getAdditionalDetails() == null)
+            return Collections.emptyList();
+
+        JsonNode signatureNodes;
+        try {
+            signatureNodes = objectMapper.convertValue(bill.getAdditionalDetails(), JsonNode.class)
+                    .path("signatures");
+        } catch (Exception e) {
+            log.warn("Could not read signatures from additionalDetails for bill {}: {}", bill.getId(), e.getMessage());
+            return Collections.emptyList();
+        }
+
+        if (!signatureNodes.isArray())
+            return Collections.emptyList();
+
+        // Keyed by slot so a re-signed action overwrites its earlier entry rather than duplicating it.
+        Map<String, ReportSignature> bySlot = new LinkedHashMap<>();
+        for (JsonNode node : signatureNodes) {
+            String action = textOrNull(node, "action");
+            String slot = action == null ? null : ACTION_TO_VOUCHER_SLOT.get(action);
+            if (slot == null)
+                continue;
+
+            JsonNode signedTime = node.path("signedTime");
+            bySlot.put(slot, ReportSignature.builder()
+                    .slot(slot)
+                    .action(action)
+                    .printedName(textOrNull(node, "printedName"))
+                    .fileStoreId(textOrNull(node, "fileStoreId"))
+                    .role(textOrNull(node, "role"))
+                    .signedTime(signedTime.isNumber() ? signedTime.asLong() : null)
+                    .build());
+        }
+
+        List<ReportSignature> signatures = new ArrayList<>(bySlot.values());
+        enrichSignatureImages(bill.getTenantId(), signatures);
+
+        log.info("Resolved {} signature(s) for bill {}", signatures.size(), bill.getId());
+        return signatures;
+    }
+
+    /**
+     * Materialises each signature image as a base64 data uri for the pdf template, since
+     * pdf-service cannot fetch an image url given in the payload. The excel path embeds from raw
+     * bytes and does not use this.
+     *
+     * Each distinct image is fetched once. A failure leaves the data uri null: the printed name
+     * still records the sign-off, the excel is unaffected, and the pdf renders that slot without an
+     * image rather than failing the whole report.
+     */
+    private void enrichSignatureImages(String tenantId, List<ReportSignature> signatures) {
+
+        List<String> fileStoreIds = signatures.stream()
+                .map(ReportSignature::getFileStoreId)
+                .filter(StringUtils::hasText)
+                .distinct()
+                .collect(Collectors.toList());
+
+        if (fileStoreIds.isEmpty())
+            return;
+
+        Map<String, String> dataUris = new HashMap<>();
+        for (String fileStoreId : fileStoreIds) {
+            try {
+                dataUris.put(fileStoreId, toDataUri(fileStoreUtil.downloadFile(tenantId, fileStoreId)));
+            } catch (Exception e) {
+                log.warn("Could not fetch signature image {} for tenant {}: {}", fileStoreId, tenantId, e.getMessage());
+            }
+        }
+        signatures.forEach(signature -> signature.setImageDataUri(dataUris.get(signature.getFileStoreId())));
+    }
+
+    /** A 1x1 transparent png, so an unsigned slot still resolves to a valid image. */
+    private static final String BLANK_IMAGE_DATA_URI = "data:image/png;base64,"
+            + "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/58BAwAI/AL+p5qOfwAAAABJRU5ErkJggg==";
+
+    /**
+     * A single space rather than an empty string: pdf-service's getValue treats [""] as no value and
+     * substitutes the literal "NA", which would print on the voucher.
+     */
+    private static final String BLANK_TEXT = " ";
+
+    /**
+     * Copies the resolved sign-offs into the flat, always-present fields the pdf template reads.
+     * Slots that were not signed get blank stand-ins so every template path matches — see the
+     * comment on those fields in ReportBill for why "NA" must never reach an image element.
+     */
+    // Package-private so the blank stand-ins can be tested directly — they are what keeps pdf
+    // generation working for bills that were never signed.
+    void flattenSignaturesForPdf(ReportBill reportBill) {
+
+        Map<String, ReportSignature> bySlot = reportBill.getSignatures() == null
+                ? Collections.emptyMap()
+                : reportBill.getSignatures().stream()
+                        .filter(signature -> signature.getSlot() != null)
+                        .collect(Collectors.toMap(ReportSignature::getSlot, signature -> signature,
+                                (first, second) -> second));
+
+        ReportSignature prepared = bySlot.get(ReportSignature.SLOT_PREPARED_BY);
+        ReportSignature verified = bySlot.get(ReportSignature.SLOT_VERIFIED_BY);
+        ReportSignature approved = bySlot.get(ReportSignature.SLOT_APPROVED_BY);
+
+        reportBill.setPreparedBySignatureName(nameOrBlank(prepared));
+        reportBill.setPreparedBySignatureImage(imageOrBlank(prepared));
+        reportBill.setVerifiedBySignatureName(nameOrBlank(verified));
+        reportBill.setVerifiedBySignatureImage(imageOrBlank(verified));
+        reportBill.setApprovedBySignatureName(nameOrBlank(approved));
+        reportBill.setApprovedBySignatureImage(imageOrBlank(approved));
+    }
+
+    private String nameOrBlank(ReportSignature signature) {
+        return signature != null && StringUtils.hasText(signature.getPrintedName())
+                ? signature.getPrintedName() : BLANK_TEXT;
+    }
+
+    private String imageOrBlank(ReportSignature signature) {
+        return signature != null && StringUtils.hasText(signature.getImageDataUri())
+                ? signature.getImageDataUri() : BLANK_IMAGE_DATA_URI;
+    }
+
+    /** Wraps image bytes as a data uri, deciding the media type from the bytes themselves. */
+    private String toDataUri(byte[] imageBytes) {
+        String mediaType = imageBytes.length >= 3
+                && imageBytes[0] == (byte) 0xFF && imageBytes[1] == (byte) 0xD8 && imageBytes[2] == (byte) 0xFF
+                ? "image/jpeg" : "image/png";
+        return "data:" + mediaType + ";base64," + Base64.getEncoder().encodeToString(imageBytes);
+    }
+
+    /** Reads a text field, treating missing and json-null alike as absent. */
+    private String textOrNull(JsonNode node, String field) {
+        JsonNode value = node.path(field);
+        return value.isTextual() && StringUtils.hasText(value.asText()) ? value.asText() : null;
     }
 
     /**
