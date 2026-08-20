@@ -11,6 +11,7 @@ import org.egov.common.models.project.Address;
 import org.egov.common.models.project.Project;
 import org.egov.common.utils.CommonUtils;
 import org.egov.config.AttendanceServiceConfiguration;
+import org.egov.enrichment.AttendeeEnrichmentService;
 import org.egov.enrichment.RegisterEnrichment;
 import org.egov.enrichment.StaffEnrichmentService;
 import org.egov.common.producer.Producer;
@@ -57,6 +58,8 @@ public class AttendanceRegisterService {
     private final AttendeeRepository attendeeRepository;
 
     private final StaffEnrichmentService staffEnrichmentService;
+
+    private final AttendeeEnrichmentService attendeeEnrichmentService;
     private final IndividualServiceUtil individualServiceUtil;
 
     private final ProjectServiceUtil projectServiceUtil;
@@ -68,7 +71,7 @@ public class AttendanceRegisterService {
     private final MusterRollWorkflowUtil musterRollWorkflowUtil;
 
     @Autowired
-    public AttendanceRegisterService(AttendanceServiceValidator attendanceServiceValidator, ResponseInfoFactory responseInfoFactory, Producer producer, AttendanceServiceConfiguration attendanceServiceConfiguration, RegisterEnrichment registerEnrichment, StaffRepository staffRepository, RegisterRepository registerRepository, AttendeeRepository attendeeRepository, StaffEnrichmentService staffEnrichmentService, IndividualServiceUtil individualServiceUtil, ProjectServiceUtil projectServiceUtil, RegisterPeriodEnrichmentService registerPeriodEnrichmentService, MusterRollWorkflowUtil musterRollWorkflowUtil) {
+    public AttendanceRegisterService(AttendanceServiceValidator attendanceServiceValidator, ResponseInfoFactory responseInfoFactory, Producer producer, AttendanceServiceConfiguration attendanceServiceConfiguration, RegisterEnrichment registerEnrichment, StaffRepository staffRepository, RegisterRepository registerRepository, AttendeeRepository attendeeRepository, StaffEnrichmentService staffEnrichmentService, IndividualServiceUtil individualServiceUtil, ProjectServiceUtil projectServiceUtil, RegisterPeriodEnrichmentService registerPeriodEnrichmentService, MusterRollWorkflowUtil musterRollWorkflowUtil, AttendeeEnrichmentService attendeeEnrichmentService) {
         this.attendanceServiceValidator = attendanceServiceValidator;
         this.responseInfoFactory = responseInfoFactory;
         this.producer = producer;
@@ -78,6 +81,7 @@ public class AttendanceRegisterService {
         this.registerRepository = registerRepository;
         this.attendeeRepository = attendeeRepository;
         this.staffEnrichmentService = staffEnrichmentService;
+        this.attendeeEnrichmentService = attendeeEnrichmentService;
         this.individualServiceUtil = individualServiceUtil;
         this.projectServiceUtil = projectServiceUtil;
         this.registerPeriodEnrichmentService = registerPeriodEnrichmentService;
@@ -1100,7 +1104,78 @@ public class AttendanceRegisterService {
         producer.push(tenantId, attendanceServiceConfiguration.getDeleteAttendanceRegisterTopic(), request);
         log.info("Pushed delete attendance register request to kafka");
 
+        // Deleting the register does not by itself end anyone's enrolment, and an enrolment in a
+        // register that no longer exists still blocks that person from being enrolled anywhere else.
+        // Pushed after the delete so a failure here leaves the register deleted rather than emptying a
+        // live register.
+        deEnrolMembersOfDeletedRegisters(request.getRequestInfo(), tenantId, registerIds);
+
         return request;
+    }
+
+    /** De-enrols the attendees and staff of registers being deleted, so they are free to be enrolled elsewhere. */
+    private void deEnrolMembersOfDeletedRegisters(RequestInfo requestInfo, String tenantId, List<String> registerIds) {
+        deEnrolAttendees(requestInfo, tenantId, registerIds);
+        deEnrolStaff(requestInfo, tenantId, registerIds);
+    }
+
+    private void deEnrolAttendees(RequestInfo requestInfo, String tenantId, List<String> registerIds) {
+        AttendeeSearchCriteria criteria = AttendeeSearchCriteria.builder()
+                .tenantId(tenantId).registerIds(registerIds).build();
+        List<IndividualEntry> attendeesFromDB = attendeeRepository.getAttendees(tenantId, criteria);
+
+        List<IndividualEntry> stillEnrolled = attendeesFromDB.stream()
+                .filter(attendee -> isStillEnrolled(attendee.getDenrollmentDate()))
+                .collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(stillEnrolled)) {
+            log.info("No enrolled attendees left in deleted registers {}", registerIds);
+            return;
+        }
+
+        // The de-enrolment date and audit details are stamped by the same enrichment the attendee
+        // delete API uses, so a register deletion and a manual de-enrolment leave identical rows.
+        List<IndividualEntry> toDeEnrol = stillEnrolled.stream()
+                .map(attendee -> IndividualEntry.builder()
+                        .tenantId(attendee.getTenantId())
+                        .registerId(attendee.getRegisterId())
+                        .individualId(attendee.getIndividualId())
+                        .build())
+                .collect(Collectors.toList());
+        AttendeeDeleteRequest deEnrolRequest = AttendeeDeleteRequest.builder()
+                .requestInfo(requestInfo).attendees(toDeEnrol).build();
+        attendeeEnrichmentService.enrichAttendeeOnDelete(deEnrolRequest, stillEnrolled);
+
+        producer.push(tenantId, attendanceServiceConfiguration.getUpdateAttendeeTopic(), deEnrolRequest);
+        log.info("De-enrolled {} attendee(s) of deleted registers {}", toDeEnrol.size(), registerIds);
+    }
+
+    private void deEnrolStaff(RequestInfo requestInfo, String tenantId, List<String> registerIds) {
+        StaffSearchCriteria criteria = StaffSearchCriteria.builder()
+                .tenantId(tenantId).registerIds(registerIds).build();
+        List<StaffPermission> activeStaff = staffRepository.getActiveStaff(criteria);
+        if (CollectionUtils.isEmpty(activeStaff)) {
+            log.info("No enrolled staff left in deleted registers {}", registerIds);
+            return;
+        }
+
+        List<StaffPermission> toDeEnrol = activeStaff.stream()
+                .map(staff -> StaffPermission.builder()
+                        .tenantId(staff.getTenantId())
+                        .registerId(staff.getRegisterId())
+                        .userId(staff.getUserId())
+                        .build())
+                .collect(Collectors.toList());
+        StaffPermissionRequest deEnrolRequest = StaffPermissionRequest.builder()
+                .requestInfo(requestInfo).staff(toDeEnrol).build();
+        staffEnrichmentService.enrichStaffPermissionOnDelete(deEnrolRequest, activeStaff);
+
+        producer.push(tenantId, attendanceServiceConfiguration.getUpdateStaffTopic(), deEnrolRequest);
+        log.info("De-enrolled {} staff member(s) of deleted registers {}", toDeEnrol.size(), registerIds);
+    }
+
+    /** A zero date is written by some clients in place of null, and means the same thing here. */
+    private boolean isStillEnrolled(BigDecimal denrollmentDate) {
+        return denrollmentDate == null || denrollmentDate.signum() == 0;
     }
 
     /**
