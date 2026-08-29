@@ -66,6 +66,9 @@ public class FaceAuthEvent {
     @JsonProperty("faceImage")
     private String faceImage;
 
+    @JsonProperty("faceImageFileStoreId")
+    private String faceImageFileStoreId;
+
     @JsonProperty("anomalyFlags")
     private String anomalyFlags;
 
