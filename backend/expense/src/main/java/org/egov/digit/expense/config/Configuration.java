@@ -205,6 +205,7 @@ public class Configuration {
 	@Value("${excel.sheet.protect.password:readonly}")
 	private String excelSheetProtectPassword;
 
+
 	@Value("${filestore.module:expense}")
 	private String filestoreModule;
 
