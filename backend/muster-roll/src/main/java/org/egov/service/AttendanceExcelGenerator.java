@@ -107,6 +107,11 @@ public class AttendanceExcelGenerator {
                 formatDate(reportData.getStartDate()),
                 formatDate(reportData.getEndDate()),
                 reportData.getTotalAttendees());
+        // Stamped so a pre-approval draft is not mistaken for the final, billable report.
+        if (reportData.getMusterRollStatus() != null
+                && !"APPROVED".equalsIgnoreCase(reportData.getMusterRollStatus())) {
+            registerInfo = registerInfo + "  |  " + reportData.getMusterRollStatus();
+        }
         infoCell1.setCellValue(registerInfo);
         infoCell1.setCellStyle(subHeaderStyle);
         sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, totalCols - 1));

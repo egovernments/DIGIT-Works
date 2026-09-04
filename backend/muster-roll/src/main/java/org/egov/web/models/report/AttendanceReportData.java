@@ -28,6 +28,9 @@ public class AttendanceReportData {
     @JsonProperty("musterRollId")
     private String musterRollId;
 
+    @JsonProperty("musterRollStatus")
+    private String musterRollStatus;
+
     @JsonProperty("campaignName")
     private String campaignName;
 

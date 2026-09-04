@@ -100,14 +100,6 @@ public class AttendanceReportGeneratorService {
                         "Muster roll not found with id: " + musterRollId);
             }
 
-            // Validate muster is approved
-            if (!AttendanceReportConstants.REPORT_STATUS_COMPLETED.equalsIgnoreCase(musterRoll.getMusterRollStatus())
-                    && !"APPROVED".equalsIgnoreCase(musterRoll.getMusterRollStatus())) {
-                log.error("Muster roll not approved: {}", musterRollId);
-                throw new CustomException(AttendanceReportConstants.MUSTER_NOT_APPROVED,
-                        "Report can only be generated for approved muster rolls");
-            }
-
             // Update status to INITIATED
             updateReportStatus(musterRoll, reportType, reportFormat,
                     ReportStatus.INITIATED.getValue(), null, null, requestInfo.getUserInfo().getUuid());
@@ -147,12 +139,10 @@ public class AttendanceReportGeneratorService {
                 return;
             }
 
-            if (!AttendanceReportConstants.REPORT_STATUS_COMPLETED.equalsIgnoreCase(musterRoll.getMusterRollStatus())
-                    && !"APPROVED".equalsIgnoreCase(musterRoll.getMusterRollStatus())) {
-                log.info("Skipping report generation - muster roll {} not approved (status: {})",
-                        musterRollId, musterRoll.getMusterRollStatus());
-                return;
-            }
+            // Generated in any workflow state: a supervisor needs the day-level attendance and signatures to decide on approval.
+            // Marked INITIATED before building so a click mid-regeneration reports progress instead of the previous run's stale file.
+            updateReportStatus(musterRoll, reportType, reportFormat,
+                    ReportStatus.INITIATED.getValue(), null, null, requestInfo.getUserInfo().getUuid());
 
             // Dispatch to type-specific generator using enums
             try {
@@ -313,6 +303,7 @@ public class AttendanceReportGeneratorService {
                 .musterRollId(musterRoll.getId())
                 .registerNumber(register.getRegisterNumber())
                 .musterRollNumber(musterRoll.getMusterRollNumber())
+                .musterRollStatus(musterRoll.getMusterRollStatus())
                 .campaignName(register.getName())
                 .campaignCode(register.getServiceCode())
                 .startDate(startDate)
