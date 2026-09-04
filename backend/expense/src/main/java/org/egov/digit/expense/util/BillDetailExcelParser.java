@@ -79,8 +79,10 @@ public class BillDetailExcelParser {
         List<String> headCodes = BillDetailExcelGenerator.resolveOrderedHeadCodes(bill, fcCtx);
         Map<String, BillDetail> workerToBillDetail = buildWorkerMap(bill);
 
-        boolean isEditor   = userRoles.contains(ROLE_PAYMENT_EDITOR);
-        boolean isReviewer = userRoles.contains(ROLE_PAYMENT_REVIEWER);
+        // Must match BillValidator's branch choice, else we validate fields it will strip
+        BillUpdateMode mode = BillUpdateMode.resolve(userRoles, bill.getStatus());
+        boolean isEditor   = mode == BillUpdateMode.EDITOR;
+        boolean isReviewer = mode == BillUpdateMode.REVIEWER;
 
         Map<String, String> msgMap = resolveLocalization(bill, requestInfo);
         Integer maxAttendanceDays = billPeriodUtil.resolveMaxAttendanceDays(bill);

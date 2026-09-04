@@ -383,9 +383,10 @@ public class BillDetailExcelGenerator {
                                 Set<String> userRoles, RequestInfo requestInfo, Map<String, String> msgMap,
                                 XSSFCellStyle lockedStr, XSSFCellStyle editableStr,
                                 XSSFCellStyle lockedNum, XSSFCellStyle editableNum) {
-        boolean isEditor   = userRoles.contains(ROLE_PAYMENT_EDITOR);
-        boolean isReviewer = userRoles.contains(ROLE_PAYMENT_REVIEWER);
-        boolean canEditWages = isEditor || isReviewer;
+        // Role alone is not enough: a dual-role user acts in one mode, decided by bill status
+        BillUpdateMode mode = BillUpdateMode.resolve(userRoles, bill.getStatus());
+        boolean isEditor   = mode == BillUpdateMode.EDITOR;
+        boolean canEditWages = mode == BillUpdateMode.REVIEWER;
 
         // headCode → column index (0-based from start of dynamic columns)
         Map<String, Integer> headCodeColIdx = new LinkedHashMap<>();
@@ -431,9 +432,9 @@ public class BillDetailExcelGenerator {
                 createNumericCell(row, col++, val, canEditWages ? editableNum : lockedNum);
             }
 
-            // totalAttendance — reviewer-only; BillValidator strips an editor's change silently
+            // totalAttendance — reviewer mode only; BillValidator strips an editor's change silently
             BigDecimal attendance = detail.getTotalAttendance() != null ? detail.getTotalAttendance() : BigDecimal.ZERO;
-            createNumericCell(row, col++, attendance, isReviewer ? editableNum : lockedNum);
+            createNumericCell(row, col++, attendance, canEditWages ? editableNum : lockedNum);
 
             // totalAmount — locked formula
             int excelRow = row.getRowNum() + 1;
