@@ -3,6 +3,7 @@ package org.egov.digit.expense.web.validators;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.repository.BillRepository;
+import org.egov.digit.expense.util.BillPeriodUtil;
 import org.egov.digit.expense.util.MdmsUtil;
 import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.enums.Status;
@@ -38,6 +39,7 @@ public class BillValidatorErrorMessageTest {
     @Mock private MdmsUtil mdmsUtil;
     @Mock private Configuration configs;
     @Mock private BillRepository billRepository;
+    @Mock private BillPeriodUtil billPeriodUtil;
 
     @InjectMocks
     private BillValidator validator;

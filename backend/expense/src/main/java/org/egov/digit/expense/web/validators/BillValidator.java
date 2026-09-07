@@ -27,6 +27,7 @@ import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.config.Constants;
 import org.egov.digit.expense.repository.BillRepository;
 import org.egov.digit.expense.util.BillDetailExcelGenerator;
+import org.egov.digit.expense.util.BillPeriodUtil;
 import org.egov.digit.expense.util.MdmsUtil;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillCriteria;
@@ -65,13 +66,16 @@ public class BillValidator {
 
 	private final ObjectMapper objectMapper;
 
+	private final BillPeriodUtil billPeriodUtil;
+
 	@Autowired
 	public BillValidator(MdmsUtil mdmsUtil, Configuration configs, BillRepository billRepository,
-	                     ObjectMapper objectMapper) {
+	                     ObjectMapper objectMapper, BillPeriodUtil billPeriodUtil) {
 		this.mdmsUtil = mdmsUtil;
 		this.configs = configs;
 		this.billRepository = billRepository;
 		this.objectMapper = objectMapper;
+		this.billPeriodUtil = billPeriodUtil;
 	}
 
 	public void validateCreateRequest(BillRequest billRequest) {
@@ -126,6 +130,12 @@ public class BillValidator {
 			validateFieldsForUpdate(bill, billsFromSearch.get(0), errorMap);
 
 		validatePaymentFieldUpdate(bill, billsFromSearch.get(0));
+
+		List<BillDetailUpdateError> attendanceErrors = validateAttendanceLimits(bill, billsFromSearch.get(0));
+		if (!attendanceErrors.isEmpty())
+			throw new CustomException(ERR_ATTENDANCE_LIMIT_EXCEEDED, attendanceErrors.stream()
+					.map(BillDetailUpdateError::getMessage)
+					.collect(Collectors.joining("; ")));
 
 		if (hasPayableAmountChanges(bill, billsFromSearch.get(0))) {
 			String projectType = extractProjectType(billsFromSearch.get(0));
@@ -875,7 +885,16 @@ public class BillValidator {
 		List<BillDetailUpdateError> warnings =
 				stripAndWarnBlockedFields(request, billFromSearch, searchDetailMap);
 
-		// 4. Rate limit validation — only when bill has a projectType in additionalDetails
+		// 4. Attendance ceiling — editors have had totalAttendance stripped by step 3 already
+		List<BillDetailUpdateError> attendanceErrors =
+				validateAttendanceLimits(billFromSearch, request.getBillDetails());
+		if (!attendanceErrors.isEmpty()) {
+			throw new CustomException(ERR_ATTENDANCE_LIMIT_EXCEEDED, attendanceErrors.stream()
+					.map(BillDetailUpdateError::getMessage)
+					.collect(Collectors.joining("; ")));
+		}
+
+		// 5. Rate limit validation — only when bill has a projectType in additionalDetails
 		String projectType = extractProjectType(billFromSearch);
 		if (projectType != null) {
 			Map<String, BigDecimal> headCodeMaxLimits = mdmsUtil.fetchCampaignRateLimits(
@@ -1244,6 +1263,61 @@ public class BillValidator {
 					.collect(Collectors.joining("; "));
 			throw new CustomException(ERR_RATE_LIMIT_EXCEEDED, msg);
 		}
+	}
+
+	/**
+	 * Caps totalAttendance at the length of the bill's billing period, for billdetails/_update.
+	 *
+	 * Zero is allowed — the calculator bills absentees with zero attendance. Fractional values
+	 * are allowed — muster-roll records 0.5 for half days.
+	 */
+	private List<BillDetailUpdateError> validateAttendanceLimits(Bill existingBill,
+	                                                             List<PartialBillDetail> partials) {
+		if (CollectionUtils.isEmpty(partials)) return Collections.emptyList();
+
+		Integer maxDays = billPeriodUtil.resolveMaxAttendanceDays(existingBill);
+		List<BillDetailUpdateError> errors = new ArrayList<>();
+		for (PartialBillDetail partial : partials)
+			collectAttendanceError(partial.getId(), partial.getTotalAttendance(), maxDays, errors);
+		return errors;
+	}
+
+	/**
+	 * Same ceiling for the full bill/_update path, where details arrive as BillDetail rather than
+	 * PartialBillDetail. Deliberately not gated on hasPayableAmountChanges: a caller can inflate
+	 * totalAttendance while leaving line items untouched, and the amounts get recomputed later.
+	 */
+	private List<BillDetailUpdateError> validateAttendanceLimits(Bill updatedBill, Bill existingBill) {
+		if (updatedBill == null || CollectionUtils.isEmpty(updatedBill.getBillDetails()))
+			return Collections.emptyList();
+
+		Integer maxDays = billPeriodUtil.resolveMaxAttendanceDays(existingBill);
+		List<BillDetailUpdateError> errors = new ArrayList<>();
+		for (BillDetail detail : updatedBill.getBillDetails())
+			collectAttendanceError(detail.getId(), detail.getTotalAttendance(), maxDays, errors);
+		return errors;
+	}
+
+	/**
+	 * Negatives are rejected always; the upper bound only applies when the billing period is
+	 * known, so legacy bills without period metadata stay updatable.
+	 */
+	private void collectAttendanceError(String billDetailId, BigDecimal attendance,
+	                                    Integer maxDays, List<BillDetailUpdateError> errors) {
+		if (attendance == null) return;
+
+		boolean isNegative = attendance.compareTo(BigDecimal.ZERO) < 0;
+		boolean exceedsCeiling = maxDays != null
+				&& attendance.compareTo(BigDecimal.valueOf(maxDays)) > 0;
+		if (!isNegative && !exceedsCeiling) return;
+
+		errors.add(BillDetailUpdateError.builder()
+				.billDetailId(billDetailId)
+				.code(ERR_ATTENDANCE_LIMIT_EXCEEDED)
+				.message("Total Attendance must be " + BillPeriodUtil.attendanceRangeText(maxDays)
+						+ " days for this billing period, found " + attendance.toPlainString()
+						+ " (billDetailId=" + billDetailId + ")")
+				.build());
 	}
 
 	/**

@@ -27,18 +27,24 @@ import static org.egov.digit.expense.config.Constants.*;
 @Slf4j
 public class BillDetailExcelParser {
 
+    /** Cap on rows named in the error message, so a wholly wrong file doesn't produce a wall of text. */
+    private static final int MAX_REPORTED_ROW_ERRORS = 20;
+
     private final LocalizationUtil localizationUtil;
     private final Configuration config;
     private final ObjectMapper objectMapper;
     private final BillDetailExcelGenerator generator;
+    private final BillPeriodUtil billPeriodUtil;
 
     @Autowired
     public BillDetailExcelParser(LocalizationUtil localizationUtil, Configuration config,
-                                  ObjectMapper objectMapper, BillDetailExcelGenerator generator) {
+                                  ObjectMapper objectMapper, BillDetailExcelGenerator generator,
+                                  BillPeriodUtil billPeriodUtil) {
         this.localizationUtil = localizationUtil;
         this.config = config;
         this.objectMapper = objectMapper;
         this.generator = generator;
+        this.billPeriodUtil = billPeriodUtil;
     }
 
     /**
@@ -73,12 +79,16 @@ public class BillDetailExcelParser {
         List<String> headCodes = BillDetailExcelGenerator.resolveOrderedHeadCodes(bill, fcCtx);
         Map<String, BillDetail> workerToBillDetail = buildWorkerMap(bill);
 
-        boolean isEditor   = userRoles.contains(ROLE_PAYMENT_EDITOR);
-        boolean isReviewer = userRoles.contains(ROLE_PAYMENT_REVIEWER);
+        // Must match BillValidator's branch choice, else we validate fields it will strip
+        BillUpdateMode mode = BillUpdateMode.resolve(userRoles, bill.getStatus());
+        boolean isEditor   = mode == BillUpdateMode.EDITOR;
+        boolean isReviewer = mode == BillUpdateMode.REVIEWER;
 
         Map<String, String> msgMap = resolveLocalization(bill, requestInfo);
+        Integer maxAttendanceDays = billPeriodUtil.resolveMaxAttendanceDays(bill);
 
         List<PartialBillDetail> result = new ArrayList<>();
+        List<RowError> rowErrors = new ArrayList<>();
 
         try (XSSFWorkbook workbook = new XSSFWorkbook(new ByteArrayInputStream(excelBytes))) {
             Sheet sheet = workbook.getSheetAt(0);
@@ -99,8 +109,9 @@ public class BillDetailExcelParser {
 
                 BillDetail source = workerToBillDetail.get(workerId);
                 if (source == null) {
-                    throw new CustomException(ERR_TEMPLATE_INVALID_ROW,
-                            "No BillDetail found for workerId=" + workerId + " in bill " + bill.getId());
+                    rowErrors.add(new RowError(ERR_TEMPLATE_INVALID_ROW, rowIdx + 1, workerId,
+                            "no matching worker in this bill"));
+                    continue;
                 }
 
                 PartialBillDetail.PartialBillDetailBuilder builder = PartialBillDetail.builder()
@@ -112,9 +123,16 @@ public class BillDetailExcelParser {
 
                 if (isReviewer) {
                     BigDecimal totalAttendance = readBigDecimal(row, colMap.totalAttendance);
-                    if (totalAttendance == null || totalAttendance.compareTo(BigDecimal.ZERO) < 0) {
-                        throw new CustomException(ERR_TEMPLATE_INVALID_ATTENDANCE,
-                                "totalAttendance must be > 0 for workerId=" + workerId);
+                    // 0 is valid — absentees are billed with zero attendance by the calculator.
+                    // Fractional is valid too — muster-roll emits 0.5 for half days.
+                    if (totalAttendance == null || totalAttendance.compareTo(BigDecimal.ZERO) < 0
+                            || (maxAttendanceDays != null
+                                && totalAttendance.compareTo(BigDecimal.valueOf(maxAttendanceDays)) > 0)) {
+                        rowErrors.add(new RowError(ERR_TEMPLATE_INVALID_ATTENDANCE, rowIdx + 1, workerId,
+                                "Total Attendance must be "
+                                + BillPeriodUtil.attendanceRangeText(maxAttendanceDays)
+                                + " days, found " + (totalAttendance != null ? totalAttendance.toPlainString() : "blank")));
+                        continue;
                     }
                     builder.totalAttendance(totalAttendance);
 
@@ -131,6 +149,8 @@ public class BillDetailExcelParser {
 
                 result.add(builder.build());
             }
+
+            if (!rowErrors.isEmpty()) throw buildRowErrorException(rowErrors);
         } catch (CustomException e) {
             throw e;
         } catch (IOException e) {
@@ -140,6 +160,36 @@ public class BillDetailExcelParser {
         }
 
         return result;
+    }
+
+    /** One rejected row, so a reviewer sees every bad row at once instead of only the first. */
+    private static class RowError {
+        final String code;
+        final int excelRow;
+        final String workerId;
+        final String reason;
+
+        RowError(String code, int excelRow, String workerId, String reason) {
+            this.code = code;
+            this.excelRow = excelRow;
+            this.workerId = workerId;
+            this.reason = reason;
+        }
+
+        @Override
+        public String toString() {
+            return "Row " + excelRow + " (workerId=" + workerId + "): " + reason;
+        }
+    }
+
+    private CustomException buildRowErrorException(List<RowError> rowErrors) {
+        String detail = rowErrors.stream().limit(MAX_REPORTED_ROW_ERRORS)
+                .map(RowError::toString)
+                .collect(Collectors.joining("; "));
+        if (rowErrors.size() > MAX_REPORTED_ROW_ERRORS)
+            detail += "; and " + (rowErrors.size() - MAX_REPORTED_ROW_ERRORS) + " more row(s)";
+        log.warn("Rejecting template upload: {} invalid row(s)", rowErrors.size());
+        return new CustomException(rowErrors.get(0).code, MSG_TEMPLATE_ROW_ERRORS_PREFIX + detail);
     }
 
     /**

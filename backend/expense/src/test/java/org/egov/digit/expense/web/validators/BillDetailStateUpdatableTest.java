@@ -3,6 +3,7 @@ package org.egov.digit.expense.web.validators;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.repository.BillRepository;
+import org.egov.digit.expense.util.BillPeriodUtil;
 import org.egov.digit.expense.util.MdmsUtil;
 import org.egov.digit.expense.web.models.Bill;
 import org.egov.digit.expense.web.models.BillDetail;
@@ -32,12 +33,13 @@ public class BillDetailStateUpdatableTest {
     @Mock private Configuration configs;
     @Mock private BillRepository billRepository;
     @Mock private ObjectMapper objectMapper;
+    @Mock private BillPeriodUtil billPeriodUtil;
 
     private BillValidator validator;
 
     @BeforeEach
     public void setUp() {
-        validator = new BillValidator(mdmsUtil, configs, billRepository, objectMapper);
+        validator = new BillValidator(mdmsUtil, configs, billRepository, objectMapper, billPeriodUtil);
     }
 
     // ── Always-locked states ──────────────────────────────────────────────────

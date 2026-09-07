@@ -71,15 +71,18 @@ public class BillDetailExcelGenerator {
     private final Configuration config;
     private final ObjectMapper objectMapper;
     private final MdmsUtil mdmsUtil;
+    private final BillPeriodUtil billPeriodUtil;
 
     @Autowired
     public BillDetailExcelGenerator(LocalizationUtil localizationUtil, IndividualUtil individualUtil,
-                                     Configuration config, ObjectMapper objectMapper, MdmsUtil mdmsUtil) {
+                                     Configuration config, ObjectMapper objectMapper, MdmsUtil mdmsUtil,
+                                     BillPeriodUtil billPeriodUtil) {
         this.localizationUtil = localizationUtil;
         this.individualUtil = individualUtil;
         this.config = config;
         this.objectMapper = objectMapper;
         this.mdmsUtil = mdmsUtil;
+        this.billPeriodUtil = billPeriodUtil;
     }
 
     public byte[] generateTemplate(Bill bill, Set<String> userRoles, RequestInfo requestInfo) {
@@ -114,6 +117,8 @@ public class BillDetailExcelGenerator {
             if (!headCodeMaxLimits.isEmpty()) {
                 addRateLimitValidations(sheet, headCodes, headCodeMaxLimits, fcCtx);
             }
+            addAttendanceValidation(sheet, STATIC_COL_COUNT + headCodes.size(),
+                    billPeriodUtil.resolveMaxAttendanceDays(bill));
 
             setColumnWidths(sheet, headCodes.size());
             sheet.protectSheet(config.getExcelSheetProtectPassword());
@@ -174,6 +179,32 @@ public class BillDetailExcelGenerator {
             log.debug("Added rate limit validation: headCode={} fieldKey={} limit={} col={}",
                     headCode, fieldKey, limit, colIdx);
         }
+    }
+
+    /**
+     * Caps the Total Attendance column at the calendar length of the bill's billing period.
+     * Skipped when the period is unknown (legacy bills) — the parser and BillValidator apply
+     * the same ceiling server-side, so an unprotected sheet cannot bypass it.
+     */
+    private void addAttendanceValidation(XSSFSheet sheet, int attendanceColIdx, Integer maxDays) {
+        int lastRow = sheet.getLastRowNum();
+        if (lastRow < 1 || maxDays == null) return;
+
+        XSSFDataValidationHelper dvHelper = new XSSFDataValidationHelper(sheet);
+        DataValidationConstraint constraint = dvHelper.createNumericConstraint(
+                DataValidationConstraint.ValidationType.DECIMAL,
+                DataValidationConstraint.OperatorType.BETWEEN,
+                "0",
+                String.valueOf(maxDays));
+
+        DataValidation dv = dvHelper.createValidation(constraint,
+                new CellRangeAddressList(1, lastRow, attendanceColIdx, attendanceColIdx));
+        dv.setShowErrorBox(true);
+        dv.setErrorStyle(DataValidation.ErrorStyle.STOP);
+        dv.createErrorBox("Invalid Attendance",
+                "Total Attendance must be between 0 and " + maxDays + " days for this billing period.");
+        sheet.addValidationData(dv);
+        log.info("Added attendance validation: maxDays={} col={}", maxDays, attendanceColIdx);
     }
 
     // -------------------------------------------------------------------------
@@ -352,9 +383,10 @@ public class BillDetailExcelGenerator {
                                 Set<String> userRoles, RequestInfo requestInfo, Map<String, String> msgMap,
                                 XSSFCellStyle lockedStr, XSSFCellStyle editableStr,
                                 XSSFCellStyle lockedNum, XSSFCellStyle editableNum) {
-        boolean isEditor   = userRoles.contains(ROLE_PAYMENT_EDITOR);
-        boolean isReviewer = userRoles.contains(ROLE_PAYMENT_REVIEWER);
-        boolean canEditWages = isEditor || isReviewer;
+        // Role alone is not enough: a dual-role user acts in one mode, decided by bill status
+        BillUpdateMode mode = BillUpdateMode.resolve(userRoles, bill.getStatus());
+        boolean isEditor   = mode == BillUpdateMode.EDITOR;
+        boolean canEditWages = mode == BillUpdateMode.REVIEWER;
 
         // headCode → column index (0-based from start of dynamic columns)
         Map<String, Integer> headCodeColIdx = new LinkedHashMap<>();
@@ -400,7 +432,7 @@ public class BillDetailExcelGenerator {
                 createNumericCell(row, col++, val, canEditWages ? editableNum : lockedNum);
             }
 
-            // totalAttendance
+            // totalAttendance — reviewer mode only; BillValidator strips an editor's change silently
             BigDecimal attendance = detail.getTotalAttendance() != null ? detail.getTotalAttendance() : BigDecimal.ZERO;
             createNumericCell(row, col++, attendance, canEditWages ? editableNum : lockedNum);
 

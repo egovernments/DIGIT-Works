@@ -283,6 +283,7 @@ public class Constants {
 	public static final String MSG_BULK_STATUS_DUPLICATE_IDS     = "Duplicate bill IDs are not allowed in bulk status update request";
 	public static final String MSG_BULK_STATUS_INVALID           = "Status is required for bulk status update";
 	public static final String MSG_BULK_STATUS_TENANT_REQUIRED   = "tenantId is required for bulk status update";
+	public static final String MSG_TEMPLATE_ROW_ERRORS_PREFIX    = "Uploaded template has invalid rows: ";
 	public static final String MSG_TEMPLATE_PARSE_ERROR_PREFIX   = "Failed to read Excel file: ";
 	public static final String MSG_TEMPLATE_PARSE_UNEXPECTED     = "Unexpected error parsing template: ";
 	public static final String MSG_BILL_UPDATE_NOTNULL_PAYER_ID     = "Payer id is mandaotry for update request";
@@ -376,4 +377,9 @@ public class Constants {
 
 	// Error code for rate limit validation
 	public static final String ERR_RATE_LIMIT_EXCEEDED = "ERR_RATE_LIMIT_EXCEEDED";
+
+	// Attendance ceiling — billing period keys written by health-expense-calculator
+	public static final String PERIOD_START_DATE_KEY = "periodStartDate";
+	public static final String PERIOD_END_DATE_KEY   = "periodEndDate";
+	public static final String ERR_ATTENDANCE_LIMIT_EXCEEDED = "EG_EXPENSE_ATTENDANCE_LIMIT_EXCEEDED";
 }
