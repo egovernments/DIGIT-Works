@@ -382,6 +382,7 @@ public class Constants {
 	public static final String PERIOD_START_DATE_KEY = "periodStartDate";
 	public static final String PERIOD_END_DATE_KEY   = "periodEndDate";
 	public static final String ERR_ATTENDANCE_LIMIT_EXCEEDED = "EG_EXPENSE_ATTENDANCE_LIMIT_EXCEEDED";
+	public static final String ERR_AMOUNT_WITHOUT_LINE_ITEMS = "EG_EXPENSE_AMOUNT_WITHOUT_LINE_ITEMS";
 
 	// Rate snapshot on billDetail.additionalDetails, written by health-expense-calculator.
 	// The rate is authoritative; how the amount derives from it depends on paymentType.

@@ -42,6 +42,7 @@ import org.egov.digit.expense.web.models.LineItem;
 import org.egov.digit.expense.web.models.Party;
 import org.egov.digit.expense.web.models.PartialBillDetail;
 import org.egov.digit.expense.web.models.RateFieldConfig;
+import org.egov.digit.expense.web.models.enums.LineItemType;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.tracer.model.CustomException;
 import lombok.extern.slf4j.Slf4j;
@@ -894,7 +895,18 @@ public class BillValidator {
 					.collect(Collectors.joining("; ")));
 		}
 
-		// 5. Rate limit validation — only when bill has a projectType in additionalDetails
+		// 5. A payable total with no payable line items is money with no breakdown — reports and
+		//    payment advice have nothing to render. Clients that build line items themselves can
+		//    post a positive total with an empty list when the calculator omitted the rows.
+		List<BillDetailUpdateError> breakdownErrors =
+				validateAmountHasLineItems(request.getBillDetails(), searchDetailMap);
+		if (!breakdownErrors.isEmpty()) {
+			throw new CustomException(ERR_AMOUNT_WITHOUT_LINE_ITEMS, breakdownErrors.stream()
+					.map(BillDetailUpdateError::getMessage)
+					.collect(Collectors.joining("; ")));
+		}
+
+		// 6. Rate limit validation — only when bill has a projectType in additionalDetails
 		String projectType = extractProjectType(billFromSearch);
 		if (projectType != null) {
 			Map<String, BigDecimal> headCodeMaxLimits = mdmsUtil.fetchCampaignRateLimits(
@@ -1076,6 +1088,48 @@ public class BillValidator {
 		return errors;
 	}
 
+	/**
+	 * Rejects a positive totalAmount with no payable line items anywhere — submitted or persisted.
+	 * Deliberately not a full total-vs-sum equality check: clients round differently, and a strict
+	 * comparison would reject legitimate saves.
+	 */
+	private List<BillDetailUpdateError> validateAmountHasLineItems(List<PartialBillDetail> partials,
+	                                                               Map<String, BillDetail> dbDetails) {
+		if (CollectionUtils.isEmpty(partials)) return new ArrayList<>();
+		List<BillDetailUpdateError> errors = new ArrayList<>();
+
+		for (PartialBillDetail pd : partials) {
+			BigDecimal total = pd.getTotalAmount();
+			if (total == null || total.compareTo(BigDecimal.ZERO) <= 0) continue;
+
+			if (hasPayableItem(pd.getPayableLineItems()) || hasPayableItem(pd.getLineItems())) continue;
+
+			// nothing submitted — fall back to what is already stored. Only an explicitly empty
+			// payableLineItems speaks for the payables; lineItems may legitimately carry
+			// deductions only, or be empty while payableLineItems is omitted.
+			BillDetail db = dbDetails.get(pd.getId());
+			boolean submittedEmptyPayables =
+					pd.getPayableLineItems() != null && pd.getPayableLineItems().isEmpty();
+			if (!submittedEmptyPayables && db != null
+					&& (hasPayableItem(db.getPayableLineItems()) || hasPayableItem(db.getLineItems())))
+				continue;
+
+			errors.add(BillDetailUpdateError.builder()
+					.billDetailId(pd.getId())
+					.code(ERR_AMOUNT_WITHOUT_LINE_ITEMS)
+					.message("Bill detail " + pd.getId() + " has a total of " + total.toPlainString()
+							+ " but no payable line items to account for it.")
+					.build());
+		}
+		return errors;
+	}
+
+	private boolean hasPayableItem(List<LineItem> items) {
+		return items != null && items.stream()
+				.anyMatch(li -> li != null && li.getType() == LineItemType.PAYABLE
+						&& li.getStatus() != Status.INACTIVE);
+	}
+
 	private BillDetailUpdateError rateError(String billDetailId, String message) {
 		return BillDetailUpdateError.builder()
 				.billDetailId(billDetailId)
@@ -1150,11 +1204,18 @@ public class BillValidator {
 				&& (db.getTotalAttendance() == null || pd.getTotalAttendance().compareTo(db.getTotalAttendance()) != 0)) {
 			pd.setTotalAttendance(null); stripped.add("totalAttendance");
 		}
-		if (pd.getLineItems() != null && !pd.getLineItems().isEmpty()) {
-			pd.setLineItems(null); stripped.add("lineItems");
+		// Empty lists are normalised to null too, not just non-empty ones: left as [] they would
+		// wipe the persisted rows in mergeLineItems and count as "no payables" downstream.
+		// Only a list that actually carried something counts as a rejected edit.
+		if (pd.getLineItems() != null) {
+			boolean carriedItems = !pd.getLineItems().isEmpty();
+			pd.setLineItems(null);
+			if (carriedItems) stripped.add("lineItems");
 		}
-		if (pd.getPayableLineItems() != null && !pd.getPayableLineItems().isEmpty()) {
-			pd.setPayableLineItems(null); stripped.add("payableLineItems");
+		if (pd.getPayableLineItems() != null) {
+			boolean carriedItems = !pd.getPayableLineItems().isEmpty();
+			pd.setPayableLineItems(null);
+			if (carriedItems) stripped.add("payableLineItems");
 		}
 		if (pd.getWorkerId() != null && !pd.getWorkerId().equals(db.getWorkerId())) {
 			pd.setWorkerId(null); stripped.add("workerId");

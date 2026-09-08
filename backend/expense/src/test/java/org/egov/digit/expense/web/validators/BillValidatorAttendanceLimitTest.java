@@ -6,6 +6,8 @@ import org.egov.digit.expense.repository.BillRepository;
 import org.egov.digit.expense.util.BillPeriodUtil;
 import org.egov.digit.expense.util.MdmsUtil;
 import org.egov.digit.expense.web.models.*;
+import org.egov.digit.expense.web.models.enums.LineItemType;
+import org.egov.digit.expense.web.models.enums.Status;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +19,7 @@ import org.mockito.quality.Strictness;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -147,6 +150,123 @@ public class BillValidatorAttendanceLimitTest {
     @Test
     void fullBillUpdateRejectsNegativeAttendance() {
         assertEquals(1, invokeFullBill(updatedBillWith(BigDecimal.valueOf(-2)), billWithPeriod()).size());
+    }
+
+    // ── a total must have line items to account for it ───────────────────────
+
+    @SuppressWarnings("unchecked")
+    private List<BillDetailUpdateError> invokeBreakdown(PartialBillDetail pd, BillDetail db) {
+        try {
+            Method m = BillValidator.class.getDeclaredMethod(
+                    "validateAmountHasLineItems", List.class, Map.class);
+            m.setAccessible(true);
+            Map<String, BillDetail> dbMap = db == null ? Map.of() : Map.of(db.getId(), db);
+            return (List<BillDetailUpdateError>) m.invoke(validator, List.of(pd), dbMap);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private LineItem payable(String headCode, double amount) {
+        return LineItem.builder().id("li-" + headCode).headCode(headCode)
+                .type(LineItemType.PAYABLE).amount(BigDecimal.valueOf(amount))
+                .status(Status.ACTIVE).build();
+    }
+
+    @Test
+    void positiveTotalWithNoLineItemsAnywhereIsRejected() {
+        // what the UI posts for a worker the calculator left without payable rows
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .totalAmount(BigDecimal.valueOf(50))
+                .payableLineItems(List.of())
+                .build();
+        List<BillDetailUpdateError> errors = invokeBreakdown(pd, BillDetail.builder().id("d1").build());
+
+        assertEquals(1, errors.size());
+        assertEquals("EG_EXPENSE_AMOUNT_WITHOUT_LINE_ITEMS", errors.get(0).getCode());
+    }
+
+    @Test
+    void positiveTotalWithSubmittedLineItemsIsFine() {
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .totalAmount(BigDecimal.valueOf(50))
+                .payableLineItems(List.of(payable("PER_DAY", 50)))
+                .build();
+        assertTrue(invokeBreakdown(pd, BillDetail.builder().id("d1").build()).isEmpty());
+    }
+
+    @Test
+    void totalOnlyUpdateLeansOnThePersistedLineItems() {
+        // no line items submitted at all — the stored ones still account for the total
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .totalAmount(BigDecimal.valueOf(50)).build();
+        BillDetail db = BillDetail.builder().id("d1")
+                .payableLineItems(List.of(payable("PER_DAY", 50))).build();
+        assertTrue(invokeBreakdown(pd, db).isEmpty());
+    }
+
+    @Test
+    void submittingAnEmptyListIgnoresThePersistedOnes() {
+        // an explicit empty list means "these are my line items", so the DB cannot vouch for it
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .totalAmount(BigDecimal.valueOf(50))
+                .payableLineItems(List.of())
+                .build();
+        BillDetail db = BillDetail.builder().id("d1")
+                .payableLineItems(List.of(payable("PER_DAY", 50))).build();
+        assertEquals(1, invokeBreakdown(pd, db).size());
+    }
+
+    @Test
+    void emptyLineItemsWithPayablesOmittedStillLeansOnTheDb() {
+        // lineItems: [] does not speak for the payables — the stored ones still account for it
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .totalAmount(BigDecimal.valueOf(50))
+                .lineItems(List.of())
+                .build();
+        BillDetail db = BillDetail.builder().id("d1")
+                .payableLineItems(List.of(payable("PER_DAY", 50))).build();
+        assertTrue(invokeBreakdown(pd, db).isEmpty());
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<String> invokeStripAmounts(PartialBillDetail pd, BillDetail db) {
+        try {
+            Method m = BillValidator.class.getDeclaredMethod(
+                    "stripAmountFields", PartialBillDetail.class, BillDetail.class, List.class);
+            m.setAccessible(true);
+            List<BillDetailUpdateError> warnings = new ArrayList<>();
+            m.invoke(validator, pd, db, warnings);
+            return warnings.stream().map(BillDetailUpdateError::getMessage).toList();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    void editorEmptyPayablesAreNormalisedToNullWithoutAWarning() {
+        // left as [] they would wipe the persisted rows and trip the breakdown check
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .totalAmount(BigDecimal.valueOf(50))
+                .payableLineItems(new ArrayList<>())
+                .lineItems(new ArrayList<>())
+                .build();
+        BillDetail db = BillDetail.builder().id("d1").totalAmount(BigDecimal.valueOf(50))
+                .payableLineItems(List.of(payable("PER_DAY", 50))).build();
+
+        List<String> warnings = invokeStripAmounts(pd, db);
+
+        assertNull(pd.getPayableLineItems(), "empty list must become null");
+        assertNull(pd.getLineItems());
+        assertTrue(warnings.isEmpty(), "nothing was actually rejected, so no warning");
+        assertTrue(invokeBreakdown(pd, db).isEmpty(), "and the breakdown check now passes");
+    }
+
+    @Test
+    void zeroTotalNeedsNoLineItems() {
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .totalAmount(BigDecimal.ZERO).payableLineItems(List.of()).build();
+        assertTrue(invokeBreakdown(pd, BillDetail.builder().id("d1").build()).isEmpty());
     }
 
     // ── the rate snapshot is capped regardless of attendance ─────────────────
