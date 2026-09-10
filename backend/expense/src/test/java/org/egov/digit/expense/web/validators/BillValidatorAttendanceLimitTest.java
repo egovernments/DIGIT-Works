@@ -496,6 +496,35 @@ public class BillValidatorAttendanceLimitTest {
     }
 
     @Test
+    void nullRateIsRejectedRatherThanSkipped() {
+        // Map.of rejects null values, so the snapshot has to be built mutably
+        Map<String, Object> rb = new HashMap<>();
+        rb.put("PER_DAY", null);
+        assertTrue(reviewerRateBreakupError(rb).contains("must not be null"));
+    }
+
+    @Test
+    void anAbsurdExponentIsRejectedBeforeItIsFormatted() {
+        // BigDecimal accepts this, but toPlainString() on it would allocate ~2GB
+        String msg = reviewerRateBreakupError(Map.of("PER_DAY", "-1E+2147483647"));
+        assertTrue(msg.contains("out of range"), msg);
+        assertFalse(msg.contains("0000"), "the value must never be rendered in plain form");
+    }
+
+    @Test
+    void ordinaryDecimalRatesStillPass() {
+        when(billRepository.search(any(), eq(true)))
+                .thenReturn(List.of(billWithStoredRate(Status.UNDER_REVIEW, 10)));
+        Map<String, Object> submitted = new HashMap<>();
+        submitted.put("rateBreakup", Map.of("PER_DAY", "12.50"));
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .additionalDetails(submitted).build();
+
+        assertDoesNotThrow(() ->
+                validator.validateBillDetailUpdateRequest(updateRequest(ROLE_PAYMENT_REVIEWER, pd)));
+    }
+
+    @Test
     void reviewerSubmittingANegativeRateIsStillRejected() {
         when(billRepository.search(any(), eq(true)))
                 .thenReturn(List.of(billWithStoredRate(Status.UNDER_REVIEW, 10)));

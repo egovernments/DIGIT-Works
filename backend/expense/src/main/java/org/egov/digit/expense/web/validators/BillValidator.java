@@ -882,10 +882,8 @@ public class BillValidator {
 			throw new CustomException(ERR_INVALID_BILL_DETAIL_IDS,
 					"BillDetail ids not found under bill " + request.getBillId() + ": " + invalidIds);
 
-		// 3. Role-based field access — strips blocked fields in-place, returns warnings.
-		//    Details whose rate snapshot was restored from the DB are collected so step 6
-		//    doesn't hold a caller responsible for values it forced back on them.
-		Set<String> restoredRateDetailIds = new HashSet<>();
+		// 3. Role-based field access — strips blocked fields in-place, returns warnings
+		Set<String> restoredRateDetailIds = new HashSet<>();   // snapshots step 6 must not blame the caller for
 		List<BillDetailUpdateError> warnings =
 				stripAndWarnBlockedFields(request, billFromSearch, searchDetailMap, restoredRateDetailIds);
 
@@ -925,8 +923,8 @@ public class BillValidator {
 
 		// The line-item check skips PER_DAY at zero attendance, so validate the rate
 		// snapshot directly. Runs even with no MDMS limits — negative rates and the
-		// percentage default cap still apply. A restored snapshot is the DB's own value
-		// and the caller cannot change it, so rejecting it would lock them out for good.
+		// percentage default cap still apply.
+		// A restored snapshot is the DB's own — rejecting it would lock the caller out for good.
 		List<PartialBillDetail> callerOwnedRates = request.getBillDetails().stream()
 				.filter(pd -> !restoredRateDetailIds.contains(pd.getId()))
 				.collect(Collectors.toList());
@@ -1044,8 +1042,7 @@ public class BillValidator {
 
 		for (PartialBillDetail partial : partials) {
 			if (partial.getAdditionalDetails() == null) continue;
-			// Unreadable shapes are rejected, not skipped: additionalDetails is persisted
-			// wholesale, so skipping stores a snapshot every later reader silently drops.
+			// reject unreadable shapes: skipping persists a snapshot later readers silently drop
 			Map<String, Object> ad;
 			try {
 				ad = objectMapper.convertValue(partial.getAdditionalDetails(),
@@ -1072,14 +1069,27 @@ public class BillValidator {
 			Map<String, BigDecimal> rates = new HashMap<>();
 			List<BillDetailUpdateError> parseErrors = new ArrayList<>();
 			rawRates.forEach((k, v) -> {
-				if (v == null) return;
+				if (v == null) {
+					// skipping would persist the null, and every later reader drops it silently
+					parseErrors.add(rateError(partial.getId(), "Rate for " + k + " must not be null"));
+					return;
+				}
+				BigDecimal parsed;
 				try {
-					rates.put(k, new BigDecimal(v.toString()));
+					parsed = new BigDecimal(v.toString());
 				} catch (NumberFormatException e) {
 					// reject rather than skip: a skipped value still gets persisted
 					parseErrors.add(rateError(partial.getId(),
 							"Rate for " + k + " is not a number, found '" + v + "'"));
+					return;
 				}
+				// bound before any message calls toPlainString(); Math.abs is unsafe at MIN_VALUE
+				if (parsed.scale() > MAX_RATE_SCALE || parsed.scale() < -MAX_RATE_SCALE
+						|| parsed.precision() > MAX_RATE_PRECISION) {
+					parseErrors.add(rateError(partial.getId(), "Rate for " + k + " is out of range"));
+					return;
+				}
+				rates.put(k, parsed);
 			});
 			if (!parseErrors.isEmpty()) {
 				errors.addAll(parseErrors);
@@ -1153,6 +1163,10 @@ public class BillValidator {
 				.anyMatch(li -> li != null && li.getType() == LineItemType.PAYABLE
 						&& li.getStatus() != Status.INACTIVE);
 	}
+
+	/** A configured rate is money or a percentage; anything beyond these bounds is not one. */
+	private static final int MAX_RATE_SCALE     = 6;
+	private static final int MAX_RATE_PRECISION = 15;
 
 	/** Shape of a bad rateBreakup, for the error message — never the value, which may be large. */
 	private static String describe(Object raw) {
