@@ -1,11 +1,17 @@
 package org.egov.digit.expense.web.validators;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
+import org.egov.common.contract.request.User;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.repository.BillRepository;
 import org.egov.digit.expense.util.BillPeriodUtil;
 import org.egov.digit.expense.util.MdmsUtil;
 import org.egov.digit.expense.web.models.*;
+import org.egov.digit.expense.web.models.enums.LineItemType;
+import org.egov.digit.expense.web.models.enums.Status;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,11 +23,19 @@ import org.mockito.quality.Strictness;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import static org.egov.digit.expense.config.Constants.ROLE_PAYMENT_EDITOR;
+import static org.egov.digit.expense.config.Constants.ROLE_PAYMENT_REVIEWER;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 /**
  * Attendance ceiling in BillValidator, covering both update paths.
@@ -149,9 +163,379 @@ public class BillValidatorAttendanceLimitTest {
         assertEquals(1, invokeFullBill(updatedBillWith(BigDecimal.valueOf(-2)), billWithPeriod()).size());
     }
 
+    // ── a total must have line items to account for it ───────────────────────
+
+    @SuppressWarnings("unchecked")
+    private List<BillDetailUpdateError> invokeBreakdown(PartialBillDetail pd, BillDetail db) {
+        try {
+            Method m = BillValidator.class.getDeclaredMethod(
+                    "validateAmountHasLineItems", List.class, Map.class);
+            m.setAccessible(true);
+            Map<String, BillDetail> dbMap = db == null ? Map.of() : Map.of(db.getId(), db);
+            return (List<BillDetailUpdateError>) m.invoke(validator, List.of(pd), dbMap);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private LineItem payable(String headCode, double amount) {
+        return LineItem.builder().id("li-" + headCode).headCode(headCode)
+                .type(LineItemType.PAYABLE).amount(BigDecimal.valueOf(amount))
+                .status(Status.ACTIVE).build();
+    }
+
+    @Test
+    void positiveTotalWithNoLineItemsAnywhereIsRejected() {
+        // what the UI posts for a worker the calculator left without payable rows
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .totalAmount(BigDecimal.valueOf(50))
+                .payableLineItems(List.of())
+                .build();
+        List<BillDetailUpdateError> errors = invokeBreakdown(pd, BillDetail.builder().id("d1").build());
+
+        assertEquals(1, errors.size());
+        assertEquals("EG_EXPENSE_AMOUNT_WITHOUT_LINE_ITEMS", errors.get(0).getCode());
+    }
+
+    @Test
+    void positiveTotalWithSubmittedLineItemsIsFine() {
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .totalAmount(BigDecimal.valueOf(50))
+                .payableLineItems(List.of(payable("PER_DAY", 50)))
+                .build();
+        assertTrue(invokeBreakdown(pd, BillDetail.builder().id("d1").build()).isEmpty());
+    }
+
+    @Test
+    void totalOnlyUpdateLeansOnThePersistedLineItems() {
+        // no line items submitted at all — the stored ones still account for the total
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .totalAmount(BigDecimal.valueOf(50)).build();
+        BillDetail db = BillDetail.builder().id("d1")
+                .payableLineItems(List.of(payable("PER_DAY", 50))).build();
+        assertTrue(invokeBreakdown(pd, db).isEmpty());
+    }
+
+    @Test
+    void submittingAnEmptyListIgnoresThePersistedOnes() {
+        // an explicit empty list means "these are my line items", so the DB cannot vouch for it
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .totalAmount(BigDecimal.valueOf(50))
+                .payableLineItems(List.of())
+                .build();
+        BillDetail db = BillDetail.builder().id("d1")
+                .payableLineItems(List.of(payable("PER_DAY", 50))).build();
+        assertEquals(1, invokeBreakdown(pd, db).size());
+    }
+
+    @Test
+    void emptyLineItemsWithPayablesOmittedStillLeansOnTheDb() {
+        // lineItems: [] does not speak for the payables — the stored ones still account for it
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .totalAmount(BigDecimal.valueOf(50))
+                .lineItems(List.of())
+                .build();
+        BillDetail db = BillDetail.builder().id("d1")
+                .payableLineItems(List.of(payable("PER_DAY", 50))).build();
+        assertTrue(invokeBreakdown(pd, db).isEmpty());
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<String> invokeStripAmounts(PartialBillDetail pd, BillDetail db) {
+        try {
+            Method m = BillValidator.class.getDeclaredMethod(
+                    "stripAmountFields", PartialBillDetail.class, BillDetail.class, List.class, Set.class);
+            m.setAccessible(true);
+            List<BillDetailUpdateError> warnings = new ArrayList<>();
+            m.invoke(validator, pd, db, warnings, new HashSet<String>());
+            return warnings.stream().map(BillDetailUpdateError::getMessage).toList();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    void editorEmptyPayablesAreNormalisedToNullWithoutAWarning() {
+        // left as [] they would wipe the persisted rows and trip the breakdown check
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .totalAmount(BigDecimal.valueOf(50))
+                .payableLineItems(new ArrayList<>())
+                .lineItems(new ArrayList<>())
+                .build();
+        BillDetail db = BillDetail.builder().id("d1").totalAmount(BigDecimal.valueOf(50))
+                .payableLineItems(List.of(payable("PER_DAY", 50))).build();
+
+        List<String> warnings = invokeStripAmounts(pd, db);
+
+        assertNull(pd.getPayableLineItems(), "empty list must become null");
+        assertNull(pd.getLineItems());
+        assertTrue(warnings.isEmpty(), "nothing was actually rejected, so no warning");
+        assertTrue(invokeBreakdown(pd, db).isEmpty(), "and the breakdown check now passes");
+    }
+
+    @Test
+    void zeroTotalNeedsNoLineItems() {
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .totalAmount(BigDecimal.ZERO).payableLineItems(List.of()).build();
+        assertTrue(invokeBreakdown(pd, BillDetail.builder().id("d1").build()).isEmpty());
+    }
+
+    // ── the rate snapshot is capped regardless of attendance ─────────────────
+
+    @SuppressWarnings("unchecked")
+    private List<BillDetailUpdateError> invokeSnapshotLimits(String key, Object rate, Bill existingBill) {
+        Map<String, Object> ad = new HashMap<>();
+        ad.put("rateBreakup", Map.of(key, rate));
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .totalAttendance(BigDecimal.ZERO).additionalDetails(ad).build();
+        try {
+            Method m = BillValidator.class.getDeclaredMethod(
+                    "validateRateSnapshotLimits", Bill.class, List.class, Map.class);
+            m.setAccessible(true);
+            return (List<BillDetailUpdateError>) m.invoke(validator, existingBill, List.of(pd),
+                    Map.of("PER_DAY", BigDecimal.valueOf(150)));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private List<BillDetailUpdateError> invokeSnapshotLimits(Object rate) {
+        return invokeSnapshotLimits("PER_DAY", rate, billWithPeriod());
+    }
+
+    /** Bill whose fieldConfig declares a PERCENTAGE field keyed by FEE_PCT. */
+    private Bill billWithPercentageConfig() {
+        Map<String, Object> ad = new HashMap<>();
+        ad.put("periodStartDate", PERIOD_START);
+        ad.put("periodEndDate", PERIOD_END);
+        ad.put("workerRatesSnapshot", List.of(Map.of(
+                "fieldKey", "FEES", "isPayable", true, "valueType", "PERCENTAGE",
+                "paymentType", "PER_DAY", "percentageKey", "FEE_PCT",
+                "components", List.of("PER_DAY"))));
+        return Bill.builder().id("bill-pct").tenantId("demo").additionalDetails(ad).build();
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<BillDetailUpdateError> invokeSnapshotLimitsNoMdms(Object rate) {
+        Map<String, Object> ad = new HashMap<>();
+        ad.put("rateBreakup", Map.of("PER_DAY", rate));
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .totalAttendance(BigDecimal.ZERO).additionalDetails(ad).build();
+        try {
+            Method m = BillValidator.class.getDeclaredMethod(
+                    "validateRateSnapshotLimits", Bill.class, List.class, Map.class);
+            m.setAccessible(true);
+            return (List<BillDetailUpdateError>) m.invoke(validator, billWithPeriod(), List.of(pd), Map.of());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    void nonNumericRateIsRejectedRatherThanSkipped() {
+        assertEquals(1, invokeSnapshotLimits("PER_DAY", "abc", billWithPeriod()).size(),
+                "a skipped value would still be persisted");
+    }
+
+    @Test
+    void negativeRateIsRejectedEvenWithNoMdmsLimit() {
+        assertEquals(1, invokeSnapshotLimitsNoMdms(-5).size());
+        assertTrue(invokeSnapshotLimitsNoMdms(9999).isEmpty(),
+                "with no MDMS limit there is no ceiling to apply for a flat field");
+    }
+
+    @Test
+    void percentageRateDefaultsToACapOf100() {
+        assertEquals(1, invokeSnapshotLimits("FEE_PCT", 150, billWithPercentageConfig()).size(),
+                "no explicit MDMS limit for a percentage field means max 100");
+        assertTrue(invokeSnapshotLimits("FEE_PCT", 100, billWithPercentageConfig()).isEmpty());
+    }
+
+    @Test
+    void outOfRangeRateIsRejectedEvenAtZeroAttendance() {
+        // the line-item check is skipped at 0 days, so this is the only thing guarding it
+        assertEquals(1, invokeSnapshotLimits(9999).size());
+        assertEquals(1, invokeSnapshotLimits(-1).size());
+    }
+
+    @Test
+    void inRangeRateIsAccepted() {
+        assertTrue(invokeSnapshotLimits(150).isEmpty());
+        assertTrue(invokeSnapshotLimits(0).isEmpty());
+    }
+
+    // ── editors must not be able to forge the rate snapshot ───────────────────
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> invokeRestore(PartialBillDetail pd, BillDetail db) {
+        try {
+            Method m = BillValidator.class.getDeclaredMethod(
+                    "restoreCalculationMetadata", PartialBillDetail.class, BillDetail.class);
+            m.setAccessible(true);
+            m.invoke(validator, pd, db);
+            return new ObjectMapper().convertValue(pd.getAdditionalDetails(), Map.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private BillDetail dbDetailWithRate(Object rate) {
+        Map<String, Object> ad = new HashMap<>();
+        ad.put("rateBreakup", Map.of("PER_DAY", rate));
+        ad.put("attendance", 3);
+        return BillDetail.builder().id("d1").additionalDetails(ad).build();
+    }
+
+    @Test
+    void editorForgedRateIsReplacedByThePersistedOne() {
+        Map<String, Object> forged = new HashMap<>();
+        forged.put("rateBreakup", Map.of("PER_DAY", 9999));
+        forged.put("editInfo", Map.of("payeeUpdatedAtEpochMs", 1L));
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1").additionalDetails(forged).build();
+
+        Map<String, Object> result = invokeRestore(pd, dbDetailWithRate(10));
+
+        assertEquals(Map.of("PER_DAY", 10), result.get("rateBreakup"), "the DB rate must win");
+        assertNotNull(result.get("editInfo"), "the editor's own key must survive");
+    }
+
+    @Test
+    void editorOmittingTheSnapshotDoesNotDeleteIt() {
+        // EnrichmentUtil takes additionalDetails wholesale, so an omitted key would be lost
+        Map<String, Object> submitted = new HashMap<>();
+        submitted.put("editInfo", Map.of("payeeUpdatedAtEpochMs", 1L));
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1").additionalDetails(submitted).build();
+
+        Map<String, Object> result = invokeRestore(pd, dbDetailWithRate(10));
+
+        assertEquals(Map.of("PER_DAY", 10), result.get("rateBreakup"), "must be restored, not dropped");
+        assertEquals(3, result.get("attendance"));
+    }
+
     @Test
     void fullBillUpdateWithNoDetailsIsANoOp() {
         assertTrue(invokeFullBill(Bill.builder().id("b").build(), billWithPeriod()).isEmpty());
         assertTrue(invokeFullBill(null, billWithPeriod()).isEmpty());
+    }
+
+    // ── A restored snapshot must not be validated against the caller ──────────
+
+    private RequestInfo requestInfoWithRole(String roleCode) {
+        return RequestInfo.builder()
+                .userInfo(User.builder()
+                        .uuid("user-1")
+                        .roles(List.of(Role.builder().code(roleCode).build()))
+                        .build())
+                .build();
+    }
+
+    /** Bill in the given status carrying one detail whose stored snapshot holds {@code rate}. */
+    private Bill billWithStoredRate(Status status, Object rate) {
+        Map<String, Object> detailAd = new HashMap<>();
+        detailAd.put("rateBreakup", Map.of("PER_DAY", rate));
+        BillDetail db = BillDetail.builder().id("d1").tenantId("demo")
+                .status(status).additionalDetails(detailAd).build();
+
+        Map<String, Object> billAd = new HashMap<>();
+        billAd.put("periodStartDate", PERIOD_START);
+        billAd.put("periodEndDate", PERIOD_END);
+        return Bill.builder().id("bill-1").tenantId("demo").status(status)
+                .additionalDetails(billAd).billDetails(List.of(db)).build();
+    }
+
+    private BillDetailUpdateRequest updateRequest(String roleCode, PartialBillDetail pd) {
+        return BillDetailUpdateRequest.builder()
+                .requestInfo(requestInfoWithRole(roleCode))
+                .billId("bill-1").tenantId("demo")
+                .billDetails(new ArrayList<>(List.of(pd)))
+                .build();
+    }
+
+    @Test
+    void editorIsNotLockedOutByANonCompliantStoredSnapshot() {
+        // the UI echoes additionalDetails with only its own key, and step 3 injects the DB
+        // rateBreakup — validating it would 400 on a value the editor cannot change
+        when(billRepository.search(any(), eq(true)))
+                .thenReturn(List.of(billWithStoredRate(Status.PENDING_VERIFICATION, -5)));
+
+        Map<String, Object> submitted = new HashMap<>();
+        submitted.put("editInfo", Map.of("payeeUpdatedAtEpochMs", 1L));
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .additionalDetails(submitted).build();
+
+        assertDoesNotThrow(() ->
+                validator.validateBillDetailUpdateRequest(updateRequest(ROLE_PAYMENT_EDITOR, pd)));
+    }
+
+    /** Reviewer submits the given rateBreakup shape; returns the thrown message. */
+    private String reviewerRateBreakupError(Object rateBreakup) {
+        when(billRepository.search(any(), eq(true)))
+                .thenReturn(List.of(billWithStoredRate(Status.UNDER_REVIEW, 10)));
+
+        Map<String, Object> submitted = new HashMap<>();
+        submitted.put("rateBreakup", rateBreakup);
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .additionalDetails(submitted).build();
+
+        CustomException e = assertThrows(CustomException.class, () ->
+                validator.validateBillDetailUpdateRequest(updateRequest(ROLE_PAYMENT_REVIEWER, pd)));
+        return e.getMessage();
+    }
+
+    @Test
+    void scalarRateBreakupIsRejectedRatherThanSkipped() {
+        // skipping would persist it, and every later reader parses it back as empty
+        assertTrue(reviewerRateBreakupError(5).contains("rateBreakup must be an object"));
+    }
+
+    @Test
+    void arrayRateBreakupIsRejectedRatherThanSkipped() {
+        String msg = reviewerRateBreakupError(List.of(1, 2));
+        assertTrue(msg.contains("rateBreakup must be an object"), msg);
+        assertTrue(msg.contains("a list"), msg);
+    }
+
+    @Test
+    void nullRateIsRejectedRatherThanSkipped() {
+        // Map.of rejects null values, so the snapshot has to be built mutably
+        Map<String, Object> rb = new HashMap<>();
+        rb.put("PER_DAY", null);
+        assertTrue(reviewerRateBreakupError(rb).contains("must not be null"));
+    }
+
+    @Test
+    void anAbsurdExponentIsRejectedBeforeItIsFormatted() {
+        // BigDecimal accepts this, but toPlainString() on it would allocate ~2GB
+        String msg = reviewerRateBreakupError(Map.of("PER_DAY", "-1E+2147483647"));
+        assertTrue(msg.contains("out of range"), msg);
+        assertFalse(msg.contains("0000"), "the value must never be rendered in plain form");
+    }
+
+    @Test
+    void ordinaryDecimalRatesStillPass() {
+        when(billRepository.search(any(), eq(true)))
+                .thenReturn(List.of(billWithStoredRate(Status.UNDER_REVIEW, 10)));
+        Map<String, Object> submitted = new HashMap<>();
+        submitted.put("rateBreakup", Map.of("PER_DAY", "12.50"));
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .additionalDetails(submitted).build();
+
+        assertDoesNotThrow(() ->
+                validator.validateBillDetailUpdateRequest(updateRequest(ROLE_PAYMENT_REVIEWER, pd)));
+    }
+
+    @Test
+    void reviewerSubmittingANegativeRateIsStillRejected() {
+        when(billRepository.search(any(), eq(true)))
+                .thenReturn(List.of(billWithStoredRate(Status.UNDER_REVIEW, 10)));
+
+        Map<String, Object> submitted = new HashMap<>();
+        submitted.put("rateBreakup", Map.of("PER_DAY", -5));
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .additionalDetails(submitted).build();
+
+        CustomException e = assertThrows(CustomException.class, () ->
+                validator.validateBillDetailUpdateRequest(updateRequest(ROLE_PAYMENT_REVIEWER, pd)));
+        assertTrue(e.getMessage().contains("cannot be negative"), e.getMessage());
     }
 }

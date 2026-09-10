@@ -721,9 +721,11 @@ public class HealthBillReportGenerator {
         }
         BigDecimal totalNumberOfDays = BigDecimal.ZERO;
 
+        Map<String, BigDecimal> rateSnapshot = readRateSnapshot(billDetail);
+
         boolean billHasStoredData =
                 billDetail.getTotalAttendance() != null
-                && billDetail.getTotalAttendance().compareTo(BigDecimal.ZERO) > 0
+                && billDetail.getTotalAttendance().compareTo(BigDecimal.ZERO) >= 0
                 && !CollectionUtils.isEmpty(billDetail.getPayableLineItems());
 
         if (billHasStoredData) {
@@ -767,6 +769,7 @@ public class HealthBillReportGenerator {
             BigDecimal sumOfAllAmounts = amountByHeadCode.values().stream()
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+            BigDecimal zeroDayRateTotal = BigDecimal.ZERO;
             for (Map.Entry<String, BigDecimal> entry : amountByHeadCode.entrySet()) {
                 String headCode = entry.getKey();
                 BigDecimal storedTotal = entry.getValue();
@@ -777,6 +780,10 @@ public class HealthBillReportGenerator {
                 // Always store the actual bill total for use in the total column
                 reportBillDetail.getTotalAmountBreakup().put(detailKey, storedTotal);
 
+                BigDecimal snapshotRate = rateSnapshot.get(
+                        cfg != null && "PERCENTAGE".equals(cfg.getValueType()) && cfg.getPercentageKey() != null
+                                ? cfg.getPercentageKey() : fieldKey);
+
                 if (cfg != null && "PERCENTAGE".equals(cfg.getValueType())
                         && cfg.getComponents() != null && !cfg.getComponents().isEmpty()) {
                     // Reverse-calculate the percentage from stored bill amounts so manual bill
@@ -785,21 +792,28 @@ public class HealthBillReportGenerator {
                             .map(componentFieldKey -> fieldKeyToAmount.getOrDefault(componentFieldKey, BigDecimal.ZERO))
                             .reduce(BigDecimal.ZERO, BigDecimal::add);
                     BigDecimal reversePct = componentsTotalAmount.compareTo(BigDecimal.ZERO) == 0
-                            ? BigDecimal.ZERO
+                            ? (snapshotRate != null ? snapshotRate : BigDecimal.ZERO)
                             : storedTotal.divide(componentsTotalAmount, 4, RoundingMode.HALF_UP)
                                          .multiply(BigDecimal.valueOf(100))
                                          .setScale(2, RoundingMode.HALF_UP);
                     reportBillDetail.getPerDayBreakup().put(detailKey, reversePct);
                     log.debug("PERCENTAGE field {} reverse-calculated as {}% (total={}, componentsTotal={})",
                             fieldKey, reversePct, storedTotal, componentsTotalAmount);
+                } else if (totalNumberOfDays.compareTo(BigDecimal.ZERO) == 0 && snapshotRate != null) {
+                    // amount/days is not invertible at 0 days — read the stored rate
+                    reportBillDetail.getPerDayBreakup().put(detailKey, snapshotRate);
+                    zeroDayRateTotal = zeroDayRateTotal.add(snapshotRate);
                 } else {
                     reportBillDetail.getPerDayBreakup().put(detailKey,
                             perDayAmount(storedTotal, totalNumberOfDays));
                 }
             }
 
-            // totalWages = sum of all actual per-day dollar amounts (not the percentage display values)
-            reportBillDetail.setTotalWages(perDayAmount(sumOfAllAmounts, totalNumberOfDays));
+            // totalWages = sum of all actual per-day dollar amounts (not the percentage display values).
+            // At 0 days there is nothing to divide, so sum the rates that were read instead.
+            reportBillDetail.setTotalWages(totalNumberOfDays.compareTo(BigDecimal.ZERO) == 0
+                    ? zeroDayRateTotal
+                    : perDayAmount(sumOfAllAmounts, totalNumberOfDays));
         } else if (individual != null) {
             // New bill: derive attendance from muster roll, per-day rates from MDMS.
             if (individualMusterAttendanceMap.containsKey(billDetail.getReferenceId())
@@ -842,7 +856,12 @@ public class HealthBillReportGenerator {
                         ? workerMdms.getHeadCodeMapping() : Collections.emptyMap();
                 for (RateFieldConfig config : workerMdms.getFieldConfig()) {
                     if (config.getFieldKey() == null || config.getReportDetailKey() == null) continue;
-                    BigDecimal rate = rateBreakup.getOrDefault(config.getFieldKey(), BigDecimal.ZERO);
+                    String snapshotKey = "PERCENTAGE".equals(config.getValueType())
+                            && config.getPercentageKey() != null
+                            ? config.getPercentageKey() : config.getFieldKey();
+                    BigDecimal rate = rateSnapshot.containsKey(snapshotKey)
+                            ? rateSnapshot.get(snapshotKey)
+                            : rateBreakup.getOrDefault(snapshotKey, BigDecimal.ZERO);
                     reportBillDetail.getPerDayBreakup().put(config.getReportDetailKey(), rate);
                 }
             }
@@ -857,6 +876,29 @@ public class HealthBillReportGenerator {
         }
         reportBillDetail.setTotalAmount(billDetail.getTotalAmount());
         return reportBillDetail;
+    }
+
+    /** Rate snapshot written by the bill generator, keyed by fieldKey; empty for older bills. */
+    private Map<String, BigDecimal> readRateSnapshot(BillDetail billDetail) {
+        if (billDetail == null || billDetail.getAdditionalDetails() == null) return Collections.emptyMap();
+        try {
+            Map<String, Object> ad = objectMapper.convertValue(billDetail.getAdditionalDetails(), Map.class);
+            Object raw = ad.get("rateBreakup");
+            if (raw == null) return Collections.emptyMap();
+            Map<String, BigDecimal> rates = new HashMap<>();
+            ((Map<?, ?>) objectMapper.convertValue(raw, Map.class)).forEach((k, v) -> {
+                if (v == null) return;
+                try {
+                    rates.put(String.valueOf(k), new BigDecimal(v.toString()));
+                } catch (NumberFormatException e) {
+                    log.warn("Ignoring non-numeric rate {}={} on bill detail {}", k, v, billDetail.getId());
+                }
+            });
+            return rates;
+        } catch (Exception e) {
+            log.warn("Could not read rateBreakup on bill detail {}: {}", billDetail.getId(), e.getMessage());
+            return Collections.emptyMap();
+        }
     }
 
     private BigDecimal perDayAmount(BigDecimal amount, BigDecimal totalNumberOfDays) {
