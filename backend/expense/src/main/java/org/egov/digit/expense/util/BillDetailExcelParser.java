@@ -466,6 +466,7 @@ public class BillDetailExcelParser {
         log.info("Creating missing payable line item headCode={} amount={} for billDetail={}",
                 headCode, newAmount, detail.getId());
         result.add(LineItem.builder()
+                .billDetailId(detail.getId())
                 .tenantId(detail.getTenantId())
                 .headCode(headCode)
                 .type(LineItemType.PAYABLE)

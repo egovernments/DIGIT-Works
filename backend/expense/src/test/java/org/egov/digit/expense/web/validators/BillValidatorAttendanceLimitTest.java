@@ -1,6 +1,9 @@
 package org.egov.digit.expense.web.validators;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
+import org.egov.common.contract.request.User;
 import org.egov.digit.expense.config.Configuration;
 import org.egov.digit.expense.repository.BillRepository;
 import org.egov.digit.expense.util.BillPeriodUtil;
@@ -8,6 +11,7 @@ import org.egov.digit.expense.util.MdmsUtil;
 import org.egov.digit.expense.web.models.*;
 import org.egov.digit.expense.web.models.enums.LineItemType;
 import org.egov.digit.expense.web.models.enums.Status;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,10 +25,17 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import static org.egov.digit.expense.config.Constants.ROLE_PAYMENT_EDITOR;
+import static org.egov.digit.expense.config.Constants.ROLE_PAYMENT_REVIEWER;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 /**
  * Attendance ceiling in BillValidator, covering both update paths.
@@ -233,10 +244,10 @@ public class BillValidatorAttendanceLimitTest {
     private List<String> invokeStripAmounts(PartialBillDetail pd, BillDetail db) {
         try {
             Method m = BillValidator.class.getDeclaredMethod(
-                    "stripAmountFields", PartialBillDetail.class, BillDetail.class, List.class);
+                    "stripAmountFields", PartialBillDetail.class, BillDetail.class, List.class, Set.class);
             m.setAccessible(true);
             List<BillDetailUpdateError> warnings = new ArrayList<>();
-            m.invoke(validator, pd, db, warnings);
+            m.invoke(validator, pd, db, warnings, new HashSet<String>());
             return warnings.stream().map(BillDetailUpdateError::getMessage).toList();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -405,5 +416,69 @@ public class BillValidatorAttendanceLimitTest {
     void fullBillUpdateWithNoDetailsIsANoOp() {
         assertTrue(invokeFullBill(Bill.builder().id("b").build(), billWithPeriod()).isEmpty());
         assertTrue(invokeFullBill(null, billWithPeriod()).isEmpty());
+    }
+
+    // ── A restored snapshot must not be validated against the caller ──────────
+
+    private RequestInfo requestInfoWithRole(String roleCode) {
+        return RequestInfo.builder()
+                .userInfo(User.builder()
+                        .uuid("user-1")
+                        .roles(List.of(Role.builder().code(roleCode).build()))
+                        .build())
+                .build();
+    }
+
+    /** Bill in the given status carrying one detail whose stored snapshot holds {@code rate}. */
+    private Bill billWithStoredRate(Status status, Object rate) {
+        Map<String, Object> detailAd = new HashMap<>();
+        detailAd.put("rateBreakup", Map.of("PER_DAY", rate));
+        BillDetail db = BillDetail.builder().id("d1").tenantId("demo")
+                .status(status).additionalDetails(detailAd).build();
+
+        Map<String, Object> billAd = new HashMap<>();
+        billAd.put("periodStartDate", PERIOD_START);
+        billAd.put("periodEndDate", PERIOD_END);
+        return Bill.builder().id("bill-1").tenantId("demo").status(status)
+                .additionalDetails(billAd).billDetails(List.of(db)).build();
+    }
+
+    private BillDetailUpdateRequest updateRequest(String roleCode, PartialBillDetail pd) {
+        return BillDetailUpdateRequest.builder()
+                .requestInfo(requestInfoWithRole(roleCode))
+                .billId("bill-1").tenantId("demo")
+                .billDetails(new ArrayList<>(List.of(pd)))
+                .build();
+    }
+
+    @Test
+    void editorIsNotLockedOutByANonCompliantStoredSnapshot() {
+        // the UI echoes additionalDetails with only its own key, and step 3 injects the DB
+        // rateBreakup — validating it would 400 on a value the editor cannot change
+        when(billRepository.search(any(), eq(true)))
+                .thenReturn(List.of(billWithStoredRate(Status.PENDING_VERIFICATION, -5)));
+
+        Map<String, Object> submitted = new HashMap<>();
+        submitted.put("editInfo", Map.of("payeeUpdatedAtEpochMs", 1L));
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .additionalDetails(submitted).build();
+
+        assertDoesNotThrow(() ->
+                validator.validateBillDetailUpdateRequest(updateRequest(ROLE_PAYMENT_EDITOR, pd)));
+    }
+
+    @Test
+    void reviewerSubmittingANegativeRateIsStillRejected() {
+        when(billRepository.search(any(), eq(true)))
+                .thenReturn(List.of(billWithStoredRate(Status.UNDER_REVIEW, 10)));
+
+        Map<String, Object> submitted = new HashMap<>();
+        submitted.put("rateBreakup", Map.of("PER_DAY", -5));
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .additionalDetails(submitted).build();
+
+        CustomException e = assertThrows(CustomException.class, () ->
+                validator.validateBillDetailUpdateRequest(updateRequest(ROLE_PAYMENT_REVIEWER, pd)));
+        assertTrue(e.getMessage().contains("cannot be negative"), e.getMessage());
     }
 }

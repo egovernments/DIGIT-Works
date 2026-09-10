@@ -882,9 +882,12 @@ public class BillValidator {
 			throw new CustomException(ERR_INVALID_BILL_DETAIL_IDS,
 					"BillDetail ids not found under bill " + request.getBillId() + ": " + invalidIds);
 
-		// 3. Role-based field access — strips blocked fields in-place, returns warnings
+		// 3. Role-based field access — strips blocked fields in-place, returns warnings.
+		//    Details whose rate snapshot was restored from the DB are collected so step 6
+		//    doesn't hold a caller responsible for values it forced back on them.
+		Set<String> restoredRateDetailIds = new HashSet<>();
 		List<BillDetailUpdateError> warnings =
-				stripAndWarnBlockedFields(request, billFromSearch, searchDetailMap);
+				stripAndWarnBlockedFields(request, billFromSearch, searchDetailMap, restoredRateDetailIds);
 
 		// 4. Attendance ceiling — editors have had totalAttendance stripped by step 3 already
 		List<BillDetailUpdateError> attendanceErrors =
@@ -906,28 +909,35 @@ public class BillValidator {
 					.collect(Collectors.joining("; ")));
 		}
 
-		// 6. Rate limit validation — only when bill has a projectType in additionalDetails
+		// 6. Rate limit validation. MDMS limits only apply when the bill has a projectType, but the
+		//    rate-snapshot check (negative rates, percentage default cap) must run regardless —
+		//    otherwise a bill with no projectType skips it entirely.
 		String projectType = extractProjectType(billFromSearch);
+		Map<String, BigDecimal> headCodeMaxLimits = Collections.emptyMap();
 		if (projectType != null) {
-			Map<String, BigDecimal> headCodeMaxLimits = mdmsUtil.fetchCampaignRateLimits(
+			headCodeMaxLimits = mdmsUtil.fetchCampaignRateLimits(
 					request.getRequestInfo(), request.getTenantId(), projectType);
-			List<BillDetailUpdateError> rateErrors = new ArrayList<>();
-			if (!headCodeMaxLimits.isEmpty())
-				rateErrors.addAll(validatePayableLineLimits(
-						billFromSearch, request.getBillDetails(), headCodeMaxLimits));
-
-			// The line-item check skips PER_DAY at zero attendance, so validate the rate
-			// snapshot directly. Runs even with no MDMS limits — negative rates and the
-			// percentage default cap still apply.
-			rateErrors.addAll(validateRateSnapshotLimits(
+		}
+		List<BillDetailUpdateError> rateErrors = new ArrayList<>();
+		if (!headCodeMaxLimits.isEmpty())
+			rateErrors.addAll(validatePayableLineLimits(
 					billFromSearch, request.getBillDetails(), headCodeMaxLimits));
 
-			if (!rateErrors.isEmpty()) {
-				String msg = rateErrors.stream()
-						.map(BillDetailUpdateError::getMessage)
-						.collect(Collectors.joining("; "));
-				throw new CustomException(ERR_RATE_LIMIT_EXCEEDED, msg);
-			}
+		// The line-item check skips PER_DAY at zero attendance, so validate the rate
+		// snapshot directly. Runs even with no MDMS limits — negative rates and the
+		// percentage default cap still apply. A restored snapshot is the DB's own value
+		// and the caller cannot change it, so rejecting it would lock them out for good.
+		List<PartialBillDetail> callerOwnedRates = request.getBillDetails().stream()
+				.filter(pd -> !restoredRateDetailIds.contains(pd.getId()))
+				.collect(Collectors.toList());
+		rateErrors.addAll(validateRateSnapshotLimits(
+				billFromSearch, callerOwnedRates, headCodeMaxLimits));
+
+		if (!rateErrors.isEmpty()) {
+			String msg = rateErrors.stream()
+					.map(BillDetailUpdateError::getMessage)
+					.collect(Collectors.joining("; "));
+			throw new CustomException(ERR_RATE_LIMIT_EXCEEDED, msg);
 		}
 
 		return new BillDetailValidationResult(billFromSearch, warnings);
@@ -947,7 +957,8 @@ public class BillValidator {
 	private List<BillDetailUpdateError> stripAndWarnBlockedFields(
 			BillDetailUpdateRequest request,
 			Bill billFromSearch,
-			Map<String, BillDetail> searchDetailMap) {
+			Map<String, BillDetail> searchDetailMap,
+			Set<String> restoredRateDetailIds) {
 
 		List<org.egov.common.contract.request.Role> rawRoles = request.getRequestInfo().getUserInfo().getRoles();
 		Set<String> userRoles = (rawRoles != null ? rawRoles.stream() : java.util.stream.Stream.<org.egov.common.contract.request.Role>empty())
@@ -984,7 +995,7 @@ public class BillValidator {
 					editorIter.remove();
 					continue;
 				}
-				stripAmountFields(pd, db, warnings);
+				stripAmountFields(pd, db, warnings, restoredRateDetailIds);
 			}
 			return warnings;
 		}
@@ -1188,7 +1199,8 @@ public class BillValidator {
 	private void stripAmountFields(
 			PartialBillDetail pd,
 			BillDetail db,
-			List<BillDetailUpdateError> warnings) {
+			List<BillDetailUpdateError> warnings,
+			Set<String> restoredRateDetailIds) {
 
 		List<String> stripped = new ArrayList<>();
 
@@ -1222,6 +1234,7 @@ public class BillValidator {
 		}
 		// Calculation metadata is reviewer-owned. Restored from the DB rather than removed:
 		// EnrichmentUtil takes additionalDetails wholesale, so removing a key would delete it.
+		if (pd.getAdditionalDetails() != null) restoredRateDetailIds.add(pd.getId());
 		if (restoreCalculationMetadata(pd, db)) stripped.add("additionalDetails.rateBreakup");
 
 		if (!stripped.isEmpty())

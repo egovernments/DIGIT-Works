@@ -383,6 +383,8 @@ public class BillDetailExcelAttendanceTest {
         assertEquals(1, pd.getLineItems().size(), "a payable line item must be created");
         assertEquals(HEAD_CODE, pd.getLineItems().get(0).getHeadCode());
         assertNull(pd.getLineItems().get(0).getId(), "null id lets EnrichmentUtil assign one");
+        assertEquals("detail-W1", pd.getLineItems().get(0).getBillDetailId(),
+                "billdetailid is NOT NULL with an FK to eg_expense_billdetail");
         assertEquals(0, pd.getTotalAmount().compareTo(BigDecimal.valueOf(50)), "5 days at 10 = 50");
     }
 
