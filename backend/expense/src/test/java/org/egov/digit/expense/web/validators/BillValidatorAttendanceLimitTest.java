@@ -467,6 +467,34 @@ public class BillValidatorAttendanceLimitTest {
                 validator.validateBillDetailUpdateRequest(updateRequest(ROLE_PAYMENT_EDITOR, pd)));
     }
 
+    /** Reviewer submits the given rateBreakup shape; returns the thrown message. */
+    private String reviewerRateBreakupError(Object rateBreakup) {
+        when(billRepository.search(any(), eq(true)))
+                .thenReturn(List.of(billWithStoredRate(Status.UNDER_REVIEW, 10)));
+
+        Map<String, Object> submitted = new HashMap<>();
+        submitted.put("rateBreakup", rateBreakup);
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .additionalDetails(submitted).build();
+
+        CustomException e = assertThrows(CustomException.class, () ->
+                validator.validateBillDetailUpdateRequest(updateRequest(ROLE_PAYMENT_REVIEWER, pd)));
+        return e.getMessage();
+    }
+
+    @Test
+    void scalarRateBreakupIsRejectedRatherThanSkipped() {
+        // skipping would persist it, and every later reader parses it back as empty
+        assertTrue(reviewerRateBreakupError(5).contains("rateBreakup must be an object"));
+    }
+
+    @Test
+    void arrayRateBreakupIsRejectedRatherThanSkipped() {
+        String msg = reviewerRateBreakupError(List.of(1, 2));
+        assertTrue(msg.contains("rateBreakup must be an object"), msg);
+        assertTrue(msg.contains("a list"), msg);
+    }
+
     @Test
     void reviewerSubmittingANegativeRateIsStillRejected() {
         when(billRepository.search(any(), eq(true)))

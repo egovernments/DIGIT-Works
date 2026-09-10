@@ -1044,32 +1044,45 @@ public class BillValidator {
 
 		for (PartialBillDetail partial : partials) {
 			if (partial.getAdditionalDetails() == null) continue;
-			Map<String, BigDecimal> rates;
+			// Unreadable shapes are rejected, not skipped: additionalDetails is persisted
+			// wholesale, so skipping stores a snapshot every later reader silently drops.
+			Map<String, Object> ad;
 			try {
-				Map<String, Object> ad = objectMapper.convertValue(partial.getAdditionalDetails(),
+				ad = objectMapper.convertValue(partial.getAdditionalDetails(),
 						new TypeReference<Map<String, Object>>() {});
-				Object raw = ad.get(BILL_DETAIL_RATE_BREAKUP_KEY);
-				if (raw == null) continue;
-				rates = new HashMap<>();
-				List<BillDetailUpdateError> parseErrors = new ArrayList<>();
-				objectMapper.convertValue(raw, new TypeReference<Map<String, Object>>() {})
-						.forEach((k, v) -> {
-							if (v == null) return;
-							try {
-								rates.put(k, new BigDecimal(v.toString()));
-							} catch (NumberFormatException e) {
-								// reject rather than skip: a skipped value still gets persisted
-								parseErrors.add(rateError(partial.getId(),
-										"Rate for " + k + " is not a number, found '" + v + "'"));
-							}
-						});
-				if (!parseErrors.isEmpty()) {
-					errors.addAll(parseErrors);
-					continue;
-				}
 			} catch (Exception e) {
-				log.warn("Could not read rateBreakup on billDetail={} for limit check: {}",
-						partial.getId(), e.getMessage());
+				log.warn("Unreadable additionalDetails on billDetail={}: {}", partial.getId(), e.getMessage());
+				errors.add(rateError(partial.getId(), "additionalDetails must be an object"));
+				continue;
+			}
+
+			Object raw = ad.get(BILL_DETAIL_RATE_BREAKUP_KEY);
+			if (raw == null) continue;
+
+			Map<String, Object> rawRates;
+			try {
+				rawRates = objectMapper.convertValue(raw, new TypeReference<Map<String, Object>>() {});
+			} catch (Exception e) {
+				log.warn("Unreadable rateBreakup on billDetail={}: {}", partial.getId(), e.getMessage());
+				errors.add(rateError(partial.getId(),
+						"rateBreakup must be an object keyed by rate name, found " + describe(raw)));
+				continue;
+			}
+
+			Map<String, BigDecimal> rates = new HashMap<>();
+			List<BillDetailUpdateError> parseErrors = new ArrayList<>();
+			rawRates.forEach((k, v) -> {
+				if (v == null) return;
+				try {
+					rates.put(k, new BigDecimal(v.toString()));
+				} catch (NumberFormatException e) {
+					// reject rather than skip: a skipped value still gets persisted
+					parseErrors.add(rateError(partial.getId(),
+							"Rate for " + k + " is not a number, found '" + v + "'"));
+				}
+			});
+			if (!parseErrors.isEmpty()) {
+				errors.addAll(parseErrors);
 				continue;
 			}
 
@@ -1139,6 +1152,12 @@ public class BillValidator {
 		return items != null && items.stream()
 				.anyMatch(li -> li != null && li.getType() == LineItemType.PAYABLE
 						&& li.getStatus() != Status.INACTIVE);
+	}
+
+	/** Shape of a bad rateBreakup, for the error message — never the value, which may be large. */
+	private static String describe(Object raw) {
+		if (raw instanceof Collection || raw instanceof Object[]) return "a list";
+		return "a " + raw.getClass().getSimpleName().toLowerCase();
 	}
 
 	private BillDetailUpdateError rateError(String billDetailId, String message) {
