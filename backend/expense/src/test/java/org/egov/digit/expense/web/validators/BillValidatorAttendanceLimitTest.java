@@ -244,10 +244,10 @@ public class BillValidatorAttendanceLimitTest {
     private List<String> invokeStripAmounts(PartialBillDetail pd, BillDetail db) {
         try {
             Method m = BillValidator.class.getDeclaredMethod(
-                    "stripAmountFields", PartialBillDetail.class, BillDetail.class, List.class, Set.class);
+                    "stripAmountFields", PartialBillDetail.class, BillDetail.class, List.class);
             m.setAccessible(true);
             List<BillDetailUpdateError> warnings = new ArrayList<>();
-            m.invoke(validator, pd, db, warnings, new HashSet<String>());
+            m.invoke(validator, pd, db, warnings);
             return warnings.stream().map(BillDetailUpdateError::getMessage).toList();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -273,6 +273,59 @@ public class BillValidatorAttendanceLimitTest {
         assertTrue(invokeBreakdown(pd, db).isEmpty(), "and the breakdown check now passes");
     }
 
+    /** Runs the role-based strip for a reviewer — the path an Excel upload takes. */
+    private void invokeReviewerStrip(PartialBillDetail pd, BillDetail db) {
+        Bill bill = Bill.builder().id("b1").status(Status.UNDER_REVIEW)
+                .billDetails(new ArrayList<>(List.of(db))).build();
+        BillDetailUpdateRequest request = BillDetailUpdateRequest.builder()
+                .requestInfo(RequestInfo.builder()
+                        .userInfo(User.builder()
+                                .roles(List.of(Role.builder().code(ROLE_PAYMENT_REVIEWER).build()))
+                                .build())
+                        .build())
+                .billId("b1").tenantId("mz")
+                .billDetails(new ArrayList<>(List.of(pd)))
+                .build();
+        try {
+            Method m = BillValidator.class.getDeclaredMethod(
+                    "stripAndWarnBlockedFields", BillDetailUpdateRequest.class, Bill.class, Map.class);
+            m.setAccessible(true);
+            m.invoke(validator, request, bill, Map.of(db.getId(), db));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    void reviewerEmptyPayablesAreNormalisedToNullToo() {
+        // mergeLineItems hands [] straight back and the detail total is recomputed from nothing,
+        // so an empty list zeroes the detail even though no amount was submitted.
+        BillDetail db = BillDetail.builder().id("d1").status(Status.UNDER_REVIEW)
+                .payableLineItems(List.of(payable("PER_DAY", 50))).build();
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .payableLineItems(new ArrayList<>())
+                .lineItems(new ArrayList<>())
+                .build();
+
+        invokeReviewerStrip(pd, db);
+
+        assertNull(pd.getPayableLineItems(), "an empty list must not reach mergeLineItems");
+        assertNull(pd.getLineItems());
+    }
+
+    @Test
+    void reviewerLineItemsThatCarrySomethingAreLeftAlone() {
+        BillDetail db = BillDetail.builder().id("d1").status(Status.UNDER_REVIEW)
+                .payableLineItems(List.of(payable("PER_DAY", 50))).build();
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .payableLineItems(new ArrayList<>(List.of(payable("PER_DAY", 75))))
+                .build();
+
+        invokeReviewerStrip(pd, db);
+
+        assertEquals(1, pd.getPayableLineItems().size(), "a reviewer may edit amounts");
+    }
+
     @Test
     void zeroTotalNeedsNoLineItems() {
         PartialBillDetail pd = PartialBillDetail.builder().id("d1")
@@ -284,16 +337,23 @@ public class BillValidatorAttendanceLimitTest {
 
     @SuppressWarnings("unchecked")
     private List<BillDetailUpdateError> invokeSnapshotLimits(String key, Object rate, Bill existingBill) {
+        return invokeSnapshotLimits(key, rate, existingBill, BillDetail.builder().id("d1").build());
+    }
+
+    /** dbDetail carries what is already persisted — rates echoed back from it are not the caller's. */
+    @SuppressWarnings("unchecked")
+    private List<BillDetailUpdateError> invokeSnapshotLimits(String key, Object rate, Bill existingBill,
+                                                             BillDetail dbDetail) {
         Map<String, Object> ad = new HashMap<>();
         ad.put("rateBreakup", Map.of(key, rate));
         PartialBillDetail pd = PartialBillDetail.builder().id("d1")
                 .totalAttendance(BigDecimal.ZERO).additionalDetails(ad).build();
         try {
             Method m = BillValidator.class.getDeclaredMethod(
-                    "validateRateSnapshotLimits", Bill.class, List.class, Map.class);
+                    "validateRateSnapshotLimits", Bill.class, List.class, Map.class, Map.class);
             m.setAccessible(true);
             return (List<BillDetailUpdateError>) m.invoke(validator, existingBill, List.of(pd),
-                    Map.of("PER_DAY", BigDecimal.valueOf(150)));
+                    Map.of("d1", dbDetail), Map.of("PER_DAY", BigDecimal.valueOf(150)));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -301,6 +361,63 @@ public class BillValidatorAttendanceLimitTest {
 
     private List<BillDetailUpdateError> invokeSnapshotLimits(Object rate) {
         return invokeSnapshotLimits("PER_DAY", rate, billWithPeriod());
+    }
+
+    /** A bill detail already carrying a persisted rateBreakup. */
+    private BillDetail dbWithRate(String key, Object rate) {
+        Map<String, Object> ad = new HashMap<>();
+        ad.put("rateBreakup", Map.of(key, rate));
+        return BillDetail.builder().id("d1").additionalDetails(ad).build();
+    }
+
+    @Test
+    void aRateEchoedBackFromTheDbIsNotBlamedOnTheCaller() {
+        // A reviewer resubmits the whole snapshot, including keys with no column on their sheet.
+        // They can neither edit nor drop those, so judging them locks the bill out of approval.
+        List<BillDetailUpdateError> errors = invokeSnapshotLimits(
+                "PER_DAY", BigDecimal.valueOf(999), billWithPeriod(), dbWithRate("PER_DAY", BigDecimal.valueOf(999)));
+
+        assertTrue(errors.isEmpty(), "the DB's own value is not the caller's to fix");
+    }
+
+    @Test
+    void anEchoedRateIsMatchedNumericallyNotByType() {
+        // JSON round trips turn a persisted 999 into 999.0; that is still not an edit
+        List<BillDetailUpdateError> errors = invokeSnapshotLimits(
+                "PER_DAY", 999.0, billWithPeriod(), dbWithRate("PER_DAY", 999));
+
+        assertTrue(errors.isEmpty());
+    }
+
+    @Test
+    void changingARateToAnOutOfRangeValueIsStillRejected() {
+        List<BillDetailUpdateError> errors = invokeSnapshotLimits(
+                "PER_DAY", BigDecimal.valueOf(998), billWithPeriod(), dbWithRate("PER_DAY", BigDecimal.valueOf(999)));
+
+        assertFalse(errors.isEmpty(), "the caller changed it, so the cap applies");
+    }
+
+    @Test
+    void aNullRateEchoedBackFromTheDbIsNotRejected() {
+        Map<String, Object> ad = new HashMap<>();
+        Map<String, Object> rates = new HashMap<>();
+        rates.put("PER_DAY", null);
+        ad.put("rateBreakup", rates);
+        BillDetail db = BillDetail.builder().id("d1").additionalDetails(ad).build();
+
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .totalAttendance(BigDecimal.ZERO).additionalDetails(ad).build();
+        try {
+            Method m = BillValidator.class.getDeclaredMethod(
+                    "validateRateSnapshotLimits", Bill.class, List.class, Map.class, Map.class);
+            m.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            List<BillDetailUpdateError> errors = (List<BillDetailUpdateError>) m.invoke(
+                    validator, billWithPeriod(), List.of(pd), Map.of("d1", db), Map.of());
+            assertTrue(errors.isEmpty(), "a null already in the DB is not the reviewer's doing");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /** Bill whose fieldConfig declares a PERCENTAGE field keyed by FEE_PCT. */
@@ -323,9 +440,10 @@ public class BillValidatorAttendanceLimitTest {
                 .totalAttendance(BigDecimal.ZERO).additionalDetails(ad).build();
         try {
             Method m = BillValidator.class.getDeclaredMethod(
-                    "validateRateSnapshotLimits", Bill.class, List.class, Map.class);
+                    "validateRateSnapshotLimits", Bill.class, List.class, Map.class, Map.class);
             m.setAccessible(true);
-            return (List<BillDetailUpdateError>) m.invoke(validator, billWithPeriod(), List.of(pd), Map.of());
+            return (List<BillDetailUpdateError>) m.invoke(validator, billWithPeriod(), List.of(pd),
+                    Map.of("d1", BillDetail.builder().id("d1").build()), Map.of());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

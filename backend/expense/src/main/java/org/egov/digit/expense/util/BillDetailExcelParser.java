@@ -138,8 +138,16 @@ public class BillDetailExcelParser {
                     builder.totalAttendance(totalAttendance);
 
                     Map<String, BigDecimal> enteredRates = new LinkedHashMap<>();
+                    List<String> unreadableRates = new ArrayList<>();
                     List<LineItem> updatedLineItems = buildLineItems(row, headCodes, source, totalAttendance,
-                            colMap, fcCtx, enteredRates);
+                            colMap, fcCtx, enteredRates, unreadableRates);
+                    // A blank or text rate cell used to read as 0 and is now persisted as the rate,
+                    // so it has to be rejected rather than silently zeroing the worker for good.
+                    if (!unreadableRates.isEmpty()) {
+                        rowErrors.add(new RowError(ERR_TEMPLATE_INVALID_RATE, rowIdx + 1, workerId,
+                                "rate must be a number for " + String.join(", ", unreadableRates)));
+                        continue;
+                    }
                     builder.lineItems(updatedLineItems);
                     builder.additionalDetails(mergeRateSnapshot(source, enteredRates, totalAttendance));
 
@@ -329,7 +337,8 @@ public class BillDetailExcelParser {
                                           BillDetail source, BigDecimal totalAttendance,
                                           ColumnMap colMap,
                                           BillDetailExcelGenerator.FieldConfigContext fcCtx,
-                                          Map<String, BigDecimal> enteredRatesOut) {
+                                          Map<String, BigDecimal> enteredRatesOut,
+                                          List<String> unreadableRatesOut) {
         Map<String, LineItem> existingByHeadCode = new HashMap<>();
         for (LineItem item : getPayableItems(source))
             existingByHeadCode.put(item.getHeadCode(), item);
@@ -345,7 +354,7 @@ public class BillDetailExcelParser {
                 Integer colIdx = colMap.headCodeCols.get(headCode);
                 if (colIdx == null) continue;
                 BigDecimal entered = readBigDecimal(row, colIdx);
-                if (entered == null) entered = BigDecimal.ZERO;
+                if (entered == null) { unreadableRatesOut.add(headCode); entered = BigDecimal.ZERO; }
                 enteredRatesOut.put(snapshotKey(headCode, fcCtx), entered);
                 BigDecimal newAmount = entered.multiply(totalAttendance).setScale(2, RoundingMode.HALF_UP);
                 addOrUpdateLineItem(result, existingByHeadCode.get(headCode), source, headCode, newAmount, entered);
@@ -359,7 +368,7 @@ public class BillDetailExcelParser {
                 if (colIdx == null) continue;
 
                 BigDecimal entered = readBigDecimal(row, colIdx);
-                if (entered == null) entered = BigDecimal.ZERO;
+                if (entered == null) { unreadableRatesOut.add(hc); entered = BigDecimal.ZERO; }
                 enteredRatesOut.put(BillDetailExcelGenerator.rateKey(fc), entered);
 
                 BigDecimal newAmount;
@@ -384,7 +393,7 @@ public class BillDetailExcelParser {
                 Integer colIdx = colMap.headCodeCols.get(hc);
                 if (colIdx == null) continue;
                 BigDecimal entered = readBigDecimal(row, colIdx);
-                if (entered == null) entered = BigDecimal.ZERO;
+                if (entered == null) { unreadableRatesOut.add(hc); entered = BigDecimal.ZERO; }
                 enteredRatesOut.put(snapshotKey(hc, fcCtx), entered);
                 BigDecimal newAmount = entered.multiply(totalAttendance).setScale(2, RoundingMode.HALF_UP);
                 addOrUpdateLineItem(result, existingByHeadCode.get(hc), source, hc, newAmount, entered);

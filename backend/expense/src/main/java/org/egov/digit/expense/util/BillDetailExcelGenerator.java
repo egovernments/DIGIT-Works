@@ -453,7 +453,8 @@ public class BillDetailExcelGenerator {
      * Processes fieldConfigs in order so PERCENTAGE fields can use already-computed
      * stored amounts of their components.
      *
-     * additionalDetails.rateBreakup wins when present; only pre-snapshot bills divide:
+     * The persisted amount is the money of record, so it is divided back out wherever that
+     * division has an inverse. additionalDetails.rateBreakup speaks only where it does not:
      *
      * PER_DAY      → storedAmount / attendance
      * ONE_TIME      → storedAmount
@@ -474,7 +475,7 @@ public class BillDetailExcelGenerator {
             // Legacy: no fieldConfig, so fieldKey == headCode
             for (String hc : headCodes) {
                 BigDecimal snapshot = snapshotRates.get(snapshotKey(hc, fcCtx));
-                if (snapshot != null) {
+                if (preferSnapshot(snapshot, storedAmounts.containsKey(hc), isDivisible(attendance))) {
                     displayValues.put(hc, snapshot);
                     continue;
                 }
@@ -491,17 +492,15 @@ public class BillDetailExcelGenerator {
             if (!headCodes.contains(hc)) continue;
 
             BigDecimal snapshot = snapshotRates.get(rateKey(fc));
-            if (snapshot != null) {
-                displayValues.put(hc, snapshot);
-                continue;
-            }
-
+            boolean hasStored = storedAmounts.containsKey(hc);
             BigDecimal stored = storedAmounts.getOrDefault(hc, BigDecimal.ZERO);
             BigDecimal displayVal;
 
             if (VALUE_TYPE_PERCENTAGE.equals(fc.getValueType())) {
                 BigDecimal componentSum = sumComponentAmounts(fc, fcCtx, storedAmounts);
-                if (componentSum.compareTo(BigDecimal.ZERO) == 0) {
+                if (preferSnapshot(snapshot, hasStored, isDivisible(componentSum))) {
+                    displayVal = snapshot;
+                } else if (componentSum.compareTo(BigDecimal.ZERO) == 0) {
                     displayVal = BigDecimal.ZERO;
                 } else {
                     // Reverse: pct = storedAmount * 100 / Σ(component stored amounts)
@@ -509,10 +508,11 @@ public class BillDetailExcelGenerator {
                             .divide(componentSum, 4, RoundingMode.HALF_UP);
                 }
             } else if (PAYMENT_TYPE_PER_DAY.equals(fc.getPaymentType())) {
-                displayVal = divideByAttendance(stored, attendance);
+                displayVal = preferSnapshot(snapshot, hasStored, isDivisible(attendance))
+                        ? snapshot : divideByAttendance(stored, attendance);
             } else {
-                // ONE_TIME / PER_PERIOD — stored amount IS the rate
-                displayVal = stored;
+                // ONE_TIME / PER_PERIOD — stored amount IS the rate, so it always inverts
+                displayVal = preferSnapshot(snapshot, hasStored, true) ? snapshot : stored;
             }
 
             displayValues.put(hc, displayVal);
@@ -522,8 +522,10 @@ public class BillDetailExcelGenerator {
         for (String hc : headCodes) {
             if (!displayValues.containsKey(hc)) {
                 BigDecimal snapshot = snapshotRates.get(snapshotKey(hc, fcCtx));
-                displayValues.put(hc, snapshot != null ? snapshot
-                        : divideByAttendance(storedAmounts.getOrDefault(hc, BigDecimal.ZERO), attendance));
+                displayValues.put(hc,
+                        preferSnapshot(snapshot, storedAmounts.containsKey(hc), isDivisible(attendance))
+                                ? snapshot
+                                : divideByAttendance(storedAmounts.getOrDefault(hc, BigDecimal.ZERO), attendance));
             }
         }
 
@@ -542,9 +544,19 @@ public class BillDetailExcelGenerator {
     }
 
     /**
-     * Key a field's rate is stored under in rateBreakup — mirrors the calculator's
-     * computeFieldAmount, which reads percentageKey for PERCENTAGE and fieldKey otherwise.
+     * The snapshot is a fallback, not an override. An amount corrected outside the sheet (a whole-bill
+     * _update) would otherwise be silently reverted on the next round trip, so derive from the money
+     * whenever it can be derived — the snapshot only speaks when it cannot be, or when no line item
+     * was ever written for the head code.
      */
+    private static boolean preferSnapshot(BigDecimal snapshot, boolean hasStoredAmount, boolean derivable) {
+        return snapshot != null && (!hasStoredAmount || !derivable);
+    }
+
+    private static boolean isDivisible(BigDecimal divisor) {
+        return divisor != null && divisor.compareTo(BigDecimal.ZERO) > 0;
+    }
+
     /** rateBreakup is keyed by fieldKey; translate where a headCode is all we have. */
     static String snapshotKey(String headCode, FieldConfigContext fcCtx) {
         return fcCtx != null && fcCtx.reverseMapping != null
@@ -552,6 +564,10 @@ public class BillDetailExcelGenerator {
                 : headCode;
     }
 
+    /**
+     * Key a field's rate is stored under in rateBreakup — mirrors the calculator's
+     * computeFieldAmount, which reads percentageKey for PERCENTAGE and fieldKey otherwise.
+     */
     static String rateKey(RateFieldConfig fc) {
         return VALUE_TYPE_PERCENTAGE.equals(fc.getValueType()) && fc.getPercentageKey() != null
                 ? fc.getPercentageKey()

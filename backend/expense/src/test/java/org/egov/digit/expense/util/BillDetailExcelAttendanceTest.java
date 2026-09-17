@@ -246,6 +246,7 @@ public class BillDetailExcelAttendanceTest {
     // ── rate snapshot survives an attendance edit (HCMPRE-4444) ──────────────
 
     /** Seeds additionalDetails.rateBreakup on every detail, as the calculator now does. */
+    /** Amounts track rate x attendance — the calculator never writes a bill where they disagree. */
     private void seedRates(Bill bill, double rate) {
         for (BillDetail d : bill.getBillDetails()) {
             Map<String, Object> ad = new HashMap<>();
@@ -253,6 +254,8 @@ public class BillDetailExcelAttendanceTest {
             ad.put("individualId", "ind-" + d.getWorkerId());
             ad.put("editInfo", Map.of("payeeUpdatedAtEpochMs", 1L));
             d.setAdditionalDetails(ad);
+            for (LineItem li : d.getLineItems())
+                li.setAmount(BigDecimal.valueOf(rate).multiply(d.getTotalAttendance()));
         }
     }
 
@@ -358,6 +361,104 @@ public class BillDetailExcelAttendanceTest {
             int rateCol = BillDetailExcelGenerator.STATIC_COL_COUNT;
             assertEquals(150.0, wb.getSheetAt(0).getRow(1).getCell(rateCol).getNumericCellValue(), 0.001);
         }
+    }
+
+    // ── the persisted amount outranks the snapshot wherever it can be divided back out ──
+
+    /** Overwrites the first rate column of a row so a damaged cell can be round-tripped. */
+    private byte[] withRateCell(byte[] tpl, int rowIdx, String text) throws Exception {
+        try (XSSFWorkbook wb = new XSSFWorkbook(new ByteArrayInputStream(tpl))) {
+            Cell cell = wb.getSheetAt(0).getRow(rowIdx).getCell(BillDetailExcelGenerator.STATIC_COL_COUNT);
+            if (text == null) cell.setBlank(); else cell.setCellValue(text);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            wb.write(out);
+            return out.toByteArray();
+        }
+    }
+
+    @Test
+    void anAmountCorrectedOutsideTheSheetWinsOverTheSnapshot() throws Exception {
+        // A whole-bill _update changes the amount without touching the snapshot. Showing the
+        // stale rate would revert the correction the moment the sheet is uploaded again.
+        Bill bill = bill(period(), Status.UNDER_REVIEW, "W1");
+        seedRates(bill, 10);                       // 10 x 10 days = 100
+        bill.getBillDetails().get(0).getLineItems().get(0).setAmount(BigDecimal.valueOf(150));
+
+        try (XSSFWorkbook wb = new XSSFWorkbook(new ByteArrayInputStream(template(bill, reviewer)))) {
+            int rateCol = BillDetailExcelGenerator.STATIC_COL_COUNT;
+            assertEquals(15.0, wb.getSheetAt(0).getRow(1).getCell(rateCol).getNumericCellValue(), 0.001,
+                    "150 over 10 days is 15/day; the snapshot's 10 is stale");
+        }
+    }
+
+    @Test
+    void reUploadingAnUntouchedSheetKeepsACorrectedAmount() throws Exception {
+        Bill bill = bill(period(), Status.UNDER_REVIEW, "W1");
+        seedRates(bill, 10);
+        bill.getBillDetails().get(0).getLineItems().get(0).setAmount(BigDecimal.valueOf(150));
+
+        PartialBillDetail pd = parser.parse(template(bill, reviewer), bill, reviewer, requestInfo).get(0);
+
+        assertEquals(0, pd.getTotalAmount().compareTo(BigDecimal.valueOf(150)),
+                "a no-op round trip must not pull the amount back down to 10 x 10");
+    }
+
+    @Test
+    void aHeadCodeWithNoLineItemStillShowsTheSnapshotRate() throws Exception {
+        // No amount to divide, so the snapshot is the only rate there is — the absentee case
+        Bill bill = bill(period(), Status.UNDER_REVIEW, "W1", "W2");
+        seedRates(bill, 10);
+        BillDetail absent = bill.getBillDetails().stream()
+                .filter(d -> "W1".equals(d.getWorkerId())).findFirst().orElseThrow();
+        absent.setLineItems(new ArrayList<>());
+        absent.setPayableLineItems(new ArrayList<>());
+
+        try (XSSFWorkbook wb = new XSSFWorkbook(new ByteArrayInputStream(template(bill, reviewer)))) {
+            int rateCol = BillDetailExcelGenerator.STATIC_COL_COUNT;
+            assertEquals(10.0, wb.getSheetAt(0).getRow(1).getCell(rateCol).getNumericCellValue(), 0.001);
+        }
+    }
+
+    // ── an unreadable rate cell is a row error, not a persisted 0 ─────────────
+
+    @Test
+    void aTextRateCellIsRejectedInsteadOfPersistingAZeroRate() throws Exception {
+        // Pasting a column from another sheet lands as text; it used to read as 0 and, now that
+        // the rate is persisted, would zero the worker for good with no warning.
+        Bill bill = bill(period(), Status.UNDER_REVIEW, "W1");
+        seedRates(bill, 10);
+        byte[] tpl = withRateCell(template(bill, reviewer), 1, "1,200");
+
+        CustomException ex = assertThrows(CustomException.class,
+                () -> parser.parse(tpl, bill, reviewer, requestInfo));
+
+        assertEquals(ERR_TEMPLATE_INVALID_RATE, ex.getCode());
+        assertTrue(ex.getMessage().contains(HEAD_CODE), ex.getMessage());
+        assertTrue(ex.getMessage().contains("W1"), ex.getMessage());
+    }
+
+    @Test
+    void aBlankRateCellIsRejectedToo() throws Exception {
+        Bill bill = bill(period(), Status.UNDER_REVIEW, "W1");
+        seedRates(bill, 10);
+        byte[] tpl = withRateCell(template(bill, reviewer), 1, null);
+
+        CustomException ex = assertThrows(CustomException.class,
+                () -> parser.parse(tpl, bill, reviewer, requestInfo));
+
+        assertEquals(ERR_TEMPLATE_INVALID_RATE, ex.getCode());
+    }
+
+    @Test
+    void aRateOfZeroIsStillAValidEntry() throws Exception {
+        // 0 typed deliberately is not the same as a cell that could not be read
+        Bill bill = bill(period(), Status.UNDER_REVIEW, "W1");
+        seedRates(bill, 10);
+        byte[] tpl = withRateCell(template(bill, reviewer), 1, "0");
+
+        PartialBillDetail pd = parser.parse(tpl, bill, reviewer, requestInfo).get(0);
+
+        assertEquals(0, pd.getTotalAmount().compareTo(BigDecimal.ZERO));
     }
 
     /**

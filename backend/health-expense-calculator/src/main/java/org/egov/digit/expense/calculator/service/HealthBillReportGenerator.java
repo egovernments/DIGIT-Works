@@ -780,9 +780,13 @@ public class HealthBillReportGenerator {
                 // Always store the actual bill total for use in the total column
                 reportBillDetail.getTotalAmountBreakup().put(detailKey, storedTotal);
 
-                BigDecimal snapshotRate = rateSnapshot.get(
-                        cfg != null && "PERCENTAGE".equals(cfg.getValueType()) && cfg.getPercentageKey() != null
-                                ? cfg.getPercentageKey() : fieldKey);
+                String snapshotKey = cfg != null && "PERCENTAGE".equals(cfg.getValueType())
+                        && cfg.getPercentageKey() != null ? cfg.getPercentageKey() : fieldKey;
+                BigDecimal snapshotRate = rateSnapshot.get(snapshotKey);
+                // Bills created before the snapshot existed have none, and 0 days leaves nothing to
+                // divide — without this they would report a rate of 0 instead of their real one.
+                if (snapshotRate == null)
+                    snapshotRate = mdmsRate(skillCodeRateMap, reportBillDetail.getRole(), snapshotKey);
 
                 if (cfg != null && "PERCENTAGE".equals(cfg.getValueType())
                         && cfg.getComponents() != null && !cfg.getComponents().isEmpty()) {
@@ -876,6 +880,13 @@ public class HealthBillReportGenerator {
         }
         reportBillDetail.setTotalAmount(billDetail.getTotalAmount());
         return reportBillDetail;
+    }
+
+    /** Live MDMS rate for a worker's role — the fallback for bills with no stored snapshot. */
+    private BigDecimal mdmsRate(Map<String, WorkerRate> skillCodeRateMap, String role, String key) {
+        if (role == null || skillCodeRateMap == null || !skillCodeRateMap.containsKey(role)) return null;
+        Map<String, BigDecimal> breakup = skillCodeRateMap.get(role).getRateBreakup();
+        return breakup != null ? breakup.get(key) : null;
     }
 
     /** Rate snapshot written by the bill generator, keyed by fieldKey; empty for older bills. */

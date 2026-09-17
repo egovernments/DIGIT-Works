@@ -247,6 +247,7 @@ public class Constants {
 	public static final String ERR_TEMPLATE_INVALID_FORMAT         = "EG_EXPENSE_TEMPLATE_INVALID_FORMAT";
 	public static final String ERR_TEMPLATE_INVALID_ROW            = "EG_EXPENSE_TEMPLATE_INVALID_ROW";
 	public static final String ERR_TEMPLATE_INVALID_ATTENDANCE     = "EG_EXPENSE_TEMPLATE_INVALID_ATTENDANCE";
+	public static final String ERR_TEMPLATE_INVALID_RATE           = "EG_EXPENSE_TEMPLATE_INVALID_RATE";
 	public static final String ERR_TEMPLATE_PARSE_ERROR            = "EG_EXPENSE_TEMPLATE_PARSE_ERROR";
 	public static final String ERR_DUPLICATE_BILL                  = "EG_EXPENSE_DUPLICATE_BILL";
 	public static final String ERR_PAYMENT_FIELD_UPDATE_NOT_ALLOWED = "EG_EXPENSE_PAYMENT_FIELD_UPDATE_NOT_ALLOWED";

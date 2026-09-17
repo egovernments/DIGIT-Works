@@ -883,9 +883,8 @@ public class BillValidator {
 					"BillDetail ids not found under bill " + request.getBillId() + ": " + invalidIds);
 
 		// 3. Role-based field access — strips blocked fields in-place, returns warnings
-		Set<String> restoredRateDetailIds = new HashSet<>();   // snapshots step 6 must not blame the caller for
 		List<BillDetailUpdateError> warnings =
-				stripAndWarnBlockedFields(request, billFromSearch, searchDetailMap, restoredRateDetailIds);
+				stripAndWarnBlockedFields(request, billFromSearch, searchDetailMap);
 
 		// 4. Attendance ceiling — editors have had totalAttendance stripped by step 3 already
 		List<BillDetailUpdateError> attendanceErrors =
@@ -923,13 +922,11 @@ public class BillValidator {
 
 		// The line-item check skips PER_DAY at zero attendance, so validate the rate
 		// snapshot directly. Runs even with no MDMS limits — negative rates and the
-		// percentage default cap still apply.
-		// A restored snapshot is the DB's own — rejecting it would lock the caller out for good.
-		List<PartialBillDetail> callerOwnedRates = request.getBillDetails().stream()
-				.filter(pd -> !restoredRateDetailIds.contains(pd.getId()))
-				.collect(Collectors.toList());
+		// percentage default cap still apply. Only rates the caller actually changed are
+		// judged: a reviewer resubmits the whole snapshot including keys with no column on
+		// their sheet, and blaming them for the DB's own value would lock the bill for good.
 		rateErrors.addAll(validateRateSnapshotLimits(
-				billFromSearch, callerOwnedRates, headCodeMaxLimits));
+				billFromSearch, request.getBillDetails(), searchDetailMap, headCodeMaxLimits));
 
 		if (!rateErrors.isEmpty()) {
 			String msg = rateErrors.stream()
@@ -955,8 +952,7 @@ public class BillValidator {
 	private List<BillDetailUpdateError> stripAndWarnBlockedFields(
 			BillDetailUpdateRequest request,
 			Bill billFromSearch,
-			Map<String, BillDetail> searchDetailMap,
-			Set<String> restoredRateDetailIds) {
+			Map<String, BillDetail> searchDetailMap) {
 
 		List<org.egov.common.contract.request.Role> rawRoles = request.getRequestInfo().getUserInfo().getRoles();
 		Set<String> userRoles = (rawRoles != null ? rawRoles.stream() : java.util.stream.Stream.<org.egov.common.contract.request.Role>empty())
@@ -993,7 +989,7 @@ public class BillValidator {
 					editorIter.remove();
 					continue;
 				}
-				stripAmountFields(pd, db, warnings, restoredRateDetailIds);
+				stripAmountFields(pd, db, warnings);
 			}
 			return warnings;
 		}
@@ -1012,6 +1008,11 @@ public class BillValidator {
 					reviewerIter.remove();
 					continue;
 				}
+				// An empty list is not an edit: mergeLineItems returns it as-is and the detail
+				// total is then recomputed from nothing, zeroing the bill silently.
+				if (pd.getLineItems() != null && pd.getLineItems().isEmpty()) pd.setLineItems(null);
+				if (pd.getPayableLineItems() != null && pd.getPayableLineItems().isEmpty())
+					pd.setPayableLineItems(null);
 				stripPayeeFields(pd, db, warnings);
 			}
 			return warnings;
@@ -1028,6 +1029,7 @@ public class BillValidator {
 	 */
 	private List<BillDetailUpdateError> validateRateSnapshotLimits(Bill existingBill,
 	                                                               List<PartialBillDetail> partials,
+	                                                               Map<String, BillDetail> dbDetails,
 	                                                               Map<String, BigDecimal> fieldKeyMaxLimits) {
 		if (CollectionUtils.isEmpty(partials)) return new ArrayList<>();
 
@@ -1056,6 +1058,8 @@ public class BillValidator {
 			Object raw = ad.get(BILL_DETAIL_RATE_BREAKUP_KEY);
 			if (raw == null) continue;
 
+			Map<String, Object> persisted = persistedRates(dbDetails.get(partial.getId()));
+
 			Map<String, Object> rawRates;
 			try {
 				rawRates = objectMapper.convertValue(raw, new TypeReference<Map<String, Object>>() {});
@@ -1069,6 +1073,7 @@ public class BillValidator {
 			Map<String, BigDecimal> rates = new HashMap<>();
 			List<BillDetailUpdateError> parseErrors = new ArrayList<>();
 			rawRates.forEach((k, v) -> {
+				if (sameAsPersisted(v, persisted, k)) return;   // the DB's own value, not the caller's
 				if (v == null) {
 					// skipping would persist the null, and every later reader drops it silently
 					parseErrors.add(rateError(partial.getId(), "Rate for " + k + " must not be null"));
@@ -1120,6 +1125,34 @@ public class BillValidator {
 			});
 		}
 		return errors;
+	}
+
+	/** The rateBreakup already persisted for a bill detail; empty when there is none or it is unreadable. */
+	private Map<String, Object> persistedRates(BillDetail db) {
+		if (db == null || db.getAdditionalDetails() == null) return Collections.emptyMap();
+		try {
+			Map<String, Object> ad = objectMapper.convertValue(db.getAdditionalDetails(),
+					new TypeReference<Map<String, Object>>() {});
+			Object raw = ad.get(BILL_DETAIL_RATE_BREAKUP_KEY);
+			return raw == null ? Collections.emptyMap()
+					: objectMapper.convertValue(raw, new TypeReference<Map<String, Object>>() {});
+		} catch (Exception e) {
+			log.warn("Unreadable persisted rateBreakup on billDetail={}: {}", db.getId(), e.getMessage());
+			return Collections.emptyMap();
+		}
+	}
+
+	/** Numeric compare, so a snapshot echoed back as 100.0 still matches a persisted 100. */
+	private boolean sameAsPersisted(Object submitted, Map<String, Object> persisted, String key) {
+		if (!persisted.containsKey(key)) return false;
+		Object dbValue = persisted.get(key);
+		if (Objects.equals(submitted, dbValue)) return true;
+		if (submitted == null || dbValue == null) return false;
+		try {
+			return new BigDecimal(submitted.toString()).compareTo(new BigDecimal(dbValue.toString())) == 0;
+		} catch (NumberFormatException e) {
+			return false;
+		}
 	}
 
 	/**
@@ -1232,8 +1265,7 @@ public class BillValidator {
 	private void stripAmountFields(
 			PartialBillDetail pd,
 			BillDetail db,
-			List<BillDetailUpdateError> warnings,
-			Set<String> restoredRateDetailIds) {
+			List<BillDetailUpdateError> warnings) {
 
 		List<String> stripped = new ArrayList<>();
 
@@ -1267,7 +1299,6 @@ public class BillValidator {
 		}
 		// Calculation metadata is reviewer-owned. Restored from the DB rather than removed:
 		// EnrichmentUtil takes additionalDetails wholesale, so removing a key would delete it.
-		if (pd.getAdditionalDetails() != null) restoredRateDetailIds.add(pd.getId());
 		if (restoreCalculationMetadata(pd, db)) stripped.add("additionalDetails.rateBreakup");
 
 		if (!stripped.isEmpty())
