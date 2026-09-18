@@ -1,7 +1,6 @@
 package org.egov.digit.expense.calculator.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
@@ -162,12 +161,16 @@ public class WageSeekerBillGeneratorService {
 					bill.getAmountBreakup().merge(config.getBillAmountKey(), amount, BigDecimal::add);
 				}
 
-				// BUGFIX: Store attendance data in bill detail additionalDetails for aggregate bill reports
-				// For aggregate bills, the consolidated muster roll isn't persisted, so report generation
-				// can't fetch it. We store attendance here so reports can access it without muster roll lookup.
+				// Built once and set once — a second setAdditionalDetails() used to overwrite it all
 				Map<String, Object> billDetailAdditionalDetails = new HashMap<>();
 				billDetailAdditionalDetails.put("attendance", attendance);
 				billDetailAdditionalDetails.put("individualId", individualEntry.getIndividualId());
+				// Copy: rateBreakup is the live map owned by WorkerMdms, shared by skill code
+				billDetailAdditionalDetails.put("rateBreakup", new HashMap<>(rateBreakup));
+				billDetailAdditionalDetails.put("noOfDaysWorked",
+						individualEntry.getModifiedTotalAttendance() != null
+								? individualEntry.getModifiedTotalAttendance()
+								: individualEntry.getActualTotalAttendance());
 
 				//Create bill detail
 				BillDetail billDetail = BillDetail.builder()
@@ -184,14 +187,6 @@ public class WageSeekerBillGeneratorService {
 								.build())
 						.additionalDetails(billDetailAdditionalDetails)
 						.build();
-
-				ObjectNode additionalDetails = mapper.createObjectNode();
-				if (individualEntry.getModifiedTotalAttendance() != null) {
-					additionalDetails.put("noOfDaysWorked", individualEntry.getModifiedTotalAttendance());
-				} else {
-					additionalDetails.put("noOfDaysWorked", individualEntry.getActualTotalAttendance());
-				}
-				billDetail.setAdditionalDetails(additionalDetails);
 
 				bill.addBillDetailsItem(billDetail);
 				bill.setTotalAmount(bill.getTotalAmount().add(billDetail.getTotalAmount()));

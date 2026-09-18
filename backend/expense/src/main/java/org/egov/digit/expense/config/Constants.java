@@ -247,6 +247,7 @@ public class Constants {
 	public static final String ERR_TEMPLATE_INVALID_FORMAT         = "EG_EXPENSE_TEMPLATE_INVALID_FORMAT";
 	public static final String ERR_TEMPLATE_INVALID_ROW            = "EG_EXPENSE_TEMPLATE_INVALID_ROW";
 	public static final String ERR_TEMPLATE_INVALID_ATTENDANCE     = "EG_EXPENSE_TEMPLATE_INVALID_ATTENDANCE";
+	public static final String ERR_TEMPLATE_INVALID_RATE           = "EG_EXPENSE_TEMPLATE_INVALID_RATE";
 	public static final String ERR_TEMPLATE_PARSE_ERROR            = "EG_EXPENSE_TEMPLATE_PARSE_ERROR";
 	public static final String ERR_DUPLICATE_BILL                  = "EG_EXPENSE_DUPLICATE_BILL";
 	public static final String ERR_PAYMENT_FIELD_UPDATE_NOT_ALLOWED = "EG_EXPENSE_PAYMENT_FIELD_UPDATE_NOT_ALLOWED";
@@ -382,4 +383,11 @@ public class Constants {
 	public static final String PERIOD_START_DATE_KEY = "periodStartDate";
 	public static final String PERIOD_END_DATE_KEY   = "periodEndDate";
 	public static final String ERR_ATTENDANCE_LIMIT_EXCEEDED = "EG_EXPENSE_ATTENDANCE_LIMIT_EXCEEDED";
+	public static final String ERR_AMOUNT_WITHOUT_LINE_ITEMS = "EG_EXPENSE_AMOUNT_WITHOUT_LINE_ITEMS";
+
+	// Rate snapshot on billDetail.additionalDetails, written by health-expense-calculator.
+	// The rate is authoritative; how the amount derives from it depends on paymentType.
+	public static final String BILL_DETAIL_RATE_BREAKUP_KEY = "rateBreakup";
+	public static final String BILL_DETAIL_ATTENDANCE_KEY   = "attendance";
+	public static final String BILL_DETAIL_DAYS_WORKED_KEY  = "noOfDaysWorked";
 }

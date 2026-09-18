@@ -1,5 +1,6 @@
 package org.egov.digit.expense.util;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
@@ -136,8 +137,19 @@ public class BillDetailExcelParser {
                     }
                     builder.totalAttendance(totalAttendance);
 
-                    List<LineItem> updatedLineItems = buildLineItems(row, headCodes, source, totalAttendance, colMap, fcCtx);
+                    Map<String, BigDecimal> enteredRates = new LinkedHashMap<>();
+                    List<String> unreadableRates = new ArrayList<>();
+                    List<LineItem> updatedLineItems = buildLineItems(row, headCodes, source, totalAttendance,
+                            colMap, fcCtx, enteredRates, unreadableRates);
+                    // A blank or text rate cell used to read as 0 and is now persisted as the rate,
+                    // so it has to be rejected rather than silently zeroing the worker for good.
+                    if (!unreadableRates.isEmpty()) {
+                        rowErrors.add(new RowError(ERR_TEMPLATE_INVALID_RATE, rowIdx + 1, workerId,
+                                "rate must be a number for " + String.join(", ", unreadableRates)));
+                        continue;
+                    }
                     builder.lineItems(updatedLineItems);
+                    builder.additionalDetails(mergeRateSnapshot(source, enteredRates, totalAttendance));
 
                     List<LineItem> updatedPayableItems = updatedLineItems.stream()
                             .filter(li -> li.getType() == LineItemType.PAYABLE)
@@ -324,7 +336,9 @@ public class BillDetailExcelParser {
     private List<LineItem> buildLineItems(Row row, List<String> headCodes,
                                           BillDetail source, BigDecimal totalAttendance,
                                           ColumnMap colMap,
-                                          BillDetailExcelGenerator.FieldConfigContext fcCtx) {
+                                          BillDetailExcelGenerator.FieldConfigContext fcCtx,
+                                          Map<String, BigDecimal> enteredRatesOut,
+                                          List<String> unreadableRatesOut) {
         Map<String, LineItem> existingByHeadCode = new HashMap<>();
         for (LineItem item : getPayableItems(source))
             existingByHeadCode.put(item.getHeadCode(), item);
@@ -340,10 +354,10 @@ public class BillDetailExcelParser {
                 Integer colIdx = colMap.headCodeCols.get(headCode);
                 if (colIdx == null) continue;
                 BigDecimal entered = readBigDecimal(row, colIdx);
-                if (entered == null) entered = BigDecimal.ZERO;
+                if (entered == null) { unreadableRatesOut.add(headCode); entered = BigDecimal.ZERO; }
+                enteredRatesOut.put(snapshotKey(headCode, fcCtx), entered);
                 BigDecimal newAmount = entered.multiply(totalAttendance).setScale(2, RoundingMode.HALF_UP);
-                LineItem sourceItem = existingByHeadCode.get(headCode);
-                if (sourceItem != null) result.add(cloneWithAmount(sourceItem, newAmount));
+                addOrUpdateLineItem(result, existingByHeadCode.get(headCode), source, headCode, newAmount, entered);
             }
         } else {
             // Process in fieldConfig.order — PERCENTAGE fields see already-computed component amounts
@@ -354,7 +368,8 @@ public class BillDetailExcelParser {
                 if (colIdx == null) continue;
 
                 BigDecimal entered = readBigDecimal(row, colIdx);
-                if (entered == null) entered = BigDecimal.ZERO;
+                if (entered == null) { unreadableRatesOut.add(hc); entered = BigDecimal.ZERO; }
+                enteredRatesOut.put(BillDetailExcelGenerator.rateKey(fc), entered);
 
                 BigDecimal newAmount;
                 if (VALUE_TYPE_PERCENTAGE.equals(fc.getValueType())) {
@@ -369,9 +384,7 @@ public class BillDetailExcelParser {
                 }
 
                 runningAmounts.put(hc, newAmount);
-
-                LineItem sourceItem = existingByHeadCode.get(hc);
-                if (sourceItem != null) result.add(cloneWithAmount(sourceItem, newAmount));
+                addOrUpdateLineItem(result, existingByHeadCode.get(hc), source, hc, newAmount, entered);
             }
 
             // Safety net for head codes not in fieldConfig
@@ -380,10 +393,10 @@ public class BillDetailExcelParser {
                 Integer colIdx = colMap.headCodeCols.get(hc);
                 if (colIdx == null) continue;
                 BigDecimal entered = readBigDecimal(row, colIdx);
-                if (entered == null) entered = BigDecimal.ZERO;
+                if (entered == null) { unreadableRatesOut.add(hc); entered = BigDecimal.ZERO; }
+                enteredRatesOut.put(snapshotKey(hc, fcCtx), entered);
                 BigDecimal newAmount = entered.multiply(totalAttendance).setScale(2, RoundingMode.HALF_UP);
-                LineItem sourceItem = existingByHeadCode.get(hc);
-                if (sourceItem != null) result.add(cloneWithAmount(sourceItem, newAmount));
+                addOrUpdateLineItem(result, existingByHeadCode.get(hc), source, hc, newAmount, entered);
             }
         }
 
@@ -397,6 +410,42 @@ public class BillDetailExcelParser {
         return result;
     }
 
+    /**
+     * Rewrites rateBreakup and noOfDaysWorked on the detail's additionalDetails, preserving
+     * every other key. EnrichmentUtil replaces additionalDetails wholesale rather than merging,
+     * so anything omitted here (editInfo, individualId, attendance) would be dropped.
+     */
+    private Object mergeRateSnapshot(BillDetail source, Map<String, BigDecimal> enteredRates,
+                                      BigDecimal totalAttendance) {
+        Map<String, Object> merged = new LinkedHashMap<>();
+        if (source.getAdditionalDetails() != null) {
+            try {
+                merged.putAll(objectMapper.convertValue(source.getAdditionalDetails(),
+                        new TypeReference<Map<String, Object>>() {}));
+            } catch (Exception e) {
+                log.warn("Could not read additionalDetails for billDetail={}, rewriting rate snapshot only: {}",
+                        source.getId(), e.getMessage());
+            }
+        }
+
+        Map<String, Object> rates = new LinkedHashMap<>();
+        Object existing = merged.get(BILL_DETAIL_RATE_BREAKUP_KEY);
+        if (existing != null) {
+            try {
+                rates.putAll(objectMapper.convertValue(existing, new TypeReference<Map<String, Object>>() {}));
+            } catch (Exception e) {
+                log.warn("Discarding unreadable rateBreakup on billDetail={}: {}",
+                        source.getId(), e.getMessage());
+            }
+        }
+        rates.putAll(enteredRates);   // reviewer's values win; untouched heads keep their snapshot
+
+        merged.put(BILL_DETAIL_RATE_BREAKUP_KEY, rates);
+        merged.put(BILL_DETAIL_ATTENDANCE_KEY, totalAttendance);
+        merged.put(BILL_DETAIL_DAYS_WORKED_KEY, totalAttendance);
+        return merged;
+    }
+
     private BigDecimal sumRunningComponents(RateFieldConfig fc,
                                              BillDetailExcelGenerator.FieldConfigContext fcCtx,
                                              Map<String, BigDecimal> runningAmounts) {
@@ -407,6 +456,40 @@ public class BillDetailExcelParser {
             sum = sum.add(runningAmounts.getOrDefault(componentHc, BigDecimal.ZERO));
         }
         return sum;
+    }
+
+    /**
+     * The calculator omits zero-amount line items, so a worker with no attendance at bill
+     * creation has no payable row to clone. Without creating one, restoring their days saves
+     * nothing and underpays silently. Skipped at rate 0 so we don't litter zero rows.
+     * A null id makes EnrichmentUtil.mergeLineItems assign the id and audit details.
+     */
+    private void addOrUpdateLineItem(List<LineItem> result, LineItem sourceItem, BillDetail detail,
+                                     String headCode, BigDecimal newAmount, BigDecimal enteredRate) {
+        if (sourceItem != null) {
+            result.add(cloneWithAmount(sourceItem, newAmount));
+            return;
+        }
+        if (enteredRate == null || enteredRate.compareTo(BigDecimal.ZERO) <= 0) return;
+
+        log.info("Creating missing payable line item headCode={} amount={} for billDetail={}",
+                headCode, newAmount, detail.getId());
+        result.add(LineItem.builder()
+                .billDetailId(detail.getId())
+                .tenantId(detail.getTenantId())
+                .headCode(headCode)
+                .type(LineItemType.PAYABLE)
+                .amount(newAmount)
+                .paidAmount(BigDecimal.ZERO)
+                .status(Status.ACTIVE)
+                .build());
+    }
+
+    /** rateBreakup is keyed by fieldKey; translate where a headCode is all we have. */
+    private static String snapshotKey(String headCode, BillDetailExcelGenerator.FieldConfigContext fcCtx) {
+        return fcCtx.reverseMapping != null
+                ? fcCtx.reverseMapping.getOrDefault(headCode, headCode)
+                : headCode;
     }
 
     private LineItem cloneWithAmount(LineItem source, BigDecimal newAmount) {

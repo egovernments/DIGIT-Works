@@ -42,6 +42,7 @@ import org.egov.digit.expense.web.models.LineItem;
 import org.egov.digit.expense.web.models.Party;
 import org.egov.digit.expense.web.models.PartialBillDetail;
 import org.egov.digit.expense.web.models.RateFieldConfig;
+import org.egov.digit.expense.web.models.enums.LineItemType;
 import org.egov.digit.expense.web.models.enums.Status;
 import org.egov.tracer.model.CustomException;
 import lombok.extern.slf4j.Slf4j;
@@ -894,21 +895,44 @@ public class BillValidator {
 					.collect(Collectors.joining("; ")));
 		}
 
-		// 5. Rate limit validation — only when bill has a projectType in additionalDetails
+		// 5. A payable total with no payable line items is money with no breakdown — reports and
+		//    payment advice have nothing to render. Clients that build line items themselves can
+		//    post a positive total with an empty list when the calculator omitted the rows.
+		List<BillDetailUpdateError> breakdownErrors =
+				validateAmountHasLineItems(request.getBillDetails(), searchDetailMap);
+		if (!breakdownErrors.isEmpty()) {
+			throw new CustomException(ERR_AMOUNT_WITHOUT_LINE_ITEMS, breakdownErrors.stream()
+					.map(BillDetailUpdateError::getMessage)
+					.collect(Collectors.joining("; ")));
+		}
+
+		// 6. Rate limit validation. MDMS limits only apply when the bill has a projectType, but the
+		//    rate-snapshot check (negative rates, percentage default cap) must run regardless —
+		//    otherwise a bill with no projectType skips it entirely.
 		String projectType = extractProjectType(billFromSearch);
+		Map<String, BigDecimal> headCodeMaxLimits = Collections.emptyMap();
 		if (projectType != null) {
-			Map<String, BigDecimal> headCodeMaxLimits = mdmsUtil.fetchCampaignRateLimits(
+			headCodeMaxLimits = mdmsUtil.fetchCampaignRateLimits(
 					request.getRequestInfo(), request.getTenantId(), projectType);
-			if (!headCodeMaxLimits.isEmpty()) {
-				List<BillDetailUpdateError> rateErrors = validatePayableLineLimits(
-						billFromSearch, request.getBillDetails(), headCodeMaxLimits);
-				if (!rateErrors.isEmpty()) {
-					String msg = rateErrors.stream()
-							.map(BillDetailUpdateError::getMessage)
-							.collect(Collectors.joining("; "));
-					throw new CustomException(ERR_RATE_LIMIT_EXCEEDED, msg);
-				}
-			}
+		}
+		List<BillDetailUpdateError> rateErrors = new ArrayList<>();
+		if (!headCodeMaxLimits.isEmpty())
+			rateErrors.addAll(validatePayableLineLimits(
+					billFromSearch, request.getBillDetails(), headCodeMaxLimits));
+
+		// The line-item check skips PER_DAY at zero attendance, so validate the rate
+		// snapshot directly. Runs even with no MDMS limits — negative rates and the
+		// percentage default cap still apply. Only rates the caller actually changed are
+		// judged: a reviewer resubmits the whole snapshot including keys with no column on
+		// their sheet, and blaming them for the DB's own value would lock the bill for good.
+		rateErrors.addAll(validateRateSnapshotLimits(
+				billFromSearch, request.getBillDetails(), searchDetailMap, headCodeMaxLimits));
+
+		if (!rateErrors.isEmpty()) {
+			String msg = rateErrors.stream()
+					.map(BillDetailUpdateError::getMessage)
+					.collect(Collectors.joining("; "));
+			throw new CustomException(ERR_RATE_LIMIT_EXCEEDED, msg);
 		}
 
 		return new BillDetailValidationResult(billFromSearch, warnings);
@@ -984,6 +1008,11 @@ public class BillValidator {
 					reviewerIter.remove();
 					continue;
 				}
+				// An empty list is not an edit: mergeLineItems returns it as-is and the detail
+				// total is then recomputed from nothing, zeroing the bill silently.
+				if (pd.getLineItems() != null && pd.getLineItems().isEmpty()) pd.setLineItems(null);
+				if (pd.getPayableLineItems() != null && pd.getPayableLineItems().isEmpty())
+					pd.setPayableLineItems(null);
 				stripPayeeFields(pd, db, warnings);
 			}
 			return warnings;
@@ -991,6 +1020,245 @@ public class BillValidator {
 
 		throw new CustomException(ERR_ROLE_STATUS_MISMATCH,
 				"The bill is not available for update at its current stage.");
+	}
+
+	/**
+	 * Caps each rate submitted in additionalDetails.rateBreakup at its MDMS max, regardless of
+	 * attendance. PERCENTAGE fields are keyed by percentageKey, so those resolve to their
+	 * fieldKey's limit and default to 100 — matching the sheet's own validation.
+	 */
+	private List<BillDetailUpdateError> validateRateSnapshotLimits(Bill existingBill,
+	                                                               List<PartialBillDetail> partials,
+	                                                               Map<String, BillDetail> dbDetails,
+	                                                               Map<String, BigDecimal> fieldKeyMaxLimits) {
+		if (CollectionUtils.isEmpty(partials)) return new ArrayList<>();
+
+		// percentageKey -> its config, so a percentage rate finds the right limit
+		Map<String, RateFieldConfig> byPercentageKey = new HashMap<>();
+		buildHeadCodeToConfigMap(existingBill).values().forEach(fc -> {
+			if (VALUE_TYPE_PERCENTAGE.equals(fc.getValueType()) && fc.getPercentageKey() != null)
+				byPercentageKey.put(fc.getPercentageKey(), fc);
+		});
+
+		List<BillDetailUpdateError> errors = new ArrayList<>();
+
+		for (PartialBillDetail partial : partials) {
+			if (partial.getAdditionalDetails() == null) continue;
+			// reject unreadable shapes: skipping persists a snapshot later readers silently drop
+			Map<String, Object> ad;
+			try {
+				ad = objectMapper.convertValue(partial.getAdditionalDetails(),
+						new TypeReference<Map<String, Object>>() {});
+			} catch (Exception e) {
+				log.warn("Unreadable additionalDetails on billDetail={}: {}", partial.getId(), e.getMessage());
+				errors.add(rateError(partial.getId(), "additionalDetails must be an object"));
+				continue;
+			}
+
+			Object raw = ad.get(BILL_DETAIL_RATE_BREAKUP_KEY);
+			if (raw == null) continue;
+
+			Map<String, Object> persisted = persistedRates(dbDetails.get(partial.getId()));
+
+			Map<String, Object> rawRates;
+			try {
+				rawRates = objectMapper.convertValue(raw, new TypeReference<Map<String, Object>>() {});
+			} catch (Exception e) {
+				log.warn("Unreadable rateBreakup on billDetail={}: {}", partial.getId(), e.getMessage());
+				errors.add(rateError(partial.getId(),
+						"rateBreakup must be an object keyed by rate name, found " + describe(raw)));
+				continue;
+			}
+
+			Map<String, BigDecimal> rates = new HashMap<>();
+			List<BillDetailUpdateError> parseErrors = new ArrayList<>();
+			rawRates.forEach((k, v) -> {
+				if (sameAsPersisted(v, persisted, k)) return;   // the DB's own value, not the caller's
+				if (v == null) {
+					// skipping would persist the null, and every later reader drops it silently
+					parseErrors.add(rateError(partial.getId(), "Rate for " + k + " must not be null"));
+					return;
+				}
+				BigDecimal parsed;
+				try {
+					parsed = new BigDecimal(v.toString());
+				} catch (NumberFormatException e) {
+					// reject rather than skip: a skipped value still gets persisted
+					parseErrors.add(rateError(partial.getId(),
+							"Rate for " + k + " is not a number, found '" + v + "'"));
+					return;
+				}
+				// bound before any message calls toPlainString(); Math.abs is unsafe at MIN_VALUE
+				if (parsed.scale() > MAX_RATE_SCALE || parsed.scale() < -MAX_RATE_SCALE
+						|| parsed.precision() > MAX_RATE_PRECISION) {
+					parseErrors.add(rateError(partial.getId(), "Rate for " + k + " is out of range"));
+					return;
+				}
+				rates.put(k, parsed);
+			});
+			if (!parseErrors.isEmpty()) {
+				errors.addAll(parseErrors);
+				continue;
+			}
+
+			rates.forEach((snapshotKey, rate) -> {
+				if (rate == null) return;
+
+				if (rate.compareTo(BigDecimal.ZERO) < 0) {
+					errors.add(rateError(partial.getId(),
+							"Rate for " + snapshotKey + " cannot be negative, found "
+									+ rate.toPlainString()));
+					return;
+				}
+
+				RateFieldConfig pctConfig = byPercentageKey.get(snapshotKey);
+				BigDecimal limit = pctConfig != null
+						? fieldKeyMaxLimits.getOrDefault(pctConfig.getFieldKey(), BigDecimal.valueOf(100))
+						: fieldKeyMaxLimits.get(snapshotKey);
+				if (limit == null) return;
+
+				if (rate.compareTo(limit) > 0)
+					errors.add(rateError(partial.getId(),
+							"Rate for " + snapshotKey + " must be between 0 and "
+									+ limit.stripTrailingZeros().toPlainString() + ", found "
+									+ rate.toPlainString()));
+			});
+		}
+		return errors;
+	}
+
+	/** The rateBreakup already persisted for a bill detail; empty when there is none or it is unreadable. */
+	private Map<String, Object> persistedRates(BillDetail db) {
+		if (db == null || db.getAdditionalDetails() == null) return Collections.emptyMap();
+		try {
+			Map<String, Object> ad = objectMapper.convertValue(db.getAdditionalDetails(),
+					new TypeReference<Map<String, Object>>() {});
+			Object raw = ad.get(BILL_DETAIL_RATE_BREAKUP_KEY);
+			return raw == null ? Collections.emptyMap()
+					: objectMapper.convertValue(raw, new TypeReference<Map<String, Object>>() {});
+		} catch (Exception e) {
+			log.warn("Unreadable persisted rateBreakup on billDetail={}: {}", db.getId(), e.getMessage());
+			return Collections.emptyMap();
+		}
+	}
+
+	/** Numeric compare, so a snapshot echoed back as 100.0 still matches a persisted 100. */
+	private boolean sameAsPersisted(Object submitted, Map<String, Object> persisted, String key) {
+		if (!persisted.containsKey(key)) return false;
+		Object dbValue = persisted.get(key);
+		if (Objects.equals(submitted, dbValue)) return true;
+		if (submitted == null || dbValue == null) return false;
+		try {
+			return new BigDecimal(submitted.toString()).compareTo(new BigDecimal(dbValue.toString())) == 0;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Rejects a positive totalAmount with no payable line items anywhere — submitted or persisted.
+	 * Deliberately not a full total-vs-sum equality check: clients round differently, and a strict
+	 * comparison would reject legitimate saves.
+	 */
+	private List<BillDetailUpdateError> validateAmountHasLineItems(List<PartialBillDetail> partials,
+	                                                               Map<String, BillDetail> dbDetails) {
+		if (CollectionUtils.isEmpty(partials)) return new ArrayList<>();
+		List<BillDetailUpdateError> errors = new ArrayList<>();
+
+		for (PartialBillDetail pd : partials) {
+			BigDecimal total = pd.getTotalAmount();
+			if (total == null || total.compareTo(BigDecimal.ZERO) <= 0) continue;
+
+			if (hasPayableItem(pd.getPayableLineItems()) || hasPayableItem(pd.getLineItems())) continue;
+
+			// nothing submitted — fall back to what is already stored. Only an explicitly empty
+			// payableLineItems speaks for the payables; lineItems may legitimately carry
+			// deductions only, or be empty while payableLineItems is omitted.
+			BillDetail db = dbDetails.get(pd.getId());
+			boolean submittedEmptyPayables =
+					pd.getPayableLineItems() != null && pd.getPayableLineItems().isEmpty();
+			if (!submittedEmptyPayables && db != null
+					&& (hasPayableItem(db.getPayableLineItems()) || hasPayableItem(db.getLineItems())))
+				continue;
+
+			errors.add(BillDetailUpdateError.builder()
+					.billDetailId(pd.getId())
+					.code(ERR_AMOUNT_WITHOUT_LINE_ITEMS)
+					.message("Bill detail " + pd.getId() + " has a total of " + total.toPlainString()
+							+ " but no payable line items to account for it.")
+					.build());
+		}
+		return errors;
+	}
+
+	private boolean hasPayableItem(List<LineItem> items) {
+		return items != null && items.stream()
+				.anyMatch(li -> li != null && li.getType() == LineItemType.PAYABLE
+						&& li.getStatus() != Status.INACTIVE);
+	}
+
+	/** A configured rate is money or a percentage; anything beyond these bounds is not one. */
+	private static final int MAX_RATE_SCALE     = 6;
+	private static final int MAX_RATE_PRECISION = 15;
+
+	/** Shape of a bad rateBreakup, for the error message — never the value, which may be large. */
+	private static String describe(Object raw) {
+		if (raw instanceof Collection || raw instanceof Object[]) return "a list";
+		return "a " + raw.getClass().getSimpleName().toLowerCase();
+	}
+
+	private BillDetailUpdateError rateError(String billDetailId, String message) {
+		return BillDetailUpdateError.builder()
+				.billDetailId(billDetailId)
+				.code(ERR_RATE_LIMIT_EXCEEDED)
+				.message(message + " (billDetailId=" + billDetailId + ")")
+				.build();
+	}
+
+	/** Keys only a reviewer may change; an editor's values are overwritten with the DB's. */
+	private static final List<String> REVIEWER_OWNED_DETAIL_KEYS =
+			List.of(BILL_DETAIL_RATE_BREAKUP_KEY, BILL_DETAIL_ATTENDANCE_KEY, BILL_DETAIL_DAYS_WORKED_KEY);
+
+	/**
+	 * Forces the reviewer-owned additionalDetails keys back to their persisted values, leaving
+	 * an editor's own keys (editInfo.payeeUpdatedAtEpochMs) untouched. Returns true only when the
+	 * editor actually sent a different value, so a plain omission doesn't raise a warning.
+	 */
+	private boolean restoreCalculationMetadata(PartialBillDetail pd, BillDetail db) {
+		if (pd.getAdditionalDetails() == null) return false;
+
+		Map<String, Object> pdDetails;
+		try {
+			pdDetails = objectMapper.convertValue(pd.getAdditionalDetails(),
+					new TypeReference<Map<String, Object>>() {});
+		} catch (Exception e) {
+			log.warn("Unreadable additionalDetails on billDetail={} — keeping the persisted copy: {}",
+					pd.getId(), e.getMessage());
+			pd.setAdditionalDetails(db.getAdditionalDetails());
+			return true;
+		}
+
+		Map<String, Object> dbDetails = Collections.emptyMap();
+		if (db.getAdditionalDetails() != null) {
+			try {
+				dbDetails = objectMapper.convertValue(db.getAdditionalDetails(),
+						new TypeReference<Map<String, Object>>() {});
+			} catch (Exception e) {
+				log.warn("Unreadable persisted additionalDetails on billDetail={}: {}", pd.getId(), e.getMessage());
+			}
+		}
+
+		boolean forged = false;
+		for (String key : REVIEWER_OWNED_DETAIL_KEYS) {
+			Object dbValue = dbDetails.get(key);
+			boolean submitted = pdDetails.containsKey(key);
+			if (submitted && !Objects.equals(pdDetails.get(key), dbValue)) forged = true;
+
+			if (dbValue != null) pdDetails.put(key, dbValue);
+			else pdDetails.remove(key);
+		}
+		pd.setAdditionalDetails(pdDetails);
+		return forged;
 	}
 
 	/** Strips amount/attendance/lineItem fields blocked for PAYMENT_EDITOR. */
@@ -1013,15 +1281,25 @@ public class BillValidator {
 				&& (db.getTotalAttendance() == null || pd.getTotalAttendance().compareTo(db.getTotalAttendance()) != 0)) {
 			pd.setTotalAttendance(null); stripped.add("totalAttendance");
 		}
-		if (pd.getLineItems() != null && !pd.getLineItems().isEmpty()) {
-			pd.setLineItems(null); stripped.add("lineItems");
+		// Empty lists are normalised to null too, not just non-empty ones: left as [] they would
+		// wipe the persisted rows in mergeLineItems and count as "no payables" downstream.
+		// Only a list that actually carried something counts as a rejected edit.
+		if (pd.getLineItems() != null) {
+			boolean carriedItems = !pd.getLineItems().isEmpty();
+			pd.setLineItems(null);
+			if (carriedItems) stripped.add("lineItems");
 		}
-		if (pd.getPayableLineItems() != null && !pd.getPayableLineItems().isEmpty()) {
-			pd.setPayableLineItems(null); stripped.add("payableLineItems");
+		if (pd.getPayableLineItems() != null) {
+			boolean carriedItems = !pd.getPayableLineItems().isEmpty();
+			pd.setPayableLineItems(null);
+			if (carriedItems) stripped.add("payableLineItems");
 		}
 		if (pd.getWorkerId() != null && !pd.getWorkerId().equals(db.getWorkerId())) {
 			pd.setWorkerId(null); stripped.add("workerId");
 		}
+		// Calculation metadata is reviewer-owned. Restored from the DB rather than removed:
+		// EnrichmentUtil takes additionalDetails wholesale, so removing a key would delete it.
+		if (restoreCalculationMetadata(pd, db)) stripped.add("additionalDetails.rateBreakup");
 
 		if (!stripped.isEmpty())
 			warnings.add(BillDetailUpdateError.builder()
