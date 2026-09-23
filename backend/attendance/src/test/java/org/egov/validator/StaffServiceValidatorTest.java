@@ -168,5 +168,33 @@ public class StaffServiceValidatorTest {
         assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionOnCreate(staffPermissionRequest, staffPermissionList, attendanceRegisterList));
     }
 
+    @DisplayName("staff with a pending future de-enrolment is still enrolled, so re-enrolment is blocked")
+    @Test
+    void shouldThrowExceptionIfStaffHasFutureDatedDeEnrolment() {
+
+        StaffPermissionRequest staffPermissionRequest = StaffRequestBuilderTest.getStaffPermissionRequest();
+        List<StaffPermission> staffPermissionList = AttendanceRegisterBuilderTest.getStaff();
+        List<AttendanceRegister> attendanceRegisterList = AttendanceRegisterBuilderTest.getAttendanceRegisterList();
+
+        staffPermissionList.forEach(staff -> staff.setDenrollmentDate(
+                BigDecimal.valueOf(System.currentTimeMillis() + 30L * 24 * 60 * 60 * 1000)));
+
+        assertThrows(CustomException.class, () -> staffServiceValidator.validateStaffPermissionOnCreate(staffPermissionRequest, staffPermissionList, attendanceRegisterList));
+    }
+
+    @DisplayName("staff de-enrolled in the past is free to be enrolled again")
+    @Test
+    void shouldAllowReEnrolmentWhenDeEnrolmentDateHasPassed() {
+
+        StaffPermissionRequest staffPermissionRequest = StaffRequestBuilderTest.getStaffPermissionRequest();
+        List<StaffPermission> staffPermissionList = AttendanceRegisterBuilderTest.getStaff();
+        List<AttendanceRegister> attendanceRegisterList = AttendanceRegisterBuilderTest.getAttendanceRegisterList();
+
+        staffPermissionList.forEach(staff -> staff.setDenrollmentDate(
+                BigDecimal.valueOf(System.currentTimeMillis() - 24L * 60 * 60 * 1000)));
+
+        assertDoesNotThrow(() -> staffServiceValidator.validateStaffPermissionOnCreate(staffPermissionRequest, staffPermissionList, attendanceRegisterList));
+    }
+
 
 }

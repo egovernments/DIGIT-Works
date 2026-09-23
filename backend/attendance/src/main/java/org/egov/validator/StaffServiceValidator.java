@@ -176,12 +176,17 @@ public class StaffServiceValidator {
                 StaffPermission staff = staffPermissionListFromDB.stream()
                         .filter(s -> s.getUserId().equals(staffFromRequest.getUserId()) && s.getRegisterId().equals(staffFromRequest.getRegisterId()))
                         .findFirst().orElse(null);
-                if (staff != null && staff.getDenrollmentDate() == null) {
+                if (staff != null && isStillEnrolled(staff.getDenrollmentDate())) {
                     throw new CustomException("USER_id", "Staff " + staff.getUserId() + " is already enrolled in the register " + staff.getRegisterId());
                 }
             }
         }
 
+    }
+
+    private static boolean isStillEnrolled(BigDecimal denrollmentDate) {
+        return denrollmentDate == null
+                || denrollmentDate.compareTo(BigDecimal.valueOf(System.currentTimeMillis())) > 0;
     }
 
 

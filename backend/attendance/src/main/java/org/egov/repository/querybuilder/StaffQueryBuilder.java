@@ -35,7 +35,8 @@ public class StaffQueryBuilder {
     public String getActiveAttendanceStaffSearchQuery(StaffSearchCriteria criteria, List<Object> preparedStmtList) throws InvalidTenantIdException {
         StringBuilder query = new StringBuilder( getAttendanceStaffSearchQuery(criteria, preparedStmtList));
         addClauseIfRequired(query, preparedStmtList);
-        query.append(" stf.deenrollment_date is null ");
+        query.append(" (stf.deenrollment_date is null OR stf.deenrollment_date > ?) ");
+        preparedStmtList.add(System.currentTimeMillis());
 
         return query.toString();
     }
