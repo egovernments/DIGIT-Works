@@ -81,7 +81,7 @@ public class StaffRowMapper implements ResultSetExtractor<List<StaffPermission>>
         } catch (IOException e) {
             throw new CustomException("PARSING ERROR", "Failed to parse additionalDetail object");
         }
-        if (additionalDetails.isEmpty())
+        if (additionalDetails != null && additionalDetails.isEmpty())
             additionalDetails = null;
         return additionalDetails;
     }

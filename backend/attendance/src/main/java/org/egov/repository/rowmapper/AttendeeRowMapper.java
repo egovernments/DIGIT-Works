@@ -81,7 +81,7 @@ public class AttendeeRowMapper implements ResultSetExtractor<List<IndividualEntr
         } catch (IOException e) {
             throw new CustomException("PARSING ERROR", "Failed to parse additionalDetail object");
         }
-        if (additionalDetails.isEmpty())
+        if (additionalDetails != null && additionalDetails.isEmpty())
             additionalDetails = null;
         return additionalDetails;
     }

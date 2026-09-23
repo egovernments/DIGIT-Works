@@ -122,7 +122,7 @@ public class AttendanceLogRowMapper implements ResultSetExtractor<List<Attendanc
             log.error("Failed to parse additionalDetail object");
             throw new CustomException("PARSING_ERROR", "Failed to parse additionalDetail object");
         }
-        if (additionalDetails.isEmpty())
+        if (additionalDetails != null && additionalDetails.isEmpty())
             additionalDetails = null;
         return additionalDetails;
     }
