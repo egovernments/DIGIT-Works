@@ -38,6 +38,7 @@ public class FaceAuthEventQueryBuilder {
             "fae.response_time as faeResponseTime, " +
             "fae.response_type as faeResponseType, " +
             "fae.face_image as faeFaceImage, " +
+            "fae.face_image_fs_id as faeFaceImageFsId, " +
             "fae.anomaly_flags as faeAnomalyFlags, " +
             "fae.project_id as faeProjectId, " +
             "fae.boundary_code as faeBoundaryCode, " +

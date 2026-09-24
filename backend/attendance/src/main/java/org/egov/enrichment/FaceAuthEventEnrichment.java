@@ -23,6 +23,11 @@ public class FaceAuthEventEnrichment {
         this.attendanceServiceUtil = attendanceServiceUtil;
     }
 
+    /**
+     * API-stage enrichment: id and auditDetails are server-owned, so they are ALWAYS overwritten —
+     * a client-supplied id (spoofable PK / duplicate-key poison) or auditDetails (spoofable audit
+     * trail) is never trusted.
+     */
     public void enrichCreateRequest(FaceAuthEventRequest request) {
         log.info("Enriching face auth event create request");
         String byUser = request.getRequestInfo().getUserInfo().getUuid();
@@ -34,6 +39,25 @@ public class FaceAuthEventEnrichment {
             event.setAuditDetails(auditDetails);
         }
         log.info("Enriched {} face auth events for create", events.size());
+    }
+
+    /**
+     * Consumer-stage enrichment: fills id/auditDetails only when absent — a no-op for events that
+     * already passed API-stage enrichment, and a safety net for events produced straight to the bulk
+     * topic. Never regenerates an id that is already assigned (idempotent under redelivery).
+     */
+    public void enrichMissingIdentifiers(FaceAuthEventRequest request) {
+        String byUser = request.getRequestInfo().getUserInfo().getUuid();
+        AuditDetails auditDetails = attendanceServiceUtil.getAuditDetails(byUser, null, true);
+
+        for (FaceAuthEvent event : request.getFaceAuthEvents()) {
+            if (event.getId() == null || event.getId().isEmpty()) {
+                event.setId(String.valueOf(UUID.randomUUID()));
+            }
+            if (event.getAuditDetails() == null) {
+                event.setAuditDetails(auditDetails);
+            }
+        }
     }
 
     public void enrichSearchRequest(FaceAuthEventSearchCriteria searchCriteria) {
