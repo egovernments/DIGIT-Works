@@ -18,7 +18,7 @@ const search_user = async (uuid: string, tenantId: string, requestinfo: any) => 
 /*
   This asynchronous function searches for muster rolls based on the provided parameters.
 */
-const search_muster = async (params: any, requestinfo: any) => {
+const search_muster = async (params: any, requestinfo: any, key: string) => {
   // Send an HTTP request to the muster search endpoint using the provided parameters and request information.
   const musterResponse = await httpRequest(
     url.resolve(config.host.muster, config.paths.mus_search),
@@ -29,7 +29,7 @@ const search_muster = async (params: any, requestinfo: any) => {
   // Check if there are muster rolls in the response.
   if (musterResponse?.musterRolls?.length > 0) {
     // If muster rolls are found, return them.
-    return musterResponse?.musterRolls?.[0];
+    return musterResponse?.musterRolls;
   }
 
   // If no muster rolls are found, return an error code.
@@ -150,8 +150,8 @@ const search_contract = async (params: any, requestinfo: any, cachekey: any) => 
 
   // Check if there are contracts in the response.
   if (contractResponse?.contracts?.length > 0) {
-    // If contracts are found, return the first one.
-    return contractResponse?.contracts?.[0];
+    // If contracts are found, return the first ACTIVE one.
+    return contractResponse?.contracts?.filter((ob: any) => ob?.status === "ACTIVE")?.length > 0 ? contractResponse?.contracts?.filter((ob: any) => ob?.status === "ACTIVE")?.[0] : contractResponse?.contracts?.[0];
   }
 
   // If no contracts are found, return an error code.
@@ -206,6 +206,52 @@ const search_measurement = async (requestinfo: any, cachekey: any, allResponse: 
   return getErrorCodes("WORKS", "NO_MEASUREMENT_ROLL_FOUND");
 }
 
+const calculate_expense = async (params: any, requestinfo: any, cachekey: any) => {
+  // Send an HTTP request to the muster search endpoint using the provided parameters and request information.
+  const expenseResponse = await httpRequest(
+    url.resolve(config.host.expense_calculator, config.paths.expense_caluclator),
+    requestinfo,
+    params
+  );
+
+  // Check if there are muster rolls in the response.
+  if ( Object.keys(expenseResponse.calculation).length > 0) {
+    // If muster rolls are found, return them.
+    return expenseResponse?.calculation;
+  }
+
+  // If no muster rolls are found, return an error code.
+  return getErrorCodes("WORKS", "NO_WB_CALCULATION_FOUND_FOR_GIVEN_MUSTER_ROLL");
+}
+
+
+const searchRates = async (tenantId: string, module: string, master: string, requestinfo: any) => {
+  const requestBody = {
+    RequestInfo: requestinfo.RequestInfo,
+    MdmsCriteria: {
+      tenantId: tenantId,
+      moduleDetails: [
+        {
+          moduleName: module,
+          masterDetails: [
+            {
+              name: master,
+            },
+          ],
+        },
+      ],
+    },
+  };
+  return await httpRequest(
+    url.resolve(config.host.mdmsV2, config.paths.mdmsV2_search),
+    requestBody,
+    null,
+    "post",
+    "",
+    { cachekey: `${tenantId}-${module}-${master}` }
+  ).then((response: { MdmsRes: any; })=>response.MdmsRes[module][master]);
+}
+
 export {
   create_pdf,
   create_pdf_and_upload,
@@ -217,5 +263,7 @@ export {
   search_localization,
   search_contract,
   search_estimate,
-  search_measurement
+  search_measurement,
+  calculate_expense,
+  searchRates
 };
