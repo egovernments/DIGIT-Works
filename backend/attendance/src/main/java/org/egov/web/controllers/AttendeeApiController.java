@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import java.util.List;
+import org.egov.requestvalidation.ValidateRequest;
 
+@ValidateRequest
 @Controller
 @RequestMapping("/attendee/v1")
 public class AttendeeApiController {

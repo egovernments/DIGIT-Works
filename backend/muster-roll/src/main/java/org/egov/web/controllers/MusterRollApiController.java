@@ -24,10 +24,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
 import java.util.List;
+import org.egov.requestvalidation.ValidateRequest;
 
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-11-14T19:58:09.415+05:30")
 @Slf4j
 
+@ValidateRequest
 @Controller
 @RequestMapping("/v1")
 public class MusterRollApiController {
