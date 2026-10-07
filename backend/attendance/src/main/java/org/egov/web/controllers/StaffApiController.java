@@ -24,7 +24,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.validation.Valid;
 import java.util.List;
+import org.egov.requestvalidation.ValidateRequest;
 
+@ValidateRequest
 @Controller
 @RequestMapping("/staff/v1")
 public class StaffApiController {

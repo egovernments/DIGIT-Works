@@ -17,8 +17,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import org.egov.requestvalidation.ValidateRequest;
 
 
+@ValidateRequest
 @Controller
 @RequestMapping("/v1")
 public class AttendanceApiController {

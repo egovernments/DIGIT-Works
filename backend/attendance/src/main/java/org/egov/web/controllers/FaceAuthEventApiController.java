@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 import java.util.Optional;
+import org.egov.requestvalidation.ValidateRequest;
 
+@ValidateRequest
 @Controller
 @RequestMapping("/face-auth/v1")
 public class FaceAuthEventApiController {
