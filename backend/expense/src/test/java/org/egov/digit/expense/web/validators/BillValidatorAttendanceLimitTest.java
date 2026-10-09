@@ -149,6 +149,138 @@ public class BillValidatorAttendanceLimitTest {
         assertEquals(1, invokeFullBill(updatedBillWith(BigDecimal.valueOf(-2)), billWithPeriod()).size());
     }
 
+    // ── the rate snapshot is capped regardless of attendance ─────────────────
+
+    @SuppressWarnings("unchecked")
+    private List<BillDetailUpdateError> invokeSnapshotLimits(String key, Object rate, Bill existingBill) {
+        Map<String, Object> ad = new HashMap<>();
+        ad.put("rateBreakup", Map.of(key, rate));
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .totalAttendance(BigDecimal.ZERO).additionalDetails(ad).build();
+        try {
+            Method m = BillValidator.class.getDeclaredMethod(
+                    "validateRateSnapshotLimits", Bill.class, List.class, Map.class);
+            m.setAccessible(true);
+            return (List<BillDetailUpdateError>) m.invoke(validator, existingBill, List.of(pd),
+                    Map.of("PER_DAY", BigDecimal.valueOf(150)));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private List<BillDetailUpdateError> invokeSnapshotLimits(Object rate) {
+        return invokeSnapshotLimits("PER_DAY", rate, billWithPeriod());
+    }
+
+    /** Bill whose fieldConfig declares a PERCENTAGE field keyed by FEE_PCT. */
+    private Bill billWithPercentageConfig() {
+        Map<String, Object> ad = new HashMap<>();
+        ad.put("periodStartDate", PERIOD_START);
+        ad.put("periodEndDate", PERIOD_END);
+        ad.put("workerRatesSnapshot", List.of(Map.of(
+                "fieldKey", "FEES", "isPayable", true, "valueType", "PERCENTAGE",
+                "paymentType", "PER_DAY", "percentageKey", "FEE_PCT",
+                "components", List.of("PER_DAY"))));
+        return Bill.builder().id("bill-pct").tenantId("demo").additionalDetails(ad).build();
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<BillDetailUpdateError> invokeSnapshotLimitsNoMdms(Object rate) {
+        Map<String, Object> ad = new HashMap<>();
+        ad.put("rateBreakup", Map.of("PER_DAY", rate));
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1")
+                .totalAttendance(BigDecimal.ZERO).additionalDetails(ad).build();
+        try {
+            Method m = BillValidator.class.getDeclaredMethod(
+                    "validateRateSnapshotLimits", Bill.class, List.class, Map.class);
+            m.setAccessible(true);
+            return (List<BillDetailUpdateError>) m.invoke(validator, billWithPeriod(), List.of(pd), Map.of());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    void nonNumericRateIsRejectedRatherThanSkipped() {
+        assertEquals(1, invokeSnapshotLimits("PER_DAY", "abc", billWithPeriod()).size(),
+                "a skipped value would still be persisted");
+    }
+
+    @Test
+    void negativeRateIsRejectedEvenWithNoMdmsLimit() {
+        assertEquals(1, invokeSnapshotLimitsNoMdms(-5).size());
+        assertTrue(invokeSnapshotLimitsNoMdms(9999).isEmpty(),
+                "with no MDMS limit there is no ceiling to apply for a flat field");
+    }
+
+    @Test
+    void percentageRateDefaultsToACapOf100() {
+        assertEquals(1, invokeSnapshotLimits("FEE_PCT", 150, billWithPercentageConfig()).size(),
+                "no explicit MDMS limit for a percentage field means max 100");
+        assertTrue(invokeSnapshotLimits("FEE_PCT", 100, billWithPercentageConfig()).isEmpty());
+    }
+
+    @Test
+    void outOfRangeRateIsRejectedEvenAtZeroAttendance() {
+        // the line-item check is skipped at 0 days, so this is the only thing guarding it
+        assertEquals(1, invokeSnapshotLimits(9999).size());
+        assertEquals(1, invokeSnapshotLimits(-1).size());
+    }
+
+    @Test
+    void inRangeRateIsAccepted() {
+        assertTrue(invokeSnapshotLimits(150).isEmpty());
+        assertTrue(invokeSnapshotLimits(0).isEmpty());
+    }
+
+    // ── editors must not be able to forge the rate snapshot ───────────────────
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> invokeRestore(PartialBillDetail pd, BillDetail db) {
+        try {
+            Method m = BillValidator.class.getDeclaredMethod(
+                    "restoreCalculationMetadata", PartialBillDetail.class, BillDetail.class);
+            m.setAccessible(true);
+            m.invoke(validator, pd, db);
+            return new ObjectMapper().convertValue(pd.getAdditionalDetails(), Map.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private BillDetail dbDetailWithRate(Object rate) {
+        Map<String, Object> ad = new HashMap<>();
+        ad.put("rateBreakup", Map.of("PER_DAY", rate));
+        ad.put("attendance", 3);
+        return BillDetail.builder().id("d1").additionalDetails(ad).build();
+    }
+
+    @Test
+    void editorForgedRateIsReplacedByThePersistedOne() {
+        Map<String, Object> forged = new HashMap<>();
+        forged.put("rateBreakup", Map.of("PER_DAY", 9999));
+        forged.put("editInfo", Map.of("payeeUpdatedAtEpochMs", 1L));
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1").additionalDetails(forged).build();
+
+        Map<String, Object> result = invokeRestore(pd, dbDetailWithRate(10));
+
+        assertEquals(Map.of("PER_DAY", 10), result.get("rateBreakup"), "the DB rate must win");
+        assertNotNull(result.get("editInfo"), "the editor's own key must survive");
+    }
+
+    @Test
+    void editorOmittingTheSnapshotDoesNotDeleteIt() {
+        // EnrichmentUtil takes additionalDetails wholesale, so an omitted key would be lost
+        Map<String, Object> submitted = new HashMap<>();
+        submitted.put("editInfo", Map.of("payeeUpdatedAtEpochMs", 1L));
+        PartialBillDetail pd = PartialBillDetail.builder().id("d1").additionalDetails(submitted).build();
+
+        Map<String, Object> result = invokeRestore(pd, dbDetailWithRate(10));
+
+        assertEquals(Map.of("PER_DAY", 10), result.get("rateBreakup"), "must be restored, not dropped");
+        assertEquals(3, result.get("attendance"));
+    }
+
     @Test
     void fullBillUpdateWithNoDetailsIsANoOp() {
         assertTrue(invokeFullBill(Bill.builder().id("b").build(), billWithPeriod()).isEmpty());

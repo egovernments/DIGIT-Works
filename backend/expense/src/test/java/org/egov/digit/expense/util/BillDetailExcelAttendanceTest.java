@@ -52,6 +52,8 @@ public class BillDetailExcelAttendanceTest {
     @Mock private Configuration config;
     @Mock private MdmsUtil mdmsUtil;
 
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
     private BillDetailExcelGenerator generator;
     private BillDetailExcelParser parser;
 
@@ -239,6 +241,241 @@ public class BillDetailExcelAttendanceTest {
 
         assertTrue(ex.getMessage().contains("W1"), ex.getMessage());
         assertTrue(ex.getMessage().contains("W3"), ex.getMessage());
+    }
+
+    // ── rate snapshot survives an attendance edit (HCMPRE-4444) ──────────────
+
+    /** Seeds additionalDetails.rateBreakup on every detail, as the calculator now does. */
+    private void seedRates(Bill bill, double rate) {
+        for (BillDetail d : bill.getBillDetails()) {
+            Map<String, Object> ad = new HashMap<>();
+            ad.put(BILL_DETAIL_RATE_BREAKUP_KEY, Map.of(HEAD_CODE, BigDecimal.valueOf(rate)));
+            ad.put("individualId", "ind-" + d.getWorkerId());
+            ad.put("editInfo", Map.of("payeeUpdatedAtEpochMs", 1L));
+            d.setAdditionalDetails(ad);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> ratesOf(PartialBillDetail pd) {
+        return (Map<String, Object>) adOf(pd).get(BILL_DETAIL_RATE_BREAKUP_KEY);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> adOf(PartialBillDetail pd) {
+        return MAPPER.convertValue(pd.getAdditionalDetails(), Map.class);
+    }
+
+    @Test
+    void sheetShowsTheSnapshotRateEvenWhenAttendanceIsZero() throws Exception {
+        // Previously 0/0 rendered as 0 and the rate was gone for good
+        Bill bill = bill(period(), Status.UNDER_REVIEW, "W1");
+        bill.getBillDetails().get(0).setTotalAttendance(BigDecimal.ZERO);
+        bill.getBillDetails().get(0).getLineItems().get(0).setAmount(BigDecimal.ZERO);
+        seedRates(bill, 10);
+
+        try (XSSFWorkbook wb = new XSSFWorkbook(new ByteArrayInputStream(template(bill, reviewer)))) {
+            int rateCol = BillDetailExcelGenerator.STATIC_COL_COUNT; // single head code
+            assertEquals(10.0, wb.getSheetAt(0).getRow(1).getCell(rateCol).getNumericCellValue(), 0.001);
+        }
+    }
+
+    @Test
+    void zeroingAttendanceZeroesTheAmountButKeepsTheRate() throws Exception {
+        Bill bill = bill(period(), Status.UNDER_REVIEW, "W1");
+        seedRates(bill, 10);
+        byte[] edited = withAttendance(template(bill, reviewer), Map.of(1, "0"));
+
+        PartialBillDetail pd = parser.parse(edited, bill, reviewer, requestInfo).get(0);
+
+        assertEquals(0, pd.getTotalAmount().compareTo(BigDecimal.ZERO), "0 days must pay 0");
+        assertEquals(0, new BigDecimal(ratesOf(pd).get(HEAD_CODE).toString()).compareTo(BigDecimal.TEN),
+                "the rate must survive");
+    }
+
+    @Test
+    void attendanceBackFromZeroPaysTheRateAgain() throws Exception {
+        // The reported bug: 0 -> 1 day still paid 0 because the rate had been overwritten
+        Bill bill = bill(period(), Status.UNDER_REVIEW, "W1");
+        seedRates(bill, 10);
+
+        PartialBillDetail zeroed = parser.parse(
+                withAttendance(template(bill, reviewer), Map.of(1, "0")), bill, reviewer, requestInfo).get(0);
+
+        // apply that save back onto the bill, as the DB would hold it
+        BillDetail detail = bill.getBillDetails().get(0);
+        detail.setTotalAttendance(zeroed.getTotalAttendance());
+        detail.setLineItems(new ArrayList<>(zeroed.getLineItems()));
+        detail.setAdditionalDetails(zeroed.getAdditionalDetails());
+
+        PartialBillDetail restored = parser.parse(
+                withAttendance(template(bill, reviewer), Map.of(1, "1")), bill, reviewer, requestInfo).get(0);
+
+        assertEquals(0, restored.getTotalAmount().compareTo(BigDecimal.valueOf(10)),
+                "1 day at rate 10 must pay 10, not 0");
+    }
+
+    @Test
+    void reviewerRateEditStillPersists() throws Exception {
+        Bill bill = bill(period(), Status.UNDER_REVIEW, "W1");
+        seedRates(bill, 10);
+
+        byte[] tpl = template(bill, reviewer);
+        try (XSSFWorkbook wb = new XSSFWorkbook(new ByteArrayInputStream(tpl))) {
+            wb.getSheetAt(0).getRow(1).getCell(BillDetailExcelGenerator.STATIC_COL_COUNT).setCellValue(20.0);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            wb.write(out);
+            tpl = out.toByteArray();
+        }
+
+        PartialBillDetail pd = parser.parse(tpl, bill, reviewer, requestInfo).get(0);
+        assertEquals(0, new BigDecimal(ratesOf(pd).get(HEAD_CODE).toString())
+                .compareTo(BigDecimal.valueOf(20)), "a deliberate rate change must stick");
+    }
+
+    @Test
+    void mergingTheRateSnapshotPreservesOtherAdditionalDetailKeys() throws Exception {
+        Bill bill = bill(period(), Status.UNDER_REVIEW, "W1");
+        seedRates(bill, 10);
+        byte[] edited = withAttendance(template(bill, reviewer), Map.of(1, "2"));
+
+        PartialBillDetail pd = parser.parse(edited, bill, reviewer, requestInfo).get(0);
+        Map<String, Object> ad = adOf(pd);
+
+        assertNotNull(ad.get("editInfo"), "EnrichmentUtil replaces wholesale — editInfo must be kept");
+        assertNotNull(ad.get("individualId"));
+        assertEquals(0, new BigDecimal(ad.get("noOfDaysWorked").toString())
+                .compareTo(BigDecimal.valueOf(2)), "noOfDaysWorked must track attendance");
+    }
+
+    @Test
+    void billsWithoutASnapshotStillDeriveTheRateFromTheAmount() throws Exception {
+        // Pre-fix bills carry no rateBreakup: 1500 over 10 days -> 150/day
+        Bill bill = bill(period(), Status.UNDER_REVIEW, "W1");
+        bill.getBillDetails().get(0).setTotalAttendance(BigDecimal.TEN);
+
+        try (XSSFWorkbook wb = new XSSFWorkbook(new ByteArrayInputStream(template(bill, reviewer)))) {
+            int rateCol = BillDetailExcelGenerator.STATIC_COL_COUNT;
+            assertEquals(150.0, wb.getSheetAt(0).getRow(1).getCell(rateCol).getNumericCellValue(), 0.001);
+        }
+    }
+
+    /**
+     * The calculator omits zero-amount line items, so a worker absent at bill creation has no
+     * payable row. Restoring their days must still pay them.
+     */
+    @Test
+    void restoringDaysPaysAWorkerWhoHadNoLineItemAtBillCreation() throws Exception {
+        // W2 keeps its line items so the bill still has head codes (and so a rate column);
+        // W1 was absent at creation, so the calculator left it with no payable row.
+        Bill bill = bill(period(), Status.UNDER_REVIEW, "W1", "W2");
+        BillDetail absent = bill.getBillDetails().stream()
+                .filter(d -> "W1".equals(d.getWorkerId())).findFirst().orElseThrow();
+        absent.setTotalAttendance(BigDecimal.ZERO);
+        absent.setLineItems(new ArrayList<>());
+        absent.setPayableLineItems(new ArrayList<>());
+        seedRates(bill, 10);
+
+        byte[] edited = withAttendance(template(bill, reviewer), Map.of(1, "5"));
+        PartialBillDetail pd = parser.parse(edited, bill, reviewer, requestInfo).stream()
+                .filter(p -> "detail-W1".equals(p.getId())).findFirst().orElseThrow();
+
+        assertEquals(1, pd.getLineItems().size(), "a payable line item must be created");
+        assertEquals(HEAD_CODE, pd.getLineItems().get(0).getHeadCode());
+        assertNull(pd.getLineItems().get(0).getId(), "null id lets EnrichmentUtil assign one");
+        assertEquals(0, pd.getTotalAmount().compareTo(BigDecimal.valueOf(50)), "5 days at 10 = 50");
+    }
+
+    @Test
+    void noLineItemIsCreatedForAZeroRate() throws Exception {
+        Bill bill = bill(period(), Status.UNDER_REVIEW, "W1", "W2");
+        BillDetail absent = bill.getBillDetails().stream()
+                .filter(d -> "W1".equals(d.getWorkerId())).findFirst().orElseThrow();
+        absent.setLineItems(new ArrayList<>());
+        absent.setPayableLineItems(new ArrayList<>());
+        Map<String, Object> ad = new HashMap<>();
+        ad.put(BILL_DETAIL_RATE_BREAKUP_KEY, Map.of(HEAD_CODE, BigDecimal.ZERO));
+        absent.setAdditionalDetails(ad);
+
+        byte[] edited = withAttendance(template(bill, reviewer), Map.of(1, "5"));
+        PartialBillDetail pd = parser.parse(edited, bill, reviewer, requestInfo).stream()
+                .filter(p -> "detail-W1".equals(p.getId())).findFirst().orElseThrow();
+
+        assertTrue(pd.getLineItems().isEmpty(), "rate 0 must not litter a zero row");
+    }
+
+    @Test
+    void attendanceKeysAreBothSyncedForTheReportGenerator() throws Exception {
+        // HealthBillReportGenerator reads additionalDetails.attendance, not noOfDaysWorked
+        Bill bill = bill(period(), Status.UNDER_REVIEW, "W1");
+        seedRates(bill, 10);
+
+        PartialBillDetail pd = parser.parse(
+                withAttendance(template(bill, reviewer), Map.of(1, "2")), bill, reviewer, requestInfo).get(0);
+        Map<String, Object> ad = adOf(pd);
+
+        assertEquals(0, new BigDecimal(ad.get(BILL_DETAIL_ATTENDANCE_KEY).toString())
+                .compareTo(BigDecimal.valueOf(2)), "attendance is the key the report reads");
+        assertEquals(0, new BigDecimal(ad.get(BILL_DETAIL_DAYS_WORKED_KEY).toString())
+                .compareTo(BigDecimal.valueOf(2)));
+    }
+
+    // ── health context: the fieldConfig branch, which is what production takes ────
+
+    /** Bill carrying a workerRatesSnapshot, so buildFieldConfigContext takes the fieldConfig path. */
+    private Bill healthBill(String... workerIds) {
+        Bill bill = bill(period(), Status.UNDER_REVIEW, workerIds);
+        Map<String, Object> ad = new HashMap<>(MAPPER.convertValue(bill.getAdditionalDetails(), Map.class));
+        ad.put(RATE_FIELD_CONFIG_SNAPSHOT_KEY, List.of(Map.of(
+                "order", 1, "fieldKey", HEAD_CODE, "isPayable", true,
+                "valueType", "FLAT", "paymentType", "PER_DAY",
+                "columnLabelKey", "PDF_STATIC_LABEL_BILL_TABLE_WAGE")));
+        bill.setAdditionalDetails(ad);
+        return bill;
+    }
+
+    @Test
+    void healthContextZeroAttendanceKeepsTheRate() throws Exception {
+        Bill bill = healthBill("W1");
+        seedRates(bill, 10);
+
+        PartialBillDetail pd = parser.parse(
+                withAttendance(template(bill, reviewer), Map.of(1, "0")), bill, reviewer, requestInfo).get(0);
+
+        assertEquals(0, pd.getTotalAmount().compareTo(BigDecimal.ZERO));
+        assertEquals(0, new BigDecimal(ratesOf(pd).get(HEAD_CODE).toString()).compareTo(BigDecimal.TEN),
+                "fieldConfig branch must keep the rate too");
+    }
+
+    @Test
+    void healthContextSheetShowsTheSnapshotRateAtZeroAttendance() throws Exception {
+        Bill bill = healthBill("W1");
+        bill.getBillDetails().get(0).setTotalAttendance(BigDecimal.ZERO);
+        bill.getBillDetails().get(0).getLineItems().get(0).setAmount(BigDecimal.ZERO);
+        seedRates(bill, 10);
+
+        try (XSSFWorkbook wb = new XSSFWorkbook(new ByteArrayInputStream(template(bill, reviewer)))) {
+            int rateCol = BillDetailExcelGenerator.STATIC_COL_COUNT;
+            assertEquals(10.0, wb.getSheetAt(0).getRow(1).getCell(rateCol).getNumericCellValue(), 0.001);
+        }
+    }
+
+    @Test
+    void healthContextRestoringDaysFromZeroPaysAgain() throws Exception {
+        Bill bill = healthBill("W1");
+        seedRates(bill, 10);
+
+        PartialBillDetail zeroed = parser.parse(
+                withAttendance(template(bill, reviewer), Map.of(1, "0")), bill, reviewer, requestInfo).get(0);
+        BillDetail detail = bill.getBillDetails().get(0);
+        detail.setTotalAttendance(zeroed.getTotalAttendance());
+        detail.setLineItems(new ArrayList<>(zeroed.getLineItems()));
+        detail.setAdditionalDetails(zeroed.getAdditionalDetails());
+
+        PartialBillDetail restored = parser.parse(
+                withAttendance(template(bill, reviewer), Map.of(1, "1")), bill, reviewer, requestInfo).get(0);
+
+        assertEquals(0, restored.getTotalAmount().compareTo(BigDecimal.TEN));
     }
 
     // ── dual-role users act in one mode, decided by bill status ───────────────

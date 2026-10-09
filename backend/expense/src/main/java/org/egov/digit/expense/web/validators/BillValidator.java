@@ -899,15 +899,22 @@ public class BillValidator {
 		if (projectType != null) {
 			Map<String, BigDecimal> headCodeMaxLimits = mdmsUtil.fetchCampaignRateLimits(
 					request.getRequestInfo(), request.getTenantId(), projectType);
-			if (!headCodeMaxLimits.isEmpty()) {
-				List<BillDetailUpdateError> rateErrors = validatePayableLineLimits(
-						billFromSearch, request.getBillDetails(), headCodeMaxLimits);
-				if (!rateErrors.isEmpty()) {
-					String msg = rateErrors.stream()
-							.map(BillDetailUpdateError::getMessage)
-							.collect(Collectors.joining("; "));
-					throw new CustomException(ERR_RATE_LIMIT_EXCEEDED, msg);
-				}
+			List<BillDetailUpdateError> rateErrors = new ArrayList<>();
+			if (!headCodeMaxLimits.isEmpty())
+				rateErrors.addAll(validatePayableLineLimits(
+						billFromSearch, request.getBillDetails(), headCodeMaxLimits));
+
+			// The line-item check skips PER_DAY at zero attendance, so validate the rate
+			// snapshot directly. Runs even with no MDMS limits — negative rates and the
+			// percentage default cap still apply.
+			rateErrors.addAll(validateRateSnapshotLimits(
+					billFromSearch, request.getBillDetails(), headCodeMaxLimits));
+
+			if (!rateErrors.isEmpty()) {
+				String msg = rateErrors.stream()
+						.map(BillDetailUpdateError::getMessage)
+						.collect(Collectors.joining("; "));
+				throw new CustomException(ERR_RATE_LIMIT_EXCEEDED, msg);
 			}
 		}
 
@@ -993,6 +1000,136 @@ public class BillValidator {
 				"The bill is not available for update at its current stage.");
 	}
 
+	/**
+	 * Caps each rate submitted in additionalDetails.rateBreakup at its MDMS max, regardless of
+	 * attendance. PERCENTAGE fields are keyed by percentageKey, so those resolve to their
+	 * fieldKey's limit and default to 100 — matching the sheet's own validation.
+	 */
+	private List<BillDetailUpdateError> validateRateSnapshotLimits(Bill existingBill,
+	                                                               List<PartialBillDetail> partials,
+	                                                               Map<String, BigDecimal> fieldKeyMaxLimits) {
+		if (CollectionUtils.isEmpty(partials)) return new ArrayList<>();
+
+		// percentageKey -> its config, so a percentage rate finds the right limit
+		Map<String, RateFieldConfig> byPercentageKey = new HashMap<>();
+		buildHeadCodeToConfigMap(existingBill).values().forEach(fc -> {
+			if (VALUE_TYPE_PERCENTAGE.equals(fc.getValueType()) && fc.getPercentageKey() != null)
+				byPercentageKey.put(fc.getPercentageKey(), fc);
+		});
+
+		List<BillDetailUpdateError> errors = new ArrayList<>();
+
+		for (PartialBillDetail partial : partials) {
+			if (partial.getAdditionalDetails() == null) continue;
+			Map<String, BigDecimal> rates;
+			try {
+				Map<String, Object> ad = objectMapper.convertValue(partial.getAdditionalDetails(),
+						new TypeReference<Map<String, Object>>() {});
+				Object raw = ad.get(BILL_DETAIL_RATE_BREAKUP_KEY);
+				if (raw == null) continue;
+				rates = new HashMap<>();
+				List<BillDetailUpdateError> parseErrors = new ArrayList<>();
+				objectMapper.convertValue(raw, new TypeReference<Map<String, Object>>() {})
+						.forEach((k, v) -> {
+							if (v == null) return;
+							try {
+								rates.put(k, new BigDecimal(v.toString()));
+							} catch (NumberFormatException e) {
+								// reject rather than skip: a skipped value still gets persisted
+								parseErrors.add(rateError(partial.getId(),
+										"Rate for " + k + " is not a number, found '" + v + "'"));
+							}
+						});
+				if (!parseErrors.isEmpty()) {
+					errors.addAll(parseErrors);
+					continue;
+				}
+			} catch (Exception e) {
+				log.warn("Could not read rateBreakup on billDetail={} for limit check: {}",
+						partial.getId(), e.getMessage());
+				continue;
+			}
+
+			rates.forEach((snapshotKey, rate) -> {
+				if (rate == null) return;
+
+				if (rate.compareTo(BigDecimal.ZERO) < 0) {
+					errors.add(rateError(partial.getId(),
+							"Rate for " + snapshotKey + " cannot be negative, found "
+									+ rate.toPlainString()));
+					return;
+				}
+
+				RateFieldConfig pctConfig = byPercentageKey.get(snapshotKey);
+				BigDecimal limit = pctConfig != null
+						? fieldKeyMaxLimits.getOrDefault(pctConfig.getFieldKey(), BigDecimal.valueOf(100))
+						: fieldKeyMaxLimits.get(snapshotKey);
+				if (limit == null) return;
+
+				if (rate.compareTo(limit) > 0)
+					errors.add(rateError(partial.getId(),
+							"Rate for " + snapshotKey + " must be between 0 and "
+									+ limit.stripTrailingZeros().toPlainString() + ", found "
+									+ rate.toPlainString()));
+			});
+		}
+		return errors;
+	}
+
+	private BillDetailUpdateError rateError(String billDetailId, String message) {
+		return BillDetailUpdateError.builder()
+				.billDetailId(billDetailId)
+				.code(ERR_RATE_LIMIT_EXCEEDED)
+				.message(message + " (billDetailId=" + billDetailId + ")")
+				.build();
+	}
+
+	/** Keys only a reviewer may change; an editor's values are overwritten with the DB's. */
+	private static final List<String> REVIEWER_OWNED_DETAIL_KEYS =
+			List.of(BILL_DETAIL_RATE_BREAKUP_KEY, BILL_DETAIL_ATTENDANCE_KEY, BILL_DETAIL_DAYS_WORKED_KEY);
+
+	/**
+	 * Forces the reviewer-owned additionalDetails keys back to their persisted values, leaving
+	 * an editor's own keys (editInfo.payeeUpdatedAtEpochMs) untouched. Returns true only when the
+	 * editor actually sent a different value, so a plain omission doesn't raise a warning.
+	 */
+	private boolean restoreCalculationMetadata(PartialBillDetail pd, BillDetail db) {
+		if (pd.getAdditionalDetails() == null) return false;
+
+		Map<String, Object> pdDetails;
+		try {
+			pdDetails = objectMapper.convertValue(pd.getAdditionalDetails(),
+					new TypeReference<Map<String, Object>>() {});
+		} catch (Exception e) {
+			log.warn("Unreadable additionalDetails on billDetail={} — keeping the persisted copy: {}",
+					pd.getId(), e.getMessage());
+			pd.setAdditionalDetails(db.getAdditionalDetails());
+			return true;
+		}
+
+		Map<String, Object> dbDetails = Collections.emptyMap();
+		if (db.getAdditionalDetails() != null) {
+			try {
+				dbDetails = objectMapper.convertValue(db.getAdditionalDetails(),
+						new TypeReference<Map<String, Object>>() {});
+			} catch (Exception e) {
+				log.warn("Unreadable persisted additionalDetails on billDetail={}: {}", pd.getId(), e.getMessage());
+			}
+		}
+
+		boolean forged = false;
+		for (String key : REVIEWER_OWNED_DETAIL_KEYS) {
+			Object dbValue = dbDetails.get(key);
+			boolean submitted = pdDetails.containsKey(key);
+			if (submitted && !Objects.equals(pdDetails.get(key), dbValue)) forged = true;
+
+			if (dbValue != null) pdDetails.put(key, dbValue);
+			else pdDetails.remove(key);
+		}
+		pd.setAdditionalDetails(pdDetails);
+		return forged;
+	}
+
 	/** Strips amount/attendance/lineItem fields blocked for PAYMENT_EDITOR. */
 	private void stripAmountFields(
 			PartialBillDetail pd,
@@ -1022,6 +1159,9 @@ public class BillValidator {
 		if (pd.getWorkerId() != null && !pd.getWorkerId().equals(db.getWorkerId())) {
 			pd.setWorkerId(null); stripped.add("workerId");
 		}
+		// Calculation metadata is reviewer-owned. Restored from the DB rather than removed:
+		// EnrichmentUtil takes additionalDetails wholesale, so removing a key would delete it.
+		if (restoreCalculationMetadata(pd, db)) stripped.add("additionalDetails.rateBreakup");
 
 		if (!stripped.isEmpty())
 			warnings.add(BillDetailUpdateError.builder()
