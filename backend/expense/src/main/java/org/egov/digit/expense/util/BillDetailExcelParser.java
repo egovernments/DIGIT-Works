@@ -357,7 +357,7 @@ public class BillDetailExcelParser {
                 if (entered == null) { unreadableRatesOut.add(headCode); entered = BigDecimal.ZERO; }
                 enteredRatesOut.put(snapshotKey(headCode, fcCtx), entered);
                 BigDecimal newAmount = entered.multiply(totalAttendance).setScale(2, RoundingMode.HALF_UP);
-                addOrUpdateLineItem(result, existingByHeadCode.get(headCode), source, headCode, newAmount, entered);
+                addOrUpdateLineItem(result, existingByHeadCode.get(headCode), source, headCode, newAmount);
             }
         } else {
             // Process in fieldConfig.order — PERCENTAGE fields see already-computed component amounts
@@ -384,7 +384,7 @@ public class BillDetailExcelParser {
                 }
 
                 runningAmounts.put(hc, newAmount);
-                addOrUpdateLineItem(result, existingByHeadCode.get(hc), source, hc, newAmount, entered);
+                addOrUpdateLineItem(result, existingByHeadCode.get(hc), source, hc, newAmount);
             }
 
             // Safety net for head codes not in fieldConfig
@@ -396,7 +396,7 @@ public class BillDetailExcelParser {
                 if (entered == null) { unreadableRatesOut.add(hc); entered = BigDecimal.ZERO; }
                 enteredRatesOut.put(snapshotKey(hc, fcCtx), entered);
                 BigDecimal newAmount = entered.multiply(totalAttendance).setScale(2, RoundingMode.HALF_UP);
-                addOrUpdateLineItem(result, existingByHeadCode.get(hc), source, hc, newAmount, entered);
+                addOrUpdateLineItem(result, existingByHeadCode.get(hc), source, hc, newAmount);
             }
         }
 
@@ -461,16 +461,17 @@ public class BillDetailExcelParser {
     /**
      * The calculator omits zero-amount line items, so a worker with no attendance at bill
      * creation has no payable row to clone. Without creating one, restoring their days saves
-     * nothing and underpays silently. Skipped at rate 0 so we don't litter zero rows.
+     * nothing and underpays silently. Skipped at amount 0 (not just rate 0) so a prefilled rate
+     * on a still-absent worker doesn't litter a zero row; the rate itself is kept in rateBreakup.
      * A null id makes EnrichmentUtil.mergeLineItems assign the id and audit details.
      */
     private void addOrUpdateLineItem(List<LineItem> result, LineItem sourceItem, BillDetail detail,
-                                     String headCode, BigDecimal newAmount, BigDecimal enteredRate) {
+                                     String headCode, BigDecimal newAmount) {
         if (sourceItem != null) {
             result.add(cloneWithAmount(sourceItem, newAmount));
             return;
         }
-        if (enteredRate == null || enteredRate.compareTo(BigDecimal.ZERO) <= 0) return;
+        if (newAmount == null || newAmount.compareTo(BigDecimal.ZERO) <= 0) return;
 
         log.info("Creating missing payable line item headCode={} amount={} for billDetail={}",
                 headCode, newAmount, detail.getId());

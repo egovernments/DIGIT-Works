@@ -221,6 +221,7 @@ public class BillDetailExcelGenerator {
         Map<String, String> reverseMapping;      // headCode → fieldKey
         Map<String, RateFieldConfig> byHeadCode; // headCode → config
         Map<String, String> fieldKeyToHeadCode;  // fieldKey → resolved headCode (fc.headCode preferred)
+        boolean fromBillSnapshot;                // head codes resolved exactly as the calculator did
 
         boolean hasConfig() { return fieldConfigs != null && !fieldConfigs.isEmpty(); }
 
@@ -252,6 +253,7 @@ public class BillDetailExcelGenerator {
                     ctx.fieldConfigs = objectMapper.convertValue(fcRaw,
                             new TypeReference<List<RateFieldConfig>>() {});
                     if (ctx.fieldConfigs != null) {
+                        ctx.fromBillSnapshot = true;
                         ctx.fieldConfigs.sort(Comparator.comparingInt(
                                 f -> Optional.ofNullable(f.getOrder()).orElse(99)));
                         log.info("Loaded {} fieldConfigs from bill.additionalDetails snapshot", ctx.fieldConfigs.size());
@@ -266,6 +268,7 @@ public class BillDetailExcelGenerator {
             } catch (Exception e) {
                 log.warn("Could not parse fieldConfig from bill.additionalDetails: {}", e.getMessage());
                 ctx.fieldConfigs = null;
+                ctx.fromBillSnapshot = false;
             }
         }
 
@@ -306,6 +309,8 @@ public class BillDetailExcelGenerator {
                 String headCode = fc.getHeadCode() != null && !fc.getHeadCode().isBlank()
                         ? fc.getHeadCode()
                         : ctx.headCodeMapping.getOrDefault(fc.getFieldKey(), fc.getFieldKey());
+                // Two fields on one head code share a cell, so an added column could pay the wrong one
+                if (ctx.byHeadCode.containsKey(headCode)) ctx.fromBillSnapshot = false;
                 ctx.reverseMapping.put(headCode, fc.getFieldKey());
                 ctx.byHeadCode.put(headCode, fc);
                 ctx.fieldKeyToHeadCode.put(fc.getFieldKey(), headCode);
@@ -319,7 +324,8 @@ public class BillDetailExcelGenerator {
     /**
      * Returns ordered head codes for the template columns.
      * If fieldConfig is present, order follows fieldConfig.order (payable only, intersected
-     * with head codes actually present in bill line items).
+     * with head codes actually present in bill line items, plus per-day heads from the
+     * bill's own snapshot — see {@link #isPerDayHead}).
      * Falls back to insertion order from line items.
      */
     static List<String> resolveOrderedHeadCodes(Bill bill, FieldConfigContext fcCtx) {
@@ -330,13 +336,30 @@ public class BillDetailExcelGenerator {
         for (RateFieldConfig fc : fcCtx.fieldConfigs) {
             if (!Boolean.TRUE.equals(fc.getIsPayable())) continue;
             String hc = fcCtx.resolveHeadCode(fc.getFieldKey());
-            if (billHeadCodes.contains(hc)) ordered.add(hc);
+            if (hc == null || hc.isBlank()) continue;
+            if (billHeadCodes.contains(hc) || (fcCtx.fromBillSnapshot && isPerDayHead(fc, fcCtx))) ordered.add(hc);
         }
         // append any head codes present in the bill but not in fieldConfig (safety net)
         for (String hc : billHeadCodes) {
             if (!ordered.contains(hc)) ordered.add(hc);
         }
         return ordered;
+    }
+
+    /** A head that only pays with attendance, so a 0-day bill has no line item for it (HCMPRE-4567). */
+    static boolean isPerDayHead(RateFieldConfig fc, FieldConfigContext fcCtx) {
+        if (!PAYMENT_TYPE_PER_DAY.equals(fc.getPaymentType())) return false;
+        if (VALUE_TYPE_FLAT.equals(fc.getValueType())) return true;
+        if (!VALUE_TYPE_PERCENTAGE.equals(fc.getValueType())
+                || fc.getComponents() == null || fc.getComponents().isEmpty()) return false;
+        // The parser takes % of component amounts; a flat one-time component would pay it at 0 days
+        for (String componentKey : fc.getComponents()) {
+            RateFieldConfig component = fcCtx.byHeadCode.get(fcCtx.resolveHeadCode(componentKey));
+            if (component == null || !Boolean.TRUE.equals(component.getIsPayable())
+                    || !VALUE_TYPE_FLAT.equals(component.getValueType())
+                    || !PAYMENT_TYPE_PER_DAY.equals(component.getPaymentType())) return false;
+        }
+        return true;
     }
 
     // -------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 package org.egov.digit.expense.util;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataValidation;
@@ -72,7 +73,8 @@ public class BillDetailExcelAttendanceTest {
                 .thenReturn(new HashMap<>());
         when(individualUtil.getIndividualDetails(any(), anyString(), anyString())).thenReturn(null);
 
-        ObjectMapper mapper = new ObjectMapper();
+        // Lenient like MainConfiguration: real calculator snapshots carry keys expense doesn't model
+        ObjectMapper mapper = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         BillPeriodUtil billPeriodUtil = new BillPeriodUtil(mapper);
         generator = new BillDetailExcelGenerator(localizationUtil, individualUtil, config,
                 mapper, mdmsUtil, billPeriodUtil);
@@ -579,6 +581,229 @@ public class BillDetailExcelAttendanceTest {
                 withAttendance(template(bill, reviewer), Map.of(1, "1")), bill, reviewer, requestInfo).get(0);
 
         assertEquals(0, restored.getTotalAmount().compareTo(BigDecimal.TEN));
+    }
+
+    // ── nobody attended at bill creation, so no line items exist at all (HCMPRE-4567) ──
+
+    private static final String ONE_TIME_HEAD = "KIT";
+
+    /** Every worker at 0 days: the calculator wrote no PER_DAY line item for anyone. */
+    private void zeroFromStart(Bill bill) {
+        for (BillDetail d : bill.getBillDetails()) {
+            d.setTotalAttendance(BigDecimal.ZERO);
+            d.setLineItems(new ArrayList<>());
+            d.setPayableLineItems(new ArrayList<>());
+        }
+    }
+
+    private Map<String, Object> config(int order, String fieldKey, String paymentType) {
+        return Map.of("order", order, "fieldKey", fieldKey, "isPayable", true,
+                "valueType", VALUE_TYPE_FLAT, "paymentType", paymentType);
+    }
+
+    /** A per-day wage plus a flat one-time kit, as a period-2 or aggregate bill would snapshot. */
+    private Bill billWithOneTimeHead(String... workerIds) {
+        Bill bill = healthBill(workerIds);
+        Map<String, Object> ad = new HashMap<>(MAPPER.convertValue(bill.getAdditionalDetails(), Map.class));
+        ad.put(RATE_FIELD_CONFIG_SNAPSHOT_KEY, List.of(
+                config(1, HEAD_CODE, PAYMENT_TYPE_PER_DAY), config(2, ONE_TIME_HEAD, PAYMENT_TYPE_ONE_TIME)));
+        bill.setAdditionalDetails(ad);
+        return bill;
+    }
+
+    private List<String> headCodesOf(Bill bill) {
+        return BillDetailExcelGenerator.resolveOrderedHeadCodes(bill,
+                generator.buildFieldConfigContext(bill, requestInfo));
+    }
+
+    @Test
+    void zeroFromStartBillStillShowsTheWageColumnWithTheSnapshotRate() throws Exception {
+        // The reported sheet had only Total Attendance and Total Amount
+        Bill bill = healthBill("W1", "W2");
+        seedRates(bill, 10);
+        zeroFromStart(bill);
+
+        assertEquals(List.of(HEAD_CODE), headCodesOf(bill));
+        try (XSSFWorkbook wb = new XSSFWorkbook(new ByteArrayInputStream(template(bill, reviewer)))) {
+            int rateCol = BillDetailExcelGenerator.STATIC_COL_COUNT;
+            assertEquals(10.0, wb.getSheetAt(0).getRow(1).getCell(rateCol).getNumericCellValue(), 0.001);
+        }
+    }
+
+    @Test
+    void zeroFromStartBillPaysOnceTheReviewerRestoresDays() throws Exception {
+        Bill bill = healthBill("W1", "W2");
+        seedRates(bill, 10);
+        zeroFromStart(bill);
+
+        List<PartialBillDetail> parsed = parser.parse(
+                withAttendance(template(bill, reviewer), Map.of(1, "1")), bill, reviewer, requestInfo);
+        PartialBillDetail w1 = parsed.stream().filter(p -> "detail-W1".equals(p.getId())).findFirst().orElseThrow();
+        PartialBillDetail w2 = parsed.stream().filter(p -> "detail-W2".equals(p.getId())).findFirst().orElseThrow();
+
+        assertEquals(0, w1.getTotalAmount().compareTo(BigDecimal.TEN), "1 day at rate 10 must pay 10, not 0");
+        assertTrue(w2.getLineItems().isEmpty(), "a worker still at 0 days must not get a 0.00 row");
+    }
+
+    @Test
+    void untouchedZeroFromStartSheetCreatesNoLineItems() throws Exception {
+        // The prefilled rate is > 0, so creating rows on rate alone would add 0.00 rows on every upload
+        Bill bill = healthBill("W1", "W2");
+        seedRates(bill, 10);
+        zeroFromStart(bill);
+
+        List<PartialBillDetail> parsed = parser.parse(template(bill, reviewer), bill, reviewer, requestInfo);
+
+        parsed.forEach(pd -> assertTrue(pd.getLineItems().isEmpty(), pd.getId()));
+        parsed.forEach(pd -> assertEquals(0, pd.getTotalAmount().compareTo(BigDecimal.ZERO), pd.getId()));
+    }
+
+    @Test
+    void aOneTimeHeadTheCalculatorSkippedStaysHidden() throws Exception {
+        // ONE_TIME is billed regardless of attendance, so no line item means the calculator excluded
+        // it (period != 1, or the aggregate bill). Showing it would let the reviewer pay it again.
+        Bill bill = billWithOneTimeHead("W1");
+        seedRates(bill, 10);
+        zeroFromStart(bill);
+
+        assertEquals(List.of(HEAD_CODE), headCodesOf(bill));
+    }
+
+    @Test
+    void aBilledOneTimeHeadDoesNotHideTheWageColumn() throws Exception {
+        // Period 1: the kit has a line item even at 0 days, so the head-code list was never empty
+        Bill bill = billWithOneTimeHead("W1");
+        seedRates(bill, 10);
+        zeroFromStart(bill);
+        bill.getBillDetails().get(0).getLineItems().add(LineItem.builder().id("li-kit").tenantId(TENANT)
+                .headCode(ONE_TIME_HEAD).type(LineItemType.PAYABLE).amount(BigDecimal.valueOf(50)).build());
+
+        assertEquals(List.of(HEAD_CODE, ONE_TIME_HEAD), headCodesOf(bill));
+    }
+
+    @Test
+    void fieldConfigFromMdmsRatherThanTheBillAddsNoColumns() throws Exception {
+        // MDMS headCodes may not match how the calculator resolved them, so a column could
+        // duplicate a line item's head under another name and pay the wage twice
+        when(config.isHealthContextEnabled()).thenReturn(true);
+        when(mdmsUtil.fetchWorkerRateFieldConfig(any(), anyString(), anyString()))
+                .thenReturn(RateFieldConfig.DEFAULT_FIELD_CONFIGS);
+        Bill bill = bill(period(), Status.UNDER_REVIEW, "W1");
+        bill.setReferenceId("campaign-1");
+        zeroFromStart(bill);
+
+        assertTrue(headCodesOf(bill).isEmpty());
+    }
+
+    private static final String BONUS_HEAD = "BONUS";
+    private static final String BONUS_PCT  = "BONUS_PCT";
+
+    private Map<String, Object> percentage(int order, String... components) {
+        return Map.of("order", order, "fieldKey", BONUS_HEAD, "isPayable", true,
+                "valueType", VALUE_TYPE_PERCENTAGE, "paymentType", PAYMENT_TYPE_PER_DAY,
+                "percentageKey", BONUS_PCT, "components", List.of(components));
+    }
+
+    /** Snapshot plus the per-worker rateBreakup the calculator writes, with nobody at work. */
+    private Bill zeroFromStartBill(List<Map<String, Object>> configs, Map<String, Object> rates,
+                                    String... workerIds) {
+        Bill bill = healthBill(workerIds);
+        Map<String, Object> ad = new HashMap<>(MAPPER.convertValue(bill.getAdditionalDetails(), Map.class));
+        ad.put(RATE_FIELD_CONFIG_SNAPSHOT_KEY, configs);
+        bill.setAdditionalDetails(ad);
+        zeroFromStart(bill);
+        for (BillDetail d : bill.getBillDetails())
+            d.setAdditionalDetails(new HashMap<>(Map.of(BILL_DETAIL_RATE_BREAKUP_KEY, rates)));
+        return bill;
+    }
+
+    @Test
+    void aPerDayPercentageOverAPerDayWageShowsAndPaysOnRestoredDays() throws Exception {
+        Bill bill = zeroFromStartBill(
+                List.of(config(1, HEAD_CODE, PAYMENT_TYPE_PER_DAY), percentage(2, HEAD_CODE)),
+                Map.of(HEAD_CODE, 10, BONUS_PCT, 10), "W1");
+
+        assertEquals(List.of(HEAD_CODE, BONUS_HEAD), headCodesOf(bill));
+
+        byte[] tpl = template(bill, reviewer);
+        assertTrue(parser.parse(tpl, bill, reviewer, requestInfo).get(0).getLineItems().isEmpty(),
+                "an untouched upload must create nothing");
+
+        byte[] edited;
+        try (XSSFWorkbook wb = new XSSFWorkbook(new ByteArrayInputStream(tpl))) {
+            // two head codes, so attendance sits one column further right than withAttendance assumes
+            wb.getSheetAt(0).getRow(1).getCell(BillDetailExcelGenerator.STATIC_COL_COUNT + 2).setCellValue(1.0);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            wb.write(out);
+            edited = out.toByteArray();
+        }
+        PartialBillDetail pd = parser.parse(edited, bill, reviewer, requestInfo).get(0);
+        assertEquals(0, pd.getTotalAmount().compareTo(new BigDecimal("11")), "10 wage + 10% bonus");
+    }
+
+    @Test
+    void aPerDayPercentageOverAOneTimeHeadStaysHidden() throws Exception {
+        // The parser takes % of the kit's amount, which isn't attendance-based: showing the column
+        // would add a bonus the calculator never billed on every untouched upload
+        Bill bill = zeroFromStartBill(
+                List.of(config(1, HEAD_CODE, PAYMENT_TYPE_PER_DAY), config(2, ONE_TIME_HEAD, PAYMENT_TYPE_ONE_TIME),
+                        percentage(3, ONE_TIME_HEAD)),
+                Map.of(HEAD_CODE, 10, ONE_TIME_HEAD, 50, BONUS_PCT, 10), "W1");
+        bill.getBillDetails().get(0).getLineItems().add(LineItem.builder().id("li-kit").tenantId(TENANT)
+                .headCode(ONE_TIME_HEAD).type(LineItemType.PAYABLE).amount(BigDecimal.valueOf(50)).build());
+
+        assertEquals(List.of(HEAD_CODE, ONE_TIME_HEAD), headCodesOf(bill));
+        PartialBillDetail pd = parser.parse(template(bill, reviewer), bill, reviewer, requestInfo).get(0);
+        assertEquals(0, pd.getTotalAmount().compareTo(BigDecimal.valueOf(50)), "the kit alone, as billed");
+    }
+
+    @Test
+    void aCalculatorShapedSnapshotWithAHeadCodeMappingPaysUnderTheMappedHead() throws Exception {
+        // Real snapshots carry calculator-only keys and a headCodeMapping; rateBreakup stays keyed by fieldKey
+        Map<String, Object> wage = new HashMap<>(config(1, HEAD_CODE, PAYMENT_TYPE_PER_DAY));
+        wage.put("billAmountKey", "wageAmount");
+        wage.put("reportDetailKey", "wage");
+        wage.put("totalColumnLabelKey", "TOTAL_WAGE");
+        Bill bill = zeroFromStartBill(List.of(wage), Map.of(HEAD_CODE, 10), "W1");
+        Map<String, Object> ad = new HashMap<>(MAPPER.convertValue(bill.getAdditionalDetails(), Map.class));
+        ad.put("headCodeMapping", Map.of(HEAD_CODE, "WAGE_HC"));
+        bill.setAdditionalDetails(ad);
+
+        assertEquals(List.of("WAGE_HC"), headCodesOf(bill));
+        PartialBillDetail pd = parser.parse(
+                withAttendance(template(bill, reviewer), Map.of(1, "1")), bill, reviewer, requestInfo).get(0);
+        assertEquals(1, pd.getLineItems().size());
+        assertEquals("WAGE_HC", pd.getLineItems().get(0).getHeadCode());
+        assertEquals(0, pd.getTotalAmount().compareTo(BigDecimal.TEN));
+    }
+
+    @Test
+    void twoFieldsMappedToOneHeadCodeAddNoColumns() throws Exception {
+        // WAGE and KIT share head H: the one prefilled cell could be KIT's, paid again in period 2
+        Bill bill = zeroFromStartBill(
+                List.of(config(1, HEAD_CODE, PAYMENT_TYPE_PER_DAY), config(2, ONE_TIME_HEAD, PAYMENT_TYPE_ONE_TIME)),
+                Map.of(HEAD_CODE, 10, ONE_TIME_HEAD, 50), "W1");
+        Map<String, Object> ad = new HashMap<>(MAPPER.convertValue(bill.getAdditionalDetails(), Map.class));
+        ad.put("headCodeMapping", Map.of(HEAD_CODE, "H", ONE_TIME_HEAD, "H"));
+        bill.setAdditionalDetails(ad);
+
+        assertTrue(headCodesOf(bill).isEmpty());
+    }
+
+    @Test
+    void anUnreadableSnapshotDoesNotWidenTheColumns() throws Exception {
+        // The catch branch falls back to MDMS/defaults, whose head codes may not match the bill
+        Bill bill = healthBill("W1");
+        zeroFromStart(bill);
+        Map<String, Object> ad = new HashMap<>(MAPPER.convertValue(bill.getAdditionalDetails(), Map.class));
+        ad.put(RATE_FIELD_CONFIG_SNAPSHOT_KEY, "not-a-list");
+        bill.setAdditionalDetails(ad);
+        when(config.isHealthContextEnabled()).thenReturn(true);
+        bill.setReferenceId("campaign-1");
+        when(mdmsUtil.fetchWorkerRateFieldConfig(any(), anyString(), anyString()))
+                .thenReturn(RateFieldConfig.DEFAULT_FIELD_CONFIGS);
+
+        assertTrue(headCodesOf(bill).isEmpty());
     }
 
     // ── dual-role users act in one mode, decided by bill status ───────────────
