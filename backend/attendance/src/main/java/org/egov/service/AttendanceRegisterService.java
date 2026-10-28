@@ -1005,15 +1005,21 @@ public class AttendanceRegisterService {
 
     public List<AttendanceRegister> getAttendanceRegisters(RequestInfoWrapper requestInfoWrapper, List<String> registerIds, String tenantId) {
 
-        //Search criteria for attendance register search request
-        AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder().ids(registerIds)
-                .tenantId(tenantId).build();
-        List<AttendanceRegister> attendanceRegisterList;
+        // De-duplicate and search in chunks with an explicit limit. Without a limit the search falls back to
+        // attendance.register.default.limit and silently drops older registers when a request spans more registers.
+        List<String> uniqueRegisterIds = new ArrayList<>(new LinkedHashSet<>(registerIds));
+        int chunkSize = Math.max(1, attendanceServiceConfiguration.getAttendanceRegisterMaxLimit());
+        List<AttendanceRegister> attendanceRegisterList = new ArrayList<>();
 
         // Calls search attendance register with created request. If some error in searching attendance register, throws error
         try {
-
-            attendanceRegisterList = searchAttendanceRegister(requestInfoWrapper, searchCriteria).getAttendanceRegister();
+            for (int from = 0; from < uniqueRegisterIds.size(); from += chunkSize) {
+                List<String> chunk = new ArrayList<>(uniqueRegisterIds.subList(from, Math.min(from + chunkSize, uniqueRegisterIds.size())));
+                //Search criteria for attendance register search request
+                AttendanceRegisterSearchCriteria searchCriteria = AttendanceRegisterSearchCriteria.builder().ids(chunk)
+                        .tenantId(tenantId).limit(chunk.size()).offset(0).build();
+                attendanceRegisterList.addAll(searchAttendanceRegister(requestInfoWrapper, searchCriteria).getAttendanceRegister());
+            }
             log.info("Attendance register search successful");
         } catch (Exception e) {
             log.info("Error in searching attendance register", e);
