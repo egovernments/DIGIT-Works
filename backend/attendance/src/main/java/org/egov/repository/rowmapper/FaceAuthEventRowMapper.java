@@ -78,6 +78,7 @@ public class FaceAuthEventRowMapper implements ResultSetExtractor<List<FaceAuthE
                     .responseTime(rs.getBigDecimal("faeResponseTime"))
                     .responseType(rs.getString("faeResponseType"))
                     .faceImage(rs.getString("faeFaceImage"))
+                    .faceImageFileStoreId(rs.getString("faeFaceImageFsId"))
                     .anomalyFlags(rs.getString("faeAnomalyFlags"))
                     .projectId(rs.getString("faeProjectId"))
                     .boundaryCode(rs.getString("faeBoundaryCode"))

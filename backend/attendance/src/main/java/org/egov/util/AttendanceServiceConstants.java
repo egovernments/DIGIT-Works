@@ -47,4 +47,6 @@ public class AttendanceServiceConstants {
     // File Store Service Errors
     public static final String FILE_STORE_SERVICE_ERROR = "FILE_STORE_SERVICE_ERROR";
     public static final String FILE_STORE_SERVICE_ERROR_MESSAGE = "Error while uploading file to file store";
+    public static final String FILESTORE_UPLOAD_FAILED_FLAG = "FILESTORE_UPLOAD_FAILED";
+    public static final String FACE_AUTH_FILESTORE_MODULE = "attendance-face-auth";
 }

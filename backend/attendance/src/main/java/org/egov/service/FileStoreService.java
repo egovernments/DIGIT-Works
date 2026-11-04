@@ -27,7 +27,12 @@ import java.util.Map;
 public class FileStoreService {
 
     private static final int MAX_RETRY_ATTEMPTS = 3;
-    private static final long RETRY_DELAY_MS = 5000; // 5 second delay between retries
+    // Kept short on purpose: uploadFile runs on the Kafka consumer poll thread for face-auth events,
+    // so long blocking sleeps here risk exceeding max.poll.interval.ms and triggering a rebalance.
+    private static final long RETRY_DELAY_MS = 1500;
+    // Default module for the backward-compatible 3-arg overload (legacy callers); named to avoid a
+    // duplicated magic string. New callers should pass an explicit, service-appropriate module.
+    private static final String DEFAULT_UPLOAD_MODULE = "excel-ingestion";
     
     private final RestTemplate restTemplate; // Keep for multipart file upload
     private final AttendanceLogConfiguration config;
@@ -40,6 +45,10 @@ public class FileStoreService {
     }
 
     public String uploadFile(byte[] fileBytes, String tenantId, String fileName) throws IOException {
+        return uploadFile(fileBytes, tenantId, fileName, DEFAULT_UPLOAD_MODULE);
+    }
+
+    public String uploadFile(byte[] fileBytes, String tenantId, String fileName, String module) throws IOException {
         return executeWithRetry("FileStore upload for file: " + fileName, () -> {
             String url = config.getFilestoreHost() + config.getFilestoreUploadEndpoint();
             log.info("Uploading file to filestore: {}", url);
@@ -52,7 +61,7 @@ public class FileStoreService {
                 }
             });
             body.add("tenantId", tenantId);
-            body.add("module", "excel-ingestion");
+            body.add("module", module);
             // Use a simpler approach - create custom RestTemplate with no message converters for response
             RestTemplate customRestTemplate = new RestTemplate();
             

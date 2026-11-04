@@ -27,12 +27,14 @@ public class FaceAuthEventConsumer {
         this.objectMapper = objectMapper;
     }
 
-    @KafkaListener(topicPattern = "(${attendance.kafka.tenant.id.pattern})${attendance.face.auth.kafka.consumer.bulk.create.topic}")
+    @KafkaListener(
+            topicPattern = "(${attendance.kafka.tenant.id.pattern})${attendance.face.auth.kafka.consumer.bulk.create.topic}",
+            concurrency = "${attendance.face.auth.kafka.consumer.concurrency:3}")
     public void bulkCreate(Map<String, Object> consumerRecord,
                            @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
             FaceAuthEventRequest request = objectMapper.convertValue(consumerRecord, FaceAuthEventRequest.class);
-            faceAuthEventService.createFaceAuthEvents(request);
+            faceAuthEventService.processFaceAuthEvents(request);
         } catch (Exception exception) {
             log.error("Error in Face Auth Event consumer bulk create", exception);
             log.error("Exception trace: ", ExceptionUtils.getStackTrace(exception));
