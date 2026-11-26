@@ -1,7 +1,6 @@
 package org.egov.wms.repository.builder;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.egov.wms.config.SearchConfiguration;
 import org.egov.wms.web.model.Job.ReportSearchCriteria;
 import org.egov.wms.web.model.Job.ReportSearchRequest;
@@ -9,8 +8,13 @@ import org.egov.works.services.common.models.expense.Pagination;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 @Component
 @Slf4j
@@ -34,6 +38,14 @@ public class ReportQueryBuilder {
             "WHERE offset_ > ? AND offset_ <= ?";
 
     private static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
+
+    private static final String DEFAULT_SORT_COLUMN = "createdtime";
+
+    // Sortable columns of the report result set, without the "report" alias prefix (lower case).
+    // Any other sortBy value falls back to the default sort column.
+    private static final Set<String> SORTABLE_COLUMNS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+            "id", "tenantid", "number", "name", "status", "filestoreid",
+            "createdby", "lastmodifiedby", "createdtime", "lastmodifiedtime")));
 
     private static final String REPORT_JOB_COUNT_QUERY = "SELECT distinct(id) " +
             "FROM job_report";
@@ -122,14 +134,13 @@ public class ReportQueryBuilder {
 
         String paginationWrapper = PAGINATION_WRAPPER;
         if(pagination == null)
-            return paginationWrapper.replace("{sortBy}", "CreatedTime").replace("{orderBy}", Pagination.OrderEnum.DESC.name());
+            return paginationWrapper.replace("{sortBy}", DEFAULT_SORT_COLUMN).replace("{orderBy}", Pagination.OrderEnum.DESC.name());
 
-        if ( pagination.getSortBy() != null && StringUtils.isNotBlank(pagination.getSortBy())) {
-            paginationWrapper=paginationWrapper.replace("{sortBy}", pagination.getSortBy());
+        String sortColumn = pagination.getSortBy() == null ? "" : pagination.getSortBy().trim().toLowerCase(Locale.ROOT);
+        if (!SORTABLE_COLUMNS.contains(sortColumn)) {
+            sortColumn = DEFAULT_SORT_COLUMN;
         }
-        else{
-            paginationWrapper=paginationWrapper.replace("{sortBy}", "CreatedTime");
-        }
+        paginationWrapper=paginationWrapper.replace("{sortBy}", sortColumn);
 
         if (pagination.getOrder() != null) {
             paginationWrapper=paginationWrapper.replace("{orderBy}", pagination.getOrder().name());

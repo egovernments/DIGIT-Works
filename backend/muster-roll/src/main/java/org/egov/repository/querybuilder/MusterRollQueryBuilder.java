@@ -7,8 +7,13 @@ import org.egov.works.services.common.models.expense.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import static org.egov.common.utils.MultiStateInstanceUtil.SCHEMA_REPLACE_STRING;
 
@@ -39,6 +44,15 @@ public class MusterRollQueryBuilder {
             "WHERE offset_ > ? AND offset_ <= ?";
 
     private static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
+
+    private static final String DEFAULT_SORT_COLUMN = "createdtime";
+
+    // Columns of the muster roll result set that a caller may sort on (lower case).
+    // Any other sortBy value falls back to the default sort column.
+    private static final Set<String> SORTABLE_COLUMNS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+            "id", "tenant_id", "musterroll_number", "attendance_register_id", "status", "musterroll_status",
+            "start_date", "end_date", "billing_period_id", "reference_id", "service_code",
+            "createdtime", "lastmodifiedtime")));
 
     @Autowired
     public MusterRollQueryBuilder(MusterRollServiceUtil musterRollServiceUtil) {
@@ -178,12 +192,11 @@ public class MusterRollQueryBuilder {
 
         String paginationWrapper = PAGINATION_WRAPPER;
 
-        if ( !StringUtils.isEmpty(sortBy)) {
-            paginationWrapper=paginationWrapper.replace("{sortBy}", sortBy);
+        String sortColumn = sortBy == null ? "" : sortBy.trim().toLowerCase(Locale.ROOT);
+        if (!SORTABLE_COLUMNS.contains(sortColumn)) {
+            sortColumn = DEFAULT_SORT_COLUMN;
         }
-        else{
-            paginationWrapper=paginationWrapper.replace("{sortBy}", "createdtime");
-        }
+        paginationWrapper=paginationWrapper.replace("{sortBy}", sortColumn);
 
         if (order != null && Pagination.OrderEnum.fromValue(order.toString()) != null) {
             paginationWrapper=paginationWrapper.replace("{orderBy}", order.name());

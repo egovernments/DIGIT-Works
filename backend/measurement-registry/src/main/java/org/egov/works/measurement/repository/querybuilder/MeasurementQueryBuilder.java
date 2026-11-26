@@ -2,7 +2,6 @@ package org.egov.works.measurement.repository.querybuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.egov.works.measurement.config.MBRegistryConfiguration;
 import org.egov.works.measurement.web.models.MeasurementCriteria;
 import org.egov.works.measurement.web.models.MeasurementSearchRequest;
@@ -11,7 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 @Component
 @Slf4j
@@ -50,6 +54,14 @@ public class MeasurementQueryBuilder {
             "FROM eg_mb_measurements m ";
 
     private static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
+
+    private static final String DEFAULT_SORT_COLUMN = "createdtime";
+
+    // Columns of the measurement result set that a caller may sort on (lower case).
+    // Any other sortBy value falls back to the default sort column.
+    private static final Set<String> SORTABLE_COLUMNS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+            "id", "tenantid", "mbnumber", "referenceid", "phyrefnumber", "entrydate", "isactive",
+            "createdtime", "lastmodifiedtime")));
 
 
     private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList) {
@@ -132,13 +144,11 @@ public class MeasurementQueryBuilder {
 
         String paginationWrapper = WRAPPER_QUERY;
 
-        // TODO: Add possible fields on which we can sort
-        if ( !StringUtils.isEmpty(pagination.getSortBy())) {
-            paginationWrapper=paginationWrapper.replace("{sortBy}", pagination.getSortBy());
+        String sortColumn = pagination.getSortBy() == null ? "" : pagination.getSortBy().trim().toLowerCase(Locale.ROOT);
+        if (!SORTABLE_COLUMNS.contains(sortColumn)) {
+            sortColumn = DEFAULT_SORT_COLUMN;
         }
-        else{
-            paginationWrapper=paginationWrapper.replace("{sortBy}", "createdtime");
-        }
+        paginationWrapper=paginationWrapper.replace("{sortBy}", sortColumn);
 
         if (pagination.getOrder() != null && Pagination.OrderEnum.fromValue(pagination.getOrder().toString()) != null) {
             paginationWrapper=paginationWrapper.replace("{orderBy}", pagination.getOrder().name());
