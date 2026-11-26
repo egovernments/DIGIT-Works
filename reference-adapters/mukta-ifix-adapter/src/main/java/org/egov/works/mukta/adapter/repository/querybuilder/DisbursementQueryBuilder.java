@@ -1,7 +1,6 @@
 package org.egov.works.mukta.adapter.repository.querybuilder;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.egov.works.mukta.adapter.config.MuktaAdaptorConfig;
 import org.egov.works.mukta.adapter.web.models.DisbursementSearchCriteria;
 import org.egov.works.mukta.adapter.web.models.DisbursementSearchRequest;
@@ -9,8 +8,13 @@ import org.egov.works.mukta.adapter.web.models.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 @Component
 @Slf4j
@@ -22,6 +26,15 @@ public class DisbursementQueryBuilder {
             "code.additional_details as codeAdditionalDetails, code.created_time as codeCreatedTime, code.created_by as codeCreatedBy, code.last_modified_time as codeLastModifiedTime, code.last_modified_by as codeLastModifiedBy\n" +
             "FROM eg_mukta_ifms_disburse disburse LEFT JOIN eg_mukta_ifms_message_codes code ON disburse.id = code.parent_id";
     private static final String AND_CLAUSE = " AND ";
+    private static final String DEFAULT_SORT_COLUMN = "createdtime";
+
+    // Sortable columns of the disbursement result set, without the "disburse" alias prefix (lower case).
+    // Any other sortBy value falls back to the default sort column.
+    private static final Set<String> SORTABLE_COLUMNS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+            "id", "programcode", "targetid", "transactionid", "parentid", "accountcode", "status",
+            "statusmessage", "netamount", "grossamount",
+            "createdtime", "createdby", "lastmodifiedtime", "lastmodifiedby")));
+
     private static final String WRAPPER_QUERY = "SELECT * FROM " +
             "(SELECT *, DENSE_RANK() OVER (ORDER BY disburse{sortBy} {orderBy}) offset_ FROM " +
             "({})" +
@@ -121,14 +134,13 @@ public class DisbursementQueryBuilder {
 
         String paginationWrapper = WRAPPER_QUERY;
         if(pagination == null)
-            return paginationWrapper.replace("{sortBy}", "createdtime").replace("{orderBy}", Pagination.OrderEnum.DESC.name());
+            return paginationWrapper.replace("{sortBy}", DEFAULT_SORT_COLUMN).replace("{orderBy}", Pagination.OrderEnum.DESC.name());
 
-        if ( pagination.getSortBy() != null && StringUtils.isNotBlank(pagination.getSortBy())) {
-            paginationWrapper=paginationWrapper.replace("{sortBy}", pagination.getSortBy());
+        String sortColumn = pagination.getSortBy() == null ? "" : pagination.getSortBy().trim().toLowerCase(Locale.ROOT);
+        if (!SORTABLE_COLUMNS.contains(sortColumn)) {
+            sortColumn = DEFAULT_SORT_COLUMN;
         }
-        else{
-            paginationWrapper=paginationWrapper.replace("{sortBy}", "createdtime");
-        }
+        paginationWrapper=paginationWrapper.replace("{sortBy}", sortColumn);
 
         if (pagination.getOrder() != null) {
             paginationWrapper=paginationWrapper.replace("{orderBy}", pagination.getOrder().name());
